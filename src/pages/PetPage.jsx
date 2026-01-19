@@ -95,6 +95,7 @@ const PetDisplay = ({ pet, stage, mood, onTap }) => {
 // Component chọn Pet lần đầu
 const PetSelector = ({ onSelect }) => {
   const [selected, setSelected] = useState(null);
+  const { playSound } = useAudio();
   
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-400 to-pink-400 p-4">
@@ -116,7 +117,7 @@ const PetSelector = ({ onSelect }) => {
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: i * 0.1 }}
-            onClick={() => setSelected(pet.id)}
+            onClick={() => { playSound('click'); setSelected(pet.id); }}
             className={`bg-white rounded-2xl p-4 shadow-lg transition-all ${
               selected === pet.id 
                 ? 'ring-4 ring-yellow-400 scale-105' 
@@ -220,7 +221,8 @@ export default function PetPage() {
   // Chọn pet lần đầu
   const handleSelectPet = (type) => {
     playSound('achievement');
-    updateMember(currentMember.id, {
+    const updatedMember = {
+      ...currentMember,
       pet: {
         type,
         xp: 0,
@@ -228,7 +230,8 @@ export default function PetPage() {
         lastPlay: Date.now(),
         createdAt: Date.now(),
       }
-    });
+    };
+    updateMember(updatedMember);
   };
   
   // Vuốt ve pet
@@ -240,12 +243,14 @@ export default function PetPage() {
     setTimeout(() => setShowMessage(false), 3000);
     
     // Cập nhật lastPlay
-    updateMember(currentMember.id, {
+    const updatedMember = {
+      ...currentMember,
       pet: {
         ...petData,
         lastPlay: Date.now(),
       }
-    });
+    };
+    updateMember(updatedMember);
   };
   
   // Cho pet ăn (cần học bài mới có đồ ăn)
@@ -255,13 +260,15 @@ export default function PetPage() {
     setShowFeeding(true);
     
     // Cộng XP cho pet
-    updateMember(currentMember.id, {
+    const updatedMember = {
+      ...currentMember,
       pet: {
         ...petData,
         xp: petXP + 10,
         lastFed: Date.now(),
       }
-    });
+    };
+    updateMember(updatedMember);
   };
   
   // Nếu chưa có pet, hiển thị màn hình chọn
