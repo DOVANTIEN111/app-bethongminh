@@ -21,10 +21,11 @@ export function AudioProvider({ children }) {
   });
   
   const [isListening, setIsListening] = useState(false);
-  const [speechSupported, setSpeechSupported] = useState(!!SpeechRecognition);
+  const [speechSupported] = useState(!!SpeechRecognition);
   
   const audioCtxRef = useRef(null);
   const recognitionRef = useRef(null);
+  const audioRef = useRef(null);
   
   const getAudioCtx = useCallback(() => {
     if (!audioCtxRef.current) audioCtxRef.current = new AudioCtx();
@@ -62,23 +63,86 @@ export function AudioProvider({ children }) {
     return newVal;
   }, [soundEnabled]);
   
-  const speak = useCallback((text, rate = 0.85) => {
-    if (!soundEnabled || !('speechSynthesis' in window)) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'en-US';
-    utterance.rate = rate;
-    window.speechSynthesis.speak(utterance);
+  // ============================================
+  // GOOGLE TTS - Phát âm chuẩn bản ngữ
+  // ============================================
+  const speak = useCallback((text, lang = 'en-US') => {
+    if (!soundEnabled) return;
+    
+    // Dừng audio đang phát
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+    
+    // Sử dụng Google Translate TTS API (miễn phí, chuẩn bản ngữ)
+    const encodedText = encodeURIComponent(text);
+    const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=${encodedText}`;
+    
+    const audio = new Audio(url);
+    audioRef.current = audio;
+    
+    audio.play().catch((error) => {
+      // Fallback về Web Speech API nếu Google TTS không hoạt động
+      console.log('Google TTS failed, using fallback:', error);
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.85;
+        
+        // Chọn giọng tiếng Anh tốt nhất
+        const voices = window.speechSynthesis.getVoices();
+        const englishVoice = voices.find(v => 
+          v.lang.includes('en') && (v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Daniel'))
+        ) || voices.find(v => v.lang.includes('en-US'));
+        
+        if (englishVoice) {
+          utterance.voice = englishVoice;
+        }
+        
+        window.speechSynthesis.speak(utterance);
+      }
+    });
   }, [soundEnabled]);
   
-  // Speech Recognition - Listen and check pronunciation
+  // Phát âm chậm (cho học từ vựng)
+  const speakSlow = useCallback((text) => {
+    if (!soundEnabled) return;
+    
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+    
+    const encodedText = encodeURIComponent(text);
+    const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=${encodedText}&ttsspeed=0.5`;
+    
+    const audio = new Audio(url);
+    audio.playbackRate = 0.8; // Chậm hơn
+    audioRef.current = audio;
+    
+    audio.play().catch(() => {
+      // Fallback
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.6; // Rất chậm
+        window.speechSynthesis.speak(utterance);
+      }
+    });
+  }, [soundEnabled]);
+  
+  // ============================================
+  // Speech Recognition - Kiểm tra phát âm
+  // ============================================
   const startListening = useCallback((targetWord, onResult) => {
     if (!SpeechRecognition) {
       onResult({ success: false, error: 'not_supported', transcript: '' });
       return;
     }
     
-    // Stop any existing recognition
     if (recognitionRef.current) {
       recognitionRef.current.abort();
     }
@@ -99,7 +163,6 @@ export function AudioProvider({ children }) {
       const results = event.results[0];
       const transcripts = [];
       
-      // Get all alternatives
       for (let i = 0; i < results.length; i++) {
         transcripts.push(results[i].transcript.toLowerCase().trim());
       }
@@ -107,18 +170,13 @@ export function AudioProvider({ children }) {
       const mainTranscript = transcripts[0];
       const targetLower = targetWord.toLowerCase().trim();
       
-      // Check if any alternative matches
       const isMatch = transcripts.some(t => {
-        // Exact match
         if (t === targetLower) return true;
-        // Contains the word
         if (t.includes(targetLower) || targetLower.includes(t)) return true;
-        // Similarity check (for slight mispronunciations)
         const similarity = calculateSimilarity(t, targetLower);
         return similarity >= 0.7;
       });
       
-      // Calculate confidence score
       const confidence = results[0].confidence || 0.5;
       const similarity = calculateSimilarity(mainTranscript, targetLower);
       
@@ -194,6 +252,7 @@ export function AudioProvider({ children }) {
       toggleSound, 
       playSound, 
       speak,
+      speakSlow,
       startListening,
       stopListening,
       isListening,
@@ -204,7 +263,7 @@ export function AudioProvider({ children }) {
   );
 }
 
-// Calculate string similarity (Levenshtein distance based)
+// Calculate string similarity
 function calculateSimilarity(str1, str2) {
   const len1 = str1.length;
   const len2 = str2.length;
