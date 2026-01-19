@@ -5,7 +5,8 @@ import { useMember } from '../contexts/MemberContext';
 import { useAudio } from '../contexts/AudioContext';
 import { getAllSubjects } from '../data/subjects';
 import { getTodayChallenges, getDailyWords } from '../data/dailyChallenge';
-import { Flame, Star, Trophy, ChevronRight, Sparkles, Gamepad2, Gift, Target, CheckCircle2, Volume2 } from 'lucide-react';
+import { PETS, getPetStage, calculatePetMood, PET_MOODS } from '../data/pets';
+import { Flame, Star, Trophy, ChevronRight, Sparkles, Gamepad2, Gift, Target, CheckCircle2, Volume2, Heart } from 'lucide-react';
 
 // Confetti component for celebrations
 const Confetti = ({ show }) => {
@@ -282,6 +283,70 @@ export default function HomePage() {
             ))}
           </div>
         </div>
+      </motion.div>
+      
+      {/* Pet Widget */}
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.28 }} className="mb-4">
+        {currentMember?.pet ? (
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => { playSound('click'); navigate('/pet'); }}
+            className="w-full bg-gradient-to-r from-pink-400 via-purple-400 to-indigo-400 rounded-2xl p-4 shadow-lg"
+          >
+            {(() => {
+              const pet = PETS[currentMember.pet.type];
+              const stage = getPetStage(currentMember.pet.type, currentMember.pet.xp || 0);
+              const mood = calculatePetMood(currentMember.pet.lastFed, currentMember.pet.lastPlay);
+              return (
+                <div className="flex items-center gap-4">
+                  <motion.div
+                    animate={{ y: [0, -5, 0] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="text-5xl"
+                  >
+                    {stage?.icon}
+                  </motion.div>
+                  <div className="flex-1 text-left text-white">
+                    <p className="font-bold text-lg">{stage?.name}</p>
+                    <p className="text-sm text-white/80 flex items-center gap-1">
+                      <span>{PET_MOODS[mood]?.icon}</span>
+                      <span>{PET_MOODS[mood]?.name}</span>
+                      <span className="mx-2">•</span>
+                      <Star className="w-4 h-4" />
+                      <span>{currentMember.pet.xp || 0} XP</span>
+                    </p>
+                  </div>
+                  <div className="text-white/80">
+                    <Heart className="w-6 h-6" />
+                  </div>
+                </div>
+              );
+            })()}
+          </motion.button>
+        ) : (
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => { playSound('click'); navigate('/pet'); }}
+            className="w-full bg-gradient-to-r from-yellow-400 to-orange-400 rounded-2xl p-4 shadow-lg"
+          >
+            <div className="flex items-center justify-center gap-3 text-white">
+              <motion.span
+                animate={{ scale: [1, 1.2, 1], rotate: [0, 10, -10, 0] }}
+                transition={{ duration: 1, repeat: Infinity }}
+                className="text-4xl"
+              >
+                🐣
+              </motion.span>
+              <div className="text-left">
+                <p className="font-bold text-lg">Nhận Pet miễn phí!</p>
+                <p className="text-sm text-white/90">Nuôi pet cùng học mỗi ngày</p>
+              </div>
+              <ChevronRight className="w-6 h-6" />
+            </div>
+          </motion.button>
+        )}
       </motion.div>
       
       {/* Quick Actions - 2 columns */}
