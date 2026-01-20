@@ -1,10 +1,91 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMember } from '../contexts/MemberContext';
 import { useAudio } from '../contexts/AudioContext';
 import { getStory } from '../data/stories';
-import { ArrowLeft, Lock, ChevronLeft, ChevronRight, Star, BookOpen, CheckCircle, XCircle, Volume2, Sparkles } from 'lucide-react';
+import { ArrowLeft, Lock, ChevronLeft, ChevronRight, Star, BookOpen, CheckCircle, XCircle, Volume2, VolumeX, Sparkles, Pause, Play } from 'lucide-react';
+
+// Hook để đọc truyện bằng giọng nói tiếng Việt
+const useVietnameseSpeech = () => {
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  
+  const getVietnameseVoice = useCallback(() => {
+    const voices = window.speechSynthesis?.getVoices() || [];
+    // Tìm giọng tiếng Việt
+    const vnVoice = voices.find(v => v.lang.includes('vi')) 
+      || voices.find(v => v.lang.includes('vi-VN'));
+    // Fallback: dùng giọng mặc định
+    return vnVoice || voices[0];
+  }, []);
+  
+  const speak = useCallback((text, onEnd) => {
+    if (!('speechSynthesis' in window)) return;
+    
+    // Dừng đọc trước đó
+    window.speechSynthesis.cancel();
+    
+    const utterance = new SpeechSynthesisUtterance(text);
+    
+    // Cấu hình giọng đọc
+    utterance.lang = 'vi-VN';
+    utterance.rate = 0.9; // Chậm hơn để trẻ nghe rõ
+    utterance.pitch = 1.1; // Giọng cao hơn chút
+    utterance.volume = 1;
+    
+    // Tìm giọng tiếng Việt
+    const voice = getVietnameseVoice();
+    if (voice) {
+      utterance.voice = voice;
+    }
+    
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => {
+      setIsSpeaking(false);
+      setIsPaused(false);
+      onEnd?.();
+    };
+    utterance.onerror = () => {
+      setIsSpeaking(false);
+      setIsPaused(false);
+    };
+    
+    // Delay nhỏ để voices load xong
+    setTimeout(() => {
+      window.speechSynthesis.speak(utterance);
+    }, 100);
+  }, [getVietnameseVoice]);
+  
+  const pause = useCallback(() => {
+    if (window.speechSynthesis.speaking) {
+      window.speechSynthesis.pause();
+      setIsPaused(true);
+    }
+  }, []);
+  
+  const resume = useCallback(() => {
+    if (window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+      setIsPaused(false);
+    }
+  }, []);
+  
+  const stop = useCallback(() => {
+    window.speechSynthesis.cancel();
+    setIsSpeaking(false);
+    setIsPaused(false);
+  }, []);
+  
+  // Cleanup khi unmount
+  useEffect(() => {
+    return () => {
+      window.speechSynthesis?.cancel();
+    };
+  }, []);
+  
+  return { speak, pause, resume, stop, isSpeaking, isPaused };
+};
 
 // Component hiển thị chương bị khóa
 const LockedChapter = ({ chaptersNeeded, onBack }) => (
@@ -187,11 +268,71 @@ const StoryComplete = ({ story, onRestart, onBack }) => {
   );
 };
 
+// Audio player component
+const AudioPlayer = ({ isPlaying, isPaused, onPlay, onPause, onResume, onStop }) => {
+  return (
+    <div className="flex items-center gap-2">
+      {!isPlaying ? (
+        <motion.button
+          whileTap={{ scale: 0.95 }}
+          onClick={onPlay}
+          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-full font-medium shadow-lg"
+        >
+          <Volume2 className="w-5 h-5" />
+          <span>Nghe đọc</span>
+        </motion.button>
+      ) : (
+        <div className="flex items-center gap-2">
+          {isPaused ? (
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={onResume}
+              className="p-3 bg-green-500 text-white rounded-full shadow-lg"
+            >
+              <Play className="w-5 h-5" />
+            </motion.button>
+          ) : (
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={onPause}
+              className="p-3 bg-amber-500 text-white rounded-full shadow-lg"
+            >
+              <Pause className="w-5 h-5" />
+            </motion.button>
+          )}
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={onStop}
+            className="p-3 bg-red-500 text-white rounded-full shadow-lg"
+          >
+            <VolumeX className="w-5 h-5" />
+          </motion.button>
+          
+          {/* Animated waves */}
+          {!isPaused && (
+            <div className="flex items-center gap-1 ml-2">
+              {[1, 2, 3, 4, 5].map(i => (
+                <motion.div
+                  key={i}
+                  animate={{ height: [8, 20, 8] }}
+                  transition={{ duration: 0.5, repeat: Infinity, delay: i * 0.1 }}
+                  className="w-1 bg-green-500 rounded-full"
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
 export default function StoryReadPage() {
   const { storyId } = useParams();
   const navigate = useNavigate();
   const { currentMember, updateMember } = useMember();
-  const { playSound, speak } = useAudio();
+  const { playSound } = useAudio();
+  const { speak, pause, resume, stop, isSpeaking, isPaused } = useVietnameseSpeech();
   
   const story = getStory(storyId);
   const [currentChapter, setCurrentChapter] = useState(0);
@@ -202,8 +343,8 @@ export default function StoryReadPage() {
   const streak = currentMember?.stats?.streak || 0;
   const storyProgress = currentMember?.storyProgress?.[storyId] || {};
   
-  // Số chương đã mở (dựa trên streak)
-  const unlockedChapters = Math.min(Math.max(1, streak), story?.totalChapters || 0);
+  // Số chương đã mở (dựa trên streak) - minimum 1 chương luôn mở
+  const unlockedChapters = Math.min(Math.max(1, streak + 1), story?.totalChapters || 0);
   
   // Khôi phục vị trí đọc
   useEffect(() => {
@@ -211,6 +352,11 @@ export default function StoryReadPage() {
       setCurrentChapter(Math.min(storyProgress.lastChapter, unlockedChapters - 1));
     }
   }, [storyId]);
+  
+  // Dừng đọc khi chuyển chương
+  useEffect(() => {
+    stop();
+  }, [currentChapter]);
   
   if (!story) {
     return (
@@ -223,6 +369,14 @@ export default function StoryReadPage() {
   const chapter = story.chapters[currentChapter];
   const isLocked = currentChapter >= unlockedChapters;
   const chaptersNeeded = currentChapter - unlockedChapters + 1;
+  
+  // Đọc truyện
+  const handleReadAloud = () => {
+    playSound('click');
+    // Đọc tiêu đề + nội dung
+    const textToRead = `${chapter.title}. ${chapter.content}`;
+    speak(textToRead);
+  };
   
   // Lưu tiến độ đọc
   const saveProgress = (chapterIdx) => {
@@ -260,6 +414,8 @@ export default function StoryReadPage() {
   };
   
   const handleNextChapter = () => {
+    stop(); // Dừng đọc
+    
     if (!showQuiz) {
       setShowQuiz(true);
       return;
@@ -279,6 +435,7 @@ export default function StoryReadPage() {
   };
   
   const handlePrevChapter = () => {
+    stop(); // Dừng đọc
     if (currentChapter > 0) {
       setCurrentChapter(c => c - 1);
       setShowQuiz(false);
@@ -294,11 +451,6 @@ export default function StoryReadPage() {
     setQuizPassed(true); // Vẫn cho qua để đọc tiếp
   };
   
-  const handleReadAloud = () => {
-    playSound('click');
-    speak(chapter.content.replace(/\n/g, '. '));
-  };
-  
   // Hiển thị chương bị khóa
   if (isLocked) {
     return <LockedChapter chaptersNeeded={chaptersNeeded} onBack={() => navigate('/stories')} />;
@@ -309,8 +461,8 @@ export default function StoryReadPage() {
     return (
       <StoryComplete
         story={story}
-        onRestart={() => { setCurrentChapter(0); setCompleted(false); setShowQuiz(false); }}
-        onBack={() => navigate('/stories')}
+        onRestart={() => { setCurrentChapter(0); setCompleted(false); setShowQuiz(false); stop(); }}
+        onBack={() => { stop(); navigate('/stories'); }}
       />
     );
   }
@@ -320,16 +472,14 @@ export default function StoryReadPage() {
       {/* Header */}
       <div className={`bg-gradient-to-r ${story.color} text-white px-4 py-4`}>
         <div className="flex items-center justify-between mb-2">
-          <button onClick={() => navigate('/stories')} className="p-2 rounded-full hover:bg-white/20">
+          <button onClick={() => { stop(); navigate('/stories'); }} className="p-2 rounded-full hover:bg-white/20">
             <ArrowLeft className="w-6 h-6" />
           </button>
           <div className="text-center">
             <p className="font-bold">{story.title}</p>
             <p className="text-sm text-white/80">Chương {currentChapter + 1}/{story.totalChapters}</p>
           </div>
-          <button onClick={handleReadAloud} className="p-2 rounded-full hover:bg-white/20">
-            <Volume2 className="w-6 h-6" />
-          </button>
+          <div className="w-10" />
         </div>
         
         {/* Progress */}
@@ -353,7 +503,7 @@ export default function StoryReadPage() {
             return (
               <button
                 key={idx}
-                onClick={() => isUnlocked && setCurrentChapter(idx)}
+                onClick={() => { if (isUnlocked) { stop(); setCurrentChapter(idx); setShowQuiz(false); setQuizPassed(false); } }}
                 disabled={!isUnlocked}
                 className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all ${
                   isCurrent
@@ -369,6 +519,33 @@ export default function StoryReadPage() {
               </button>
             );
           })}
+        </div>
+      </div>
+      
+      {/* Audio Player - NỔI BẬT */}
+      <div className="px-4 mb-4">
+        <div className="bg-gradient-to-r from-green-100 to-emerald-100 rounded-2xl p-4 shadow-md flex items-center justify-between border-2 border-green-300">
+          <div className="flex items-center gap-3">
+            <motion.span 
+              animate={{ scale: isSpeaking && !isPaused ? [1, 1.2, 1] : 1 }}
+              transition={{ duration: 0.5, repeat: isSpeaking && !isPaused ? Infinity : 0 }}
+              className="text-3xl"
+            >
+              🔊
+            </motion.span>
+            <div>
+              <p className="font-bold text-green-800">Nghe kể chuyện</p>
+              <p className="text-sm text-green-600">Bấm để nghe đọc truyện</p>
+            </div>
+          </div>
+          <AudioPlayer
+            isPlaying={isSpeaking}
+            isPaused={isPaused}
+            onPlay={handleReadAloud}
+            onPause={pause}
+            onResume={resume}
+            onStop={stop}
+          />
         </div>
       </div>
       
@@ -389,12 +566,12 @@ export default function StoryReadPage() {
             </h2>
             
             {/* Image/emoji */}
-            <div className="text-center text-6xl mb-4 py-4 bg-amber-50 rounded-xl">
+            <div className="text-center text-6xl mb-4 py-4 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl">
               {chapter.image}
             </div>
             
-            {/* Content */}
-            <div className="text-gray-700 leading-relaxed whitespace-pre-line text-lg">
+            {/* Content - with larger text for kids */}
+            <div className="text-gray-700 leading-loose whitespace-pre-line text-lg font-medium">
               {chapter.content}
             </div>
             
