@@ -1,90 +1,132 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMember } from '../contexts/MemberContext';
 import { useAudio } from '../contexts/AudioContext';
 import { getStory } from '../data/stories';
-import { ArrowLeft, Lock, ChevronLeft, ChevronRight, Star, BookOpen, CheckCircle, XCircle, Volume2, VolumeX, Sparkles, Pause, Play } from 'lucide-react';
+import { ArrowLeft, Lock, ChevronLeft, ChevronRight, Star, BookOpen, CheckCircle, XCircle, Volume2, VolumeX, Sparkles, Pause, Play, Loader2 } from 'lucide-react';
 
-// Hook để đọc truyện bằng giọng nói tiếng Việt
-const useVietnameseSpeech = () => {
+// FPT.AI Text-to-Speech API
+const FPT_API_KEY = 'nlzVb59O6i3UHC0hO1qh6lTyhUGD1fWb';
+const FPT_TTS_URL = 'https://api.fpt.ai/hmi/tts/v5';
+
+// Hook để đọc truyện bằng FPT.AI (Tiếng Việt tự nhiên)
+const useFPTSpeech = () => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const audioRef = useRef(null);
   
-  const getVietnameseVoice = useCallback(() => {
-    const voices = window.speechSynthesis?.getVoices() || [];
-    // Tìm giọng tiếng Việt
-    const vnVoice = voices.find(v => v.lang.includes('vi')) 
-      || voices.find(v => v.lang.includes('vi-VN'));
-    // Fallback: dùng giọng mặc định
-    return vnVoice || voices[0];
+  // Tạo audio element
+  useEffect(() => {
+    audioRef.current = new Audio();
+    audioRef.current.onplay = () => {
+      setIsSpeaking(true);
+      setIsLoading(false);
+    };
+    audioRef.current.onended = () => {
+      setIsSpeaking(false);
+      setIsPaused(false);
+    };
+    audioRef.current.onerror = () => {
+      setIsSpeaking(false);
+      setIsLoading(false);
+      setError('Không thể phát âm thanh');
+    };
+    
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
   }, []);
   
-  const speak = useCallback((text, onEnd) => {
+  const speak = useCallback(async (text) => {
+    if (!text) return;
+    
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      // Gọi FPT.AI API
+      const response = await fetch(FPT_TTS_URL, {
+        method: 'POST',
+        headers: {
+          'api-key': FPT_API_KEY,
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'voice': 'banmai', // Giọng nữ miền Bắc - kể chuyện hay
+          'speed': '-1', // Chậm hơn một chút để trẻ nghe rõ (-3 đến 3)
+        },
+        body: text
+      });
+      
+      const data = await response.json();
+      
+      if (data.error === 0 && data.async) {
+        // FPT.AI trả về URL audio
+        // Đợi một chút để file audio được tạo
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        if (audioRef.current) {
+          audioRef.current.src = data.async;
+          audioRef.current.play();
+        }
+      } else {
+        throw new Error(data.message || 'Lỗi từ FPT.AI');
+      }
+    } catch (err) {
+      console.error('FPT TTS Error:', err);
+      setError(err.message);
+      setIsLoading(false);
+      
+      // Fallback về Web Speech API nếu FPT.AI lỗi
+      fallbackSpeak(text);
+    }
+  }, []);
+  
+  // Fallback về Web Speech API
+  const fallbackSpeak = useCallback((text) => {
     if (!('speechSynthesis' in window)) return;
     
-    // Dừng đọc trước đó
     window.speechSynthesis.cancel();
-    
     const utterance = new SpeechSynthesisUtterance(text);
-    
-    // Cấu hình giọng đọc
     utterance.lang = 'vi-VN';
-    utterance.rate = 0.9; // Chậm hơn để trẻ nghe rõ
-    utterance.pitch = 1.1; // Giọng cao hơn chút
-    utterance.volume = 1;
-    
-    // Tìm giọng tiếng Việt
-    const voice = getVietnameseVoice();
-    if (voice) {
-      utterance.voice = voice;
-    }
-    
+    utterance.rate = 0.9;
     utterance.onstart = () => setIsSpeaking(true);
     utterance.onend = () => {
       setIsSpeaking(false);
       setIsPaused(false);
-      onEnd?.();
     };
-    utterance.onerror = () => {
-      setIsSpeaking(false);
-      setIsPaused(false);
-    };
-    
-    // Delay nhỏ để voices load xong
-    setTimeout(() => {
-      window.speechSynthesis.speak(utterance);
-    }, 100);
-  }, [getVietnameseVoice]);
+    window.speechSynthesis.speak(utterance);
+  }, []);
   
   const pause = useCallback(() => {
-    if (window.speechSynthesis.speaking) {
-      window.speechSynthesis.pause();
+    if (audioRef.current && !audioRef.current.paused) {
+      audioRef.current.pause();
       setIsPaused(true);
     }
   }, []);
   
   const resume = useCallback(() => {
-    if (window.speechSynthesis.paused) {
-      window.speechSynthesis.resume();
+    if (audioRef.current && audioRef.current.paused) {
+      audioRef.current.play();
       setIsPaused(false);
     }
   }, []);
   
   const stop = useCallback(() => {
-    window.speechSynthesis.cancel();
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
     setIsSpeaking(false);
     setIsPaused(false);
+    setIsLoading(false);
   }, []);
   
-  // Cleanup khi unmount
-  useEffect(() => {
-    return () => {
-      window.speechSynthesis?.cancel();
-    };
-  }, []);
-  
-  return { speak, pause, resume, stop, isSpeaking, isPaused };
+  return { speak, pause, resume, stop, isSpeaking, isPaused, isLoading, error };
 };
 
 // Component hiển thị chương bị khóa
@@ -268,11 +310,16 @@ const StoryComplete = ({ story, onRestart, onBack }) => {
   );
 };
 
-// Audio player component
-const AudioPlayer = ({ isPlaying, isPaused, onPlay, onPause, onResume, onStop }) => {
+// Audio player component với FPT.AI
+const AudioPlayer = ({ isPlaying, isPaused, isLoading, onPlay, onPause, onResume, onStop, error }) => {
   return (
     <div className="flex items-center gap-2">
-      {!isPlaying ? (
+      {isLoading ? (
+        <div className="flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-600 rounded-full">
+          <Loader2 className="w-5 h-5 animate-spin" />
+          <span>Đang tải...</span>
+        </div>
+      ) : !isPlaying ? (
         <motion.button
           whileTap={{ scale: 0.95 }}
           onClick={onPlay}
@@ -332,7 +379,7 @@ export default function StoryReadPage() {
   const navigate = useNavigate();
   const { currentMember, updateMember } = useMember();
   const { playSound } = useAudio();
-  const { speak, pause, resume, stop, isSpeaking, isPaused } = useVietnameseSpeech();
+  const { speak, pause, resume, stop, isSpeaking, isPaused, isLoading, error } = useFPTSpeech();
   
   const story = getStory(storyId);
   const [currentChapter, setCurrentChapter] = useState(0);
@@ -370,7 +417,7 @@ export default function StoryReadPage() {
   const isLocked = currentChapter >= unlockedChapters;
   const chaptersNeeded = currentChapter - unlockedChapters + 1;
   
-  // Đọc truyện
+  // Đọc truyện bằng FPT.AI
   const handleReadAloud = () => {
     playSound('click');
     // Đọc tiêu đề + nội dung
@@ -522,30 +569,37 @@ export default function StoryReadPage() {
         </div>
       </div>
       
-      {/* Audio Player - NỔI BẬT */}
+      {/* Audio Player - FPT.AI */}
       <div className="px-4 mb-4">
-        <div className="bg-gradient-to-r from-green-100 to-emerald-100 rounded-2xl p-4 shadow-md flex items-center justify-between border-2 border-green-300">
-          <div className="flex items-center gap-3">
-            <motion.span 
-              animate={{ scale: isSpeaking && !isPaused ? [1, 1.2, 1] : 1 }}
-              transition={{ duration: 0.5, repeat: isSpeaking && !isPaused ? Infinity : 0 }}
-              className="text-3xl"
-            >
-              🔊
-            </motion.span>
-            <div>
-              <p className="font-bold text-green-800">Nghe kể chuyện</p>
-              <p className="text-sm text-green-600">Bấm để nghe đọc truyện</p>
+        <div className="bg-gradient-to-r from-green-100 to-emerald-100 rounded-2xl p-4 shadow-md border-2 border-green-300">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <motion.span 
+                animate={{ scale: isSpeaking && !isPaused ? [1, 1.2, 1] : 1 }}
+                transition={{ duration: 0.5, repeat: isSpeaking && !isPaused ? Infinity : 0 }}
+                className="text-3xl"
+              >
+                🔊
+              </motion.span>
+              <div>
+                <p className="font-bold text-green-800">Nghe kể chuyện</p>
+                <p className="text-sm text-green-600">Giọng đọc AI tự nhiên</p>
+              </div>
             </div>
+            <AudioPlayer
+              isPlaying={isSpeaking}
+              isPaused={isPaused}
+              isLoading={isLoading}
+              onPlay={handleReadAloud}
+              onPause={pause}
+              onResume={resume}
+              onStop={stop}
+              error={error}
+            />
           </div>
-          <AudioPlayer
-            isPlaying={isSpeaking}
-            isPaused={isPaused}
-            onPlay={handleReadAloud}
-            onPause={pause}
-            onResume={resume}
-            onStop={stop}
-          />
+          {error && (
+            <p className="text-red-500 text-sm mt-2">⚠️ {error}</p>
+          )}
         </div>
       </div>
       
