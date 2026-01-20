@@ -1,8 +1,251 @@
 // ============================================
-// STORY DATA - Truyện cổ tích mở khóa
+// STORY DATA - Truyện cổ tích Việt Nam
+// Nội dung chính xác theo nguyên bản dân gian
 // ============================================
 
 export const STORIES = [
+  // ==========================================
+  // 1. THẠCH SANH
+  // ==========================================
+  {
+    id: 'thach_sanh',
+    title: 'Thạch Sanh',
+    titleEn: 'The Tale of Thach Sanh',
+    icon: '⚔️',
+    cover: '🏹',
+    color: 'from-red-500 to-orange-500',
+    description: 'Chàng dũng sĩ diệt chằn tinh, đại bàng',
+    totalChapters: 6,
+    chapters: [
+      {
+        id: 1,
+        title: 'Sự ra đời kỳ lạ',
+        content: `Ngày xưa, ở quận Cao Bình có hai vợ chồng bác tiều phu họ Thạch, tuổi đã cao mà vẫn chưa có con. Ông bà tuy nghèo nhưng luôn làm việc thiện: ông thì sửa cầu, đắp đường; bà thì nấu nước cho người qua đường uống.
+
+Việc làm tốt của họ thấu đến Ngọc Hoàng. Ngài bèn sai Thái tử xuống đầu thai làm con nhà họ Thạch.
+
+Bà vợ mang thai đến ba năm mới sinh được một cậu con trai khôi ngô tuấn tú, đặt tên là Thạch Sanh.
+
+Chẳng bao lâu sau, cha mẹ lần lượt qua đời. Thạch Sanh sống một mình trong túp lều tranh dưới gốc đa, chỉ có chiếc búa đốn củi làm bạn.
+
+Năm Thạch Sanh mười ba tuổi, Ngọc Hoàng sai thiên thần xuống dạy cho chàng đủ các môn võ nghệ và mọi phép thần thông.`,
+        image: '👶⭐🏠',
+        question: 'Thạch Sanh được ai dạy võ nghệ?',
+        options: ['Cha mẹ', 'Thiên thần', 'Thầy đồ', 'Tự học'],
+        answer: 1
+      },
+      {
+        id: 2,
+        title: 'Kết nghĩa với Lý Thông',
+        content: `Một hôm, có người hàng rượu tên là Lý Thông đi qua gốc đa, thấy Thạch Sanh vác về một gánh củi lớn tướng.
+
+Lý Thông nghĩ bụng: "Người này khỏe như voi. Nếu về ở cùng ta thì lợi biết bao nhiêu."
+
+Hắn bèn đến làm quen, nói ngọt nhạt rồi xin kết nghĩa anh em. Thạch Sanh thật thà, thấy có người quan tâm đến mình liền vui vẻ nhận lời.
+
+Từ đó, Thạch Sanh về sống chung với mẹ con Lý Thông. Chàng làm việc quần quật suốt ngày, còn Lý Thông thì chỉ biết hưởng thụ.
+
+Lúc bấy giờ, trong vùng có con Chằn tinh hung ác, thường bắt người ăn thịt. Mỗi năm, dân làng phải nộp một người cho nó. Năm ấy, đến lượt Lý Thông.`,
+        image: '🤝🍶😈',
+        question: 'Lý Thông kết nghĩa với Thạch Sanh vì lý do gì?',
+        options: ['Vì thương Thạch Sanh', 'Vì muốn lợi dụng sức khỏe của Thạch Sanh', 'Vì Thạch Sanh cứu hắn', 'Vì họ là bạn từ nhỏ'],
+        answer: 1
+      },
+      {
+        id: 3,
+        title: 'Giết Chằn tinh',
+        content: `Mẹ con Lý Thông hoảng sợ, bèn nghĩ kế lừa Thạch Sanh đi thay.
+
+Lý Thông nói: "Đêm nay anh phải canh miếu trong rừng, nhưng trót cất mẻ rượu, em chịu khó đi thay anh một đêm."
+
+Thạch Sanh thật thà nhận lời. Nửa đêm, Chằn tinh hiện ra, nhe nanh, giơ vuốt, há hơi nhả lửa định vồ Thạch Sanh.
+
+Thạch Sanh bình tĩnh vung búa đánh lại. Chằn tinh thoắt biến, thoắt hiện, nhưng không sao địch nổi Thạch Sanh.
+
+Cuối cùng, chàng chém đứt đầu yêu quái, đốt xác nó thành tro. Từ trong đống tro hiện ra một bộ cung tên bằng vàng sáng chói.
+
+Thạch Sanh mang đầu Chằn tinh về, Lý Thông lại lừa chàng rằng đó là vật nuôi của vua, giết nó sẽ bị tội chém đầu. Thạch Sanh sợ hãi, bỏ đi, để Lý Thông cướp công.`,
+        image: '🐍⚔️🏹',
+        question: 'Thạch Sanh thu được vật gì sau khi giết Chằn tinh?',
+        options: ['Thanh gươm', 'Bộ cung tên vàng', 'Chiếc áo giáp', 'Túi vàng'],
+        answer: 1
+      },
+      {
+        id: 4,
+        title: 'Cứu công chúa',
+        content: `Công chúa Quỳnh Nga bị Đại bàng khổng lồ bắt đi. Vua ra chiếu: Ai cứu được công chúa sẽ được gả làm vợ.
+
+Lý Thông biết hang Đại bàng, nhờ Thạch Sanh xuống cứu. Chàng theo dây thừng xuống hang sâu, dùng cung tên vàng bắn chết Đại bàng, cứu được công chúa.
+
+Khi chàng buộc dây cho công chúa lên trước, Lý Thông thấy nàng đẹp quá, liền cắt đứt dây, lấp cửa hang để Thạch Sanh chết, rồi đem công chúa về cướp công.
+
+Thạch Sanh một mình trong hang tối, đi mãi thì gặp con trai vua Thủy Tề bị nhốt trong cũi sắt. Chàng cứu thái tử, được đưa xuống Thủy cung.
+
+Vua Thủy Tề tặng chàng cây đàn thần và niêu cơm thần để trả ơn cứu mạng con trai.`,
+        image: '👸🦅🏰',
+        question: 'Lý Thông đã làm gì sau khi Thạch Sanh cứu được công chúa?',
+        options: ['Cảm ơn Thạch Sanh', 'Lấp cửa hang để Thạch Sanh chết', 'Kéo Thạch Sanh lên', 'Báo cho vua biết'],
+        answer: 1
+      },
+      {
+        id: 5,
+        title: 'Tiếng đàn thần',
+        content: `Công chúa từ khi được cứu thì hóa câm, không nói không cười. Vua cho Lý Thông lập đàn cầu nguyện nhưng không có kết quả.
+
+Lý Thông sợ Thạch Sanh còn sống, bèn sai người ăn trộm của cải trong kho vua rồi chôn ở gốc đa để vu oan cho chàng.
+
+Thạch Sanh bị bắt giam vào ngục. Trong ngục tối, chàng buồn bã lấy đàn thần ra gảy.
+
+Tiếng đàn kể rõ đầu đuôi câu chuyện: chàng đã giết Chằn tinh, bắn Đại bàng, cứu công chúa ra sao, rồi bị Lý Thông phản bội thế nào.
+
+Tiếng đàn bay vào cung, công chúa vừa nghe liền nói được, kể hết mọi chuyện cho vua cha.
+
+Vua truyền đưa Thạch Sanh vào cung. Chàng gảy đàn, tội ác của Lý Thông bị phơi bày. Vua sai bắt mẹ con Lý Thông trị tội.`,
+        image: '🎸👑💫',
+        question: 'Tiếng đàn thần có tác dụng gì?',
+        options: ['Làm mọi người ngủ say', 'Kể lại sự thật và chữa câm cho công chúa', 'Triệu hồi quái vật', 'Không có tác dụng gì'],
+        answer: 1
+      },
+      {
+        id: 6,
+        title: 'Niêu cơm thần',
+        content: `Thạch Sanh xin vua tha tội cho mẹ con Lý Thông. Nhưng trên đường về, cả hai bị sét đánh chết, hóa thành bọ hung.
+
+Vua gả công chúa cho Thạch Sanh. Thái tử mười tám nước chư hầu tức giận vì bị công chúa từ chối, kéo quân sang đánh.
+
+Thạch Sanh đem đàn thần ra gảy. Tiếng đàn khiến quân địch nhớ nhà, nhớ vợ con, không ai còn muốn đánh nhau nữa. Tất cả xin hàng.
+
+Thạch Sanh mời họ ăn cơm. Chàng chỉ có một niêu cơm nhỏ, nhưng niêu cơm thần cứ xới hết lại đầy, quân lính mười tám nước ăn mãi không hết.
+
+Các nước chư hầu kính phục, từ đó quy thuận, không dám gây chiến nữa.
+
+🌟 BÀI HỌC: Người thật thà, dũng cảm sẽ được đền đáp. Kẻ gian ác, phản bội sẽ bị trừng phạt.`,
+        image: '🍚👑🎉',
+        question: 'Niêu cơm thần có điều kỳ diệu gì?',
+        options: ['Nấu cơm rất nhanh', 'Cơm xới hết lại đầy, ăn mãi không hết', 'Cơm có thể chữa bệnh', 'Cơm biến thành vàng'],
+        answer: 1
+      }
+    ]
+  },
+
+  // ==========================================
+  // 2. SỌ DỪA
+  // ==========================================
+  {
+    id: 'so_dua',
+    title: 'Sọ Dừa',
+    titleEn: 'The Coconut Shell Boy',
+    icon: '🥥',
+    cover: '🎋',
+    color: 'from-green-500 to-teal-500',
+    description: 'Đừng đánh giá người qua vẻ bề ngoài',
+    totalChapters: 5,
+    chapters: [
+      {
+        id: 1,
+        title: 'Sự ra đời kỳ lạ',
+        content: `Ngày xưa, có hai vợ chồng nghèo đi ở cho nhà phú ông. Họ hiền lành, chăm chỉ nhưng đã ngoài năm mươi tuổi mà chưa có con.
+
+Một hôm, bà vợ vào rừng lấy củi. Trời nắng to, bà khát nước quá, thấy cái sọ dừa bên gốc cây đựng đầy nước mưa, bà bèn bưng lên uống.
+
+Về nhà, bà có mang. Ít lâu sau, chồng bà qua đời. Bà sinh ra một đứa con không có chân tay, mình mẩy tròn lông lốc như quả dừa.
+
+Bà buồn lắm, định bỏ đi thì đứa bé cất tiếng nói:
+
+"Mẹ ơi! Con là người đấy! Mẹ đừng bỏ con mà tội nghiệp."
+
+Bà thương tình để lại nuôi và đặt tên là Sọ Dừa.`,
+        image: '🥥👶💧',
+        question: 'Tại sao bà mẹ sinh ra Sọ Dừa?',
+        options: ['Vì bà ăn phải trái cấm', 'Vì bà uống nước trong sọ dừa', 'Vì bà bị phù phép', 'Vì bà cầu xin thần linh'],
+        answer: 1
+      },
+      {
+        id: 2,
+        title: 'Chàng chăn bò',
+        content: `Lớn lên, Sọ Dừa vẫn tròn lông lốc, chẳng làm được việc gì. Bà mẹ phiền lòng lắm.
+
+Sọ Dừa biết vậy, xin mẹ đến chăn bò cho nhà phú ông. Ban đầu phú ông ngần ngại, nhưng nghĩ: nuôi thì ít tốn cơm, tiền công cũng không đáng bao, nên đồng ý.
+
+Sọ Dừa chăn bò rất giỏi. Hàng ngày, cậu lăn sau đàn bò ra đồng, tối lại lăn về. Bò con nào con nấy no căng bụng.
+
+Phú ông có ba cô con gái, thay nhau đưa cơm cho Sọ Dừa. Hai cô chị kiêu kỳ, thường hắt hủi. Chỉ có cô út hiền lành, đối xử tử tế.
+
+Một hôm, cô út mang cơm ra, bỗng nghe tiếng sáo véo von. Nàng rón rén lại gần, thấy một chàng trai khôi ngô đang ngồi thổi sáo cho bò ăn cỏ. Vừa thấy người, chàng biến mất, chỉ còn Sọ Dừa nằm lăn lóc.
+
+Cô út biết Sọ Dừa không phải người thường, bèn đem lòng yêu mến.`,
+        image: '🐄🎵👸',
+        question: 'Ai là người đối xử tử tế với Sọ Dừa?',
+        options: ['Hai cô chị', 'Cô út', 'Phú ông', 'Bà mẹ Sọ Dừa'],
+        answer: 1
+      },
+      {
+        id: 3,
+        title: 'Đám cưới',
+        content: `Cuối mùa, Sọ Dừa giục mẹ đến nhà phú ông hỏi vợ. Bà mẹ sửng sốt nhưng cũng chiều con.
+
+Phú ông cười mỉa mai: "Muốn cưới con gái ta, hãy sắm đủ: một chĩnh vàng cốm, mười tấm lụa đào, mười con lợn béo, mười vò rượu tăm!"
+
+Bà mẹ về, nghĩ là phải bỏ cuộc. Nhưng đúng ngày hẹn, bỗng trong nhà có đầy đủ sính lễ, lại có gia nhân khiêng sang nhà phú ông.
+
+Phú ông hoa mắt, gọi ba con gái ra hỏi ý. Hai cô chị bĩu môi chê Sọ Dừa xấu xí rồi bỏ đi. Chỉ cô út cúi đầu e lệ, tỏ ý bằng lòng.
+
+Ngày cưới, tiệc bày linh đình. Khi rước dâu, không ai thấy Sọ Dừa xấu xí đâu nữa, mà chỉ thấy một chàng trai khôi ngô tuấn tú đứng bên cô dâu.
+
+Mọi người sửng sốt mừng rỡ, hai cô chị thì vừa tiếc vừa ghen tức.`,
+        image: '💍🎊👫',
+        question: 'Điều gì xảy ra trong ngày cưới của Sọ Dừa?',
+        options: ['Sọ Dừa vẫn hình dạng quả dừa', 'Sọ Dừa biến thành chàng trai tuấn tú', 'Đám cưới bị hủy', 'Hai cô chị đến phá đám'],
+        answer: 1
+      },
+      {
+        id: 4,
+        title: 'Trạng nguyên đi sứ',
+        content: `Vợ chồng Sọ Dừa sống với nhau rất hạnh phúc. Sọ Dừa ngày đêm miệt mài đèn sách.
+
+Năm ấy, chàng đi thi và đỗ Trạng nguyên. Vua cử chàng đi sứ sang nước ngoài.
+
+Trước khi đi, Sọ Dừa đưa cho vợ một hòn đá lửa, một con dao và hai quả trứng gà, dặn:
+
+"Nàng hãy giữ những thứ này trong người, phòng khi gặp nạn bất ngờ."
+
+Cô út không hiểu nhưng vẫn vâng lời chồng.
+
+Từ ngày em lấy được chồng tuấn tú, lại đỗ Trạng nguyên, hai cô chị ghen tức lắm. Chúng bàn nhau hại em để một trong hai người thay làm bà Trạng.`,
+        image: '📚🎓⛵',
+        question: 'Sọ Dừa đưa cho vợ những gì trước khi đi sứ?',
+        options: ['Vàng bạc châu báu', 'Đá lửa, dao và hai quả trứng', 'Một bức thư', 'Chiếc nhẫn'],
+        answer: 1
+      },
+      {
+        id: 5,
+        title: 'Đoàn tụ',
+        content: `Hai cô chị rủ em đi chơi thuyền rồi đẩy em xuống biển. Cô út bị cá kình nuốt vào bụng.
+
+Trong bụng cá, nàng lấy dao rạch bụng cá chui ra. Cá chết, xác trôi dạt vào bờ.
+
+Nàng dùng đá lửa nhóm lửa sưởi ấm và nướng thịt cá ăn. Hai quả trứng nở ra hai con gà.
+
+Một hôm, thuyền quan Trạng đi ngang qua. Con gà trống gáy vang:
+
+"Ò ó o! Phải thuyền quan Trạng rước cô tôi về!"
+
+Sọ Dừa nhận ra vợ, đón nàng lên thuyền. Hai vợ chồng đoàn tụ, trở về nhà.
+
+Hai cô chị xấu hổ vì tội lỗi, bỏ đi biệt xứ.
+
+🌟 BÀI HỌC: Đừng đánh giá người qua vẻ bề ngoài. Người nhân hậu sẽ được hưởng hạnh phúc, kẻ ác sẽ phải hổ thẹn.`,
+        image: '🐔⛵💕',
+        question: 'Con gà trống gáy câu gì?',
+        options: ['Gáy báo sáng', 'Phải thuyền quan Trạng rước cô tôi về', 'Kêu cứu', 'Không gáy gì'],
+        answer: 1
+      }
+    ]
+  },
+
+  // ==========================================
+  // 3. TÍCH CHU
+  // ==========================================
   {
     id: 'tich_chu',
     title: 'Tích Chu',
@@ -16,29 +259,35 @@ export const STORIES = [
       {
         id: 1,
         title: 'Cậu bé Tích Chu',
-        content: `Ngày xửa ngày xưa, có một cậu bé tên là Tích Chu sống cùng bà ngoại trong một ngôi nhà nhỏ ven rừng.
+        content: `Ngày xửa ngày xưa, có một cậu bé tên là Tích Chu sống cùng bà ngoại trong một ngôi nhà nhỏ.
 
-Bà ngoại của Tích Chu rất yêu thương cậu. Hàng ngày, bà nấu cơm, giặt áo, chăm sóc Tích Chu chu đáo.
+Bà ngoại của Tích Chu rất yêu thương cậu. Hàng ngày, bà nấu cơm, giặt áo, chăm sóc Tích Chu chu đáo. Dù tuổi đã cao, bà vẫn làm mọi việc vì thương cháu.
 
-Nhưng Tích Chu lại là một cậu bé ham chơi. Cậu suốt ngày chạy nhảy ngoài đồng, không giúp đỡ bà việc gì.`,
+Nhưng Tích Chu lại là một cậu bé ham chơi. Cậu suốt ngày chạy nhảy ngoài đồng với bạn bè, không giúp đỡ bà việc gì.
+
+Mỗi khi bà nhờ việc, Tích Chu đều nói: "Để con chơi xong đã!" rồi tiếp tục chơi, quên hết lời bà dặn.
+
+Bà ngoại buồn lắm, nhưng vẫn yêu thương cháu.`,
         image: '👦🏠👵',
-        question: 'Tích Chu sống cùng ai?',
-        options: ['Bố mẹ', 'Bà ngoại', 'Ông nội', 'Một mình'],
+        question: 'Tích Chu có tính cách như thế nào?',
+        options: ['Chăm chỉ giúp bà', 'Ham chơi, không giúp bà', 'Hay đi học', 'Thích nấu ăn'],
         answer: 1
       },
       {
         id: 2,
         title: 'Bà ốm nặng',
-        content: `Một hôm, bà ngoại bị ốm rất nặng. Bà nằm trên giường, không thể dậy nấu cơm được.
+        content: `Một hôm, bà ngoại bị ốm rất nặng. Bà nằm trên giường, người nóng như lửa đốt, không thể dậy nổi.
 
-Bà gọi Tích Chu: "Cháu ơi, bà khát nước quá. Cháu lấy cho bà chén nước được không?"
+Bà khát nước quá, gọi Tích Chu: "Cháu ơi, bà khát nước lắm! Cháu lấy cho bà chén nước được không?"
 
-Nhưng Tích Chu đang mải chơi ngoài sân. Cậu trả lời: "Bà đợi con chút, con đang chơi!"
+Nhưng lúc đó Tích Chu đang mải chơi ngoài sân với mấy con dế. Cậu trả lời qua quýt: "Bà đợi con chút, con đang chơi!"
 
-Rồi Tích Chu tiếp tục chơi, quên mất lời bà dặn.`,
+Rồi Tích Chu mải mê với đám bạn, quên mất lời bà dặn.
+
+Bà ngoại nằm chờ, khát khô cả cổ mà không có ai mang nước cho bà uống.`,
         image: '🛏️😢💧',
         question: 'Bà nhờ Tích Chu làm gì?',
-        options: ['Nấu cơm', 'Lấy nước', 'Quét nhà', 'Đi chợ'],
+        options: ['Nấu cơm', 'Lấy nước uống', 'Đi mua thuốc', 'Gọi thầy thuốc'],
         answer: 1
       },
       {
@@ -48,48 +297,171 @@ Rồi Tích Chu tiếp tục chơi, quên mất lời bà dặn.`,
 
 Bỗng nhiên, một điều kỳ lạ xảy ra. Bà ngoại biến thành một con chim nhỏ!
 
-Con chim bay ra cửa sổ, kêu lên: "Tích Chu ơi! Tích Chu ơi! Nước đâu? Nước đâu?"
+Con chim bay ra cửa sổ, kêu lên thảm thiết: "Tích Chu ơi! Tích Chu ơi! Nước! Nước!"
 
-Tích Chu nghe tiếng chim, chạy vào nhà thì không thấy bà đâu. Cậu khóc òa lên.`,
+Tích Chu nghe tiếng chim kêu lạ, vội chạy vào nhà. Nhưng bà không còn đâu nữa, chỉ thấy con chim đang bay đi.
+
+Tích Chu khóc òa lên: "Bà ơi! Bà ơi! Bà đừng bỏ con!"
+
+Cậu hối hận vô cùng vì đã không nghe lời bà.`,
         image: '🐦😭✨',
         question: 'Bà ngoại biến thành con gì?',
-        options: ['Con mèo', 'Con chim', 'Con bướm', 'Con cá'],
+        options: ['Con bướm', 'Con chim', 'Con cá', 'Con thỏ'],
         answer: 1
       },
       {
         id: 4,
         title: 'Hành trình tìm bà',
-        content: `Tích Chu hối hận vô cùng. Cậu quyết định đi tìm bà.
+        content: `Tích Chu quyết tâm đi tìm bà. Cậu đi mãi, đi mãi, qua núi cao, qua rừng sâu.
 
-Cậu đi qua núi cao, qua rừng sâu, hỏi thăm khắp nơi: "Có ai thấy con chim của bà cháu không?"
+Cậu hỏi thăm khắp nơi: "Có ai thấy con chim của bà cháu không?"
 
-Cuối cùng, một ông tiên xuất hiện và nói: "Ta biết bà cháu ở đâu. Nhưng cháu phải lấy được nước từ suối thần trên đỉnh núi cao kia."
+Cuối cùng, cậu gặp một ông tiên râu tóc bạc phơ. Ông tiên nói:
 
-Tích Chu không ngại khó khăn, leo lên đỉnh núi lấy nước thần.`,
+"Ta biết bà cháu ở đâu. Bà đang ở trên núi Khát Nước. Nhưng muốn cứu bà, cháu phải lấy được nước suối thần trên đỉnh núi cao kia."
+
+Đường lên núi rất hiểm trở, đầy gai góc. Nhưng Tích Chu không ngại khó khăn, cậu cố gắng leo lên.
+
+Chân cậu trầy xước, tay cậu rớm máu, nhưng cậu vẫn kiên trì vì thương bà.`,
         image: '🏔️🧓💫',
         question: 'Tích Chu phải lấy gì để cứu bà?',
-        options: ['Hoa thần', 'Nước suối thần', 'Trái cây thần', 'Lá thuốc'],
+        options: ['Hoa thần', 'Nước suối thần', 'Quả táo vàng', 'Lá thuốc'],
         answer: 1
       },
       {
         id: 5,
         title: 'Đoàn tụ',
-        content: `Sau bao ngày vất vả, Tích Chu mang được nước suối thần về.
+        content: `Sau bao ngày vất vả, Tích Chu cuối cùng cũng lấy được nước suối thần.
 
-Cậu tìm thấy con chim nhỏ và cho chim uống nước. Kỳ diệu thay, con chim biến trở lại thành bà ngoại!
+Cậu tìm thấy con chim nhỏ đang đậu trên cành cây. Cậu nhẹ nhàng cho chim uống nước.
 
-Bà ngoại ôm Tích Chu vào lòng: "Cháu ngoan của bà!"
+Kỳ diệu thay, con chim từ từ biến trở lại thành bà ngoại!
 
-Từ đó, Tích Chu trở thành một cậu bé hiếu thảo, luôn yêu thương và chăm sóc bà.
+Bà ngoại ôm Tích Chu vào lòng: "Cháu ngoan của bà! Cháu đã biết thương bà rồi!"
 
-🌟 BÀI HỌC: Hãy luôn yêu thương và hiếu thảo với ông bà, cha mẹ nhé các con!`,
+Tích Chu khóc nức nở: "Con xin lỗi bà! Từ nay con sẽ nghe lời bà, con sẽ chăm sóc bà thật tốt!"
+
+Từ đó, Tích Chu trở thành một cậu bé hiếu thảo, luôn yêu thương và chăm sóc bà ngoại.
+
+🌟 BÀI HỌC: Hãy luôn yêu thương, hiếu thảo với ông bà, cha mẹ khi còn có thể. Đừng để đến khi mất đi mới hối hận.`,
         image: '👵❤️👦',
-        question: 'Bài học của câu chuyện là gì?',
+        question: 'Bài học từ câu chuyện Tích Chu là gì?',
         options: ['Chăm chỉ học hành', 'Hiếu thảo với ông bà', 'Không nói dối', 'Chia sẻ với bạn bè'],
         answer: 1
       }
     ]
   },
+
+  // ==========================================
+  // 4. CÂY TRE TRĂM ĐỐT
+  // ==========================================
+  {
+    id: 'cay_tre_tram_dot',
+    title: 'Cây Tre Trăm Đốt',
+    titleEn: 'The Hundred-jointed Bamboo',
+    icon: '🎋',
+    cover: '🌿',
+    color: 'from-emerald-500 to-green-600',
+    description: 'Thật thà là đức tính quý báu',
+    totalChapters: 5,
+    chapters: [
+      {
+        id: 1,
+        title: 'Anh Khoai thật thà',
+        content: `Ngày xưa, có một anh nông dân tên là Khoai. Anh mồ côi cha mẹ từ nhỏ, phải đi làm thuê để kiếm sống.
+
+Anh Khoai rất thật thà, chăm chỉ, làm việc gì cũng hết sức mình. Anh không bao giờ nói dối hay lừa gạt ai.
+
+Anh đến làm thuê cho một phú ông giàu có. Phú ông thấy anh làm việc giỏi, rất ưng ý.
+
+Phú ông có một cô con gái xinh đẹp, hiền hậu. Dần dần, cô gái đem lòng yêu mến anh Khoai vì tính tình thật thà của anh.
+
+Phú ông biết chuyện, rất tức giận vì không muốn gả con gái cho người nghèo.`,
+        image: '👨‍🌾🏠💰',
+        question: 'Anh Khoai có đức tính gì nổi bật?',
+        options: ['Gian dối', 'Thật thà, chăm chỉ', 'Lười biếng', 'Kiêu ngạo'],
+        answer: 1
+      },
+      {
+        id: 2,
+        title: 'Lời thách cưới',
+        content: `Phú ông nghĩ ra một kế để từ chối anh Khoai. Ông nói:
+
+"Anh muốn cưới con gái ta ư? Được, nhưng anh phải tìm cho ta một cây tre có đúng một trăm đốt. Nếu tìm được, ta sẽ gả con gái cho anh!"
+
+Anh Khoai vui mừng lắm, vội vàng vào rừng tìm tre.
+
+Anh tìm khắp nơi: rừng này qua rừng khác, núi này sang núi kia. Nhưng cây tre nào cũng chỉ có vài chục đốt, không cây nào đến trăm đốt cả.
+
+Anh tìm mãi, tìm mãi mà không được. Anh ngồi bên gốc cây, ôm mặt khóc vì biết mình đã bị phú ông lừa.`,
+        image: '🎋😢🌲',
+        question: 'Phú ông thách anh Khoai tìm gì?',
+        options: ['Cây tre vàng', 'Cây tre trăm đốt', 'Cây tre nghìn tuổi', 'Cây tre biết nói'],
+        answer: 1
+      },
+      {
+        id: 3,
+        title: 'Bụt hiện lên',
+        content: `Bỗng nhiên, Bụt hiện ra trước mặt anh Khoai. Bụt hỏi: "Vì sao con khóc?"
+
+Anh Khoai kể hết sự tình cho Bụt nghe. Bụt mỉm cười hiền từ, nói:
+
+"Con hãy chặt đủ một trăm đốt tre, xếp thành hàng dài rồi đọc: KHẮC NHẬP! KHẮC NHẬP!"
+
+Anh Khoai làm theo lời Bụt dặn. Chàng chặt đủ một trăm đốt tre, xếp thành hàng rồi đọc câu thần chú.
+
+Kỳ diệu thay! Một trăm đốt tre liền dính vào nhau thành một cây tre dài trăm đốt!
+
+Anh Khoai vác cây tre về, lòng vui như mở hội.`,
+        image: '✨🧙‍♂️🎋',
+        question: 'Câu thần chú để nối tre là gì?',
+        options: ['Biến hình!', 'Khắc nhập! Khắc nhập!', 'Abracadabra!', 'Mở ra!'],
+        answer: 1
+      },
+      {
+        id: 4,
+        title: 'Phú ông bị phạt',
+        content: `Anh Khoai mang cây tre trăm đốt về nộp cho phú ông. Phú ông đếm đi đếm lại, đúng một trăm đốt!
+
+Ông ta ngạc nhiên và tức giận, định lật lọng không giữ lời hứa. Ông quát:
+
+"Ta thay đổi ý rồi! Ta không gả con gái cho ngươi nữa!"
+
+Anh Khoai buồn bã quá, bất giác đọc: "KHẮC XUẤT! KHẮC XUẤT!"
+
+Tức thì, cây tre tách ra thành từng đốt, văng tứ tung! Một đốt tre bay trúng dính vào mũi phú ông!
+
+Phú ông kêu la ầm ĩ, đau đớn vô cùng, van xin anh Khoai gỡ ra.`,
+        image: '😱🎋👃',
+        question: 'Câu thần chú để tách tre là gì?',
+        options: ['Khắc xuất! Khắc xuất!', 'Khắc nhập! Khắc nhập!', 'Bay đi!', 'Tan ra!'],
+        answer: 0
+      },
+      {
+        id: 5,
+        title: 'Kết thúc có hậu',
+        content: `Phú ông hứa sẽ giữ đúng lời, gả con gái cho anh Khoai.
+
+Anh Khoai đọc thần chú, đốt tre rời khỏi mũi phú ông.
+
+Phú ông giữ lời hứa, tổ chức đám cưới linh đình cho anh Khoai và con gái.
+
+Anh Khoai và cô gái cưới nhau, sống hạnh phúc bên nhau. Anh vẫn giữ tính thật thà, chăm chỉ như xưa, được mọi người yêu mến.
+
+Còn phú ông, từ đó ông ta không dám lừa dối ai nữa.
+
+🌟 BÀI HỌC: Người thật thà, chăm chỉ sẽ được giúp đỡ và gặp may mắn. Kẻ gian dối, lật lọng sẽ bị trừng phạt xứng đáng.`,
+        image: '💒❤️😊',
+        question: 'Bài học từ câu chuyện là gì?',
+        options: ['Phải giàu có mới hạnh phúc', 'Thật thà sẽ được giúp đỡ, gian dối sẽ bị phạt', 'Phải khôn ngoan mới thành công', 'Phải có phép thuật'],
+        answer: 1
+      }
+    ]
+  },
+
+  // ==========================================
+  // 5. TẤM CÁM
+  // ==========================================
   {
     id: 'tam_cam',
     title: 'Tấm Cám',
@@ -97,34 +469,40 @@ Từ đó, Tích Chu trở thành một cậu bé hiếu thảo, luôn yêu thư
     icon: '👸',
     cover: '🎃',
     color: 'from-pink-500 to-rose-500',
-    description: 'Người tốt sẽ được đền đáp',
+    description: 'Người hiền sẽ được đền đáp',
     totalChapters: 6,
     chapters: [
       {
         id: 1,
         title: 'Cô Tấm mồ côi',
-        content: `Ngày xưa, có một cô gái tên là Tấm. Mẹ Tấm mất sớm, cha lấy vợ kế.
+        content: `Ngày xưa, có một cô gái tên là Tấm. Mẹ Tấm mất sớm, cha lấy vợ kế rồi cũng qua đời.
 
-Dì ghẻ sinh được một cô con gái tên là Cám. Dì ghẻ rất thương Cám nhưng lại bắt Tấm làm việc vất vả.
+Tấm ở với dì ghẻ và Cám - con gái riêng của dì.
 
-Tấm phải dậy sớm nấu cơm, quét nhà, chăn trâu, còn Cám thì được ăn ngon, mặc đẹp.
+Dì ghẻ rất thương Cám nhưng đối xử tệ bạc với Tấm. Tấm phải làm mọi việc nặng nhọc trong nhà: nấu cơm, quét nhà, gánh nước, chăn trâu...
 
-Dù vất vả, Tấm vẫn luôn hiền lành, chăm chỉ và không oán trách ai.`,
+Còn Cám thì được ăn ngon, mặc đẹp, suốt ngày chơi bời.
+
+Dù vất vả, Tấm vẫn hiền lành, chăm chỉ, không một lời oán trách.`,
         image: '👧😢🧹',
-        question: 'Tấm sống với ai?',
-        options: ['Mẹ đẻ', 'Dì ghẻ và Cám', 'Ông bà', 'Một mình'],
+        question: 'Tấm phải sống với ai sau khi cha mẹ mất?',
+        options: ['Ông bà nội', 'Dì ghẻ và Cám', 'Cô chú', 'Một mình'],
         answer: 1
       },
       {
         id: 2,
         title: 'Con cá bống',
-        content: `Một hôm, dì ghẻ sai Tấm và Cám đi bắt tôm cá. Ai bắt được nhiều hơn sẽ được thưởng.
+        content: `Một hôm, dì ghẻ sai Tấm và Cám đi bắt tôm cá. Ai bắt được nhiều hơn sẽ được thưởng yếm đỏ.
 
-Tấm chăm chỉ bắt được đầy giỏ cá. Nhưng Cám lười biếng, lừa Tấm đi gội đầu rồi trút hết cá sang giỏ mình.
+Tấm chăm chỉ bắt được đầy giỏ. Cám thì lười biếng, chẳng bắt được gì.
+
+Cám lừa Tấm: "Chị Tấm ơi, đầu chị lấm bùn kìa, xuống ao gội đi!"
+
+Khi Tấm xuống gội đầu, Cám trút hết cá sang giỏ mình rồi chạy về.
 
 Tấm khóc. Trong giỏ chỉ còn một con cá bống nhỏ. Tấm mang cá bống về nuôi trong giếng.
 
-Hàng ngày, Tấm mang cơm ra cho cá bống ăn và hát: "Bống bống bang bang..."`,
+Hàng ngày, Tấm nhịn ăn, dành cơm cho cá bống. Cá bống lớn nhanh, rất quấn quýt Tấm.`,
         image: '🐟💧🎵',
         question: 'Tấm nuôi cá bống ở đâu?',
         options: ['Trong ao', 'Trong giếng', 'Trong chậu', 'Trong sông'],
@@ -133,152 +511,81 @@ Hàng ngày, Tấm mang cơm ra cho cá bống ăn và hát: "Bống bống bang
       {
         id: 3,
         title: 'Bụt hiện lên',
-        content: `Cám phát hiện Tấm nuôi cá bống. Cám lừa Tấm đi chăn trâu xa, rồi bắt cá bống giết thịt.
+        content: `Mẹ con Cám phát hiện Tấm nuôi cá bống. Họ lừa Tấm đi chăn trâu xa, rồi bắt cá bống giết thịt ăn.
 
-Tấm về không thấy cá bống, khóc rất nhiều.
+Tấm về, gọi mãi không thấy cá bống, khóc rất nhiều.
 
-Bỗng nhiên, Bụt hiện lên và nói: "Con đừng khóc. Hãy tìm xương cá, cho vào bốn cái lọ, chôn dưới bốn chân giường."
+Bỗng nhiên, Bụt hiện lên an ủi: "Con đừng khóc! Hãy tìm xương cá, cho vào bốn cái lọ, chôn dưới bốn chân giường."
 
-Tấm làm theo lời Bụt dặn.`,
+Tấm làm theo lời Bụt dặn. Nàng tìm được xương cá, bỏ vào bốn lọ, chôn cẩn thận.
+
+Từ đó, mỗi khi buồn, Tấm lại nghĩ đến lời Bụt dạy mà vơi bớt nỗi sầu.`,
         image: '✨🧓🏻💫',
-        question: 'Ai đã giúp đỡ Tấm?',
-        options: ['Ông tiên', 'Bụt', 'Bà tiên', 'Vua'],
+        question: 'Bụt bảo Tấm làm gì với xương cá?',
+        options: ['Vứt đi', 'Chôn dưới bốn chân giường', 'Đốt thành tro', 'Thả xuống sông'],
         answer: 1
       },
       {
         id: 4,
         title: 'Đi dự hội',
-        content: `Vua mở hội lớn. Dì ghẻ cho Cám đi dự hội, còn bắt Tấm ở nhà nhặt thóc ra thóc, gạo ra gạo.
+        content: `Vua mở hội lớn, ai cũng được đi. Dì ghẻ cho Cám đi hội, còn bắt Tấm ở nhà nhặt thóc ra thóc, gạo ra gạo.
 
 Tấm khóc. Bụt lại hiện lên, sai đàn chim sẻ xuống giúp Tấm nhặt thóc.
 
-Bụt bảo Tấm đào bốn cái lọ lên. Kỳ diệu thay! Trong lọ có quần áo đẹp, hài thêu và một con ngựa.
+Bụt bảo Tấm đào bốn cái lọ dưới chân giường lên. Kỳ diệu thay! Trong lọ có quần áo đẹp, hài thêu và một con ngựa hồng.
 
-Tấm mặc đồ đẹp, cưỡi ngựa đi dự hội.`,
+Tấm mặc đồ đẹp, cưỡi ngựa đi dự hội. Ai nhìn thấy cũng trầm trồ khen đẹp.
+
+Nhà vua nhìn thấy Tấm, đem lòng yêu mến ngay.`,
         image: '👗🐴🎉',
         question: 'Ai giúp Tấm nhặt thóc?',
-        options: ['Đàn kiến', 'Đàn chim sẻ', 'Đàn ong', 'Đàn bướm'],
+        options: ['Bà tiên', 'Đàn chim sẻ', 'Cám', 'Dì ghẻ'],
         answer: 1
       },
       {
         id: 5,
         title: 'Chiếc hài rơi',
-        content: `Tấm đến hội, ai cũng trầm trồ khen đẹp. Nhà vua nhìn thấy Tấm và rất ngưỡng mộ.
+        content: `Tấm đến hội, ai cũng ngắm nhìn ngưỡng mộ. Nhà vua muốn đến gần làm quen.
 
-Nhưng đến giờ phải về, Tấm vội vàng ra đi. Qua cầu, Tấm đánh rơi một chiếc hài xuống nước.
+Nhưng đến giờ phải về, Tấm vội vàng ra đi vì sợ dì ghẻ biết.
 
-Nhà vua nhặt được chiếc hài. Vua ra lệnh: "Ai đi vừa chiếc hài này, ta sẽ cưới làm hoàng hậu!"
+Qua cầu, Tấm vô tình đánh rơi một chiếc hài xuống nước.
 
-Bao nhiêu cô gái đến thử nhưng không ai vừa.`,
+Nhà vua nhặt được chiếc hài, thấy nhỏ xinh, tinh xảo. Vua ra lệnh:
+
+"Ai đi vừa chiếc hài này, ta sẽ cưới làm hoàng hậu!"
+
+Bao nhiêu cô gái đến thử, người thì chật, người thì rộng, không ai vừa.
+
+Mẹ con Cám cũng đến thử nhưng chân họ to quá, không thể xỏ vừa.`,
         image: '👠👑💕',
-        question: 'Tấm đánh rơi gì?',
-        options: ['Vòng tay', 'Chiếc hài', 'Túi tiền', 'Khăn tay'],
+        question: 'Tấm đánh rơi gì khi vội về?',
+        options: ['Chiếc nhẫn', 'Chiếc hài', 'Chiếc khăn', 'Bông hoa'],
         answer: 1
       },
       {
         id: 6,
         title: 'Hoàng hậu',
-        content: `Cuối cùng, đến lượt Tấm thử hài. Chiếc hài vừa như in!
+        content: `Cuối cùng, đến lượt Tấm đến thử. Nàng xỏ chân vào, chiếc hài vừa như in!
 
-Tấm trở thành hoàng hậu, sống trong cung điện nguy nga.
+Tấm lấy chiếc hài còn lại trong túi ra, đi vừa cả đôi.
 
-Tấm vẫn giữ tấm lòng hiền lành, thường giúp đỡ người nghèo khổ.
+Nhà vua mừng rỡ, cưới Tấm làm hoàng hậu. Tấm vào cung sống sung sướng.
 
-🌟 BÀI HỌC: Người hiền lành, chăm chỉ sẽ luôn được đền đáp xứng đáng!`,
+Dù làm hoàng hậu, Tấm vẫn giữ tấm lòng hiền lành, thường giúp đỡ người nghèo khổ.
+
+🌟 BÀI HỌC: Người hiền lành, chăm chỉ, nhẫn nại sẽ được đền đáp xứng đáng. Hãy luôn giữ tâm hồn trong sáng, không oán hận dù gặp khó khăn.`,
         image: '👸🏰❤️',
         question: 'Cuối cùng Tấm trở thành gì?',
-        options: ['Công chúa', 'Hoàng hậu', 'Tiên nữ', 'Phú hộ'],
+        options: ['Công chúa', 'Hoàng hậu', 'Tiên nữ', 'Cô gái bình thường'],
         answer: 1
       }
     ]
   },
-  {
-    id: 'cay_tre_tram_dot',
-    title: 'Cây Tre Trăm Đốt',
-    titleEn: 'The Hundred-jointed Bamboo',
-    icon: '🎋',
-    cover: '🌿',
-    color: 'from-green-500 to-emerald-500',
-    description: 'Thật thà là đức tính tốt',
-    totalChapters: 5,
-    chapters: [
-      {
-        id: 1,
-        title: 'Anh Khoai thật thà',
-        content: `Ngày xưa, có một anh nông dân tên là Khoai. Anh rất thật thà, chăm chỉ làm việc.
 
-Anh Khoai đi làm thuê cho một phú ông giàu có. Phú ông có một cô con gái rất xinh đẹp.
-
-Anh Khoai làm việc chăm chỉ, cô gái dần dần yêu mến anh.
-
-Phú ông biết chuyện, rất tức giận vì không muốn con gái lấy người nghèo.`,
-        image: '👨‍🌾🏠💰',
-        question: 'Anh Khoai có tính cách như thế nào?',
-        options: ['Lười biếng', 'Thật thà, chăm chỉ', 'Gian dối', 'Kiêu ngạo'],
-        answer: 1
-      },
-      {
-        id: 2,
-        title: 'Lời hứa khó thực hiện',
-        content: `Phú ông nghĩ ra một kế. Ông ta nói với anh Khoai:
-
-"Nếu anh tìm được cây tre trăm đốt, ta sẽ gả con gái cho anh."
-
-Anh Khoai vui mừng, vội vàng vào rừng tìm tre. Anh tìm khắp nơi nhưng không cây tre nào có đến trăm đốt.
-
-Anh ngồi khóc bên gốc cây, vì biết mình bị lừa.`,
-        image: '🎋😢🌲',
-        question: 'Phú ông yêu cầu anh Khoai tìm gì?',
-        options: ['Cây đa trăm tuổi', 'Cây tre trăm đốt', 'Vàng bạc', 'Ngọc trai'],
-        answer: 1
-      },
-      {
-        id: 3,
-        title: 'Ông Bụt giúp đỡ',
-        content: `Bỗng nhiên, ông Bụt hiện ra hỏi: "Tại sao con khóc?"
-
-Anh Khoai kể hết sự tình. Ông Bụt mỉm cười và nói:
-
-"Con hãy chặt một trăm đốt tre, xếp thành hàng rồi đọc: Khắc nhập khắc nhập!"
-
-Anh Khoai làm theo. Kỳ diệu thay, một trăm đốt tre dính liền thành một cây tre dài!`,
-        image: '✨🧙‍♂️🎋',
-        question: 'Câu thần chú để nối tre là gì?',
-        options: ['Abracadabra', 'Khắc nhập khắc nhập', 'Sim sala bim', 'Biến biến biến'],
-        answer: 1
-      },
-      {
-        id: 4,
-        title: 'Phú ông bị phạt',
-        content: `Anh Khoai mang cây tre trăm đốt về. Phú ông rất ngạc nhiên và tức giận.
-
-Phú ông định lật lọng, không giữ lời hứa. Anh Khoai liền đọc: "Khắc xuất khắc xuất!"
-
-Cây tre tách ra thành trăm đốt, văng khắp nơi! Một đốt tre dính vào mũi phú ông.
-
-Phú ông đau quá, van xin anh Khoai gỡ ra.`,
-        image: '😱🎋👃',
-        question: 'Câu thần chú để tách tre là gì?',
-        options: ['Khắc xuất khắc xuất', 'Khắc nhập khắc nhập', 'Tan đi', 'Bay đi'],
-        answer: 0
-      },
-      {
-        id: 5,
-        title: 'Kết thúc có hậu',
-        content: `Phú ông hứa sẽ giữ lời, gả con gái cho anh Khoai.
-
-Anh Khoai đọc thần chú, đốt tre rời khỏi mũi phú ông.
-
-Anh Khoai và cô gái cưới nhau, sống hạnh phúc bên nhau.
-
-🌟 BÀI HỌC: Người thật thà, chăm chỉ sẽ được giúp đỡ. Còn người gian dối sẽ bị trừng phạt!`,
-        image: '💒❤️😊',
-        question: 'Bài học của câu chuyện là gì?',
-        options: ['Phải giàu có', 'Thật thà sẽ được giúp đỡ', 'Phải khôn ngoan', 'Phải mạnh mẽ'],
-        answer: 1
-      }
-    ]
-  },
+  // ==========================================
+  // 6. SƠN TINH THỦY TINH
+  // ==========================================
   {
     id: 'son_tinh_thuy_tinh',
     title: 'Sơn Tinh Thủy Tinh',
@@ -286,156 +593,200 @@ Anh Khoai và cô gái cưới nhau, sống hạnh phúc bên nhau.
     icon: '🏔️',
     cover: '🌊',
     color: 'from-blue-500 to-cyan-500',
-    description: 'Truyền thuyết về lũ lụt',
+    description: 'Truyền thuyết giải thích lũ lụt',
     totalChapters: 5,
     chapters: [
       {
         id: 1,
         title: 'Công chúa Mỵ Nương',
-        content: `Ngày xưa, vua Hùng thứ 18 có một người con gái tên là Mỵ Nương. Nàng rất xinh đẹp và hiền hậu.
+        content: `Đời Hùng Vương thứ mười tám, vua có một người con gái tên là Mỵ Nương. Nàng rất xinh đẹp và hiền hậu.
 
-Vua muốn tìm cho công chúa một người chồng xứng đáng.
+Vua Hùng muốn kén cho con một người chồng xứng đáng.
 
 Tin loan truyền khắp nơi. Có hai chàng trai tài giỏi đến cầu hôn công chúa.
 
-Một người là Sơn Tinh - thần núi. Một người là Thủy Tinh - thần nước.`,
+Một người là Sơn Tinh - thần núi Tản Viên. Chàng có thể vẫy tay làm mọc lên núi đồi, cây cối.
+
+Một người là Thủy Tinh - thần nước biển. Chàng có thể hô mưa gọi gió, dâng nước lên cao.
+
+Cả hai đều tài giỏi phi thường, vua không biết chọn ai.`,
         image: '👸🏔️🌊',
-        question: 'Công chúa tên là gì?',
-        options: ['Mỵ Châu', 'Mỵ Nương', 'Tiên Dung', 'Âu Cơ'],
+        question: 'Sơn Tinh là thần của gì?',
+        options: ['Thần sông', 'Thần núi', 'Thần gió', 'Thần mặt trời'],
         answer: 1
       },
       {
         id: 2,
-        title: 'Hai chàng trai tài giỏi',
-        content: `Sơn Tinh sống trên núi cao. Chàng có thể vẫy tay là núi mọc lên, đồi xuất hiện.
+        title: 'Lễ vật cầu hôn',
+        content: `Vua Hùng không biết chọn ai, bèn ra điều kiện:
 
-Thủy Tinh sống dưới biển sâu. Chàng có thể gọi mưa, dâng nước, tạo sóng lớn.
+"Ai mang lễ vật đến trước, ta sẽ gả công chúa cho người đó!"
 
-Cả hai đều rất tài giỏi, đẹp trai. Vua Hùng không biết chọn ai.
+Lễ vật gồm: một trăm ván cơm nếp, hai trăm nệp bánh chưng, voi chín ngà, gà chín cựa, ngựa chín hồng mao.
 
-Vua bèn ra điều kiện: "Ai mang lễ vật đến trước sẽ được cưới công chúa!"`,
-        image: '⛰️🌊👑',
-        question: 'Sơn Tinh có khả năng gì?',
-        options: ['Gọi mưa', 'Làm núi mọc lên', 'Bay trên trời', 'Biến hình'],
+Đây đều là những thứ hiếm có, khó tìm.
+
+Sơn Tinh về núi, ra sức tìm kiếm. Chàng có phép thần, nên tìm được đủ lễ vật rất nhanh.
+
+Thủy Tinh cũng vội vã đi tìm. Nhưng những thứ này là vật trên cạn, chàng khó tìm hơn.`,
+        image: '🐘🐓🐴',
+        question: 'Vua Hùng thách cưới những lễ vật gì?',
+        options: ['Vàng bạc châu báu', 'Voi chín ngà, gà chín cựa, ngựa chín hồng mao', 'Ngọc trai, san hô', 'Lụa là gấm vóc'],
         answer: 1
       },
       {
         id: 3,
-        title: 'Lễ vật kỳ lạ',
-        content: `Vua yêu cầu lễ vật gồm: voi chín ngà, gà chín cựa, ngựa chín hồng mao.
+        title: 'Sơn Tinh thắng cuộc',
+        content: `Sáng sớm hôm sau, khi mặt trời chưa mọc, Sơn Tinh đã mang đủ lễ vật đến.
 
-Sáng sớm hôm sau, Sơn Tinh đã mang đủ lễ vật đến. Chàng cưới được công chúa Mỵ Nương.
+Vua Hùng giữ lời hứa, gả công chúa Mỵ Nương cho Sơn Tinh.
 
-Thủy Tinh đến sau, không cưới được công chúa. Chàng vô cùng tức giận.
+Chàng rước nàng về núi Tản Viên làm vợ.
 
-Thủy Tinh quyết định đánh Sơn Tinh để cướp lại Mỵ Nương.`,
-        image: '🐘🐓🐴',
-        question: 'Ai mang lễ vật đến trước?',
+Thủy Tinh đến sau một bước, không lấy được công chúa. Chàng vô cùng tức giận, uất hận.
+
+Thủy Tinh quyết định đuổi theo, đánh Sơn Tinh để cướp lại Mỵ Nương.
+
+Từ đây, cuộc chiến giữa hai vị thần bắt đầu.`,
+        image: '⛰️👰💨',
+        question: 'Ai đến trước và cưới được công chúa?',
         options: ['Thủy Tinh', 'Sơn Tinh', 'Cả hai cùng lúc', 'Không ai'],
         answer: 1
       },
       {
         id: 4,
-        title: 'Trận chiến lớn',
-        content: `Thủy Tinh dâng nước lên cao. Nước ngập đồng ruộng, nhà cửa.
+        title: 'Trận chiến long trời',
+        content: `Thủy Tinh tức giận, hô mưa gọi gió, dâng nước lên cao ngập cả đồng ruộng, nhà cửa.
 
-Sơn Tinh bèn làm núi cao lên. Nước dâng bao nhiêu, núi cao bấy nhiêu.
+Nước mỗi lúc một cao, dâng lên tận chân núi Tản Viên.
 
-Hai bên đánh nhau ròng rã nhiều tháng. Cuối cùng, Thủy Tinh đuối sức, phải rút lui.
+Sơn Tinh không hề nao núng. Chàng dùng phép thần làm núi cao thêm. Nước dâng đến đâu, núi cao đến đấy.
 
-Nhưng Thủy Tinh không chịu thua. Năm nào chàng cũng dâng nước đánh Sơn Tinh.`,
+Hai bên đánh nhau ròng rã nhiều ngày, nhiều tháng.
+
+Cuối cùng, Thủy Tinh đuối sức, nước rút dần, phải rút quân về biển.
+
+Nhưng Thủy Tinh không chịu thua. Năm nào chàng cũng dâng nước lên đánh Sơn Tinh.`,
         image: '⛰️💨🌊',
-        question: 'Khi nước dâng, Sơn Tinh làm gì?',
-        options: ['Chạy trốn', 'Làm núi cao lên', 'Đầu hàng', 'Gọi vua giúp'],
+        question: 'Khi Thủy Tinh dâng nước, Sơn Tinh làm gì?',
+        options: ['Chạy trốn', 'Làm núi cao thêm', 'Đầu hàng', 'Cầu xin Thủy Tinh'],
         answer: 1
       },
       {
         id: 5,
         title: 'Giải thích lũ lụt',
-        content: `Từ đó, hàng năm cứ đến mùa mưa, Thủy Tinh lại dâng nước đánh Sơn Tinh.
+        content: `Từ đó về sau, hàng năm cứ đến mùa mưa tháng bảy, tháng tám, Thủy Tinh lại dâng nước đánh Sơn Tinh.
 
-Đó là lý do vì sao Việt Nam hay có lũ lụt vào mùa mưa.
+Nước sông dâng cao, gây ra lũ lụt ở nhiều nơi.
 
-Nhưng Sơn Tinh luôn chiến thắng, bảo vệ người dân bình an.
+Nhưng Sơn Tinh lần nào cũng chiến thắng, bảo vệ công chúa và người dân.
 
-🌟 BÀI HỌC: Đây là câu chuyện giải thích hiện tượng lũ lụt của ông cha ta ngày xưa. Thiên nhiên rất hùng vĩ, chúng ta cần biết bảo vệ môi trường!`,
+Câu chuyện này giải thích vì sao Việt Nam hay có lũ lụt vào mùa mưa. Đó chính là do Thủy Tinh dâng nước đánh Sơn Tinh.
+
+🌟 BÀI HỌC: Thiên nhiên rất hùng vĩ với sức mạnh to lớn. Con người cần biết sống hòa hợp với thiên nhiên và bảo vệ môi trường.`,
         image: '🌧️🏔️🏠',
-        question: 'Truyện giải thích hiện tượng gì?',
-        options: ['Động đất', 'Lũ lụt', 'Núi lửa', 'Sấm sét'],
+        question: 'Truyện Sơn Tinh Thủy Tinh giải thích hiện tượng gì?',
+        options: ['Động đất', 'Lũ lụt hàng năm', 'Núi lửa phun', 'Sấm sét'],
         answer: 1
       }
     ]
   },
+
+  // ==========================================
+  // 7. CÓC KIỆN TRỜI
+  // ==========================================
   {
-    id: 'coc_va_tho',
-    title: 'Rùa và Thỏ',
-    titleEn: 'The Tortoise and the Hare',
-    icon: '🐢',
-    cover: '🐰',
+    id: 'coc_kien_troi',
+    title: 'Cóc Kiện Trời',
+    titleEn: 'The Toad Sues Heaven',
+    icon: '🐸',
+    cover: '☁️',
     color: 'from-yellow-500 to-amber-500',
-    description: 'Chậm mà chắc',
+    description: 'Đoàn kết tạo nên sức mạnh',
     totalChapters: 4,
     chapters: [
       {
         id: 1,
-        title: 'Thỏ kiêu ngạo',
-        content: `Trong khu rừng nọ, có một chú Thỏ chạy rất nhanh. Thỏ luôn khoe khoang và chê cười các con vật khác.
+        title: 'Hạn hán kéo dài',
+        content: `Ngày xưa, có năm trời làm hạn hán rất lâu. Mấy tháng liền không có một giọt mưa.
 
-Một hôm, Thỏ gặp Rùa đang chậm chạp bò trên đường.
+Ruộng đồng nứt nẻ, cây cối héo khô, sông suối cạn trơ đáy.
 
-Thỏ cười lớn: "Ha ha! Rùa chậm như sên! Đến mai cũng không đi hết con đường này!"
+Con người và muôn loài khát nước, đói khổ vô cùng. Nhiều người, nhiều con vật đã chết vì khát.
 
-Rùa bình tĩnh đáp: "Thỏ ơi, chậm mà chắc. Hay chúng ta thi chạy đua xem ai thắng?"`,
-        image: '🐰😏🐢',
-        question: 'Thỏ có tính cách như thế nào?',
-        options: ['Khiêm tốn', 'Kiêu ngạo', 'Nhút nhát', 'Thật thà'],
+Ai cũng than khóc, nhưng không biết làm sao.
+
+Cóc thấy tình cảnh ấy, quyết định lên thiên đình kiện Trời, đòi Trời làm mưa cứu muôn loài.
+
+Dù nhỏ bé, Cóc vẫn không sợ hãi, một mình lên đường.`,
+        image: '☀️🏜️😢',
+        question: 'Vì sao Cóc quyết định kiện Trời?',
+        options: ['Vì bị Trời ăn hiếp', 'Vì hạn hán kéo dài, không có mưa', 'Vì muốn nổi tiếng', 'Vì được ai đó nhờ'],
         answer: 1
       },
       {
         id: 2,
-        title: 'Cuộc thi bắt đầu',
-        content: `Các con vật trong rừng kéo đến xem cuộc đua giữa Thỏ và Rùa.
+        title: 'Đoàn quân của Cóc',
+        content: `Trên đường đi, Cóc gặp Cua. Cua hỏi: "Cóc đi đâu thế?"
 
-"Một... hai... ba... Bắt đầu!" - Cáo làm trọng tài hô to.
+Cóc nói: "Tôi đi kiện Trời vì Trời không làm mưa." Cua xin theo.
 
-Thỏ phóng vụt đi như tên bay. Chỉ trong chốc lát, Thỏ đã bỏ xa Rùa.
+Đi tiếp, gặp Gấu, Cọp, Ong, Cáo, Gà trống. Tất cả đều xin đi cùng.
 
-Còn Rùa, vẫn từng bước chậm rãi, kiên nhẫn tiến về phía trước.`,
-        image: '🏃‍♂️🐢🚩',
-        question: 'Ai làm trọng tài?',
-        options: ['Sư tử', 'Cáo', 'Gấu', 'Khỉ'],
-        answer: 1
+Mỗi con vật đều có một tài riêng:
+- Cua có càng kẹp chắc
+- Gấu có sức mạnh vô địch
+- Cọp có nanh vuốt sắc
+- Ong có nọc độc
+- Cáo có mưu trí
+- Gà trống biết gáy to
+
+Đoàn quân của Cóc ngày càng đông, cùng tiến lên thiên đình.`,
+        image: '🐸🦀🐻🐯🐝🦊🐓',
+        question: 'Những con vật nào đi cùng Cóc?',
+        options: ['Cua, Gấu, Cọp, Ong, Cáo, Gà trống', 'Chỉ có Cua', 'Cá, Chim, Rắn', 'Không có ai'],
+        answer: 0
       },
       {
         id: 3,
-        title: 'Thỏ ngủ quên',
-        content: `Thỏ chạy được nửa đường, ngoảnh lại không thấy Rùa đâu.
+        title: 'Đánh tan quân Trời',
+        content: `Đến thiên đình, Cóc gõ cửa đòi gặp Ngọc Hoàng. Quân canh cửa cười chê:
 
-"Rùa chậm thế này, mình ngủ một giấc cũng kịp!" - Thỏ nghĩ.
+"Con Cóc nhỏ bé dám đến đây kiện Trời ư?"
 
-Thỏ nằm xuống gốc cây, ngủ một giấc ngon lành.
+Ngọc Hoàng sai Thần Sấm, Thần Sét ra đánh. Nhưng Cóc đã bố trí sẵn:
 
-Trong khi đó, Rùa vẫn kiên trì bò từng bước một, không dừng lại nghỉ.`,
-        image: '😴🌳🐢',
-        question: 'Thỏ làm gì khi dẫn trước?',
-        options: ['Tiếp tục chạy', 'Ngủ dưới gốc cây', 'Quay lại chờ Rùa', 'Ăn cà rốt'],
+- Gấu đứng sau cánh cửa, quật ngã Thần Sấm
+- Cọp từ bên hông nhảy ra, vồ Thần Sét
+- Ong bay vù vù, đốt khắp nơi
+- Cua kẹp chân những ai chạy trốn
+- Cáo bày mưu, chỉ huy quân ta
+
+Quân Trời thua chạy tan tác. Ngọc Hoàng thấy vậy phải đích thân ra tiếp.`,
+        image: '⚡🐻🐯',
+        question: 'Khi quân Trời đánh, các con vật làm gì?',
+        options: ['Bỏ chạy', 'Đánh bại quân Trời bằng tài riêng của mỗi con', 'Đầu hàng', 'Van xin'],
         answer: 1
       },
       {
         id: 4,
-        title: 'Rùa chiến thắng',
-        content: `Khi Thỏ tỉnh dậy, mặt trời đã lặn. Thỏ hốt hoảng chạy về đích.
+        title: 'Cóc thắng kiện',
+        content: `Ngọc Hoàng hỏi: "Các ngươi muốn gì?"
 
-Nhưng đã quá muộn! Rùa đã về đích từ lâu, đang được các bạn chúc mừng.
+Cóc đáp: "Muôn tâu Ngọc Hoàng, hạ giới hạn hán đã lâu. Xin Ngọc Hoàng ban mưa cứu muôn loài!"
 
-Thỏ xấu hổ, cúi đầu nhận thua.
+Ngọc Hoàng thấy Cóc và các bạn dũng cảm, đoàn kết, bèn thuận cho.
 
-Rùa nói: "Chậm mà chắc, bạn Thỏ ạ. Kiên trì sẽ đến đích!"
+Từ đó, Ngọc Hoàng hứa: "Hễ khi nào Cóc nghiến răng kêu, ta sẽ làm mưa ngay!"
 
-🌟 BÀI HỌC: Không nên kiêu ngạo. Kiên trì và nỗ lực sẽ mang lại thành công!`,
-        image: '🐢🏆🎉',
-        question: 'Ai chiến thắng cuộc đua?',
-        options: ['Thỏ', 'Rùa', 'Hòa', 'Không ai'],
+Cóc và các bạn vui vẻ trở về. Trời bắt đầu đổ mưa. Muôn loài hoan hỉ.
+
+Từ đó, mỗi khi Cóc nghiến răng kêu là trời đổ mưa. Người ta có câu: "Con Cóc là cậu ông Trời."
+
+🌟 BÀI HỌC: Đoàn kết tạo nên sức mạnh. Dù nhỏ bé, nếu có lòng dũng cảm và biết hợp sức với nhau, ta có thể làm được những việc lớn lao.`,
+        image: '🌧️🐸🎉',
+        question: 'Từ đó về sau, khi nào thì trời mưa?',
+        options: ['Khi Gà gáy', 'Khi Cóc nghiến răng kêu', 'Khi Cọp gầm', 'Khi Ong bay'],
         answer: 1
       }
     ]
@@ -447,14 +798,5 @@ export const getStory = (id) => STORIES.find(s => s.id === id);
 
 // Lấy tất cả truyện
 export const getAllStories = () => STORIES;
-
-// Tính số chương đã mở khóa dựa trên ngày học liên tiếp
-export const getUnlockedChapters = (storyId, startDate, streak) => {
-  const story = getStory(storyId);
-  if (!story) return 0;
-  
-  // Mỗi ngày học liên tiếp mở 1 chương
-  return Math.min(streak + 1, story.totalChapters);
-};
 
 export default STORIES;
