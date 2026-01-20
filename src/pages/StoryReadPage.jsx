@@ -29,7 +29,8 @@ const useFPTSpeech = () => {
       setIsSpeaking(false);
       setIsPaused(false);
     };
-    audioRef.current.onerror = () => {
+    audioRef.current.onerror = (e) => {
+      console.error('Audio error:', e);
       setIsSpeaking(false);
       setIsLoading(false);
       setError('Không thể phát âm thanh');
@@ -43,6 +44,22 @@ const useFPTSpeech = () => {
     };
   }, []);
   
+  // Đợi file audio sẵn sàng
+  const waitForAudio = async (url, maxAttempts = 30) => {
+    for (let i = 0; i < maxAttempts; i++) {
+      try {
+        const response = await fetch(url, { method: 'HEAD' });
+        if (response.ok) {
+          return true;
+        }
+      } catch (e) {
+        // File chưa sẵn sàng, đợi tiếp
+      }
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
+    return false;
+  };
+  
   const speak = useCallback(async (text) => {
     if (!text) return;
     
@@ -50,28 +67,39 @@ const useFPTSpeech = () => {
     setError(null);
     
     try {
-      // Gọi FPT.AI API
+      // Gọi FPT.AI API với đúng format
       const response = await fetch(FPT_TTS_URL, {
         method: 'POST',
         headers: {
-          'api-key': FPT_API_KEY,
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'voice': 'banmai', // Giọng nữ miền Bắc - kể chuyện hay
-          'speed': '-1', // Chậm hơn một chút để trẻ nghe rõ (-3 đến 3)
+          'api_key': FPT_API_KEY,
+          'voice': 'banmai',      // Giọng nữ miền Bắc - kể chuyện hay
+          'speed': '0',           // Tốc độ bình thường (range: -3 to 3)
+          'prosody': '1',         // BẬT ngữ điệu tự nhiên - quan trọng!
+          'Content-Type': 'text/plain; charset=utf-8'
         },
         body: text
       });
       
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const data = await response.json();
+      console.log('FPT.AI Response:', data);
       
       if (data.error === 0 && data.async) {
-        // FPT.AI trả về URL audio
-        // Đợi một chút để file audio được tạo
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // FPT.AI trả về URL audio - cần đợi file được tạo
+        const audioUrl = data.async;
+        console.log('Audio URL:', audioUrl);
         
-        if (audioRef.current) {
-          audioRef.current.src = data.async;
-          audioRef.current.play();
+        // Đợi file audio sẵn sàng
+        const isReady = await waitForAudio(audioUrl);
+        
+        if (isReady && audioRef.current) {
+          audioRef.current.src = audioUrl;
+          await audioRef.current.play();
+        } else {
+          throw new Error('Audio file not ready after waiting');
         }
       } else {
         throw new Error(data.message || 'Lỗi từ FPT.AI');
@@ -90,6 +118,7 @@ const useFPTSpeech = () => {
   const fallbackSpeak = useCallback((text) => {
     if (!('speechSynthesis' in window)) return;
     
+    console.log('Using fallback Web Speech API');
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'vi-VN';
@@ -121,6 +150,7 @@ const useFPTSpeech = () => {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
     }
+    window.speechSynthesis?.cancel();
     setIsSpeaking(false);
     setIsPaused(false);
     setIsLoading(false);
@@ -311,11 +341,11 @@ const StoryComplete = ({ story, onRestart, onBack }) => {
 };
 
 // Audio player component với FPT.AI
-const AudioPlayer = ({ isPlaying, isPaused, isLoading, onPlay, onPause, onResume, onStop, error }) => {
+const AudioPlayer = ({ isPlaying, isPaused, isLoading, onPlay, onPause, onResume, onStop }) => {
   return (
     <div className="flex items-center gap-2">
       {isLoading ? (
-        <div className="flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-600 rounded-full">
+        <div className="flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-600 rounded-full">
           <Loader2 className="w-5 h-5 animate-spin" />
           <span>Đang tải...</span>
         </div>
@@ -323,10 +353,10 @@ const AudioPlayer = ({ isPlaying, isPaused, isLoading, onPlay, onPause, onResume
         <motion.button
           whileTap={{ scale: 0.95 }}
           onClick={onPlay}
-          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-full font-medium shadow-lg"
+          className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-full font-bold shadow-lg"
         >
-          <Volume2 className="w-5 h-5" />
-          <span>Nghe đọc</span>
+          <Volume2 className="w-6 h-6" />
+          <span>Nghe kể</span>
         </motion.button>
       ) : (
         <div className="flex items-center gap-2">
@@ -336,7 +366,7 @@ const AudioPlayer = ({ isPlaying, isPaused, isLoading, onPlay, onPause, onResume
               onClick={onResume}
               className="p-3 bg-green-500 text-white rounded-full shadow-lg"
             >
-              <Play className="w-5 h-5" />
+              <Play className="w-6 h-6" />
             </motion.button>
           ) : (
             <motion.button
@@ -344,7 +374,7 @@ const AudioPlayer = ({ isPlaying, isPaused, isLoading, onPlay, onPause, onResume
               onClick={onPause}
               className="p-3 bg-amber-500 text-white rounded-full shadow-lg"
             >
-              <Pause className="w-5 h-5" />
+              <Pause className="w-6 h-6" />
             </motion.button>
           )}
           <motion.button
@@ -352,7 +382,7 @@ const AudioPlayer = ({ isPlaying, isPaused, isLoading, onPlay, onPause, onResume
             onClick={onStop}
             className="p-3 bg-red-500 text-white rounded-full shadow-lg"
           >
-            <VolumeX className="w-5 h-5" />
+            <VolumeX className="w-6 h-6" />
           </motion.button>
           
           {/* Animated waves */}
@@ -361,9 +391,9 @@ const AudioPlayer = ({ isPlaying, isPaused, isLoading, onPlay, onPause, onResume
               {[1, 2, 3, 4, 5].map(i => (
                 <motion.div
                   key={i}
-                  animate={{ height: [8, 20, 8] }}
+                  animate={{ height: [8, 24, 8] }}
                   transition={{ duration: 0.5, repeat: Infinity, delay: i * 0.1 }}
-                  className="w-1 bg-green-500 rounded-full"
+                  className="w-1.5 bg-green-500 rounded-full"
                 />
               ))}
             </div>
@@ -571,19 +601,19 @@ export default function StoryReadPage() {
       
       {/* Audio Player - FPT.AI */}
       <div className="px-4 mb-4">
-        <div className="bg-gradient-to-r from-green-100 to-emerald-100 rounded-2xl p-4 shadow-md border-2 border-green-300">
-          <div className="flex items-center justify-between">
+        <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-4 shadow-lg border-2 border-green-200">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <motion.span 
+              <motion.div 
                 animate={{ scale: isSpeaking && !isPaused ? [1, 1.2, 1] : 1 }}
                 transition={{ duration: 0.5, repeat: isSpeaking && !isPaused ? Infinity : 0 }}
-                className="text-3xl"
+                className="w-12 h-12 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full flex items-center justify-center"
               >
-                🔊
-              </motion.span>
+                <span className="text-2xl">🎧</span>
+              </motion.div>
               <div>
                 <p className="font-bold text-green-800">Nghe kể chuyện</p>
-                <p className="text-sm text-green-600">Giọng đọc AI tự nhiên</p>
+                <p className="text-xs text-green-600">Giọng Ban Mai - FPT.AI</p>
               </div>
             </div>
             <AudioPlayer
@@ -594,11 +624,12 @@ export default function StoryReadPage() {
               onPause={pause}
               onResume={resume}
               onStop={stop}
-              error={error}
             />
           </div>
           {error && (
-            <p className="text-red-500 text-sm mt-2">⚠️ {error}</p>
+            <div className="mt-3 p-2 bg-yellow-100 rounded-lg">
+              <p className="text-yellow-700 text-xs">⚠️ Đang dùng giọng đọc dự phòng</p>
+            </div>
           )}
         </div>
       </div>
@@ -620,12 +651,12 @@ export default function StoryReadPage() {
             </h2>
             
             {/* Image/emoji */}
-            <div className="text-center text-6xl mb-4 py-4 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl">
+            <div className="text-center text-6xl mb-4 py-6 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl">
               {chapter.image}
             </div>
             
-            {/* Content - with larger text for kids */}
-            <div className="text-gray-700 leading-loose whitespace-pre-line text-lg font-medium">
+            {/* Content */}
+            <div className="text-gray-700 leading-loose whitespace-pre-line text-lg">
               {chapter.content}
             </div>
             
@@ -641,7 +672,7 @@ export default function StoryReadPage() {
         </AnimatePresence>
       </div>
       
-      {/* Navigation buttons - Fixed bottom */}
+      {/* Navigation buttons */}
       <div className="fixed bottom-20 left-0 right-0 bg-white border-t shadow-lg px-4 py-3">
         <div className="flex gap-3">
           <button
