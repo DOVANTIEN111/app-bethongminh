@@ -21,6 +21,8 @@ const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const SettingsPage = lazy(() => import('./pages/SettingsPage'));
 const PetPage = lazy(() => import('./pages/PetPage'));
+const StoryListPage = lazy(() => import('./pages/StoryListPage'));
+const StoryReadPage = lazy(() => import('./pages/StoryReadPage'));
 
 // English Zone
 const EnglishHubPage = lazy(() => import('./pages/EnglishHubPage'));
@@ -57,6 +59,8 @@ function App() {
           <Route path="english/topic/:topicId" element={<EnglishTopicPage />} />
           <Route path="english/game/:gameId" element={<EnglishGamePage />} />
           <Route path="pet" element={<PetPage />} />
+          <Route path="stories" element={<StoryListPage />} />
+          <Route path="story/:storyId" element={<StoryReadPage />} />
           <Route path="profile" element={<ProfilePage />} />
           <Route path="settings" element={<SettingsPage />} />
         </Route>

@@ -368,12 +368,32 @@ export default function HomePage() {
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
+            onClick={() => { playSound('click'); navigate('/stories'); }}
+            className="bg-gradient-to-br from-amber-500 to-orange-500 text-white rounded-2xl p-4 flex flex-col items-center shadow-lg"
+          >
+            <span className="text-4xl mb-2">📖</span>
+            <p className="font-bold">Truyện Cổ Tích</p>
+            <p className="text-white/80 text-xs">5 truyện hay</p>
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={() => { playSound('click'); navigate('/games'); }}
             className="bg-gradient-to-br from-pink-500 to-rose-500 text-white rounded-2xl p-4 flex flex-col items-center shadow-lg"
           >
             <Gamepad2 className="w-10 h-10 mb-2" />
             <p className="font-bold">Khu Vui Chơi</p>
             <p className="text-white/80 text-xs">8 trò chơi</p>
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => { playSound('click'); navigate('/pet'); }}
+            className="bg-gradient-to-br from-teal-500 to-cyan-500 text-white rounded-2xl p-4 flex flex-col items-center shadow-lg"
+          >
+            <span className="text-4xl mb-2">{currentMember?.pet ? '🐾' : '🐣'}</span>
+            <p className="font-bold">Pet của tôi</p>
+            <p className="text-white/80 text-xs">{currentMember?.pet ? 'Chăm sóc pet' : 'Nhận pet mới'}</p>
           </motion.button>
         </div>
       </motion.div>
