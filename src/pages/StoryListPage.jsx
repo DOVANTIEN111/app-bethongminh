@@ -1,19 +1,19 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useMember } from '../contexts/MemberContext';
+import { useAuth } from '../contexts/AuthContext';
 import { useAudio } from '../contexts/AudioContext';
 import { getAllStories } from '../data/stories';
 import { ArrowLeft, BookOpen, Lock, Star, ChevronRight, Sparkles } from 'lucide-react';
 
 export default function StoryListPage() {
   const navigate = useNavigate();
-  const { currentMember } = useMember();
+  const { currentChild } = useAuth();
   const { playSound } = useAudio();
   
   const stories = getAllStories();
-  const storyProgress = currentMember?.storyProgress || {};
-  const streak = currentMember?.stats?.streak || 0;
+  const storyProgress = currentChild?.storyProgress || {};
+  const streak = currentChild?.stats?.streak || 0;
   
   // Tính số chương đã mở dựa trên streak
   const getUnlockedCount = (storyId, totalChapters) => {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useMember } from '../contexts/MemberContext';
+import { useAuth } from '../contexts/AuthContext';
 import { useAudio } from '../contexts/AudioContext';
 import { getStory } from '../data/stories';
 import { ArrowLeft, Lock, ChevronLeft, ChevronRight, Star, BookOpen, CheckCircle, XCircle, Volume2, VolumeX, Sparkles, Pause, Play, Loader2 } from 'lucide-react';
@@ -407,7 +407,7 @@ const AudioPlayer = ({ isPlaying, isPaused, isLoading, onPlay, onPause, onResume
 export default function StoryReadPage() {
   const { storyId } = useParams();
   const navigate = useNavigate();
-  const { currentMember, updateMember } = useMember();
+  const { currentChild, updateChild } = useAuth();
   const { playSound } = useAudio();
   const { speak, pause, resume, stop, isSpeaking, isPaused, isLoading, error } = useFPTSpeech();
   
@@ -417,8 +417,8 @@ export default function StoryReadPage() {
   const [quizPassed, setQuizPassed] = useState(false);
   const [completed, setCompleted] = useState(false);
   
-  const streak = currentMember?.stats?.streak || 0;
-  const storyProgress = currentMember?.storyProgress?.[storyId] || {};
+  const streak = currentChild?.stats?.streak || 0;
+  const storyProgress = currentChild?.storyProgress?.[storyId] || {};
   
   // Số chương đã mở (dựa trên streak) - minimum 1 chương luôn mở
   const unlockedChapters = Math.min(Math.max(1, streak + 1), story?.totalChapters || 0);
@@ -457,7 +457,7 @@ export default function StoryReadPage() {
   
   // Lưu tiến độ đọc
   const saveProgress = (chapterIdx) => {
-    const member = { ...currentMember };
+    const member = { ...currentChild };
     if (!member.storyProgress) member.storyProgress = {};
     if (!member.storyProgress[storyId]) {
       member.storyProgress[storyId] = { lastChapter: 0, completed: false };
@@ -466,12 +466,12 @@ export default function StoryReadPage() {
       member.storyProgress[storyId].lastChapter,
       chapterIdx + 1
     );
-    updateMember(member);
+    updateChild(member);
   };
   
   // Hoàn thành truyện
   const completeStory = () => {
-    const member = { ...currentMember };
+    const member = { ...currentChild };
     if (!member.storyProgress) member.storyProgress = {};
     if (!member.storyProgress[storyId]) {
       member.storyProgress[storyId] = { lastChapter: 0, completed: false };
@@ -486,7 +486,7 @@ export default function StoryReadPage() {
       member.pet.lastFed = Date.now();
     }
     
-    updateMember(member);
+    updateChild(member);
     setCompleted(true);
   };
   

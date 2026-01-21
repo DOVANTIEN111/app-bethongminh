@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useMember } from '../contexts/MemberContext';
+import { useAuth } from '../contexts/AuthContext';
 import { useAudio } from '../contexts/AudioContext';
 import { getAllWords } from '../data/englishVocab';
 import { ArrowLeft, RotateCcw, Home, Trophy, Volume2, Check, X, Mic, MicOff } from 'lucide-react';
@@ -610,7 +610,7 @@ const SpeakCheckGame = ({ onComplete }) => {
 export default function EnglishGamePage() {
   const { gameId } = useParams();
   const navigate = useNavigate();
-  const { completeGame } = useMember();
+  const { completeGame } = useAuth();
   const { playSound } = useAudio();
   
   const [gameState, setGameState] = useState('playing');

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useMember } from '../contexts/MemberContext';
+import { useAuth } from '../contexts/AuthContext';
 import { useAudio } from '../contexts/AudioContext';
 import { getSubject } from '../data/subjects';
 import { ArrowLeft, CheckCircle, Lock, Star } from 'lucide-react';
@@ -9,11 +9,11 @@ import { ArrowLeft, CheckCircle, Lock, Star } from 'lucide-react';
 export default function SubjectPage() {
   const { subjectId } = useParams();
   const navigate = useNavigate();
-  const { currentMember } = useMember();
+  const { currentChild } = useAuth();
   const { playSound } = useAudio();
   
   const subject = getSubject(subjectId);
-  const progress = currentMember?.progress?.[subjectId] || { completed: [], scores: {} };
+  const progress = currentChild?.progress?.[subjectId] || { completed: [], scores: {} };
   
   if (!subject) {
     return (

@@ -1,15 +1,15 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useMember } from '../contexts/MemberContext';
+import { useAuth } from '../contexts/AuthContext';
 import { getAchievement } from '../data/achievements';
 import { ArrowLeft, LogOut, Trophy, Flame, Star, Target } from 'lucide-react';
 
 export default function ProfilePage() {
   const navigate = useNavigate();
-  const { currentMember, logout, levelInfo } = useMember();
+  const { currentChild, logout, levelInfo } = useAuth();
   
-  const achievements = (currentMember?.achievements || [])
+  const achievements = (currentChild?.achievements || [])
     .map(id => getAchievement(id))
     .filter(Boolean);
   
@@ -23,9 +23,9 @@ export default function ProfilePage() {
       {/* Profile Card */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <div className="bg-white rounded-3xl p-6 shadow-lg text-center mb-6">
-          <div className="text-6xl mb-4">{currentMember?.avatar}</div>
-          <h2 className="text-2xl font-bold text-gray-800">{currentMember?.name}</h2>
-          <p className="text-gray-500 mb-4">{currentMember?.age} tuổi</p>
+          <div className="text-6xl mb-4">{currentChild?.avatar}</div>
+          <h2 className="text-2xl font-bold text-gray-800">{currentChild?.name}</h2>
+          <p className="text-gray-500 mb-4">{currentChild?.age} tuổi</p>
           
           {/* Level */}
           <div className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-2xl p-4 mb-4">
@@ -37,7 +37,7 @@ export default function ProfilePage() {
             <div className="h-2 bg-white/30 rounded-full overflow-hidden">
               <div className="h-full bg-white rounded-full" style={{ width: `${levelInfo?.progress}%` }} />
             </div>
-            <p className="text-white/70 text-xs mt-1">{currentMember?.xp || 0} XP</p>
+            <p className="text-white/70 text-xs mt-1">{currentChild?.xp || 0} XP</p>
           </div>
           
           {/* Stats */}
@@ -45,14 +45,14 @@ export default function ProfilePage() {
             <div className="text-center">
               <div className="flex items-center justify-center gap-1 text-orange-500">
                 <Flame className="w-5 h-5" />
-                <span className="text-xl font-bold">{currentMember?.stats?.streak || 0}</span>
+                <span className="text-xl font-bold">{currentChild?.stats?.streak || 0}</span>
               </div>
               <p className="text-xs text-gray-500">Streak</p>
             </div>
             <div className="text-center">
               <div className="flex items-center justify-center gap-1 text-indigo-500">
                 <Target className="w-5 h-5" />
-                <span className="text-xl font-bold">{currentMember?.stats?.totalLessons || 0}</span>
+                <span className="text-xl font-bold">{currentChild?.stats?.totalLessons || 0}</span>
               </div>
               <p className="text-xs text-gray-500">Bài học</p>
             </div>

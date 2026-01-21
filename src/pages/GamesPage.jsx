@@ -1,22 +1,22 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useMember } from '../contexts/MemberContext';
+import { useAuth } from '../contexts/AuthContext';
 import { useAudio } from '../contexts/AudioContext';
 import { getAllGames, getGamesByCategory, GAME_CATEGORIES } from '../data/games';
 import { ChevronRight, Trophy, Star, Zap } from 'lucide-react';
 
 export default function GamesPage() {
   const navigate = useNavigate();
-  const { currentMember } = useMember();
+  const { currentChild } = useAuth();
   const { playSound } = useAudio();
   const [category, setCategory] = useState('all');
   
   const games = getGamesByCategory(category);
   
   // Calculate total best scores
-  const totalBestScore = Object.values(currentMember?.gameScores || {}).reduce((sum, g) => sum + (g.best || 0), 0);
-  const gamesPlayed = Object.keys(currentMember?.gameScores || {}).length;
+  const totalBestScore = Object.values(currentChild?.gameScores || {}).reduce((sum, g) => sum + (g.best || 0), 0);
+  const gamesPlayed = Object.keys(currentChild?.gameScores || {}).length;
   
   const handleGame = (id) => {
     playSound('click');
@@ -77,7 +77,7 @@ export default function GamesPage() {
       {/* Games Grid */}
       <div className="grid grid-cols-2 gap-3">
         {games.map((game, i) => {
-          const gameScore = currentMember?.gameScores?.[game.id];
+          const gameScore = currentChild?.gameScores?.[game.id];
           const isNew = !gameScore;
           
           return (

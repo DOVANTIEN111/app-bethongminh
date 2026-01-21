@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useMember } from '../contexts/MemberContext';
+import { useAuth } from '../contexts/AuthContext';
 import { useAudio } from '../contexts/AudioContext';
 import { getGame } from '../data/games';
 import { ArrowLeft, RotateCcw, Home, Trophy } from 'lucide-react';
@@ -823,7 +823,7 @@ const BalloonPopGame = ({ onComplete }) => {
 export default function GamePlayPage() {
   const { gameId } = useParams();
   const navigate = useNavigate();
-  const { completeGame } = useMember();
+  const { completeGame } = useAuth();
   const { playSound } = useAudio();
   
   const game = getGame(gameId);

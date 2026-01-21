@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useMember } from '../contexts/MemberContext';
+import { useAuth } from '../contexts/AuthContext';
 import { useAudio } from '../contexts/AudioContext';
 import { 
   PETS, 
@@ -189,7 +189,7 @@ const FeedingAnimation = ({ pet, food, onComplete }) => {
 
 export default function PetPage() {
   const navigate = useNavigate();
-  const { currentMember, updateMember, addXP } = useMember();
+  const { currentChild, updateChild, addXP } = useAuth();
   const { playSound, speak } = useAudio();
   
   const [showFeeding, setShowFeeding] = useState(false);
@@ -198,7 +198,7 @@ export default function PetPage() {
   const [showMessage, setShowMessage] = useState(false);
   
   // Lấy thông tin pet của member
-  const petData = currentMember?.pet || null;
+  const petData = currentChild?.pet || null;
   const petType = petData?.type;
   const petXP = petData?.xp || 0;
   const pet = petType ? PETS[petType] : null;
@@ -222,7 +222,7 @@ export default function PetPage() {
   const handleSelectPet = (type) => {
     playSound('achievement');
     const updatedMember = {
-      ...currentMember,
+      ...currentChild,
       pet: {
         type,
         xp: 0,
@@ -231,7 +231,7 @@ export default function PetPage() {
         createdAt: Date.now(),
       }
     };
-    updateMember(updatedMember);
+    updateChild(updatedMember);
   };
   
   // Vuốt ve pet
@@ -244,13 +244,13 @@ export default function PetPage() {
     
     // Cập nhật lastPlay
     const updatedMember = {
-      ...currentMember,
+      ...currentChild,
       pet: {
         ...petData,
         lastPlay: Date.now(),
       }
     };
-    updateMember(updatedMember);
+    updateChild(updatedMember);
   };
   
   // Cho pet ăn (cần học bài mới có đồ ăn)
@@ -261,14 +261,14 @@ export default function PetPage() {
     
     // Cộng XP cho pet
     const updatedMember = {
-      ...currentMember,
+      ...currentChild,
       pet: {
         ...petData,
         xp: petXP + 10,
         lastFed: Date.now(),
       }
     };
-    updateMember(updatedMember);
+    updateChild(updatedMember);
   };
   
   // Nếu chưa có pet, hiển thị màn hình chọn

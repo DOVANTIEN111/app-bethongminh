@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useMember } from '../contexts/MemberContext';
+import { useAuth } from '../contexts/AuthContext';
 import { useAudio } from '../contexts/AudioContext';
 import { getAllSubjects } from '../data/subjects';
 import { getTodayChallenges, getDailyWords } from '../data/dailyChallenge';
@@ -77,7 +77,7 @@ const AchievementPopup = ({ achievement, onClose }) => {
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const { currentMember, levelInfo } = useMember();
+  const { currentChild, levelInfo } = useAuth();
   const { playSound, speak } = useAudio();
   const subjects = getAllSubjects();
   
@@ -95,10 +95,10 @@ export default function HomePage() {
   // Check for new achievements
   useEffect(() => {
     const lastAchCount = parseInt(localStorage.getItem('gdtm_last_ach_count') || '0');
-    const currentCount = currentMember?.achievements?.length || 0;
+    const currentCount = currentChild?.achievements?.length || 0;
     
-    if (currentCount > lastAchCount && currentMember?.achievements?.length > 0) {
-      const latest = currentMember.achievements[currentMember.achievements.length - 1];
+    if (currentCount > lastAchCount && currentChild?.achievements?.length > 0) {
+      const latest = currentChild.achievements[currentChild.achievements.length - 1];
       // Find achievement details
       const achDetails = { icon: '🏆', name: latest, desc: 'Chúc mừng!' };
       setNewAchievement(achDetails);
@@ -108,7 +108,7 @@ export default function HomePage() {
       
       setTimeout(() => setShowConfetti(false), 3000);
     }
-  }, [currentMember?.achievements]);
+  }, [currentChild?.achievements]);
   
   const getGreeting = () => {
     const h = new Date().getHours();
@@ -145,7 +145,7 @@ export default function HomePage() {
       {/* Greeting */}
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-4">
         <h1 className="text-2xl font-bold text-gray-800">
-          {getGreeting()}, {currentMember?.name}! 👋
+          {getGreeting()}, {currentChild?.name}! 👋
         </h1>
         <p className="text-gray-500">Hôm nay con muốn học gì nào?</p>
       </motion.div>
@@ -157,21 +157,21 @@ export default function HomePage() {
             <motion.div whileHover={{ scale: 1.05 }} className="bg-white/20 rounded-2xl p-3">
               <div className="flex items-center justify-center gap-1">
                 <Flame className="w-5 h-5 text-orange-300" />
-                <span className="text-2xl font-bold">{currentMember?.stats?.streak || 0}</span>
+                <span className="text-2xl font-bold">{currentChild?.stats?.streak || 0}</span>
               </div>
               <p className="text-xs text-white/80">Streak</p>
             </motion.div>
             <motion.div whileHover={{ scale: 1.05 }} className="bg-white/20 rounded-2xl p-3">
               <div className="flex items-center justify-center gap-1">
                 <Star className="w-5 h-5 text-yellow-300" />
-                <span className="text-2xl font-bold">{currentMember?.xp || 0}</span>
+                <span className="text-2xl font-bold">{currentChild?.xp || 0}</span>
               </div>
               <p className="text-xs text-white/80">XP</p>
             </motion.div>
             <motion.div whileHover={{ scale: 1.05 }} className="bg-white/20 rounded-2xl p-3">
               <div className="flex items-center justify-center gap-1">
                 <Trophy className="w-5 h-5 text-amber-300" />
-                <span className="text-2xl font-bold">{currentMember?.achievements?.length || 0}</span>
+                <span className="text-2xl font-bold">{currentChild?.achievements?.length || 0}</span>
               </div>
               <p className="text-xs text-white/80">Huy hiệu</p>
             </motion.div>
@@ -287,7 +287,7 @@ export default function HomePage() {
       
       {/* Pet Widget */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.28 }} className="mb-4">
-        {currentMember?.pet ? (
+        {currentChild?.pet ? (
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -295,9 +295,9 @@ export default function HomePage() {
             className="w-full bg-gradient-to-r from-pink-400 via-purple-400 to-indigo-400 rounded-2xl p-4 shadow-lg"
           >
             {(() => {
-              const pet = PETS[currentMember.pet.type];
-              const stage = getPetStage(currentMember.pet.type, currentMember.pet.xp || 0);
-              const mood = calculatePetMood(currentMember.pet.lastFed, currentMember.pet.lastPlay);
+              const pet = PETS[currentChild.pet.type];
+              const stage = getPetStage(currentChild.pet.type, currentChild.pet.xp || 0);
+              const mood = calculatePetMood(currentChild.pet.lastFed, currentChild.pet.lastPlay);
               return (
                 <div className="flex items-center gap-4">
                   <motion.div
@@ -314,7 +314,7 @@ export default function HomePage() {
                       <span>{PET_MOODS[mood]?.name}</span>
                       <span className="mx-2">•</span>
                       <Star className="w-4 h-4" />
-                      <span>{currentMember.pet.xp || 0} XP</span>
+                      <span>{currentChild.pet.xp || 0} XP</span>
                     </p>
                   </div>
                   <div className="text-white/80">
@@ -391,9 +391,9 @@ export default function HomePage() {
             onClick={() => { playSound('click'); navigate('/pet'); }}
             className="bg-gradient-to-br from-teal-500 to-cyan-500 text-white rounded-2xl p-4 flex flex-col items-center shadow-lg"
           >
-            <span className="text-4xl mb-2">{currentMember?.pet ? '🐾' : '🐣'}</span>
+            <span className="text-4xl mb-2">{currentChild?.pet ? '🐾' : '🐣'}</span>
             <p className="font-bold">Pet của tôi</p>
-            <p className="text-white/80 text-xs">{currentMember?.pet ? 'Chăm sóc pet' : 'Nhận pet mới'}</p>
+            <p className="text-white/80 text-xs">{currentChild?.pet ? 'Chăm sóc pet' : 'Nhận pet mới'}</p>
           </motion.button>
         </div>
       </motion.div>
@@ -403,7 +403,7 @@ export default function HomePage() {
         <h2 className="text-lg font-bold text-gray-800 mb-3">📚 Các Môn Học</h2>
         <div className="space-y-3">
           {subjects.map((subject, i) => {
-            const progress = currentMember?.progress?.[subject.id];
+            const progress = currentChild?.progress?.[subject.id];
             const completed = progress?.completed?.length || 0;
             const percent = Math.round((completed / subject.lessons.length) * 100);
             

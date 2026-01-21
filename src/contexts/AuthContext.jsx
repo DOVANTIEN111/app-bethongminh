@@ -35,7 +35,6 @@ export function AuthProvider({ children }) {
 
   const initAuth = async () => {
     try {
-      // Kiểm tra session
       const { data: { session } } = await supabase.auth.getSession();
       
       if (session?.user) {
@@ -48,7 +47,6 @@ export function AuthProvider({ children }) {
       setLoading(false);
     }
 
-    // Lắng nghe thay đổi auth
     const { data: { subscription: authSub } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         setUser(session?.user ?? null);
@@ -79,7 +77,6 @@ export function AuthProvider({ children }) {
   // =====================================================
   const loadAccountData = async (userId) => {
     try {
-      // 1. Load account
       const { data: accountData } = await supabase
         .from('accounts')
         .select('*')
@@ -93,7 +90,6 @@ export function AuthProvider({ children }) {
 
       setAccount(accountData);
 
-      // 2. Load subscription
       const { data: subData } = await supabase
         .from('subscriptions')
         .select('*')
@@ -102,13 +98,8 @@ export function AuthProvider({ children }) {
 
       setSubscription(subData || { plan: 'free', max_devices: 1, max_children: 1 });
 
-      // 3. Check & register device
       await checkAndRegisterDevice(accountData.id);
-
-      // 4. Load devices
       await loadDevices(accountData.id);
-
-      // 5. Load children
       await loadChildren(accountData.id);
 
     } catch (err) {
@@ -124,7 +115,6 @@ export function AuthProvider({ children }) {
       const deviceInfo = getDeviceInfo();
       const deviceId = getOrCreateDeviceId();
 
-      // Kiểm tra giới hạn thiết bị
       const { data: checkResult } = await supabase.rpc('check_device_limit', {
         p_account_id: accountId,
         p_device_fingerprint: deviceId,
@@ -136,7 +126,6 @@ export function AuthProvider({ children }) {
         return false;
       }
 
-      // Đăng ký thiết bị nếu là mới
       if (checkResult?.is_new) {
         await supabase.rpc('register_device', {
           p_account_id: accountId,
@@ -155,7 +144,6 @@ export function AuthProvider({ children }) {
 
     } catch (err) {
       console.error('Device check error:', err);
-      // Cho phép nếu có lỗi (để app vẫn hoạt động)
       setDeviceAllowed(true);
       return true;
     }
@@ -223,7 +211,6 @@ export function AuthProvider({ children }) {
 
       setChildrenList(data || []);
 
-      // Restore last selected child
       const lastChildId = localStorage.getItem('gdtm_current_child');
       if (lastChildId && data) {
         const child = data.find(c => c.id === lastChildId);
@@ -266,7 +253,6 @@ export function AuthProvider({ children }) {
 
       await loadChildren(account.id);
 
-      // Update currentChild if it's the same
       if (currentChild?.id === childId) {
         setCurrentChild(prev => ({ ...prev, ...updates }));
       }
@@ -296,8 +282,6 @@ export function AuthProvider({ children }) {
   const selectChild = useCallback((child) => {
     setCurrentChild(child);
     localStorage.setItem('gdtm_current_child', child.id);
-
-    // Update streak
     supabase.rpc('update_child_streak', { p_child_id: child.id });
   }, []);
 
@@ -393,7 +377,6 @@ export function AuthProvider({ children }) {
       });
 
       if (data?.success) {
-        // Reload subscription
         const { data: newSub } = await supabase
           .from('subscriptions')
           .select('*')
@@ -446,7 +429,6 @@ export function AuthProvider({ children }) {
     loadDevices: () => loadDevices(account?.id),
 
     // Subscription
-    subscription,
     upgradePlan,
     planInfo: PLANS[subscription?.plan || 'free'],
 

@@ -1,20 +1,20 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useMember } from '../contexts/MemberContext';
+import { useAuth } from '../contexts/AuthContext';
 import { useAudio } from '../contexts/AudioContext';
 import { getAllTopics } from '../data/englishVocab';
 import { ArrowLeft, BookOpen, Gamepad2, ChevronRight, Mic, Trophy } from 'lucide-react';
 
 export default function EnglishHubPage() {
   const navigate = useNavigate();
-  const { currentMember } = useMember();
+  const { currentChild } = useAuth();
   const { playSound } = useAudio();
   
   const topics = getAllTopics();
   
   // Calculate progress
-  const englishProgress = currentMember?.englishProgress || {};
+  const englishProgress = currentChild?.englishProgress || {};
   const totalWordsLearned = Object.values(englishProgress).reduce((sum, t) => sum + (t.learned?.length || 0), 0);
   const totalWords = topics.reduce((sum, t) => sum + t.words.length, 0);
   const progressPercent = Math.round((totalWordsLearned / totalWords) * 100);

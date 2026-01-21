@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useMember } from '../contexts/MemberContext';
+import { useAuth } from '../contexts/AuthContext';
 import { useAudio } from '../contexts/AudioContext';
 import { getSubject } from '../data/subjects';
 import { ArrowLeft, CheckCircle, XCircle, Star, Home } from 'lucide-react';
@@ -171,7 +171,7 @@ const LESSON_QUESTIONS = {
 export default function LessonPage() {
   const { subjectId, lessonId } = useParams();
   const navigate = useNavigate();
-  const { completeLesson } = useMember();
+  const { completeLesson } = useAuth();
   const { playSound, speak } = useAudio();
   
   const subject = getSubject(subjectId);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useMember } from '../contexts/MemberContext';
+import { useAuth } from '../contexts/AuthContext';
 import { useAudio } from '../contexts/AudioContext';
 import { getTopic, getRandomWords } from '../data/englishVocab';
 import { ArrowLeft, Volume2, Check, ChevronLeft, ChevronRight, Play, Mic, Star, Zap, Trophy, RotateCcw, Eye, EyeOff, Sparkles } from 'lucide-react';
@@ -1076,7 +1076,7 @@ const CompletionScreen = ({ score, topic, onRestart, onBack }) => {
 export default function EnglishTopicPage() {
   const { topicId } = useParams();
   const navigate = useNavigate();
-  const { currentMember, updateMember } = useMember();
+  const { currentChild, updateChild } = useAuth();
   const { playSound } = useAudio();
   
   const topic = getTopic(topicId);
@@ -1092,10 +1092,10 @@ export default function EnglishTopicPage() {
     );
   }
   
-  const progress = currentMember?.englishProgress?.[topicId] || { learned: [] };
+  const progress = currentChild?.englishProgress?.[topicId] || { learned: [] };
   
   const handleMarkLearned = (word) => {
-    const member = { ...currentMember };
+    const member = { ...currentChild };
     if (!member.englishProgress) member.englishProgress = {};
     if (!member.englishProgress[topicId]) {
       member.englishProgress[topicId] = { learned: [] };
@@ -1110,7 +1110,7 @@ export default function EnglishTopicPage() {
         member.pet.lastFed = Date.now();
       }
       
-      updateMember(member);
+      updateChild(member);
     }
   };
   
@@ -1119,9 +1119,9 @@ export default function EnglishTopicPage() {
     setCompleted(true);
     
     // Bonus XP
-    const member = { ...currentMember };
+    const member = { ...currentChild };
     member.xp = (member.xp || 0) + Math.round(score / 5);
-    updateMember(member);
+    updateChild(member);
   };
   
   const handleRestart = () => {
