@@ -28,6 +28,22 @@ export default function SubjectPage() {
     playSound('click');
     navigate(`/lesson/${subjectId}/${lesson.id}`);
   };
+
+  // Logic mở khóa bài học:
+  // - 3 bài đầu (index 0, 1, 2) luôn mở
+  // - Bài 4 (index 3) mở khi bài 1 (index 0) hoàn thành
+  // - Bài 5 (index 4) mở khi bài 2 (index 1) hoàn thành
+  // - Bài N mở khi bài (N-3) hoàn thành
+  const isLessonLocked = (index) => {
+    // 3 bài đầu luôn mở
+    if (index < 3) return false;
+    
+    // Bài thứ N (index >= 3) cần bài (index - 3) đã hoàn thành
+    const requiredLessonIndex = index - 3;
+    const requiredLessonId = subject.lessons[requiredLessonIndex]?.id;
+    
+    return !progress.completed.includes(requiredLessonId);
+  };
   
   return (
     <div className="min-h-screen">
@@ -64,7 +80,7 @@ export default function SubjectPage() {
         {subject.lessons.map((lesson, i) => {
           const isCompleted = progress.completed.includes(lesson.id);
           const score = progress.scores[lesson.id];
-          const isLocked = i > 0 && !progress.completed.includes(subject.lessons[i - 1].id);
+          const isLocked = isLessonLocked(i);
           
           return (
             <motion.div
