@@ -14,8 +14,8 @@ export default function ProfilePage() {
     .filter(Boolean);
   
   const handleLogout = () => {
-    logout();
-    navigate('/member-select');
+    // Không cần logout, chỉ đổi bé;
+    navigate('/select-role');
   };
   
   return (
