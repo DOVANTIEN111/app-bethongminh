@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#4F46E5">
+  <title>🎓 Gia Đình Thông Minh</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <style>
+    * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+    .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+    .glass-dark { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes bounceIn { 0% { transform: scale(0); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+    .animate-fadeIn { animation: fadeIn 0.3s ease-out; }
+    .animate-bounceIn { animation: bounceIn 0.5s ease-out; }
+    .animate-float { animation: float 3s ease-in-out infinite; }
+    .animate-slideIn { animation: slideIn 0.3s ease-out; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #a78bfa; border-radius: 3px; }
+    .loader { border: 4px solid #f3f3f3; border-top: 4px solid #4F46E5; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    input:focus, select:focus, textarea:focus { outline: none; }
+  </style>
+</head>
+<body>
+  <div id="root">
+    <div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;">
+      <div class="loader"></div>
+      <p style="margin-top:16px;color:#fff;">Đang tải ứng dụng...</p>
+    </div>
+  </div>
+  
+  <script type="text/babel">
+// ============================================================================
+// 🎓 GIA ĐÌNH THÔNG MINH - APP HỢP NHẤT
+// ============================================================================
+// ✅ Chọn vai trò: Phụ huynh hoặc Học sinh
+// ✅ Đăng nhập/Đăng ký theo vai trò
+// ✅ Liên kết phụ huynh - học sinh bằng mã
+// ============================================================================
+
+const { useState, useEffect, useCallback, useMemo, createContext, useContext } = React;
+
+// ============================================================================
+// SUPABASE CONFIG
+// ============================================================================
+const SUPABASE_URL = 'https://kombmceddsnwisymrlwn.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvbWJtY2VkZHNud2lzeW1ybHduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg5MjE4MDIsImV4cCI6MjA4NDQ5NzgwMn0.Bzyf00VQG35L_N0h71TrmsWvI5gj1rn_gtf--E8sx50';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ============================================================================
+// UTILITIES
+// ============================================================================
+const today = () => new Date().toISOString().split('T')[0];
+const formatNumber = n => n?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") || '0';
+const formatTime = mins => {
+  if (!mins) return '0 phút';
+  if (mins < 60) return `${mins} phút`;
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return m > 0 ? `${h}h ${m}p` : `${h} giờ`;
+};
+const getWeekDates = () => {
+  const dates = [];
+  const now = new Date();
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(d.getDate() - i);
+    dates.push(d.toISOString().split('T')[0]);
+  }
+  return dates;
+};
+const getDayName = (dateStr) => {
+  const days = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+  return days[new Date(dateStr).getDay()];
+};
+const fmtTime = (s) => {
+  if (!s) return '';
+  const d = new Date(s);
+  return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
+};
+
+// Level calculation
+const calculateLevel = (xp) => {
+  const levels = [0, 100, 250, 500, 800, 1200, 1700, 2300, 3000, 4000, 5000];
+  let level = 1;
+  for (let i = 1; i < levels.length; i++) {
+    if (xp >= levels[i]) level = i + 1;
+    else break;
+  }
+  const currentLevelXp = levels[level - 1] || 0;
+  const nextLevelXp = levels[level] || levels[levels.length - 1] + 5000;
+  const progress = ((xp - currentLevelXp) / (nextLevelXp - currentLevelXp)) * 100;
+  return { level, xp, currentLevelXp, nextLevelXp, progress: Math.min(100, Math.max(0, progress)) };
+};
+
+const LEVEL_TITLES = { 1: 'Người Mới', 2: 'Học Sinh', 3: 'Cần Cù', 4: 'Chăm Chỉ', 5: 'Giỏi Giang', 6: 'Xuất Sắc', 7: 'Siêu Sao', 8: 'Thiên Tài', 9: 'Thần Đồng', 10: 'Bậc Thầy' };
+
+const getActivityIcon = (type) => ({ vocabulary: '📖', lesson: '📚', quiz: '✅', story: '📕', game: '🎮' }[type] || '📝');
+const getActivityColor = (type) => ({ vocabulary: 'bg-blue-100 text-blue-700', lesson: 'bg-green-100 text-green-700', quiz: 'bg-purple-100 text-purple-700', story: 'bg-orange-100 text-orange-700', game: 'bg-pink-100 text-pink-700' }[type] || 'bg-gray-100 text-gray-700');
+
+// ============================================================================
+// AUTH CONTEXT
+// ============================================================================
+const AuthContext = createContext(null);
+const useAuth = () => useContext(AuthContext);
+
+const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      if (session?.user) fetchProfile(session.user.id);
+      else setLoading(false);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      if (session?.user) fetchProfile(session.user.id);
+      else { setProfile(null); setLoading(false); }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const fetchProfile = async (userId) => {
+    try {
+      const { data } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+      if (data) setProfile(data);
+    } catch (err) {
+      console.log('Profile not found');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const signIn = async (email, password) => {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    return { data, error };
+  };
+
+  const signUp = async (email, password, name, role, extraData = {}) => {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { name, role } }
+    });
+
+    if (data?.user && !error) {
+      const profileData = {
+        user_id: data.user.id,
+        role: role,
+        name: name,
+        email: email,
+        avatar: extraData.avatar || (role === 'parent' ? '👨‍👩‍👧' : '👦'),
+        age: extraData.age || null,
+        level: 1,
+        xp: 0,
+        streak: 0,
+        settings: role === 'parent' ? {
+          dailyWords: 10,
+          dailyLessons: 3,
+          dailyMinutes: 30,
+          timeLimitEnabled: false,
+          allowedTimeStart: '07:00',
+          allowedTimeEnd: '21:00',
+          notifyOnComplete: true,
+          notifyOnAchievement: true
+        } : null
+      };
+
+      const { data: newProfile } = await supabase.from('profiles').insert(profileData).select().single();
+      if (newProfile) setProfile(newProfile);
+    }
+
+    return { data, error };
+  };
+
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+    setProfile(null);
+  };
+
+  const updateProfile = async (updates) => {
+    if (!profile?.id) return { error: 'No profile' };
+    const { data, error } = await supabase
+      .from('profiles')
+      .update(updates)
+      .eq('id', profile.id)
+      .select()
+      .single();
+    if (data) setProfile(data);
+    return { data, error };
+  };
+
+  const addXP = async (amount, type, title) => {
+    if (!profile?.id || profile.role !== 'child') return;
+    const newXP = (profile.xp || 0) + amount;
+    const newLevel = calculateLevel(newXP).level;
+    await updateProfile({ xp: newXP, level: newLevel });
+    await supabase.from('learning_logs').insert({
+      child_id: profile.id,
+      type: type,
+      title: title,
+      xp_earned: amount,
+      date: today()
+    });
+  };
+
+  return (
+    <AuthContext.Provider value={{ user, profile, loading, signIn, signUp, signOut, updateProfile, addXP, fetchProfile }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+// ============================================================================
+// ROLE SELECTION SCREEN
+// ============================================================================
+const RoleSelectionScreen = ({ onSelectRole }) => {
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="text-center animate-fadeIn">
+        {/* Logo */}
+        <div className="w-28 h-28 mx-auto rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-6xl shadow-2xl mb-6 animate-float">
+          🎓
+        </div>
+        <h1 className="text-3xl font-bold text-white mb-2">Gia Đình Thông Minh</h1>
+        <p className="text-white/70 mb-8">Ứng dụng học tập cho cả gia đình</p>
+
+        {/* Role Selection */}
+        <div className="space-y-4 max-w-sm mx-auto">
+          <button
+            onClick={() => onSelectRole('child')}
+            className="w-full glass rounded-2xl p-6 flex items-center gap-4 hover:scale-105 transition-transform"
+          >
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-3xl shadow-lg">
+              👦
+            </div>
+            <div className="text-left flex-1">
+              <p className="text-xl font-bold text-gray-800">Học sinh</p>
+              <p className="text-sm text-gray-500">Học tập, chơi game, đọc truyện</p>
+            </div>
+            <span className="text-2xl">→</span>
+          </button>
+
+          <button
+            onClick={() => onSelectRole('parent')}
+            className="w-full glass rounded-2xl p-6 flex items-center gap-4 hover:scale-105 transition-transform"
+          >
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-3xl shadow-lg">
+              👨‍👩‍👧
+            </div>
+            <div className="text-left flex-1">
+              <p className="text-xl font-bold text-gray-800">Phụ huynh</p>
+              <p className="text-sm text-gray-500">Theo dõi, quản lý việc học của con</p>
+            </div>
+            <span className="text-2xl">→</span>
+          </button>
+        </div>
+
+        <p className="text-white/50 text-sm mt-8">Phiên bản 2.0</p>
+      </div>
+    </div>
+  );
+};
+
+// ============================================================================
+// AUTH SCREEN (Login/Register)
+// ============================================================================
+const AuthScreen = ({ role, onBack }) => {
+  const { signIn, signUp } = useAuth();
+  const [isLogin, setIsLogin] = useState(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [age, setAge] = useState('');
+  const [avatar, setAvatar] = useState(role === 'parent' ? '👨‍👩‍👧' : '👦');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const avatars = role === 'child' 
+    ? ['👦', '👧', '🧒', '👶', '🐱', '🐶', '🦁', '🐰', '🐼', '🦊']
+    : ['👨‍👩‍👧', '👨', '👩', '👴', '👵', '🧑‍🦱', '🧑‍🦰'];
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      if (isLogin) {
+        const { error } = await signIn(email, password);
+        if (error) setError(error.message.includes('Invalid') ? 'Email hoặc mật khẩu không đúng' : error.message);
+      } else {
+        if (!name.trim()) { setError('Vui lòng nhập tên'); setLoading(false); return; }
+        if (password.length < 6) { setError('Mật khẩu phải có ít nhất 6 ký tự'); setLoading(false); return; }
+        const { error } = await signUp(email, password, name, role, { avatar, age: parseInt(age) || null });
+        if (error) setError(error.message.includes('already') ? 'Email đã được đăng ký' : error.message);
+      }
+    } catch (err) {
+      setError('Có lỗi xảy ra. Vui lòng thử lại.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const roleInfo = role === 'parent' 
+    ? { icon: '👨‍👩‍👧', title: 'Phụ huynh', color: 'from-purple-500 to-pink-500' }
+    : { icon: '👦', title: 'Học sinh', color: 'from-blue-500 to-cyan-500' };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="glass rounded-3xl p-8 w-full max-w-md animate-fadeIn">
+        {/* Back button */}
+        <button onClick={onBack} className="mb-4 text-gray-500 hover:text-gray-700 flex items-center gap-2">
+          ← Quay lại
+        </button>
+
+        {/* Header */}
+        <div className="text-center mb-6">
+          <div className={`w-20 h-20 mx-auto rounded-full bg-gradient-to-br ${roleInfo.color} flex items-center justify-center text-4xl shadow-lg mb-4`}>
+            {roleInfo.icon}
+          </div>
+          <h1 className="text-2xl font-bold text-gray-800">{roleInfo.title}</h1>
+          <p className="text-gray-500 mt-1">
+            {role === 'parent' ? 'Theo dõi việc học của con' : 'Học tập vui vẻ mỗi ngày'}
+          </p>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex mb-6 bg-gray-100 rounded-xl p-1">
+          <button
+            onClick={() => { setIsLogin(true); setError(''); }}
+            className={`flex-1 py-2 rounded-lg font-medium transition ${isLogin ? 'bg-white shadow text-indigo-700' : 'text-gray-500'}`}
+          >
+            Đăng nhập
+          </button>
+          <button
+            onClick={() => { setIsLogin(false); setError(''); }}
+            className={`flex-1 py-2 rounded-lg font-medium transition ${!isLogin ? 'bg-white shadow text-indigo-700' : 'text-gray-500'}`}
+          >
+            Đăng ký
+          </button>
+        </div>
+
+        {/* Error */}
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 border border-red-300 text-red-700 rounded-xl text-sm">
+            ⚠️ {error}
+          </div>
+        )}
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {!isLogin && (
+            <>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {role === 'parent' ? 'Họ tên' : 'Tên của bé'}
+                </label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder={role === 'parent' ? 'Nguyễn Văn A' : 'VD: Minh Anh'}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              {role === 'child' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Tuổi</label>
+                  <input
+                    type="number"
+                    value={age}
+                    onChange={(e) => setAge(e.target.value)}
+                    placeholder="VD: 7"
+                    min="3"
+                    max="15"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+              )}
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Chọn avatar</label>
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {avatars.map(av => (
+                    <button
+                      key={av}
+                      type="button"
+                      onClick={() => setAvatar(av)}
+                      className={`w-12 h-12 rounded-full text-2xl flex items-center justify-center transition ${
+                        avatar === av ? 'bg-indigo-500 ring-4 ring-indigo-300 scale-110' : 'bg-gray-100 hover:bg-gray-200'
+                      }`}
+                    >
+                      {av}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="email@example.com"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Mật khẩu</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500"
+              required
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full py-3 bg-gradient-to-r ${roleInfo.color} text-white rounded-xl font-semibold hover:opacity-90 transition disabled:opacity-50 flex items-center justify-center gap-2`}
+          >
+            {loading ? (
+              <><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>Đang xử lý...</>
+            ) : (
+              isLogin ? '🚀 Đăng nhập' : '🎉 Đăng ký'
+            )}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+// ============================================================================
+// STUDENT APP
+// ============================================================================
+const StudentApp = () => {
+  const { profile, signOut, addXP } = useAuth();
+  const [screen, setScreen] = useState('home');
+  const [screenData, setScreenData] = useState(null);
+  const [messages, setMessages] = useState([]);
+
+  const levelInfo = calculateLevel(profile?.xp || 0);
+
+  useEffect(() => {
+    if (profile?.id) loadMessages();
+  }, [profile?.id]);
+
+  const loadMessages = async () => {
+    const { data } = await supabase
+      .from('encouragements')
+      .select('*')
+      .eq('child_id', profile.id)
+      .eq('is_read', false)
+      .order('created_at', { ascending: false })
+      .limit(5);
+    if (data) setMessages(data);
+  };
+
+  const markAsRead = async (id) => {
+    await supabase.from('encouragements').update({ is_read: true }).eq('id', id);
+    setMessages(messages.filter(m => m.id !== id));
+  };
+
+  const navigate = (newScreen, data = null) => {
+    setScreen(newScreen);
+    setScreenData(data);
+  };
+
+  // Settings Screen
+  if (screen === 'settings') {
+    const [copied, setCopied] = useState(false);
+    const copyCode = () => {
+      if (profile?.link_code) {
+        navigator.clipboard.writeText(profile.link_code);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }
+    };
+
+    return (
+      <div className="min-h-screen pb-8">
+        <div className="glass-dark text-white p-4 flex items-center gap-4">
+          <button onClick={() => navigate('home')} className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">←</button>
+          <h1 className="text-xl font-bold">⚙️ Cài đặt</h1>
+        </div>
+
+        <div className="p-4 space-y-4">
+          {/* Profile */}
+          <div className="glass rounded-2xl p-6 text-center">
+            <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-5xl shadow-lg mb-4">
+              {profile?.avatar || '👦'}
+            </div>
+            <h2 className="text-xl font-bold text-gray-800">{profile?.name}</h2>
+            <p className="text-gray-500">{profile?.email}</p>
+            <div className="flex justify-center gap-6 mt-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-indigo-600">{profile?.level || 1}</div>
+                <div className="text-xs text-gray-500">Level</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-orange-500">{formatNumber(profile?.xp || 0)}</div>
+                <div className="text-xs text-gray-500">XP</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-red-500">{profile?.streak || 0}</div>
+                <div className="text-xs text-gray-500">Streak</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Link Code */}
+          <div className="glass rounded-2xl p-4">
+            <h3 className="font-bold text-gray-800 mb-2">🔗 Mã liên kết phụ huynh</h3>
+            <p className="text-sm text-gray-500 mb-3">Đưa mã này cho Ba/Mẹ để theo dõi việc học của con.</p>
+            <div className="flex items-center gap-2">
+              <div className="flex-1 bg-indigo-50 border-2 border-indigo-200 rounded-xl p-4 text-center">
+                <span className="text-2xl font-mono font-bold text-indigo-600 tracking-widest">
+                  {profile?.link_code || 'Đang tạo...'}
+                </span>
+              </div>
+              <button
+                onClick={copyCode}
+                className={`px-4 py-4 rounded-xl font-medium transition ${copied ? 'bg-green-500 text-white' : 'bg-indigo-500 text-white hover:bg-indigo-600'}`}
+              >
+                {copied ? '✓' : '📋'}
+              </button>
+            </div>
+            {copied && <p className="text-green-600 text-sm text-center mt-2">✅ Đã sao chép!</p>}
+          </div>
+
+          {/* Logout */}
+          <button
+            onClick={() => { if (confirm('Đăng xuất?')) signOut(); }}
+            className="w-full p-4 glass rounded-2xl text-red-500 font-medium flex items-center justify-center gap-2 hover:bg-red-50"
+          >
+            🚪 Đăng xuất
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Subject Screen
+  if (screen === 'subject') {
+    const subject = screenData;
+    const [completed, setCompleted] = useState([]);
+    const lessons = [
+      { id: 1, name: 'Bài 1: Giới thiệu', xp: 20, duration: '5 phút' },
+      { id: 2, name: 'Bài 2: Từ vựng cơ bản', xp: 30, duration: '10 phút' },
+      { id: 3, name: 'Bài 3: Luyện tập', xp: 40, duration: '15 phút' },
+      { id: 4, name: 'Bài 4: Kiểm tra', xp: 50, duration: '10 phút' },
+    ];
+
+    const completeLesson = async (lesson) => {
+      if (completed.includes(lesson.id)) return;
+      await addXP(lesson.xp, 'lesson', `${subject.name} - ${lesson.name}`);
+      setCompleted([...completed, lesson.id]);
+      alert(`🎉 Hoàn thành! +${lesson.xp} XP`);
+    };
+
+    return (
+      <div className="min-h-screen pb-8">
+        <div className={`bg-gradient-to-br ${subject.color} text-white p-4`}>
+          <div className="flex items-center gap-4 mb-4">
+            <button onClick={() => navigate('home')} className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">←</button>
+            <div>
+              <h1 className="text-2xl font-bold">{subject.icon} {subject.name}</h1>
+              <p className="opacity-80">{subject.desc}</p>
+            </div>
+          </div>
+        </div>
+        <div className="p-4 space-y-3">
+          {lessons.map((lesson, idx) => (
+            <button
+              key={lesson.id}
+              onClick={() => completeLesson(lesson)}
+              disabled={completed.includes(lesson.id)}
+              className={`w-full glass rounded-2xl p-4 flex items-center gap-4 transition ${completed.includes(lesson.id) ? 'opacity-60' : 'hover:scale-[1.02]'}`}
+            >
+              <div className={`w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold ${completed.includes(lesson.id) ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-600'}`}>
+                {completed.includes(lesson.id) ? '✓' : idx + 1}
+              </div>
+              <div className="flex-1 text-left">
+                <p className="font-bold text-gray-800">{lesson.name}</p>
+                <p className="text-sm text-gray-500">⏱️ {lesson.duration} • ⭐ {lesson.xp} XP</p>
+              </div>
+              {!completed.includes(lesson.id) && <span className="text-indigo-500">Học →</span>}
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Games Screen
+  if (screen === 'games') {
+    const games = [
+      { id: 'memory', name: 'Lật hình nhớ', icon: '🧠', color: 'from-purple-500 to-pink-500', xp: 30 },
+      { id: 'math', name: 'Toán nhanh', icon: '🧮', color: 'from-green-500 to-teal-500', xp: 25 },
+      { id: 'spelling', name: 'Đánh vần', icon: '🔤', color: 'from-blue-500 to-cyan-500', xp: 35 },
+      { id: 'puzzle', name: 'Ghép hình', icon: '🧩', color: 'from-orange-500 to-red-500', xp: 40 },
+    ];
+
+    const playGame = async (game) => {
+      await addXP(game.xp, 'game', `Chơi game: ${game.name}`);
+      alert(`🎮 Hoàn thành ${game.name}! +${game.xp} XP`);
+    };
+
+    return (
+      <div className="min-h-screen pb-8">
+        <div className="glass-dark text-white p-4 flex items-center gap-4">
+          <button onClick={() => navigate('home')} className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">←</button>
+          <h1 className="text-xl font-bold">🎮 Trò chơi</h1>
+        </div>
+        <div className="p-4 grid grid-cols-2 gap-3">
+          {games.map(game => (
+            <button
+              key={game.id}
+              onClick={() => playGame(game)}
+              className={`bg-gradient-to-br ${game.color} rounded-2xl p-6 text-white text-center hover:scale-105 transition-transform`}
+            >
+              <div className="text-4xl mb-2">{game.icon}</div>
+              <p className="font-bold">{game.name}</p>
+              <p className="text-sm opacity-80">+{game.xp} XP</p>
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Stories Screen
+  if (screen === 'stories') {
+    const stories = [
+      { id: 1, name: 'Thạch Sanh', icon: '⚔️', chapters: 6, xp: 50 },
+      { id: 2, name: 'Sọ Dừa', icon: '🥥', chapters: 5, xp: 40 },
+      { id: 3, name: 'Tấm Cám', icon: '👠', chapters: 6, xp: 50 },
+      { id: 4, name: 'Tích Chu', icon: '🐦', chapters: 5, xp: 40 },
+    ];
+
+    const readStory = async (story) => {
+      await addXP(story.xp, 'story', `Đọc truyện: ${story.name}`);
+      alert(`📖 Đã đọc ${story.name}! +${story.xp} XP`);
+    };
+
+    return (
+      <div className="min-h-screen pb-8">
+        <div className="glass-dark text-white p-4 flex items-center gap-4">
+          <button onClick={() => navigate('home')} className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">←</button>
+          <h1 className="text-xl font-bold">📚 Truyện cổ tích</h1>
+        </div>
+        <div className="p-4 space-y-3">
+          {stories.map(story => (
+            <button
+              key={story.id}
+              onClick={() => readStory(story)}
+              className="w-full glass rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition"
+            >
+              <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-3xl">
+                {story.icon}
+              </div>
+              <div className="flex-1 text-left">
+                <p className="font-bold text-gray-800">{story.name}</p>
+                <p className="text-sm text-gray-500">{story.chapters} chương • +{story.xp} XP</p>
+              </div>
+              <span className="text-orange-500">Đọc →</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Home Screen
+  const subjects = [
+    { id: 'english', name: 'Tiếng Anh', icon: '🌍', color: 'from-blue-500 to-cyan-500', desc: 'Học từ vựng, ngữ pháp' },
+    { id: 'math', name: 'Toán học', icon: '🧮', color: 'from-green-500 to-emerald-500', desc: 'Tính toán, logic' },
+    { id: 'vietnamese', name: 'Tiếng Việt', icon: '📝', color: 'from-red-500 to-pink-500', desc: 'Đọc, viết, chính tả' },
+    { id: 'science', name: 'Khoa học', icon: '🔬', color: 'from-purple-500 to-indigo-500', desc: 'Khám phá thế giới' },
+  ];
+
+  return (
+    <div className="min-h-screen pb-8">
+      {/* Header */}
+      <div className="glass-dark text-white p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-3xl shadow-lg">
+              {profile?.avatar || '👦'}
+            </div>
+            <div>
+              <p className="font-bold text-lg">{profile?.name || 'Bé'}</p>
+              <p className="text-sm opacity-80">Level {levelInfo.level} • {LEVEL_TITLES[levelInfo.level] || 'Học Sinh'}</p>
+            </div>
+          </div>
+          <button onClick={() => navigate('settings')} className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">⚙️</button>
+        </div>
+        <div className="mt-4">
+          <div className="flex justify-between text-sm mb-1">
+            <span>⭐ {formatNumber(levelInfo.xp)} XP</span>
+            <span>{formatNumber(levelInfo.nextLevelXp)} XP</span>
+          </div>
+          <div className="h-3 bg-white/20 rounded-full overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full transition-all" style={{ width: `${levelInfo.progress}%` }} />
+          </div>
+        </div>
+      </div>
+
+      {/* Encouragement Banner */}
+      {messages.length > 0 && (
+        <div className="px-4 mt-4">
+          <div className="glass rounded-2xl p-4 border-2 border-pink-200">
+            <div className="flex items-start gap-3">
+              <div className="text-3xl animate-bounceIn">💌</div>
+              <div className="flex-1">
+                <p className="font-bold text-pink-600 mb-1">Tin nhắn từ Ba/Mẹ!</p>
+                <p className="text-gray-700">{messages[0].message}</p>
+                <button onClick={() => markAsRead(messages[0].id)} className="mt-2 text-sm text-pink-500">Đã đọc ✓</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Stats */}
+      <div className="flex gap-3 p-4 overflow-x-auto">
+        {[
+          { icon: '🔥', value: profile?.streak || 0, label: 'Ngày streak' },
+          { icon: '📚', value: profile?.lessons_completed || 0, label: 'Bài học' },
+          { icon: '🏆', value: profile?.achievements || 0, label: 'Huy hiệu' },
+        ].map((stat, idx) => (
+          <div key={idx} className="flex-shrink-0 glass rounded-2xl p-4 min-w-[100px] text-center">
+            <div className="text-2xl mb-1">{stat.icon}</div>
+            <div className="text-xl font-bold text-gray-800">{stat.value}</div>
+            <div className="text-xs text-gray-500">{stat.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Subjects */}
+      <div className="px-4 mb-6">
+        <h2 className="text-white font-bold text-lg mb-3">📖 Môn học</h2>
+        <div className="grid grid-cols-2 gap-3">
+          {subjects.map(subject => (
+            <button
+              key={subject.id}
+              onClick={() => navigate('subject', subject)}
+              className="glass rounded-2xl p-4 text-left hover:scale-105 transition-transform"
+            >
+              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${subject.color} flex items-center justify-center text-2xl mb-2`}>
+                {subject.icon}
+              </div>
+              <p className="font-bold text-gray-800">{subject.name}</p>
+              <p className="text-xs text-gray-500">{subject.desc}</p>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="px-4">
+        <h2 className="text-white font-bold text-lg mb-3">⚡ Hoạt động</h2>
+        <div className="flex gap-3">
+          {[
+            { id: 'games', name: 'Trò chơi', icon: '🎮', color: 'from-orange-500 to-red-500' },
+            { id: 'stories', name: 'Truyện', icon: '📚', color: 'from-teal-500 to-green-500' },
+          ].map(action => (
+            <button
+              key={action.id}
+              onClick={() => navigate(action.id)}
+              className={`flex-1 bg-gradient-to-br ${action.color} rounded-2xl p-4 text-white text-center hover:scale-105 transition-transform`}
+            >
+              <div className="text-3xl mb-1">{action.icon}</div>
+              <p className="font-medium text-sm">{action.name}</p>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ============================================================================
+// PARENT APP
+// ============================================================================
+const ParentApp = () => {
+  const { user, profile, signOut, updateProfile } = useAuth();
+  const [children, setChildren] = useState([]);
+  const [selected, setSelected] = useState(null);
+  const [activities, setActivities] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Modals
+  const [showMsg, setShowMsg] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [showLink, setShowLink] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+
+  const settings = profile?.settings || { dailyWords: 10, dailyLessons: 3, dailyMinutes: 30 };
+
+  useEffect(() => {
+    if (user && profile) loadChildren();
+  }, [user, profile]);
+
+  const loadChildren = async () => {
+    setLoading(true);
+    try {
+      const { data } = await supabase.rpc('get_my_children', { p_parent_user_id: user.id });
+      if (data && data.length > 0) {
+        setChildren(data);
+        setSelected(data[0]);
+      } else {
+        // Direct query fallback
+        const { data: links } = await supabase.from('parent_child_links').select('child_id').eq('parent_id', profile.id).eq('status', 'active');
+        if (links && links.length > 0) {
+          const { data: childProfiles } = await supabase.from('profiles').select('*').in('id', links.map(l => l.child_id));
+          if (childProfiles && childProfiles.length > 0) {
+            setChildren(childProfiles);
+            setSelected(childProfiles[0]);
+          }
+        }
+      }
+    } catch (err) {
+      console.log('Error loading children:', err);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (selected) loadActivities(selected.id);
+  }, [selected]);
+
+  const loadActivities = async (childId) => {
+    try {
+      const { data } = await supabase.from('learning_logs').select('*').eq('child_id', childId).order('created_at', { ascending: false }).limit(100);
+      setActivities(data || []);
+    } catch (err) {
+      setActivities([]);
+    }
+  };
+
+  const stats = useMemo(() => {
+    const todayStr = today();
+    const todayActs = activities.filter(a => (a.date || a.created_at?.split('T')[0]) === todayStr);
+    return {
+      wordsToday: todayActs.reduce((s, a) => s + (a.words_learned || 0), 0),
+      lessonsToday: todayActs.filter(a => a.type === 'lesson').length,
+      timeToday: todayActs.reduce((s, a) => s + (a.duration || 0), 0),
+      streak: selected?.streak || 0,
+    };
+  }, [activities, selected]);
+
+  const chartData = useMemo(() => {
+    const weekDates = getWeekDates();
+    return weekDates.map(d => {
+      const dayActs = activities.filter(a => (a.date || a.created_at?.split('T')[0]) === d);
+      return { day: getDayName(d), value: dayActs.reduce((s, a) => s + (a.duration || 0), 0), isToday: d === today() };
+    });
+  }, [activities]);
+
+  const goals = useMemo(() => [
+    { name: 'Từ vựng', icon: '📖', current: stats.wordsToday, target: settings.dailyWords },
+    { name: 'Bài học', icon: '📚', current: stats.lessonsToday, target: settings.dailyLessons },
+    { name: 'Thời gian', icon: '⏱️', current: stats.timeToday, target: settings.dailyMinutes },
+  ], [stats, settings]);
+
+  const sendMessage = async (msg) => {
+    if (!selected) return;
+    try {
+      await supabase.from('encouragements').insert({ parent_id: profile.id, child_id: selected.id, message: msg });
+      alert(`✅ Đã gửi đến ${selected.name}!`);
+    } catch (e) {
+      alert('❌ Không thể gửi');
+    }
+  };
+
+  const saveSettings = async (newSettings) => {
+    await updateProfile({ settings: newSettings });
+    alert('✅ Đã lưu!');
+  };
+
+  const linkChild = async (code) => {
+    try {
+      const { data, error } = await supabase.rpc('link_parent_to_child', { p_parent_user_id: user.id, p_link_code: code });
+      if (error) return { error: error.message };
+      if (data?.success) {
+        alert(`✅ Đã liên kết với ${data.child_name}!`);
+        loadChildren();
+        return { success: true };
+      }
+      return { error: data?.error || 'Không thể liên kết' };
+    } catch (e) {
+      return { error: 'Có lỗi xảy ra' };
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="loader mx-auto mb-4"></div>
+          <p className="text-white">Đang tải...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // No children linked yet
+  if (children.length === 0) {
+    return (
+      <div className="min-h-screen">
+        <header className="glass-dark text-white p-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-xl">{profile?.avatar || '👨‍👩‍👧'}</div>
+            <div>
+              <p className="text-sm opacity-80">Xin chào,</p>
+              <p className="font-semibold">{profile?.name}</p>
+            </div>
+          </div>
+          <button onClick={() => { if (confirm('Đăng xuất?')) signOut(); }} className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">🚪</button>
+        </header>
+
+        <div className="flex items-center justify-center min-h-[80vh] p-4">
+          <div className="glass rounded-3xl p-8 max-w-md text-center animate-fadeIn">
+            <div className="text-6xl mb-4">👨‍👩‍👧</div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">Chào {profile?.name}!</h2>
+            <p className="text-gray-600 mb-6">Bạn chưa liên kết với tài khoản con nào.</p>
+            <button
+              onClick={() => setShowLink(true)}
+              className="w-full py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-semibold text-lg hover:opacity-90 transition flex items-center justify-center gap-2"
+            >
+              🔗 Liên kết tài khoản con
+            </button>
+            <div className="mt-6 p-4 bg-blue-50 rounded-xl text-left">
+              <p className="font-semibold text-blue-800 mb-2">📱 Hướng dẫn:</p>
+              <ol className="text-sm text-blue-700 space-y-1">
+                <li>1. Con đăng nhập app với vai trò "Học sinh"</li>
+                <li>2. Vào Cài đặt → Lấy mã liên kết</li>
+                <li>3. Nhập mã vào đây để kết nối</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        {/* Link Modal */}
+        <LinkChildModal isOpen={showLink} onClose={() => setShowLink(false)} onLink={linkChild} />
+      </div>
+    );
+  }
+
+  const todayActivities = activities.filter(a => (a.date || a.created_at?.split('T')[0]) === today());
+  const maxChartValue = Math.max(...chartData.map(d => d.value), 1);
+
+  return (
+    <div className="min-h-screen pb-8">
+      {/* Header */}
+      <header className="glass-dark text-white p-4 sticky top-0 z-50">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-xl">{profile?.avatar || '👨‍👩‍👧'}</div>
+            <div>
+              <p className="text-sm opacity-80">Xin chào,</p>
+              <p className="font-semibold">{profile?.name}</p>
+            </div>
+          </div>
+          <button onClick={() => { if (confirm('Đăng xuất?')) signOut(); }} className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">🚪</button>
+        </div>
+      </header>
+
+      {/* Child Selector */}
+      <div className="flex gap-3 overflow-x-auto p-4">
+        {children.map(child => (
+          <button
+            key={child.id}
+            onClick={() => setSelected(child)}
+            className={`flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-full transition ${
+              selected?.id === child.id ? 'bg-white text-purple-700 shadow-lg' : 'bg-white/20 text-white hover:bg-white/30'
+            }`}
+          >
+            <span className="text-2xl">{child.avatar || '👦'}</span>
+            <span className="font-medium">{child.name}</span>
+          </button>
+        ))}
+        <button onClick={() => setShowLink(true)} className="flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-white/70 hover:bg-white/20 border-2 border-dashed border-white/30">
+          ➕ Thêm con
+        </button>
+      </div>
+
+      {/* Selected Child Info */}
+      {selected && (
+        <div className="glass rounded-2xl p-4 mx-4 mb-4 flex items-center gap-4 animate-fadeIn">
+          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-4xl shadow-lg">
+            {selected.avatar || '👦'}
+          </div>
+          <div className="flex-1">
+            <h2 className="text-xl font-bold text-gray-800">{selected.name}</h2>
+            <p className="text-sm text-gray-500">{selected.age ? `${selected.age} tuổi` : ''}</p>
+            <div className="flex gap-2 mt-1">
+              <span className="px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">Level {selected.level || 1}</span>
+              <span className="px-2 py-0.5 bg-orange-100 text-orange-700 rounded-full text-xs font-medium">🔥 {selected.streak || 0} ngày</span>
+            </div>
+          </div>
+          <div className="text-right">
+            <div className="text-sm text-gray-500">XP</div>
+            <div className="text-purple-600 font-bold">{formatNumber(selected.xp || 0)}</div>
+          </div>
+        </div>
+      )}
+
+      {/* Quick Actions */}
+      <div className="flex gap-3 px-4 mb-4 overflow-x-auto">
+        <button onClick={() => setShowMsg(true)} className="flex-shrink-0 flex items-center gap-2 px-4 py-3 bg-pink-500 text-white rounded-xl shadow-lg hover:bg-pink-600 transition">
+          💌 <span className="font-medium">Gửi động viên</span>
+        </button>
+        <button onClick={() => setShowHistory(true)} className="flex-shrink-0 flex items-center gap-2 px-4 py-3 bg-blue-500 text-white rounded-xl shadow-lg hover:bg-blue-600 transition">
+          📋 <span className="font-medium">Lịch sử học</span>
+        </button>
+        <button onClick={() => setShowSettings(true)} className="flex-shrink-0 flex items-center gap-2 px-4 py-3 bg-gray-500 text-white rounded-xl shadow-lg hover:bg-gray-600 transition">
+          ⚙️ <span className="font-medium">Cài đặt</span>
+        </button>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 px-4 mb-4">
+        {[
+          { icon: '📖', value: stats.wordsToday, label: 'Từ hôm nay', color: 'text-purple-700' },
+          { icon: '📚', value: stats.lessonsToday, label: 'Bài hoàn thành', color: 'text-green-600' },
+          { icon: '⏱️', value: formatTime(stats.timeToday), label: 'Thời gian học', color: 'text-blue-600' },
+          { icon: '🔥', value: stats.streak, label: 'Ngày streak', color: 'text-orange-500' },
+        ].map((s, i) => (
+          <div key={i} className="glass rounded-2xl p-4 animate-fadeIn">
+            <div className="text-3xl mb-1">{s.icon}</div>
+            <div className={`text-2xl font-bold ${s.color}`}>{s.value}</div>
+            <div className="text-sm text-gray-500">{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Goals */}
+      <div className="glass rounded-2xl p-4 mx-4 mb-4">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-semibold text-gray-700">🎯 Mục tiêu hôm nay</h3>
+          <button onClick={() => setShowSettings(true)} className="text-sm text-purple-600">Chỉnh sửa</button>
+        </div>
+        <div className="space-y-3">
+          {goals.map((g, i) => (
+            <div key={i}>
+              <div className="flex items-center justify-between text-sm mb-1">
+                <span className="text-gray-600">{g.icon} {g.name}</span>
+                <span className={g.current >= g.target ? 'text-green-600 font-medium' : 'text-gray-500'}>
+                  {g.current}/{g.target} {g.current >= g.target && '✅'}
+                </span>
+              </div>
+              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div className={`h-full rounded-full ${g.current >= g.target ? 'bg-green-500' : 'bg-purple-500'}`} style={{ width: `${Math.min(100, (g.current / g.target) * 100)}%` }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Weekly Chart */}
+      <div className="glass rounded-2xl p-4 mx-4 mb-4">
+        <h3 className="font-semibold text-gray-700 mb-4">📈 Thời gian học trong tuần</h3>
+        <div className="flex items-end justify-between gap-2 h-32">
+          {chartData.map((d, i) => (
+            <div key={i} className="flex-1 flex flex-col items-center gap-1">
+              <div className="text-xs text-gray-500">{d.value}p</div>
+              <div className="w-full bg-gradient-to-t from-purple-500 to-purple-300 rounded-t-lg" style={{ height: `${Math.max((d.value / maxChartValue) * 100, 4)}%`, opacity: d.isToday ? 1 : 0.7 }} />
+              <div className={`text-xs ${d.isToday ? 'font-bold text-purple-700' : 'text-gray-500'}`}>{d.day}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Recent Activities */}
+      <div className="glass rounded-2xl p-4 mx-4 mb-4">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-semibold text-gray-700">🕐 Hoạt động gần đây</h3>
+          <button onClick={() => setShowHistory(true)} className="text-sm text-purple-600">Xem tất cả →</button>
+        </div>
+        {todayActivities.length === 0 ? (
+          <p className="text-center text-gray-400 py-4">Chưa có hoạt động hôm nay</p>
+        ) : (
+          <div className="space-y-3">
+            {todayActivities.slice(0, 5).map((a, i) => (
+              <div key={a.id || i} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg ${getActivityColor(a.type)}`}>
+                  {getActivityIcon(a.type)}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-800 truncate">{a.title}</p>
+                  <p className="text-xs text-gray-500">{fmtTime(a.created_at)}</p>
+                </div>
+                <span className="text-xs text-purple-600 font-medium">+{a.xp_earned || 0} XP</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Modals */}
+      <EncouragementModal isOpen={showMsg} onClose={() => setShowMsg(false)} onSend={sendMessage} childName={selected?.name} />
+      <SettingsModal isOpen={showSettings} onClose={() => setShowSettings(false)} settings={settings} onSave={saveSettings} />
+      <LinkChildModal isOpen={showLink} onClose={() => setShowLink(false)} onLink={linkChild} />
+      <HistoryModal isOpen={showHistory} onClose={() => setShowHistory(false)} activities={activities} childName={selected?.name} />
+    </div>
+  );
+};
+
+// ============================================================================
+// MODALS
+// ============================================================================
+const EncouragementModal = ({ isOpen, onClose, onSend, childName }) => {
+  const [msg, setMsg] = useState('');
+  const [sending, setSending] = useState(false);
+  const quick = ['Con giỏi lắm! 💪', 'Bố/Mẹ tự hào về con! 🌟', 'Cố gắng nhé! 🎯', 'Con làm tốt rồi! ❤️'];
+
+  if (!isOpen) return null;
+
+  const send = async () => {
+    if (!msg.trim()) return;
+    setSending(true);
+    await onSend(msg);
+    setSending(false);
+    setMsg('');
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="glass rounded-2xl p-6 w-full max-w-md animate-fadeIn">
+        <h3 className="text-lg font-bold text-gray-800 mb-4">💌 Gửi động viên cho {childName}</h3>
+        <div className="flex flex-wrap gap-2 mb-4">
+          {quick.map((m, i) => <button key={i} onClick={() => setMsg(m)} className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm hover:bg-purple-200">{m}</button>)}
+        </div>
+        <textarea value={msg} onChange={e => setMsg(e.target.value)} placeholder="Viết lời nhắn..." className="w-full p-3 border border-gray-200 rounded-xl resize-none h-24 focus:ring-2 focus:ring-purple-500" />
+        <div className="flex gap-3 mt-4">
+          <button onClick={onClose} className="flex-1 py-3 rounded-xl border border-gray-300 text-gray-600 font-medium hover:bg-gray-50">Hủy</button>
+          <button onClick={send} disabled={!msg.trim() || sending} className="flex-1 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium disabled:opacity-50">
+            {sending ? 'Đang gửi...' : 'Gửi 💌'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const SettingsModal = ({ isOpen, onClose, settings, onSave }) => {
+  const [s, setS] = useState(settings);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => setS(settings), [settings]);
+
+  if (!isOpen) return null;
+
+  const save = async () => { setSaving(true); await onSave(s); setSaving(false); onClose(); };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+      <div className="glass rounded-2xl p-6 w-full max-w-md animate-fadeIn my-8">
+        <h3 className="text-lg font-bold text-gray-800 mb-6">⚙️ Cài đặt mục tiêu</h3>
+        <div className="space-y-4">
+          {[
+            { key: 'dailyWords', label: 'Số từ vựng/ngày', min: 1, max: 50 },
+            { key: 'dailyLessons', label: 'Số bài học/ngày', min: 1, max: 20 },
+            { key: 'dailyMinutes', label: 'Thời gian học (phút)', min: 5, max: 180 },
+          ].map(f => (
+            <div key={f.key}>
+              <label className="text-sm text-gray-600 block mb-1">{f.label}</label>
+              <input type="number" value={s[f.key] || 0} onChange={e => setS({ ...s, [f.key]: parseInt(e.target.value) || 0 })} className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500" min={f.min} max={f.max} />
+            </div>
+          ))}
+        </div>
+        <div className="flex gap-3 mt-6">
+          <button onClick={onClose} className="flex-1 py-3 rounded-xl border border-gray-300 text-gray-600 font-medium hover:bg-gray-50">Hủy</button>
+          <button onClick={save} disabled={saving} className="flex-1 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium disabled:opacity-50">
+            {saving ? 'Đang lưu...' : 'Lưu ✓'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const LinkChildModal = ({ isOpen, onClose, onLink }) => {
+  const [code, setCode] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  if (!isOpen) return null;
+
+  const link = async () => {
+    if (!code.trim()) return;
+    setLoading(true);
+    setError('');
+    const result = await onLink(code.trim().toUpperCase());
+    if (result?.error) setError(result.error);
+    else { setCode(''); onClose(); }
+    setLoading(false);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="glass rounded-2xl p-6 w-full max-w-md animate-fadeIn">
+        <h3 className="text-lg font-bold text-gray-800 mb-4">🔗 Liên kết tài khoản con</h3>
+        <p className="text-gray-600 text-sm mb-4">Nhập mã từ app học sinh để kết nối.</p>
+        {error && <div className="mb-4 p-3 bg-red-100 border border-red-300 text-red-700 rounded-xl text-sm">⚠️ {error}</div>}
+        <input type="text" value={code} onChange={e => setCode(e.target.value.toUpperCase())} placeholder="VD: CHILD-ABC123" className="w-full p-3 border border-gray-200 rounded-xl text-center text-lg font-mono tracking-widest focus:ring-2 focus:ring-purple-500 mb-4" maxLength={12} />
+        <div className="bg-blue-50 rounded-xl p-3 mb-4">
+          <p className="text-sm text-blue-700">💡 Con vào <strong>Cài đặt</strong> → Lấy <strong>Mã liên kết</strong></p>
+        </div>
+        <div className="flex gap-3">
+          <button onClick={() => { onClose(); setError(''); setCode(''); }} className="flex-1 py-3 rounded-xl border border-gray-300 text-gray-600 font-medium hover:bg-gray-50">Hủy</button>
+          <button onClick={link} disabled={!code.trim() || loading} className="flex-1 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium disabled:opacity-50">
+            {loading ? 'Đang xử lý...' : 'Liên kết'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const HistoryModal = ({ isOpen, onClose, activities, childName }) => {
+  const [filter, setFilter] = useState('all');
+
+  const filtered = useMemo(() => filter === 'all' ? activities : activities.filter(a => a.type === filter), [activities, filter]);
+  const grouped = useMemo(() => {
+    const g = {};
+    filtered.forEach(a => {
+      const d = a.date || a.created_at?.split('T')[0] || today();
+      if (!g[d]) g[d] = [];
+      g[d].push(a);
+    });
+    return g;
+  }, [filtered]);
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/50 z-50" onClick={onClose}>
+      <div className="absolute inset-0 md:inset-4 glass md:rounded-2xl animate-fadeIn overflow-y-auto" onClick={e => e.stopPropagation()}>
+        <div className="p-4 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-white/90 backdrop-blur z-10">
+          <h3 className="font-bold text-gray-800">📋 Lịch sử - {childName}</h3>
+          <button onClick={onClose} className="text-gray-500 text-xl">✕</button>
+        </div>
+        <div className="p-4 border-b border-gray-100 flex gap-2 overflow-x-auto sticky top-14 bg-white/90 backdrop-blur z-10">
+          {[
+            { k: 'all', l: 'Tất cả', i: '📋' },
+            { k: 'vocabulary', l: 'Từ vựng', i: '📖' },
+            { k: 'lesson', l: 'Bài học', i: '📚' },
+            { k: 'story', l: 'Truyện', i: '📕' },
+            { k: 'game', l: 'Game', i: '🎮' },
+          ].map(f => (
+            <button key={f.k} onClick={() => setFilter(f.k)} className={`flex-shrink-0 px-3 py-1.5 rounded-full text-sm font-medium ${filter === f.k ? 'bg-purple-500 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+              {f.i} {f.l}
+            </button>
+          ))}
+        </div>
+        <div className="p-4">
+          {Object.keys(grouped).length === 0 ? (
+            <p className="text-center text-gray-400 py-8">Chưa có hoạt động</p>
+          ) : (
+            Object.entries(grouped).sort((a, b) => b[0].localeCompare(a[0])).map(([date, acts]) => (
+              <div key={date} className="mb-6">
+                <h4 className="text-sm font-semibold text-gray-500 mb-3">
+                  {date === today() ? '📅 Hôm nay' : `📅 ${getDayName(date)}, ${date}`}
+                </h4>
+                <div className="space-y-2">
+                  {acts.map((a, i) => (
+                    <div key={a.id || i} className="flex items-center gap-3 p-3 bg-white rounded-xl border border-gray-100">
+                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl ${getActivityColor(a.type)}`}>
+                        {getActivityIcon(a.type)}
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium text-gray-800">{a.title}</p>
+                        <p className="text-xs text-gray-500">🕐 {fmtTime(a.created_at)}</p>
+                      </div>
+                      <span className="text-purple-600 font-semibold text-sm">+{a.xp_earned || 0} XP</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ============================================================================
+// MAIN APP
+// ============================================================================
+const App = () => {
+  const { user, profile, loading } = useAuth();
+  const [selectedRole, setSelectedRole] = useState(null);
+
+  // Reset role when user logs out
+  useEffect(() => {
+    if (!user) setSelectedRole(null);
+  }, [user]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="loader mx-auto mb-4"></div>
+          <p className="text-white">Đang tải...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // User logged in - show appropriate app based on role
+  if (user && profile) {
+    return profile.role === 'parent' ? <ParentApp /> : <StudentApp />;
+  }
+
+  // Not logged in - show role selection or auth screen
+  if (!selectedRole) {
+    return <RoleSelectionScreen onSelectRole={setSelectedRole} />;
+  }
+
+  return <AuthScreen role={selectedRole} onBack={() => setSelectedRole(null)} />;
+};
+
+// ============================================================================
+// RENDER
+// ============================================================================
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <AuthProvider>
+    <App />
+  </AuthProvider>
+);
+  </script>
+</body>
+</html>
