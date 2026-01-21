@@ -67,28 +67,43 @@ export const SUBJECTS = {
     name: 'Tiếng Anh',
     icon: '🌍',
     color: 'from-red-500 to-orange-500',
-    desc: 'Học từ vựng, phát âm cơ bản',
+    desc: 'Học từ vựng, phát âm, giao tiếp',
     lessons: [
-      // Level 1 - Alphabet (3-4 tuổi)
+      // ========== LEVEL 1: Alphabet & Numbers (3-4 tuổi) ==========
       { id: 'e1', title: 'Letters A-F', level: 1, desc: 'Learn A, B, C, D, E, F' },
       { id: 'e2', title: 'Letters G-L', level: 1, desc: 'Learn G, H, I, J, K, L' },
       { id: 'e3', title: 'Letters M-R', level: 1, desc: 'Learn M, N, O, P, Q, R' },
       { id: 'e4', title: 'Letters S-Z', level: 1, desc: 'Learn S, T, U, V, W, X, Y, Z' },
       { id: 'e5', title: 'Numbers 1-10', level: 1, desc: 'Count from 1 to 10' },
+      { id: 'e6', title: 'Numbers 11-20', level: 1, desc: 'Count from 11 to 20' },
       
-      // Level 2 - Basic vocab (4-5 tuổi)
-      { id: 'e6', title: 'Colors', level: 2, desc: 'Red, blue, green, yellow...' },
-      { id: 'e7', title: 'Animals', level: 2, desc: 'Dog, cat, bird, fish...' },
-      { id: 'e8', title: 'Fruits', level: 2, desc: 'Apple, banana, orange...' },
-      { id: 'e9', title: 'Family', level: 2, desc: 'Mom, dad, brother, sister...' },
-      { id: 'e10', title: 'Body Parts', level: 2, desc: 'Head, eyes, nose, mouth...' },
+      // ========== LEVEL 2: Basic Vocabulary (4-5 tuổi) ==========
+      { id: 'e7', title: 'Colors', level: 2, desc: 'Red, blue, green, yellow...' },
+      { id: 'e8', title: 'Shapes', level: 2, desc: 'Circle, square, triangle...' },
+      { id: 'e9', title: 'Animals - Pets', level: 2, desc: 'Dog, cat, fish, bird...' },
+      { id: 'e10', title: 'Animals - Farm', level: 2, desc: 'Cow, pig, chicken, horse...' },
+      { id: 'e11', title: 'Animals - Wild', level: 2, desc: 'Lion, elephant, monkey...' },
+      { id: 'e12', title: 'Fruits', level: 2, desc: 'Apple, banana, orange...' },
+      { id: 'e13', title: 'Vegetables', level: 2, desc: 'Carrot, tomato, potato...' },
+      { id: 'e14', title: 'Food & Drinks', level: 2, desc: 'Rice, bread, milk, juice...' },
+      { id: 'e15', title: 'Family', level: 2, desc: 'Mom, dad, brother, sister...' },
+      { id: 'e16', title: 'Body Parts', level: 2, desc: 'Head, eyes, nose, mouth...' },
+      { id: 'e17', title: 'Clothes', level: 2, desc: 'Shirt, pants, dress, shoes...' },
+      { id: 'e18', title: 'Toys', level: 2, desc: 'Ball, doll, car, teddy bear...' },
+      { id: 'e19', title: 'School Things', level: 2, desc: 'Book, pen, pencil, ruler...' },
+      { id: 'e20', title: 'Home & Rooms', level: 2, desc: 'House, bedroom, kitchen...' },
       
-      // Level 3 - Simple phrases (5-6 tuổi)
-      { id: 'e11', title: 'Greetings', level: 3, desc: 'Hello, goodbye, thank you' },
-      { id: 'e12', title: 'I am...', level: 3, desc: 'Simple self-introduction' },
-      { id: 'e13', title: 'This is...', level: 3, desc: 'Identifying objects' },
-      { id: 'e14', title: 'I like...', level: 3, desc: 'Express preferences' },
-      { id: 'e15', title: 'Questions', level: 3, desc: 'What, where, who' },
+      // ========== LEVEL 3: Sentences & Communication (5-6 tuổi) ==========
+      { id: 'e21', title: 'Greetings', level: 3, desc: 'Hello, goodbye, thank you...' },
+      { id: 'e22', title: 'I am...', level: 3, desc: 'Self-introduction' },
+      { id: 'e23', title: 'This is / That is', level: 3, desc: 'Pointing and identifying' },
+      { id: 'e24', title: 'I like / I don\'t like', level: 3, desc: 'Express preferences' },
+      { id: 'e25', title: 'I can / I can\'t', level: 3, desc: 'Express abilities' },
+      { id: 'e26', title: 'Questions - What', level: 3, desc: 'What is this? What color?' },
+      { id: 'e27', title: 'Questions - Where', level: 3, desc: 'Where is the cat?' },
+      { id: 'e28', title: 'Questions - How many', level: 3, desc: 'How many apples?' },
+      { id: 'e29', title: 'Weather', level: 3, desc: 'Sunny, rainy, cloudy, hot...' },
+      { id: 'e30', title: 'Days & Time', level: 3, desc: 'Monday, morning, today...' },
     ],
   },
   
