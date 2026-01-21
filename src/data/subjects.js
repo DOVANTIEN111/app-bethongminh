@@ -1,5 +1,5 @@
 // src/data/subjects.js
-// NỘI DUNG MÔN HỌC - Phiên bản đầy đủ
+// NỘI DUNG MÔN HỌC - Tiếng Anh thiết kế lại cho trẻ 3-6 tuổi
 
 export const SUBJECTS = {
   math: {
@@ -9,21 +9,16 @@ export const SUBJECTS = {
     color: 'from-blue-500 to-cyan-500',
     desc: 'Học đếm, phép tính, hình học',
     lessons: [
-      // Level 1 - Cơ bản (3-4 tuổi)
       { id: 'm1', title: 'Đếm 1-5', level: 1, desc: 'Học đếm số từ 1 đến 5' },
       { id: 'm2', title: 'Đếm 6-10', level: 1, desc: 'Học đếm số từ 6 đến 10' },
       { id: 'm3', title: 'Nhận biết số', level: 1, desc: 'Nhận biết các chữ số' },
       { id: 'm4', title: 'So sánh nhiều ít', level: 1, desc: 'So sánh số lượng' },
-      
-      // Level 2 - Nâng cao (4-5 tuổi)
       { id: 'm5', title: 'Đếm 11-20', level: 2, desc: 'Học đếm số từ 11 đến 20' },
       { id: 'm6', title: 'Phép cộng đến 5', level: 2, desc: 'Cộng các số nhỏ hơn 5' },
       { id: 'm7', title: 'Phép cộng đến 10', level: 2, desc: 'Cộng các số đến 10' },
       { id: 'm8', title: 'Phép trừ đến 5', level: 2, desc: 'Trừ các số nhỏ hơn 5' },
       { id: 'm9', title: 'Phép trừ đến 10', level: 2, desc: 'Trừ các số đến 10' },
       { id: 'm10', title: 'So sánh số', level: 2, desc: 'Lớn hơn, nhỏ hơn, bằng' },
-      
-      // Level 3 - Tiền tiểu học (5-6 tuổi)
       { id: 'm11', title: 'Đếm đến 50', level: 3, desc: 'Học đếm số đến 50' },
       { id: 'm12', title: 'Cộng có nhớ', level: 3, desc: 'Phép cộng vượt 10' },
       { id: 'm13', title: 'Trừ có nhớ', level: 3, desc: 'Phép trừ vượt 10' },
@@ -39,21 +34,16 @@ export const SUBJECTS = {
     color: 'from-green-500 to-emerald-500',
     desc: 'Học chữ cái, ghép vần, đọc hiểu',
     lessons: [
-      // Level 1 - Chữ cái (3-4 tuổi)
       { id: 'v1', title: 'Chữ cái A-D', level: 1, desc: 'Học A, Ă, Â, B, C, D, Đ' },
       { id: 'v2', title: 'Chữ cái E-I', level: 1, desc: 'Học E, Ê, G, H, I' },
       { id: 'v3', title: 'Chữ cái K-O', level: 1, desc: 'Học K, L, M, N, O, Ô, Ơ' },
       { id: 'v4', title: 'Chữ cái P-U', level: 1, desc: 'Học P, Q, R, S, T, U, Ư' },
       { id: 'v5', title: 'Chữ cái V-Y', level: 1, desc: 'Học V, X, Y' },
-      
-      // Level 2 - Ghép vần (4-5 tuổi)
       { id: 'v6', title: 'Vần đơn giản', level: 2, desc: 'BA, MA, LA, ĐI, MẸ' },
       { id: 'v7', title: 'Vần có dấu', level: 2, desc: 'Dấu sắc, huyền, hỏi, ngã, nặng' },
       { id: 'v8', title: 'Vần ghép IA, UA', level: 2, desc: 'Học vần ia, ua, ưa' },
       { id: 'v9', title: 'Vần ghép AN, ON', level: 2, desc: 'Học vần an, on, en' },
       { id: 'v10', title: 'Từ đơn giản', level: 2, desc: 'Đọc từ 2 âm tiết' },
-      
-      // Level 3 - Đọc hiểu (5-6 tuổi)
       { id: 'v11', title: 'Vần ghép nâng cao', level: 3, desc: 'Vần ong, ang, ung, ương' },
       { id: 'v12', title: 'Đọc câu ngắn', level: 3, desc: 'Đọc câu 3-5 từ' },
       { id: 'v13', title: 'Từ vựng gia đình', level: 3, desc: 'Bố, mẹ, anh, chị, em' },
@@ -67,43 +57,33 @@ export const SUBJECTS = {
     name: 'Tiếng Anh',
     icon: '🌍',
     color: 'from-red-500 to-orange-500',
-    desc: 'Học từ vựng, phát âm, giao tiếp',
+    desc: 'Học qua hình ảnh, âm thanh, trò chơi',
     lessons: [
-      // ========== LEVEL 1: Alphabet & Numbers (3-4 tuổi) ==========
-      { id: 'e1', title: 'Letters A-F', level: 1, desc: 'Learn A, B, C, D, E, F' },
-      { id: 'e2', title: 'Letters G-L', level: 1, desc: 'Learn G, H, I, J, K, L' },
-      { id: 'e3', title: 'Letters M-R', level: 1, desc: 'Learn M, N, O, P, Q, R' },
-      { id: 'e4', title: 'Letters S-Z', level: 1, desc: 'Learn S, T, U, V, W, X, Y, Z' },
-      { id: 'e5', title: 'Numbers 1-10', level: 1, desc: 'Count from 1 to 10' },
-      { id: 'e6', title: 'Numbers 11-20', level: 1, desc: 'Count from 11 to 20' },
+      // ========== LEVEL 1: Làm quen (3-4 tuổi) - Nghe + Nhìn + Chọn hình ==========
+      { id: 'e1', title: '🍎 Trái cây', level: 1, desc: 'Apple, Banana, Orange...' },
+      { id: 'e2', title: '🐕 Con vật', level: 1, desc: 'Dog, Cat, Bird...' },
+      { id: 'e3', title: '🔴 Màu sắc', level: 1, desc: 'Red, Blue, Yellow...' },
+      { id: 'e4', title: '1️⃣ Số 1-5', level: 1, desc: 'One, Two, Three...' },
+      { id: 'e5', title: '👨‍👩‍👧 Gia đình', level: 1, desc: 'Mom, Dad, Baby...' },
+      { id: 'e6', title: '🍕 Đồ ăn', level: 1, desc: 'Rice, Bread, Milk...' },
       
-      // ========== LEVEL 2: Basic Vocabulary (4-5 tuổi) ==========
-      { id: 'e7', title: 'Colors', level: 2, desc: 'Red, blue, green, yellow...' },
-      { id: 'e8', title: 'Shapes', level: 2, desc: 'Circle, square, triangle...' },
-      { id: 'e9', title: 'Animals - Pets', level: 2, desc: 'Dog, cat, fish, bird...' },
-      { id: 'e10', title: 'Animals - Farm', level: 2, desc: 'Cow, pig, chicken, horse...' },
-      { id: 'e11', title: 'Animals - Wild', level: 2, desc: 'Lion, elephant, monkey...' },
-      { id: 'e12', title: 'Fruits', level: 2, desc: 'Apple, banana, orange...' },
-      { id: 'e13', title: 'Vegetables', level: 2, desc: 'Carrot, tomato, potato...' },
-      { id: 'e14', title: 'Food & Drinks', level: 2, desc: 'Rice, bread, milk, juice...' },
-      { id: 'e15', title: 'Family', level: 2, desc: 'Mom, dad, brother, sister...' },
-      { id: 'e16', title: 'Body Parts', level: 2, desc: 'Head, eyes, nose, mouth...' },
-      { id: 'e17', title: 'Clothes', level: 2, desc: 'Shirt, pants, dress, shoes...' },
-      { id: 'e18', title: 'Toys', level: 2, desc: 'Ball, doll, car, teddy bear...' },
-      { id: 'e19', title: 'School Things', level: 2, desc: 'Book, pen, pencil, ruler...' },
-      { id: 'e20', title: 'Home & Rooms', level: 2, desc: 'House, bedroom, kitchen...' },
+      // ========== LEVEL 2: Mở rộng (4-5 tuổi) - Nghe + Chọn hình + Đếm ==========
+      { id: 'e7', title: '🐘 Thú hoang dã', level: 2, desc: 'Lion, Elephant, Monkey...' },
+      { id: 'e8', title: '🥕 Rau củ', level: 2, desc: 'Carrot, Tomato, Corn...' },
+      { id: 'e9', title: '⭕ Hình dạng', level: 2, desc: 'Circle, Square, Star...' },
+      { id: 'e10', title: '6️⃣ Số 6-10', level: 2, desc: 'Six, Seven, Eight...' },
+      { id: 'e11', title: '👕 Quần áo', level: 2, desc: 'Shirt, Pants, Shoes...' },
+      { id: 'e12', title: '🧸 Đồ chơi', level: 2, desc: 'Ball, Doll, Car...' },
+      { id: 'e13', title: '🏠 Trong nhà', level: 2, desc: 'Bed, Chair, Door...' },
+      { id: 'e14', title: '👀 Cơ thể', level: 2, desc: 'Eyes, Nose, Mouth...' },
       
-      // ========== LEVEL 3: Sentences & Communication (5-6 tuổi) ==========
-      { id: 'e21', title: 'Greetings', level: 3, desc: 'Hello, goodbye, thank you...' },
-      { id: 'e22', title: 'I am...', level: 3, desc: 'Self-introduction' },
-      { id: 'e23', title: 'This is / That is', level: 3, desc: 'Pointing and identifying' },
-      { id: 'e24', title: 'I like / I don\'t like', level: 3, desc: 'Express preferences' },
-      { id: 'e25', title: 'I can / I can\'t', level: 3, desc: 'Express abilities' },
-      { id: 'e26', title: 'Questions - What', level: 3, desc: 'What is this? What color?' },
-      { id: 'e27', title: 'Questions - Where', level: 3, desc: 'Where is the cat?' },
-      { id: 'e28', title: 'Questions - How many', level: 3, desc: 'How many apples?' },
-      { id: 'e29', title: 'Weather', level: 3, desc: 'Sunny, rainy, cloudy, hot...' },
-      { id: 'e30', title: 'Days & Time', level: 3, desc: 'Monday, morning, today...' },
+      // ========== LEVEL 3: Giao tiếp (5-6 tuổi) - Nghe + Nói + Câu đơn giản ==========
+      { id: 'e15', title: '👋 Chào hỏi', level: 3, desc: 'Hello! Goodbye!' },
+      { id: 'e16', title: '😊 Cảm xúc', level: 3, desc: 'Happy, Sad, Hungry...' },
+      { id: 'e17', title: '🌤️ Thời tiết', level: 3, desc: 'Sunny, Rainy, Hot...' },
+      { id: 'e18', title: '🎯 Hành động', level: 3, desc: 'Run, Jump, Eat...' },
+      { id: 'e19', title: '❓ Hỏi đáp', level: 3, desc: 'What? How many?' },
+      { id: 'e20', title: '💬 Câu ngắn', level: 3, desc: 'I like... This is...' },
     ],
   },
   
@@ -114,7 +94,6 @@ export const SUBJECTS = {
     color: 'from-purple-500 to-pink-500',
     desc: 'Khám phá thế giới xung quanh',
     lessons: [
-      // Level 1 - Thiên nhiên
       { id: 's1', title: 'Con vật nuôi', level: 1, desc: 'Chó, mèo, gà, vịt...' },
       { id: 's2', title: 'Con vật hoang dã', level: 1, desc: 'Sư tử, voi, hổ...' },
       { id: 's3', title: 'Cây cối', level: 1, desc: 'Các bộ phận của cây' },
