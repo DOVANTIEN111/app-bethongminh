@@ -764,9 +764,11 @@ export const VIETNAMESE_LESSONS = {
     { q: 'How many days in a week?', options: ['Five', 'Six', 'Seven'], answer: 'Seven' },
     { q: 'We go to school in the...', options: ['Morning', 'Night', 'Midnight'], answer: 'Morning' },
   ],
-};
 
-export const SCIENCE_LESSONS = {
+  // ==========================================
+  // KHOA HỌC
+  // ==========================================
+  
   // S1: Con vật nuôi
   s1: [
     { q: 'Con vật nào được nuôi để giữ nhà?', options: ['Mèo', 'Chó', 'Gà', 'Cá'], answer: 'Chó' },
@@ -863,3 +865,5 @@ export const SCIENCE_LESSONS = {
     { q: 'Khi nước bốc hơi thành?', options: ['Đá', 'Hơi nước', 'Mưa', 'Tuyết'], answer: 'Hơi nước' },
   ],
 };
+
+export const getLessonQuestions = (lessonId) => LESSON_QUESTIONS[lessonId] || [];
