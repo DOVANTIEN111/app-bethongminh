@@ -1,14 +1,14 @@
 import React from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useMember } from '../contexts/MemberContext';
+import { useAuth } from '../contexts/AuthContext';
 import { useAudio } from '../contexts/AudioContext';
 import { Home, Gamepad2, User, Settings, Volume2, VolumeX } from 'lucide-react';
 
 export default function Layout() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { currentMember, levelInfo } = useMember();
+  const { currentChild, levelInfo } = useAuth();
   const { soundEnabled, toggleSound, playSound } = useAudio();
   
   const navItems = [
@@ -29,9 +29,9 @@ export default function Layout() {
         <div className="flex items-center justify-between px-4 py-3">
           {/* User */}
           <button onClick={() => handleNav('/profile')} className="flex items-center gap-2 bg-gray-100 rounded-full pl-1 pr-4 py-1">
-            <span className="text-2xl">{currentMember?.avatar}</span>
+            <span className="text-2xl">{currentChild?.avatar}</span>
             <div className="text-left">
-              <p className="text-sm font-semibold text-gray-800 leading-tight">{currentMember?.name}</p>
+              <p className="text-sm font-semibold text-gray-800 leading-tight">{currentChild?.name}</p>
               <p className="text-xs text-indigo-600">Lv.{levelInfo?.level}</p>
             </div>
           </button>

@@ -1,19 +1,19 @@
 // src/components/EncouragementBanner.jsx
 // Hiển thị tin nhắn động viên từ phụ huynh
 import React, { useState, useEffect } from 'react';
-import { useMember } from '../contexts/MemberContext';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function EncouragementBanner() {
-  const { getEncouragements, markEncouragementRead, currentMember } = useMember();
+  const { getEncouragements, markEncouragementRead, currentChild } = useAuth();
   const [messages, setMessages] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
-    if (currentMember) {
+    if (currentChild) {
       loadMessages();
     }
-  }, [currentMember]);
+  }, [currentChild]);
 
   const loadMessages = async () => {
     const data = await getEncouragements();
