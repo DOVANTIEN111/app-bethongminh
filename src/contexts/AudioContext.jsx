@@ -1,73 +1,117 @@
-import React, { createContext, useContext, useState, useCallback, useRef } from 'react';
+import React, { createContext, useContext, useRef, useState, useEffect, useCallback } from 'react';
 
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
+// Preload common sounds
 const SOUNDS = {
-  correct: { freq: [523, 659, 784], duration: 0.15 },
-  wrong: { freq: [200, 180], duration: 0.2 },
+  correct: { freq: [523.25, 659.25, 783.99], duration: 0.15 },
+  wrong: { freq: [200, 150], duration: 0.2 },
   click: { freq: [800], duration: 0.05 },
-  levelUp: { freq: [523, 659, 784, 1047], duration: 0.15 },
-  achievement: { freq: [440, 550, 660, 880], duration: 0.12 },
-  pop: { freq: [600, 400], duration: 0.06 },
+  complete: { freq: [523.25, 659.25, 783.99, 1046.5], duration: 0.2 },
+  levelUp: { freq: [392, 523.25, 659.25, 783.99], duration: 0.25 },
+  star: { freq: [880, 1108.73], duration: 0.15 },
 };
 
 const AudioContext = createContext(null);
 
 export function AudioProvider({ children }) {
+  const audioCtxRef = useRef(null);
+  const audioRef = useRef(null);
   const [soundEnabled, setSoundEnabled] = useState(() => {
-    try { return localStorage.getItem('gdtm_sound') !== 'false'; }
-    catch { return true; }
+    const saved = localStorage.getItem('soundEnabled');
+    return saved !== null ? JSON.parse(saved) : true;
+  });
+  const [musicEnabled, setMusicEnabled] = useState(() => {
+    const saved = localStorage.getItem('musicEnabled');
+    return saved !== null ? JSON.parse(saved) : false;
   });
   
-  const [isListening, setIsListening] = useState(false);
-  const [speechSupported] = useState(!!SpeechRecognition);
-  
-  const audioCtxRef = useRef(null);
-  const recognitionRef = useRef(null);
-  const audioRef = useRef(null);
-  
+  // Detect iOS/iPad
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
   const getAudioCtx = useCallback(() => {
     if (!audioCtxRef.current) audioCtxRef.current = new AudioCtx();
     return audioCtxRef.current;
   }, []);
-  
-  const playSound = useCallback((name) => {
-    if (!soundEnabled) return;
-    const sound = SOUNDS[name];
-    if (!sound) return;
+
+  useEffect(() => {
+    localStorage.setItem('soundEnabled', JSON.stringify(soundEnabled));
+  }, [soundEnabled]);
+
+  useEffect(() => {
+    localStorage.setItem('musicEnabled', JSON.stringify(musicEnabled));
+  }, [musicEnabled]);
+
+  // Unlock audio on iOS - cần user interaction
+  useEffect(() => {
+    const unlockAudio = () => {
+      if (isIOS) {
+        // Tạo và play silent audio để unlock
+        const ctx = getAudioCtx();
+        if (ctx.state === 'suspended') {
+          ctx.resume();
+        }
+        
+        // Preload speechSynthesis trên iOS
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance('');
+          utterance.volume = 0;
+          window.speechSynthesis.speak(utterance);
+        }
+      }
+      document.removeEventListener('touchstart', unlockAudio);
+      document.removeEventListener('click', unlockAudio);
+    };
+
+    document.addEventListener('touchstart', unlockAudio);
+    document.addEventListener('click', unlockAudio);
+
+    return () => {
+      document.removeEventListener('touchstart', unlockAudio);
+      document.removeEventListener('click', unlockAudio);
+    };
+  }, [isIOS, getAudioCtx]);
+
+  // Preload voices on iOS
+  useEffect(() => {
+    if ('speechSynthesis' in window) {
+      // Load voices
+      window.speechSynthesis.getVoices();
+      window.speechSynthesis.onvoiceschanged = () => {
+        window.speechSynthesis.getVoices();
+      };
+    }
+  }, []);
+
+  const playSound = useCallback((type) => {
+    if (!soundEnabled || !SOUNDS[type]) return;
     
     try {
       const ctx = getAudioCtx();
-      sound.freq.forEach((f, i) => {
-        setTimeout(() => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.frequency.value = f;
-          osc.type = 'sine';
-          gain.gain.setValueAtTime(0.3, ctx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + sound.duration);
-          osc.start(ctx.currentTime);
-          osc.stop(ctx.currentTime + sound.duration);
-        }, i * 80);
+      if (ctx.state === 'suspended') ctx.resume();
+      
+      const { freq, duration } = SOUNDS[type];
+      
+      freq.forEach((f, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.value = f;
+        osc.type = 'sine';
+        gain.gain.setValueAtTime(0.3, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+        osc.start(ctx.currentTime + i * 0.1);
+        osc.stop(ctx.currentTime + duration + i * 0.1);
       });
     } catch (e) { console.log('Audio error:', e); }
   }, [soundEnabled, getAudioCtx]);
-  
-  const toggleSound = useCallback(() => {
-    const newVal = !soundEnabled;
-    setSoundEnabled(newVal);
-    localStorage.setItem('gdtm_sound', String(newVal));
-    return newVal;
-  }, [soundEnabled]);
-  
-  // ============================================
-  // GOOGLE TTS - Phát âm chuẩn bản ngữ
-  // ============================================
+
+  // Speak function - ưu tiên speechSynthesis trên iOS
   const speak = useCallback((text, lang = 'en-US') => {
-    if (!soundEnabled) return;
+    if (!soundEnabled || !text) return;
     
     // Dừng audio đang phát
     if (audioRef.current) {
@@ -75,231 +119,155 @@ export function AudioProvider({ children }) {
       audioRef.current = null;
     }
     
-    // Sử dụng Google Translate TTS API (miễn phí, chuẩn bản ngữ)
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+
+    // Trên iOS - chỉ dùng speechSynthesis
+    if (isIOS) {
+      useSpeechSynthesis(text, lang, 0.85);
+      return;
+    }
+    
+    // Trên Desktop - thử Google TTS trước
     const encodedText = encodeURIComponent(text);
-    const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=${encodedText}`;
+    const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=${lang.split('-')[0]}&client=tw-ob&q=${encodedText}`;
     
     const audio = new Audio(url);
     audioRef.current = audio;
     
     audio.play().catch((error) => {
-      // Fallback về Web Speech API nếu Google TTS không hoạt động
       console.log('Google TTS failed, using fallback:', error);
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'en-US';
-        utterance.rate = 0.85;
-        
-        // Chọn giọng tiếng Anh tốt nhất
-        const voices = window.speechSynthesis.getVoices();
-        const englishVoice = voices.find(v => 
-          v.lang.includes('en') && (v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Daniel'))
-        ) || voices.find(v => v.lang.includes('en-US'));
-        
-        if (englishVoice) {
-          utterance.voice = englishVoice;
-        }
-        
-        window.speechSynthesis.speak(utterance);
-      }
+      useSpeechSynthesis(text, lang, 0.85);
     });
-  }, [soundEnabled]);
-  
-  // Phát âm chậm (cho học từ vựng)
-  const speakSlow = useCallback((text) => {
-    if (!soundEnabled) return;
+  }, [soundEnabled, isIOS]);
+
+  // Speak slow - cho học từ vựng
+  const speakSlow = useCallback((text, lang = 'en-US') => {
+    if (!soundEnabled || !text) return;
     
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current = null;
     }
     
-    const encodedText = encodeURIComponent(text);
-    const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=${encodedText}&ttsspeed=0.5`;
-    
-    const audio = new Audio(url);
-    audio.playbackRate = 0.8; // Chậm hơn
-    audioRef.current = audio;
-    
-    audio.play().catch(() => {
-      // Fallback
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'en-US';
-        utterance.rate = 0.6; // Rất chậm
-        window.speechSynthesis.speak(utterance);
-      }
-    });
-  }, [soundEnabled]);
-  
-  // ============================================
-  // Speech Recognition - Kiểm tra phát âm
-  // ============================================
-  const startListening = useCallback((targetWord, onResult) => {
-    if (!SpeechRecognition) {
-      onResult({ success: false, error: 'not_supported', transcript: '' });
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+
+    // Trên iOS - chỉ dùng speechSynthesis
+    if (isIOS) {
+      useSpeechSynthesis(text, lang, 0.6);
       return;
     }
     
-    if (recognitionRef.current) {
-      recognitionRef.current.abort();
+    // Trên Desktop - thử Google TTS trước
+    const encodedText = encodeURIComponent(text);
+    const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=${lang.split('-')[0]}&client=tw-ob&q=${encodedText}&ttsspeed=0.5`;
+    
+    const audio = new Audio(url);
+    audioRef.current = audio;
+    
+    audio.play().catch((error) => {
+      console.log('Google TTS failed, using fallback:', error);
+      useSpeechSynthesis(text, lang, 0.6);
+    });
+  }, [soundEnabled, isIOS]);
+
+  // Helper function cho speechSynthesis
+  const useSpeechSynthesis = useCallback((text, lang = 'en-US', rate = 0.85) => {
+    if (!('speechSynthesis' in window)) return;
+    
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = lang;
+    utterance.rate = rate;
+    utterance.pitch = 1;
+    utterance.volume = 1;
+    
+    // Lấy voice phù hợp
+    const voices = window.speechSynthesis.getVoices();
+    const langCode = lang.split('-')[0];
+    
+    // Ưu tiên voice theo thứ tự
+    const preferredVoice = voices.find(v => 
+      v.lang.includes(lang) && (
+        v.name.includes('Google') || 
+        v.name.includes('Samantha') || 
+        v.name.includes('Daniel') ||
+        v.name.includes('Karen') ||
+        v.name.includes('Moira')
+      )
+    ) || voices.find(v => v.lang.includes(lang))
+      || voices.find(v => v.lang.includes(langCode));
+    
+    if (preferredVoice) {
+      utterance.voice = preferredVoice;
     }
     
-    const recognition = new SpeechRecognition();
-    recognitionRef.current = recognition;
+    window.speechSynthesis.speak(utterance);
+  }, []);
+
+  // Speak Vietnamese
+  const speakVietnamese = useCallback((text) => {
+    if (!soundEnabled || !text) return;
     
-    recognition.lang = 'en-US';
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 5;
-    
-    recognition.onstart = () => {
-      setIsListening(true);
-    };
-    
-    recognition.onresult = (event) => {
-      const results = event.results[0];
-      const transcripts = [];
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
       
-      for (let i = 0; i < results.length; i++) {
-        transcripts.push(results[i].transcript.toLowerCase().trim());
-      }
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'vi-VN';
+      utterance.rate = 0.9;
       
-      const mainTranscript = transcripts[0];
-      const targetLower = targetWord.toLowerCase().trim();
+      const voices = window.speechSynthesis.getVoices();
+      const vnVoice = voices.find(v => v.lang.includes('vi'));
+      if (vnVoice) utterance.voice = vnVoice;
       
-      const isMatch = transcripts.some(t => {
-        if (t === targetLower) return true;
-        if (t.includes(targetLower) || targetLower.includes(t)) return true;
-        const similarity = calculateSimilarity(t, targetLower);
-        return similarity >= 0.7;
-      });
-      
-      const confidence = results[0].confidence || 0.5;
-      const similarity = calculateSimilarity(mainTranscript, targetLower);
-      
-      let score = 0;
-      let feedback = '';
-      
-      if (isMatch && similarity >= 0.9) {
-        score = 100;
-        feedback = 'perfect';
-      } else if (isMatch && similarity >= 0.7) {
-        score = 80;
-        feedback = 'good';
-      } else if (similarity >= 0.5) {
-        score = 50;
-        feedback = 'close';
-      } else {
-        score = 0;
-        feedback = 'try_again';
-      }
-      
-      onResult({
-        success: isMatch,
-        transcript: mainTranscript,
-        allTranscripts: transcripts,
-        confidence,
-        similarity,
-        score,
-        feedback,
-        targetWord
-      });
-      
-      setIsListening(false);
-    };
-    
-    recognition.onerror = (event) => {
-      let errorType = 'error';
-      if (event.error === 'no-speech') errorType = 'no_speech';
-      else if (event.error === 'audio-capture') errorType = 'no_mic';
-      else if (event.error === 'not-allowed') errorType = 'not_allowed';
-      
-      onResult({
-        success: false,
-        error: errorType,
-        transcript: '',
-        score: 0,
-        feedback: 'error'
-      });
-      setIsListening(false);
-    };
-    
-    recognition.onend = () => {
-      setIsListening(false);
-    };
-    
-    try {
-      recognition.start();
-    } catch (e) {
-      onResult({ success: false, error: 'error', transcript: '', score: 0 });
-      setIsListening(false);
+      window.speechSynthesis.speak(utterance);
+    }
+  }, [soundEnabled]);
+
+  // Stop all audio
+  const stopAudio = useCallback(() => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
     }
   }, []);
-  
-  const stopListening = useCallback(() => {
-    if (recognitionRef.current) {
-      recognitionRef.current.abort();
-      setIsListening(false);
-    }
+
+  const toggleSound = useCallback(() => {
+    setSoundEnabled(prev => !prev);
   }, []);
-  
+
+  const toggleMusic = useCallback(() => {
+    setMusicEnabled(prev => !prev);
+  }, []);
+
   return (
     <AudioContext.Provider value={{ 
-      soundEnabled, 
-      toggleSound, 
       playSound, 
-      speak,
+      speak, 
       speakSlow,
-      startListening,
-      stopListening,
-      isListening,
-      speechSupported
+      speakVietnamese,
+      stopAudio,
+      soundEnabled,
+      musicEnabled,
+      toggleSound,
+      toggleMusic,
+      isIOS,
     }}>
       {children}
     </AudioContext.Provider>
   );
 }
 
-// Calculate string similarity
-function calculateSimilarity(str1, str2) {
-  const len1 = str1.length;
-  const len2 = str2.length;
-  
-  if (len1 === 0) return len2 === 0 ? 1 : 0;
-  if (len2 === 0) return 0;
-  
-  const matrix = [];
-  
-  for (let i = 0; i <= len1; i++) {
-    matrix[i] = [i];
-  }
-  
-  for (let j = 0; j <= len2; j++) {
-    matrix[0][j] = j;
-  }
-  
-  for (let i = 1; i <= len1; i++) {
-    for (let j = 1; j <= len2; j++) {
-      const cost = str1[i - 1] === str2[j - 1] ? 0 : 1;
-      matrix[i][j] = Math.min(
-        matrix[i - 1][j] + 1,
-        matrix[i][j - 1] + 1,
-        matrix[i - 1][j - 1] + cost
-      );
-    }
-  }
-  
-  const distance = matrix[len1][len2];
-  const maxLen = Math.max(len1, len2);
-  return (maxLen - distance) / maxLen;
-}
-
 export function useAudio() {
   const context = useContext(AudioContext);
-  if (!context) throw new Error('useAudio must be used within AudioProvider');
+  if (!context) {
+    throw new Error('useAudio must be used within an AudioProvider');
+  }
   return context;
 }
 
