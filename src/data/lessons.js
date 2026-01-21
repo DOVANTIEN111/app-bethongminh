@@ -1,0 +1,614 @@
+// src/data/lessons.js
+// NỘI DUNG CÂU HỎI CHO TẤT CẢ BÀI HỌC
+
+export const LESSON_QUESTIONS = {
+  // ==========================================
+  // TOÁN HỌC
+  // ==========================================
+  
+  // M1: Đếm 1-5
+  m1: [
+    { q: 'Đếm số quả táo: 🍎', options: ['1', '2', '3', '4'], answer: '1' },
+    { q: 'Đếm số ngôi sao: ⭐⭐', options: ['1', '2', '3', '4'], answer: '2' },
+    { q: 'Đếm: 🍎🍎🍎', options: ['2', '3', '4', '5'], answer: '3' },
+    { q: 'Đếm số trái tim: ❤️❤️❤️❤️', options: ['3', '4', '5', '6'], answer: '4' },
+    { q: 'Đếm: ✋ (ngón tay)', options: ['4', '5', '6', '3'], answer: '5' },
+    { q: 'Số nào đứng sau số 2?', options: ['1', '3', '4', '5'], answer: '3' },
+    { q: 'Số nào đứng trước số 4?', options: ['2', '3', '5', '6'], answer: '3' },
+    { q: 'Đếm: 🌸🌸🌸🌸🌸', options: ['3', '4', '5', '6'], answer: '5' },
+  ],
+  
+  // M2: Đếm 6-10
+  m2: [
+    { q: 'Đếm: 🎈🎈🎈🎈🎈🎈', options: ['5', '6', '7', '8'], answer: '6' },
+    { q: 'Đếm: 🌟🌟🌟🌟🌟🌟🌟', options: ['6', '7', '8', '9'], answer: '7' },
+    { q: 'Số nào đứng sau số 7?', options: ['6', '7', '8', '9'], answer: '8' },
+    { q: 'Đếm: 🐱🐱🐱🐱🐱🐱🐱🐱🐱', options: ['7', '8', '9', '10'], answer: '9' },
+    { q: 'Hai bàn tay có mấy ngón?', options: ['8', '9', '10', '11'], answer: '10' },
+    { q: 'Số nào lớn nhất trong 1-10?', options: ['8', '9', '10', '1'], answer: '10' },
+    { q: 'Số nào đứng trước số 10?', options: ['8', '9', '11', '7'], answer: '9' },
+    { q: 'Đếm ngược: 10, 9, 8, ...?', options: ['6', '7', '5', '9'], answer: '7' },
+  ],
+  
+  // M3: Nhận biết số
+  m3: [
+    { q: 'Đây là số mấy? 3️⃣', options: ['2', '3', '4', '5'], answer: '3' },
+    { q: 'Đây là số mấy? 7️⃣', options: ['6', '7', '8', '9'], answer: '7' },
+    { q: 'Số nào giống chữ O?', options: ['0', '6', '8', '9'], answer: '0' },
+    { q: 'Số nào có 2 vòng tròn?', options: ['0', '6', '8', '9'], answer: '8' },
+    { q: 'Viết số "năm" bằng số?', options: ['4', '5', '6', '7'], answer: '5' },
+    { q: 'Số "chín" viết là?', options: ['6', '7', '8', '9'], answer: '9' },
+    { q: 'Đây là số mấy? 1️⃣0️⃣', options: ['1', '10', '100', '0'], answer: '10' },
+    { q: 'Số không viết là?', options: ['O', '0', '1', '00'], answer: '0' },
+  ],
+  
+  // M4: So sánh nhiều ít
+  m4: [
+    { q: '🍎🍎🍎 hay 🍎🍎 nhiều hơn?', options: ['3 táo', '2 táo', 'Bằng nhau'], answer: '3 táo' },
+    { q: '⭐⭐ hay ⭐⭐⭐⭐ ít hơn?', options: ['2 sao', '4 sao', 'Bằng nhau'], answer: '2 sao' },
+    { q: '5 và 3, số nào lớn hơn?', options: ['5', '3', 'Bằng nhau'], answer: '5' },
+    { q: '2 và 7, số nào nhỏ hơn?', options: ['2', '7', 'Bằng nhau'], answer: '2' },
+    { q: '🎈🎈🎈 và 🎈🎈🎈 bằng nhau?', options: ['Có', 'Không'], answer: 'Có' },
+    { q: 'Đĩa A: 4 kẹo, Đĩa B: 6 kẹo. Đĩa nào nhiều?', options: ['Đĩa A', 'Đĩa B', 'Bằng nhau'], answer: 'Đĩa B' },
+    { q: '8 và 8, so sánh?', options: ['8 > 8', '8 < 8', '8 = 8'], answer: '8 = 8' },
+    { q: '1 là số nhỏ nhất trong?', options: ['1, 2, 3', '0, 1, 2', '2, 3, 4'], answer: '0, 1, 2' },
+  ],
+  
+  // M5: Đếm 11-20
+  m5: [
+    { q: 'Số nào đứng sau 10?', options: ['9', '11', '12', '10'], answer: '11' },
+    { q: '10 + 2 = ?', options: ['11', '12', '13', '14'], answer: '12' },
+    { q: 'Mười lăm viết là?', options: ['14', '15', '16', '17'], answer: '15' },
+    { q: 'Số nào đứng trước 20?', options: ['18', '19', '21', '17'], answer: '19' },
+    { q: '10 + 7 = ?', options: ['16', '17', '18', '19'], answer: '17' },
+    { q: 'Hai mươi viết là?', options: ['12', '20', '21', '200'], answer: '20' },
+    { q: 'Số nào lớn nhất: 13, 18, 11, 16?', options: ['13', '18', '11', '16'], answer: '18' },
+    { q: '10 + 10 = ?', options: ['10', '20', '100', '11'], answer: '20' },
+  ],
+  
+  // M6: Phép cộng đến 5
+  m6: [
+    { q: '1 + 1 = ?', options: ['1', '2', '3', '0'], answer: '2' },
+    { q: '2 + 1 = ?', options: ['2', '3', '4', '1'], answer: '3' },
+    { q: '2 + 2 = ?', options: ['3', '4', '5', '2'], answer: '4' },
+    { q: '1 + 3 = ?', options: ['3', '4', '5', '2'], answer: '4' },
+    { q: '3 + 2 = ?', options: ['4', '5', '6', '3'], answer: '5' },
+    { q: '0 + 4 = ?', options: ['0', '4', '5', '3'], answer: '4' },
+    { q: '1 + 4 = ?', options: ['4', '5', '6', '3'], answer: '5' },
+    { q: '🍎 + 🍎🍎 = ? quả', options: ['2', '3', '4', '1'], answer: '3' },
+  ],
+  
+  // M7: Phép cộng đến 10
+  m7: [
+    { q: '3 + 4 = ?', options: ['6', '7', '8', '5'], answer: '7' },
+    { q: '5 + 3 = ?', options: ['7', '8', '9', '6'], answer: '8' },
+    { q: '4 + 5 = ?', options: ['8', '9', '10', '7'], answer: '9' },
+    { q: '5 + 5 = ?', options: ['9', '10', '11', '8'], answer: '10' },
+    { q: '6 + 2 = ?', options: ['7', '8', '9', '6'], answer: '8' },
+    { q: '7 + 3 = ?', options: ['9', '10', '11', '8'], answer: '10' },
+    { q: '4 + 4 = ?', options: ['7', '8', '9', '6'], answer: '8' },
+    { q: '2 + 6 = ?', options: ['7', '8', '9', '6'], answer: '8' },
+  ],
+  
+  // M8: Phép trừ đến 5
+  m8: [
+    { q: '2 - 1 = ?', options: ['0', '1', '2', '3'], answer: '1' },
+    { q: '3 - 1 = ?', options: ['1', '2', '3', '4'], answer: '2' },
+    { q: '4 - 2 = ?', options: ['1', '2', '3', '4'], answer: '2' },
+    { q: '5 - 3 = ?', options: ['1', '2', '3', '4'], answer: '2' },
+    { q: '5 - 5 = ?', options: ['0', '1', '5', '10'], answer: '0' },
+    { q: '4 - 1 = ?', options: ['2', '3', '4', '5'], answer: '3' },
+    { q: '3 - 0 = ?', options: ['0', '3', '2', '1'], answer: '3' },
+    { q: '🍎🍎🍎 - 🍎 = ? quả', options: ['1', '2', '3', '4'], answer: '2' },
+  ],
+  
+  // M9: Phép trừ đến 10
+  m9: [
+    { q: '7 - 3 = ?', options: ['3', '4', '5', '6'], answer: '4' },
+    { q: '8 - 5 = ?', options: ['2', '3', '4', '5'], answer: '3' },
+    { q: '10 - 4 = ?', options: ['5', '6', '7', '8'], answer: '6' },
+    { q: '9 - 6 = ?', options: ['2', '3', '4', '5'], answer: '3' },
+    { q: '10 - 10 = ?', options: ['0', '1', '10', '20'], answer: '0' },
+    { q: '6 - 4 = ?', options: ['1', '2', '3', '4'], answer: '2' },
+    { q: '8 - 2 = ?', options: ['5', '6', '7', '8'], answer: '6' },
+    { q: '10 - 7 = ?', options: ['2', '3', '4', '5'], answer: '3' },
+  ],
+  
+  // M10: So sánh số
+  m10: [
+    { q: '5 __ 3 (điền dấu)', options: ['<', '>', '='], answer: '>' },
+    { q: '2 __ 7 (điền dấu)', options: ['<', '>', '='], answer: '<' },
+    { q: '4 __ 4 (điền dấu)', options: ['<', '>', '='], answer: '=' },
+    { q: '9 __ 6 (điền dấu)', options: ['<', '>', '='], answer: '>' },
+    { q: '1 __ 10 (điền dấu)', options: ['<', '>', '='], answer: '<' },
+    { q: 'Sắp xếp tăng dần: 3, 1, 2', options: ['1, 2, 3', '3, 2, 1', '2, 1, 3'], answer: '1, 2, 3' },
+    { q: 'Sắp xếp giảm dần: 5, 8, 3', options: ['3, 5, 8', '8, 5, 3', '5, 3, 8'], answer: '8, 5, 3' },
+    { q: 'Số nào nằm giữa 4 và 6?', options: ['3', '5', '7', '4'], answer: '5' },
+  ],
+  
+  // M11-M15: Nâng cao
+  m11: [
+    { q: '20 + 10 = ?', options: ['25', '30', '35', '40'], answer: '30' },
+    { q: 'Số nào đứng sau 29?', options: ['28', '30', '31', '39'], answer: '30' },
+    { q: '40 + 5 = ?', options: ['44', '45', '46', '50'], answer: '45' },
+    { q: '50 - 10 = ?', options: ['30', '40', '45', '50'], answer: '40' },
+    { q: 'Số nào lớn nhất: 32, 45, 28, 50?', options: ['32', '45', '28', '50'], answer: '50' },
+  ],
+  
+  m12: [
+    { q: '7 + 5 = ?', options: ['11', '12', '13', '14'], answer: '12' },
+    { q: '8 + 6 = ?', options: ['13', '14', '15', '16'], answer: '14' },
+    { q: '9 + 4 = ?', options: ['12', '13', '14', '15'], answer: '13' },
+    { q: '8 + 8 = ?', options: ['14', '15', '16', '17'], answer: '16' },
+    { q: '9 + 9 = ?', options: ['16', '17', '18', '19'], answer: '18' },
+  ],
+  
+  m13: [
+    { q: '12 - 5 = ?', options: ['6', '7', '8', '9'], answer: '7' },
+    { q: '15 - 8 = ?', options: ['6', '7', '8', '9'], answer: '7' },
+    { q: '14 - 6 = ?', options: ['7', '8', '9', '10'], answer: '8' },
+    { q: '16 - 9 = ?', options: ['6', '7', '8', '9'], answer: '7' },
+    { q: '18 - 9 = ?', options: ['8', '9', '10', '11'], answer: '9' },
+  ],
+  
+  m14: [
+    { q: 'Hình vuông có mấy cạnh?', options: ['3', '4', '5', '6'], answer: '4' },
+    { q: 'Hình tròn có mấy góc?', options: ['0', '1', '2', '4'], answer: '0' },
+    { q: 'Hình tam giác có mấy cạnh?', options: ['2', '3', '4', '5'], answer: '3' },
+    { q: 'Quả bóng có hình gì?', options: ['Vuông', 'Tròn', 'Tam giác'], answer: 'Tròn' },
+    { q: 'Bánh xe có hình?', options: ['Vuông', 'Tròn', 'Tam giác'], answer: 'Tròn' },
+  ],
+  
+  m15: [
+    { q: 'Cái nào dài hơn: Bút chì hay cục tẩy?', options: ['Bút chì', 'Cục tẩy'], answer: 'Bút chì' },
+    { q: 'Cái nào cao hơn: Cây hay hoa?', options: ['Cây', 'Hoa'], answer: 'Cây' },
+    { q: 'Cái nào nặng hơn: Voi hay kiến?', options: ['Voi', 'Kiến'], answer: 'Voi' },
+    { q: '1 giờ có bao nhiêu phút?', options: ['30', '60', '100'], answer: '60' },
+    { q: '1 ngày có bao nhiêu giờ?', options: ['12', '24', '60'], answer: '24' },
+  ],
+};
+
+export const getLessonQuestions = (lessonId) => LESSON_QUESTIONS[lessonId] || [];
+
+// V1: Chữ cái A-D
+export const VIETNAMESE_LESSONS = {
+  v1: [
+    { q: 'Chữ cái đầu tiên trong bảng chữ cái?', options: ['B', 'A', 'C', 'D'], answer: 'A' },
+    { q: 'Từ "Ăn" bắt đầu bằng chữ?', options: ['A', 'Ă', 'Â', 'B'], answer: 'Ă' },
+    { q: 'Chữ nào có dấu mũ? A, Ă, Â', options: ['A', 'Ă', 'Â'], answer: 'Â' },
+    { q: 'Từ "Bố" bắt đầu bằng chữ?', options: ['A', 'B', 'C', 'D'], answer: 'B' },
+    { q: 'Chữ nào đứng sau B?', options: ['A', 'C', 'D', 'Đ'], answer: 'C' },
+    { q: 'Từ "Cá" bắt đầu bằng chữ?', options: ['B', 'C', 'D', 'K'], answer: 'C' },
+    { q: 'Chữ Đ khác chữ D như thế nào?', options: ['Có gạch ngang', 'Có dấu mũ', 'Giống nhau'], answer: 'Có gạch ngang' },
+    { q: 'Đọc chữ này: Đ', options: ['Dê', 'Đê', 'De'], answer: 'Đê' },
+  ],
+  
+  // V2: Chữ cái E-I
+  v2: [
+    { q: 'Chữ nào có dấu mũ: E hay Ê?', options: ['E', 'Ê', 'Cả hai'], answer: 'Ê' },
+    { q: 'Từ "Em" bắt đầu bằng chữ?', options: ['E', 'Ê', 'I', 'A'], answer: 'E' },
+    { q: 'Chữ nào đứng sau G?', options: ['F', 'H', 'I', 'K'], answer: 'H' },
+    { q: 'Từ "Gà" bắt đầu bằng chữ?', options: ['G', 'H', 'K', 'C'], answer: 'G' },
+    { q: 'Đọc chữ này: H', options: ['Hát', 'Hờ', 'Ha'], answer: 'Hờ' },
+    { q: 'Chữ nào đứng trước I?', options: ['G', 'H', 'K', 'E'], answer: 'H' },
+    { q: 'Từ "Hoa" bắt đầu bằng chữ?', options: ['H', 'O', 'A', 'K'], answer: 'H' },
+    { q: 'Từ "Ì" có dấu gì?', options: ['Sắc', 'Huyền', 'Hỏi', 'Nặng'], answer: 'Huyền' },
+  ],
+  
+  // V3: Chữ cái K-O
+  v3: [
+    { q: 'Chữ K đọc là?', options: ['Ka', 'Kờ', 'Ke'], answer: 'Ka' },
+    { q: 'Từ "Lá" bắt đầu bằng chữ?', options: ['K', 'L', 'M', 'N'], answer: 'L' },
+    { q: 'Chữ nào đứng sau M?', options: ['L', 'N', 'O', 'P'], answer: 'N' },
+    { q: 'Từ "Mẹ" bắt đầu bằng chữ?', options: ['M', 'N', 'L', 'K'], answer: 'M' },
+    { q: 'Chữ O, Ô, Ơ - chữ nào có dấu móc?', options: ['O', 'Ô', 'Ơ'], answer: 'Ơ' },
+    { q: 'Chữ Ô có dấu gì?', options: ['Dấu móc', 'Dấu mũ', 'Không dấu'], answer: 'Dấu mũ' },
+    { q: 'Từ "Nước" bắt đầu bằng chữ?', options: ['M', 'N', 'L', 'Ư'], answer: 'N' },
+    { q: 'Đọc chữ này: Ơ', options: ['O', 'Ô', 'Ơ'], answer: 'Ơ' },
+  ],
+  
+  // V4: Chữ cái P-U
+  v4: [
+    { q: 'Chữ P đọc là?', options: ['Pờ', 'Pa', 'Pe'], answer: 'Pờ' },
+    { q: 'Từ "Quả" bắt đầu bằng chữ?', options: ['Q', 'K', 'C', 'P'], answer: 'Q' },
+    { q: 'Chữ nào đứng sau R?', options: ['Q', 'S', 'T', 'P'], answer: 'S' },
+    { q: 'Từ "Sách" bắt đầu bằng chữ?', options: ['S', 'X', 'C', 'T'], answer: 'S' },
+    { q: 'Chữ U, Ư - chữ nào có dấu móc?', options: ['U', 'Ư'], answer: 'Ư' },
+    { q: 'Từ "Tay" bắt đầu bằng chữ?', options: ['T', 'S', 'R', 'D'], answer: 'T' },
+    { q: 'Đọc chữ này: Ư', options: ['U', 'Ư', 'Ơ'], answer: 'Ư' },
+    { q: 'Chữ nào đứng trước U?', options: ['T', 'S', 'R', 'V'], answer: 'T' },
+  ],
+  
+  // V5: Chữ cái V-Y
+  v5: [
+    { q: 'Chữ V đọc là?', options: ['Vờ', 'Va', 'Ve'], answer: 'Vờ' },
+    { q: 'Từ "Xe" bắt đầu bằng chữ?', options: ['X', 'S', 'C', 'K'], answer: 'X' },
+    { q: 'Chữ cuối bảng chữ cái tiếng Việt?', options: ['Z', 'Y', 'W', 'X'], answer: 'Y' },
+    { q: 'Từ "Yêu" bắt đầu bằng chữ?', options: ['I', 'Y', 'U', 'Ư'], answer: 'Y' },
+    { q: 'Bảng chữ cái tiếng Việt có mấy chữ?', options: ['26', '29', '24'], answer: '29' },
+    { q: 'Chữ nào KHÔNG có trong tiếng Việt?', options: ['W', 'Y', 'X', 'V'], answer: 'W' },
+    { q: 'Từ "Vui" bắt đầu bằng chữ?', options: ['V', 'U', 'I', 'Y'], answer: 'V' },
+    { q: 'Chữ X đọc là?', options: ['Xờ', 'Ích', 'Xi'], answer: 'Ích' },
+  ],
+  
+  // V6: Vần đơn giản
+  v6: [
+    { q: 'Ghép: B + A = ?', options: ['BA', 'AB', 'BE', 'BI'], answer: 'BA' },
+    { q: 'Ghép: M + Ẹ = ?', options: ['MẸ', 'ME', 'MA', 'MO'], answer: 'MẸ' },
+    { q: 'Từ "BÉ" có vần gì?', options: ['A', 'E', 'I', 'O'], answer: 'E' },
+    { q: 'Ghép: L + A = ?', options: ['LA', 'LO', 'LE', 'LI'], answer: 'LA' },
+    { q: 'Ghép: Đ + I = ?', options: ['ĐI', 'ĐA', 'ĐO', 'ĐE'], answer: 'ĐI' },
+    { q: 'Từ "CÁ" ghép từ?', options: ['C + A', 'C + Á', 'K + A'], answer: 'C + A' },
+    { q: 'Ghép: N + O = ?', options: ['NO', 'NA', 'NE', 'NI'], answer: 'NO' },
+    { q: 'Từ "TÔ" có vần gì?', options: ['O', 'Ô', 'Ơ', 'U'], answer: 'Ô' },
+  ],
+  
+  // V7: Vần có dấu
+  v7: [
+    { q: 'Từ "MÁ" có dấu gì?', options: ['Sắc', 'Huyền', 'Hỏi', 'Ngã'], answer: 'Sắc' },
+    { q: 'Từ "MÀ" có dấu gì?', options: ['Sắc', 'Huyền', 'Hỏi', 'Ngã'], answer: 'Huyền' },
+    { q: 'Từ "MẢ" có dấu gì?', options: ['Sắc', 'Huyền', 'Hỏi', 'Ngã'], answer: 'Hỏi' },
+    { q: 'Từ "MÃ" có dấu gì?', options: ['Sắc', 'Huyền', 'Hỏi', 'Ngã'], answer: 'Ngã' },
+    { q: 'Từ "MẠ" có dấu gì?', options: ['Sắc', 'Huyền', 'Nặng', 'Ngã'], answer: 'Nặng' },
+    { q: 'Dấu nào nằm dưới chữ?', options: ['Sắc', 'Huyền', 'Nặng', 'Ngã'], answer: 'Nặng' },
+    { q: 'Từ "BỐ" có dấu gì?', options: ['Sắc', 'Huyền', 'Hỏi', 'Nặng'], answer: 'Sắc' },
+    { q: 'Từ "CỦA" có dấu gì?', options: ['Sắc', 'Huyền', 'Hỏi', 'Ngã'], answer: 'Hỏi' },
+  ],
+  
+  // V8: Vần ghép IA, UA
+  v8: [
+    { q: 'Ghép: T + IA = ?', options: ['TIA', 'TUA', 'TƯA'], answer: 'TIA' },
+    { q: 'Từ "MÚA" có vần gì?', options: ['IA', 'UA', 'ƯA'], answer: 'UA' },
+    { q: 'Ghép: M + ƯA = ?', options: ['MIA', 'MUA', 'MƯA'], answer: 'MƯA' },
+    { q: 'Từ "LỪA" có vần gì?', options: ['IA', 'UA', 'ƯA'], answer: 'ƯA' },
+    { q: 'Ghép: C + UA = ?', options: ['CIA', 'CUA', 'CƯA'], answer: 'CUA' },
+    { q: 'Từ "CHIA" có vần gì?', options: ['IA', 'UA', 'ƯA'], answer: 'IA' },
+    { q: 'Ghép: Đ + ƯA = ?', options: ['ĐIA', 'ĐUA', 'ĐƯA'], answer: 'ĐƯA' },
+    { q: 'Từ "HOA" có vần gì?', options: ['IA', 'UA', 'OA'], answer: 'OA' },
+  ],
+  
+  // V9: Vần ghép AN, ON
+  v9: [
+    { q: 'Ghép: B + AN = ?', options: ['BAN', 'BON', 'BEN'], answer: 'BAN' },
+    { q: 'Từ "CON" có vần gì?', options: ['AN', 'ON', 'EN'], answer: 'ON' },
+    { q: 'Ghép: Đ + EN = ?', options: ['ĐAN', 'ĐON', 'ĐEN'], answer: 'ĐEN' },
+    { q: 'Từ "BÁN" có vần gì?', options: ['AN', 'ON', 'EN'], answer: 'AN' },
+    { q: 'Ghép: T + IN = ?', options: ['TAN', 'TON', 'TIN'], answer: 'TIN' },
+    { q: 'Từ "SEN" có vần gì?', options: ['AN', 'ON', 'EN'], answer: 'EN' },
+    { q: 'Ghép: M + AN = ?', options: ['MAN', 'MON', 'MEN'], answer: 'MAN' },
+    { q: 'Từ "LON" có vần gì?', options: ['AN', 'ON', 'UN'], answer: 'ON' },
+  ],
+  
+  // V10: Từ đơn giản
+  v10: [
+    { q: 'Đây là con gì? 🐱', options: ['Chó', 'Mèo', 'Gà', 'Vịt'], answer: 'Mèo' },
+    { q: 'Đây là quả gì? 🍎', options: ['Cam', 'Chuối', 'Táo', 'Nho'], answer: 'Táo' },
+    { q: 'Đây là gì? 🏠', options: ['Xe', 'Nhà', 'Cây', 'Hoa'], answer: 'Nhà' },
+    { q: 'Đây là gì? ☀️', options: ['Mặt trăng', 'Mặt trời', 'Sao', 'Mây'], answer: 'Mặt trời' },
+    { q: 'Đây là gì? 🌸', options: ['Lá', 'Cây', 'Hoa', 'Quả'], answer: 'Hoa' },
+    { q: 'Đây là con gì? 🐕', options: ['Chó', 'Mèo', 'Gà', 'Vịt'], answer: 'Chó' },
+    { q: 'Đây là gì? 📚', options: ['Vở', 'Sách', 'Bút', 'Thước'], answer: 'Sách' },
+    { q: 'Đây là gì? 🚗', options: ['Xe đạp', 'Xe máy', 'Ô tô', 'Xe buýt'], answer: 'Ô tô' },
+  ],
+  
+  // V11-V15: Nâng cao
+  v11: [
+    { q: 'Từ "BÔNG" có vần gì?', options: ['ONG', 'ANG', 'UNG'], answer: 'ONG' },
+    { q: 'Ghép: T + ANG = ?', options: ['TONG', 'TANG', 'TUNG'], answer: 'TANG' },
+    { q: 'Từ "SÔNG" có vần gì?', options: ['ONG', 'ÔNG', 'UNG'], answer: 'ÔNG' },
+    { q: 'Từ "HƯƠNG" có vần gì?', options: ['ƯƠI', 'ƯƠNG', 'ƯNG'], answer: 'ƯƠNG' },
+    { q: 'Từ "RỪNG" có vần gì?', options: ['ƯNG', 'ỨNG', 'ỪNG'], answer: 'ỪNG' },
+  ],
+  
+  v12: [
+    { q: '"Bé đi học" có mấy từ?', options: ['2', '3', '4'], answer: '3' },
+    { q: 'Câu nào đúng chính tả?', options: ['bé đi học', 'Bé đi học.', 'BE DI HOC'], answer: 'Bé đi học.' },
+    { q: '"Mẹ yêu con" - Ai yêu con?', options: ['Bố', 'Mẹ', 'Bé'], answer: 'Mẹ' },
+    { q: '"Bố đọc sách" - Bố làm gì?', options: ['Viết', 'Đọc sách', 'Ngủ'], answer: 'Đọc sách' },
+    { q: 'Câu hỏi kết thúc bằng dấu?', options: ['Chấm (.)', 'Hỏi (?)', 'Phẩy (,)'], answer: 'Hỏi (?)' },
+  ],
+  
+  v13: [
+    { q: 'Người sinh ra mình là?', options: ['Bố mẹ', 'Anh chị', 'Ông bà'], answer: 'Bố mẹ' },
+    { q: 'Bố của bố gọi là?', options: ['Ông nội', 'Ông ngoại', 'Bác'], answer: 'Ông nội' },
+    { q: 'Mẹ của mẹ gọi là?', options: ['Bà nội', 'Bà ngoại', 'Dì'], answer: 'Bà ngoại' },
+    { q: 'Em gái của mẹ gọi là?', options: ['Cô', 'Dì', 'Bác'], answer: 'Dì' },
+    { q: 'Em trai của bố gọi là?', options: ['Cậu', 'Chú', 'Bác'], answer: 'Chú' },
+  ],
+  
+  v14: [
+    { q: 'Con vật nào kêu "gâu gâu"?', options: ['Mèo', 'Chó', 'Gà'], answer: 'Chó' },
+    { q: 'Con vật nào kêu "meo meo"?', options: ['Mèo', 'Chó', 'Gà'], answer: 'Mèo' },
+    { q: 'Con vật nào đẻ trứng?', options: ['Chó', 'Mèo', 'Gà'], answer: 'Gà' },
+    { q: 'Con vật nào sống dưới nước?', options: ['Chim', 'Cá', 'Gà'], answer: 'Cá' },
+    { q: 'Con vật nào có vòi dài?', options: ['Hổ', 'Sư tử', 'Voi'], answer: 'Voi' },
+  ],
+  
+  v15: [
+    { q: 'Quả nào màu vàng, cong cong?', options: ['Táo', 'Chuối', 'Cam'], answer: 'Chuối' },
+    { q: 'Quả nào màu đỏ, có cuống?', options: ['Táo', 'Chuối', 'Cam'], answer: 'Táo' },
+    { q: 'Quả nào màu cam, nhiều vitamin C?', options: ['Táo', 'Chuối', 'Cam'], answer: 'Cam' },
+    { q: 'Quả nào to, xanh vỏ đỏ ruột?', options: ['Táo', 'Dưa hấu', 'Cam'], answer: 'Dưa hấu' },
+    { q: 'Quả nào nhỏ, mọc thành chùm?', options: ['Táo', 'Chuối', 'Nho'], answer: 'Nho' },
+  ],
+};
+
+export const ENGLISH_LESSONS = {
+  // E1: Letters A-F
+  e1: [
+    { q: 'What letter is this? A', options: ['A', 'B', 'C', 'D'], answer: 'A' },
+    { q: 'Apple starts with?', options: ['A', 'B', 'C', 'D'], answer: 'A' },
+    { q: 'What comes after A?', options: ['A', 'B', 'C', 'D'], answer: 'B' },
+    { q: 'Ball starts with?', options: ['A', 'B', 'C', 'D'], answer: 'B' },
+    { q: 'Cat starts with?', options: ['B', 'C', 'D', 'E'], answer: 'C' },
+    { q: 'Dog starts with?', options: ['B', 'C', 'D', 'E'], answer: 'D' },
+    { q: 'What comes after E?', options: ['D', 'E', 'F', 'G'], answer: 'F' },
+    { q: 'Fish starts with?', options: ['D', 'E', 'F', 'G'], answer: 'F' },
+  ],
+  
+  // E2: Letters G-L
+  e2: [
+    { q: 'Girl starts with?', options: ['F', 'G', 'H', 'I'], answer: 'G' },
+    { q: 'House starts with?', options: ['G', 'H', 'I', 'J'], answer: 'H' },
+    { q: 'What comes after I?', options: ['H', 'I', 'J', 'K'], answer: 'J' },
+    { q: 'Jump starts with?', options: ['I', 'J', 'K', 'L'], answer: 'J' },
+    { q: 'King starts with?', options: ['J', 'K', 'L', 'M'], answer: 'K' },
+    { q: 'Lion starts with?', options: ['K', 'L', 'M', 'N'], answer: 'L' },
+    { q: 'What letter is this? L', options: ['K', 'L', 'M', 'N'], answer: 'L' },
+    { q: 'Kite starts with?', options: ['J', 'K', 'L', 'M'], answer: 'K' },
+  ],
+  
+  // E3: Letters M-R
+  e3: [
+    { q: 'Mom starts with?', options: ['L', 'M', 'N', 'O'], answer: 'M' },
+    { q: 'What comes after N?', options: ['M', 'N', 'O', 'P'], answer: 'O' },
+    { q: 'Orange starts with?', options: ['N', 'O', 'P', 'Q'], answer: 'O' },
+    { q: 'Pig starts with?', options: ['O', 'P', 'Q', 'R'], answer: 'P' },
+    { q: 'Queen starts with?', options: ['P', 'Q', 'R', 'S'], answer: 'Q' },
+    { q: 'What comes after Q?', options: ['P', 'Q', 'R', 'S'], answer: 'R' },
+    { q: 'Red starts with?', options: ['P', 'Q', 'R', 'S'], answer: 'R' },
+    { q: 'Nose starts with?', options: ['L', 'M', 'N', 'O'], answer: 'N' },
+  ],
+  
+  // E4: Letters S-Z
+  e4: [
+    { q: 'Sun starts with?', options: ['R', 'S', 'T', 'U'], answer: 'S' },
+    { q: 'What comes after T?', options: ['S', 'T', 'U', 'V'], answer: 'U' },
+    { q: 'Umbrella starts with?', options: ['T', 'U', 'V', 'W'], answer: 'U' },
+    { q: 'Water starts with?', options: ['V', 'W', 'X', 'Y'], answer: 'W' },
+    { q: 'What comes after X?', options: ['W', 'X', 'Y', 'Z'], answer: 'Y' },
+    { q: 'Yellow starts with?', options: ['X', 'Y', 'Z', 'A'], answer: 'Y' },
+    { q: 'What is the last letter?', options: ['X', 'Y', 'Z', 'W'], answer: 'Z' },
+    { q: 'Zebra starts with?', options: ['X', 'Y', 'Z', 'A'], answer: 'Z' },
+  ],
+  
+  // E5: Numbers 1-10
+  e5: [
+    { q: 'How do you say "1"?', options: ['Two', 'One', 'Three'], answer: 'One' },
+    { q: 'What number is "Three"?', options: ['2', '3', '4'], answer: '3' },
+    { q: 'How do you say "5"?', options: ['Four', 'Five', 'Six'], answer: 'Five' },
+    { q: 'What number is "Seven"?', options: ['6', '7', '8'], answer: '7' },
+    { q: 'How do you say "10"?', options: ['Nine', 'Ten', 'Eleven'], answer: 'Ten' },
+    { q: '🍎🍎🍎🍎 = ? apples', options: ['Three', 'Four', 'Five'], answer: 'Four' },
+    { q: 'What comes after "Eight"?', options: ['Seven', 'Nine', 'Ten'], answer: 'Nine' },
+    { q: '2 + 2 = ?', options: ['Three', 'Four', 'Five'], answer: 'Four' },
+  ],
+  
+  // E6: Colors
+  e6: [
+    { q: 'What color is the sky? 🌤️', options: ['Red', 'Blue', 'Green'], answer: 'Blue' },
+    { q: 'What color is grass? 🌿', options: ['Red', 'Blue', 'Green'], answer: 'Green' },
+    { q: 'What color is the sun? ☀️', options: ['Red', 'Blue', 'Yellow'], answer: 'Yellow' },
+    { q: 'What color is a tomato? 🍅', options: ['Red', 'Blue', 'Green'], answer: 'Red' },
+    { q: 'What color is an orange? 🍊', options: ['Red', 'Orange', 'Yellow'], answer: 'Orange' },
+    { q: 'What color is snow? ❄️', options: ['White', 'Blue', 'Gray'], answer: 'White' },
+    { q: 'What color is night? 🌙', options: ['White', 'Blue', 'Black'], answer: 'Black' },
+    { q: 'Mix red + blue = ?', options: ['Green', 'Purple', 'Orange'], answer: 'Purple' },
+  ],
+  
+  // E7: Animals
+  e7: [
+    { q: 'What is this? 🐕', options: ['Cat', 'Dog', 'Bird'], answer: 'Dog' },
+    { q: 'What is this? 🐱', options: ['Cat', 'Dog', 'Bird'], answer: 'Cat' },
+    { q: 'What is this? 🐟', options: ['Cat', 'Dog', 'Fish'], answer: 'Fish' },
+    { q: 'What is this? 🐦', options: ['Cat', 'Dog', 'Bird'], answer: 'Bird' },
+    { q: 'What is this? 🐘', options: ['Lion', 'Tiger', 'Elephant'], answer: 'Elephant' },
+    { q: 'What is this? 🦁', options: ['Lion', 'Tiger', 'Bear'], answer: 'Lion' },
+    { q: 'What is this? 🐰', options: ['Mouse', 'Rabbit', 'Hamster'], answer: 'Rabbit' },
+    { q: 'What animal says "moo"? 🐄', options: ['Pig', 'Cow', 'Horse'], answer: 'Cow' },
+  ],
+  
+  // E8: Fruits
+  e8: [
+    { q: 'What is this? 🍎', options: ['Orange', 'Apple', 'Banana'], answer: 'Apple' },
+    { q: 'What is this? 🍌', options: ['Orange', 'Apple', 'Banana'], answer: 'Banana' },
+    { q: 'What is this? 🍊', options: ['Orange', 'Apple', 'Banana'], answer: 'Orange' },
+    { q: 'What is this? 🍇', options: ['Orange', 'Apple', 'Grapes'], answer: 'Grapes' },
+    { q: 'What is this? 🍓', options: ['Cherry', 'Strawberry', 'Tomato'], answer: 'Strawberry' },
+    { q: 'What is this? 🍉', options: ['Melon', 'Watermelon', 'Coconut'], answer: 'Watermelon' },
+    { q: 'What is this? 🍋', options: ['Orange', 'Lemon', 'Lime'], answer: 'Lemon' },
+    { q: 'What is this? 🥭', options: ['Peach', 'Mango', 'Papaya'], answer: 'Mango' },
+  ],
+  
+  // E9: Family
+  e9: [
+    { q: 'Who is your father?', options: ['Mom', 'Dad', 'Brother'], answer: 'Dad' },
+    { q: 'Who is your mother?', options: ['Mom', 'Dad', 'Sister'], answer: 'Mom' },
+    { q: "Father's son is your?", options: ['Sister', 'Brother', 'Father'], answer: 'Brother' },
+    { q: "Mother's daughter is your?", options: ['Sister', 'Brother', 'Mother'], answer: 'Sister' },
+    { q: "Father's father is your?", options: ['Father', 'Uncle', 'Grandfather'], answer: 'Grandfather' },
+    { q: "Mother's mother is your?", options: ['Mother', 'Aunt', 'Grandmother'], answer: 'Grandmother' },
+    { q: 'What do you call parents of parents?', options: ['Parents', 'Siblings', 'Grandparents'], answer: 'Grandparents' },
+    { q: 'Who is "baby"?', options: ['Old person', 'Young child', 'Teenager'], answer: 'Young child' },
+  ],
+  
+  // E10: Body Parts
+  e10: [
+    { q: 'What is this? 👀', options: ['Nose', 'Eyes', 'Ears'], answer: 'Eyes' },
+    { q: 'What is this? 👃', options: ['Nose', 'Eyes', 'Ears'], answer: 'Nose' },
+    { q: 'What is this? 👂', options: ['Nose', 'Eyes', 'Ears'], answer: 'Ears' },
+    { q: 'What is this? 👄', options: ['Nose', 'Eyes', 'Mouth'], answer: 'Mouth' },
+    { q: 'What do you think with?', options: ['Heart', 'Head', 'Hand'], answer: 'Head' },
+    { q: 'What do you walk with?', options: ['Hands', 'Arms', 'Legs'], answer: 'Legs' },
+    { q: 'What do you write with?', options: ['Head', 'Foot', 'Hand'], answer: 'Hand' },
+    { q: 'How many fingers on one hand?', options: ['Four', 'Five', 'Six'], answer: 'Five' },
+  ],
+  
+  // E11: Greetings
+  e11: [
+    { q: 'How do you say "Xin chào"?', options: ['Goodbye', 'Hello', 'Sorry'], answer: 'Hello' },
+    { q: 'How do you say "Tạm biệt"?', options: ['Goodbye', 'Hello', 'Sorry'], answer: 'Goodbye' },
+    { q: 'How do you say "Cảm ơn"?', options: ['Sorry', 'Please', 'Thank you'], answer: 'Thank you' },
+    { q: 'How do you say "Xin lỗi"?', options: ['Sorry', 'Please', 'Thank you'], answer: 'Sorry' },
+    { q: 'Morning greeting?', options: ['Good night', 'Good morning', 'Goodbye'], answer: 'Good morning' },
+    { q: 'Night greeting?', options: ['Good night', 'Good morning', 'Hello'], answer: 'Good night' },
+    { q: '"How are you?" means?', options: ['Bạn khỏe không?', 'Tên bạn là gì?', 'Bạn bao tuổi?'], answer: 'Bạn khỏe không?' },
+    { q: 'Reply to "Thank you"?', options: ['Sorry', 'Please', "You're welcome"], answer: "You're welcome" },
+  ],
+  
+  // E12: I am...
+  e12: [
+    { q: '"I am a boy" means?', options: ['Tôi là con gái', 'Tôi là con trai', 'Tôi là em bé'], answer: 'Tôi là con trai' },
+    { q: '"I am happy" means?', options: ['Tôi buồn', 'Tôi vui', 'Tôi mệt'], answer: 'Tôi vui' },
+    { q: 'How do you say "Tôi 5 tuổi"?', options: ['I am five', 'I have five', 'I like five'], answer: 'I am five' },
+    { q: '"I am hungry" means?', options: ['Tôi no', 'Tôi đói', 'Tôi khát'], answer: 'Tôi đói' },
+    { q: '"I am a student" means?', options: ['Tôi là giáo viên', 'Tôi là học sinh', 'Tôi là bác sĩ'], answer: 'Tôi là học sinh' },
+    { q: 'Fill: "I ___ tall"', options: ['is', 'am', 'are'], answer: 'am' },
+    { q: '"My name is..." means?', options: ['Tôi là...', 'Tên tôi là...', 'Tôi thích...'], answer: 'Tên tôi là...' },
+    { q: '"I am from Vietnam" means?', options: ['Tôi thích Việt Nam', 'Tôi đến từ Việt Nam', 'Tôi sống ở Việt Nam'], answer: 'Tôi đến từ Việt Nam' },
+  ],
+  
+  // E13: This is...
+  e13: [
+    { q: '"This is a cat" means?', options: ['Đây là con chó', 'Đây là con mèo', 'Đó là con mèo'], answer: 'Đây là con mèo' },
+    { q: 'Point to a book and say?', options: ['This is a pen', 'This is a book', 'That is a book'], answer: 'This is a book' },
+    { q: '"That is my mom" means?', options: ['Đây là mẹ tôi', 'Đó là mẹ tôi', 'Kia là mẹ tôi'], answer: 'Đó là mẹ tôi' },
+    { q: 'Fill: "___ is an apple"', options: ['These', 'Those', 'This'], answer: 'This' },
+    { q: '"It is red" means?', options: ['Nó màu xanh', 'Nó màu đỏ', 'Nó màu vàng'], answer: 'Nó màu đỏ' },
+    { q: 'What is "it"?', options: ['Tôi', 'Bạn', 'Nó'], answer: 'Nó' },
+    { q: 'Fill: "This ___ my bag"', options: ['is', 'am', 'are'], answer: 'is' },
+    { q: '"These are my toys" means?', options: ['Đây là đồ chơi của tôi', 'Đó là đồ chơi', 'Tôi có đồ chơi'], answer: 'Đây là đồ chơi của tôi' },
+  ],
+  
+  // E14: I like...
+  e14: [
+    { q: '"I like apples" means?', options: ['Tôi có táo', 'Tôi thích táo', 'Tôi ăn táo'], answer: 'Tôi thích táo' },
+    { q: '"I don\'t like fish" means?', options: ['Tôi thích cá', 'Tôi không thích cá', 'Tôi có cá'], answer: 'Tôi không thích cá' },
+    { q: '"I love my mom" means?', options: ['Tôi thích mẹ', 'Tôi yêu mẹ', 'Tôi có mẹ'], answer: 'Tôi yêu mẹ' },
+    { q: 'Fill: "I ___ ice cream"', options: ['likes', 'like', 'liking'], answer: 'like' },
+    { q: '"Do you like pizza?" means?', options: ['Bạn ăn pizza?', 'Bạn thích pizza không?', 'Bạn mua pizza?'], answer: 'Bạn thích pizza không?' },
+    { q: 'Answer "Do you like cats?"', options: ['Yes, I do', 'Yes, I am', 'Yes, it is'], answer: 'Yes, I do' },
+    { q: '"I want milk" means?', options: ['Tôi có sữa', 'Tôi uống sữa', 'Tôi muốn sữa'], answer: 'Tôi muốn sữa' },
+    { q: '"My favorite color is blue" means?', options: ['Tôi thích màu xanh', 'Màu yêu thích của tôi là xanh', 'Xanh là màu đẹp'], answer: 'Màu yêu thích của tôi là xanh' },
+  ],
+  
+  // E15: Questions
+  e15: [
+    { q: '"What is this?" means?', options: ['Đây là gì?', 'Đây ở đâu?', 'Đây là ai?'], answer: 'Đây là gì?' },
+    { q: '"Where is the cat?" means?', options: ['Con mèo là gì?', 'Con mèo ở đâu?', 'Con mèo là ai?'], answer: 'Con mèo ở đâu?' },
+    { q: '"Who is she?" means?', options: ['Cô ấy là gì?', 'Cô ấy ở đâu?', 'Cô ấy là ai?'], answer: 'Cô ấy là ai?' },
+    { q: '"How are you?" means?', options: ['Bạn là ai?', 'Bạn ở đâu?', 'Bạn khỏe không?'], answer: 'Bạn khỏe không?' },
+    { q: '"Why?" means?', options: ['Gì?', 'Ở đâu?', 'Tại sao?'], answer: 'Tại sao?' },
+    { q: '"How old are you?" means?', options: ['Bạn là ai?', 'Bạn ở đâu?', 'Bạn bao nhiêu tuổi?'], answer: 'Bạn bao nhiêu tuổi?' },
+    { q: '"How many?" means?', options: ['Bao nhiêu?', 'Như thế nào?', 'Ở đâu?'], answer: 'Bao nhiêu?' },
+    { q: '"When is your birthday?" means?', options: ['Sinh nhật bạn ở đâu?', 'Sinh nhật bạn khi nào?', 'Sinh nhật bạn là gì?'], answer: 'Sinh nhật bạn khi nào?' },
+  ],
+};
+
+export const SCIENCE_LESSONS = {
+  // S1: Con vật nuôi
+  s1: [
+    { q: 'Con vật nào được nuôi để giữ nhà?', options: ['Mèo', 'Chó', 'Gà', 'Cá'], answer: 'Chó' },
+    { q: 'Con vật nào đẻ trứng và cho ta ăn?', options: ['Chó', 'Mèo', 'Gà', 'Lợn'], answer: 'Gà' },
+    { q: 'Con vật nào cho ta sữa uống?', options: ['Gà', 'Vịt', 'Bò', 'Lợn'], answer: 'Bò' },
+    { q: 'Con vật nào sống trong nước?', options: ['Gà', 'Cá', 'Chó', 'Mèo'], answer: 'Cá' },
+    { q: 'Con vật nào bắt chuột giỏi?', options: ['Chó', 'Mèo', 'Gà', 'Vịt'], answer: 'Mèo' },
+    { q: 'Con vịt sống ở đâu?', options: ['Trên cây', 'Trong nhà', 'Gần ao hồ'], answer: 'Gần ao hồ' },
+    { q: 'Con lợn cho ta thức ăn gì?', options: ['Sữa', 'Trứng', 'Thịt'], answer: 'Thịt' },
+    { q: 'Con vật nào kéo cày giúp nông dân?', options: ['Chó', 'Mèo', 'Trâu/Bò'], answer: 'Trâu/Bò' },
+  ],
+  
+  // S2: Con vật hoang dã
+  s2: [
+    { q: 'Con vật nào gọi là "Chúa tể rừng xanh"?', options: ['Hổ', 'Sư tử', 'Voi'], answer: 'Sư tử' },
+    { q: 'Con vật nào có vòi dài?', options: ['Hươu cao cổ', 'Voi', 'Tê giác'], answer: 'Voi' },
+    { q: 'Con vật nào có cổ dài nhất?', options: ['Voi', 'Hươu cao cổ', 'Đà điểu'], answer: 'Hươu cao cổ' },
+    { q: 'Con vật nào sống ở Bắc Cực?', options: ['Sư tử', 'Gấu trắng', 'Hổ'], answer: 'Gấu trắng' },
+    { q: 'Con vật nào có vằn đen trắng?', options: ['Ngựa', 'Ngựa vằn', 'Bò'], answer: 'Ngựa vằn' },
+    { q: 'Con vật nào biết leo cây giỏi?', options: ['Voi', 'Sư tử', 'Khỉ'], answer: 'Khỉ' },
+    { q: 'Con vật nào có hàm răng sắc, sống dưới nước?', options: ['Cá heo', 'Cá sấu', 'Cá voi'], answer: 'Cá sấu' },
+    { q: 'Con vật nào nhảy bằng hai chân sau?', options: ['Thỏ', 'Kangaroo', 'Cả hai'], answer: 'Cả hai' },
+  ],
+  
+  // S3: Cây cối
+  s3: [
+    { q: 'Cây hấp thụ gì để quang hợp?', options: ['Oxy', 'Nước', 'Ánh sáng', 'Cả B và C'], answer: 'Cả B và C' },
+    { q: 'Phần nào của cây hút nước?', options: ['Lá', 'Thân', 'Rễ', 'Hoa'], answer: 'Rễ' },
+    { q: 'Phần nào của cây quang hợp?', options: ['Lá', 'Thân', 'Rễ', 'Hoa'], answer: 'Lá' },
+    { q: 'Cây thải ra khí gì?', options: ['CO2', 'Oxy', 'Nitơ', 'Hydro'], answer: 'Oxy' },
+    { q: 'Quả phát triển từ phần nào?', options: ['Lá', 'Thân', 'Rễ', 'Hoa'], answer: 'Hoa' },
+    { q: 'Cây nào cho ta gạo?', options: ['Ngô', 'Lúa', 'Khoai', 'Sắn'], answer: 'Lúa' },
+    { q: 'Cây nào cho ta hoa quả?', options: ['Cây lúa', 'Cây ăn quả', 'Cây cỏ'], answer: 'Cây ăn quả' },
+    { q: 'Lá cây thường có màu gì?', options: ['Đỏ', 'Vàng', 'Xanh', 'Tím'], answer: 'Xanh' },
+  ],
+  
+  // S4: Thời tiết
+  s4: [
+    { q: 'Khi trời nắng, ta thấy gì?', options: ['Mưa', 'Mặt trời', 'Tuyết', 'Sấm'], answer: 'Mặt trời' },
+    { q: 'Nước rơi từ trời xuống là?', options: ['Tuyết', 'Mưa', 'Sương', 'Băng'], answer: 'Mưa' },
+    { q: 'Mùa nào nóng nhất?', options: ['Xuân', 'Hạ', 'Thu', 'Đông'], answer: 'Hạ' },
+    { q: 'Mùa nào lạnh nhất?', options: ['Xuân', 'Hạ', 'Thu', 'Đông'], answer: 'Đông' },
+    { q: 'Cầu vồng có mấy màu?', options: ['5', '6', '7', '8'], answer: '7' },
+    { q: 'Mây màu đen báo hiệu?', options: ['Trời nắng', 'Trời mưa', 'Trời tuyết'], answer: 'Trời mưa' },
+    { q: 'Gió là gì?', options: ['Không khí chuyển động', 'Nước bay lên', 'Mây di chuyển'], answer: 'Không khí chuyển động' },
+    { q: 'Sấm sét thường có khi?', options: ['Trời nắng', 'Trời mưa to', 'Trời tuyết'], answer: 'Trời mưa to' },
+  ],
+  
+  // S5: Cơ thể người
+  s5: [
+    { q: 'Tim nằm ở đâu?', options: ['Bụng', 'Ngực', 'Đầu', 'Chân'], answer: 'Ngực' },
+    { q: 'Phổi dùng để làm gì?', options: ['Tiêu hóa', 'Thở', 'Suy nghĩ', 'Đi lại'], answer: 'Thở' },
+    { q: 'Não nằm ở đâu?', options: ['Bụng', 'Ngực', 'Đầu', 'Tay'], answer: 'Đầu' },
+    { q: 'Dạ dày dùng để làm gì?', options: ['Thở', 'Tiêu hóa', 'Suy nghĩ', 'Nhìn'], answer: 'Tiêu hóa' },
+    { q: 'Xương giúp cơ thể?', options: ['Thở', 'Đứng vững', 'Tiêu hóa', 'Nghe'], answer: 'Đứng vững' },
+    { q: 'Máu có màu gì?', options: ['Xanh', 'Đỏ', 'Trắng', 'Vàng'], answer: 'Đỏ' },
+    { q: 'Người có mấy tay?', options: ['1', '2', '3', '4'], answer: '2' },
+    { q: 'Răng dùng để làm gì?', options: ['Nhìn', 'Nghe', 'Nhai', 'Ngửi'], answer: 'Nhai' },
+  ],
+  
+  // S6: Giác quan
+  s6: [
+    { q: 'Mắt dùng để làm gì?', options: ['Nghe', 'Nhìn', 'Ngửi', 'Nếm'], answer: 'Nhìn' },
+    { q: 'Tai dùng để làm gì?', options: ['Nghe', 'Nhìn', 'Ngửi', 'Nếm'], answer: 'Nghe' },
+    { q: 'Mũi dùng để làm gì?', options: ['Nghe', 'Nhìn', 'Ngửi', 'Nếm'], answer: 'Ngửi' },
+    { q: 'Lưỡi dùng để làm gì?', options: ['Nghe', 'Nhìn', 'Ngửi', 'Nếm'], answer: 'Nếm' },
+    { q: 'Da dùng để làm gì?', options: ['Nghe', 'Sờ/Cảm nhận', 'Ngửi', 'Nếm'], answer: 'Sờ/Cảm nhận' },
+    { q: 'Con người có mấy giác quan?', options: ['3', '4', '5', '6'], answer: '5' },
+    { q: 'Khi ăn chanh, lưỡi cảm thấy?', options: ['Ngọt', 'Chua', 'Mặn', 'Đắng'], answer: 'Chua' },
+    { q: 'Khi sờ lửa, ta cảm thấy?', options: ['Lạnh', 'Nóng', 'Mềm', 'Cứng'], answer: 'Nóng' },
+  ],
+  
+  // S7: Hệ mặt trời
+  s7: [
+    { q: 'Hành tinh nào gần Mặt trời nhất?', options: ['Trái Đất', 'Sao Thủy', 'Sao Kim', 'Sao Hỏa'], answer: 'Sao Thủy' },
+    { q: 'Chúng ta sống trên hành tinh nào?', options: ['Sao Hỏa', 'Sao Kim', 'Trái Đất', 'Mặt Trăng'], answer: 'Trái Đất' },
+    { q: 'Mặt Trăng quay quanh?', options: ['Mặt Trời', 'Trái Đất', 'Sao Hỏa', 'Sao Kim'], answer: 'Trái Đất' },
+    { q: 'Ngày và đêm do đâu mà có?', options: ['Trái Đất quay', 'Mặt Trời quay', 'Mặt Trăng quay'], answer: 'Trái Đất quay' },
+    { q: '1 năm có mấy mùa?', options: ['2', '3', '4', '5'], answer: '4' },
+    { q: 'Hành tinh nào có vành đai?', options: ['Trái Đất', 'Sao Hỏa', 'Sao Thổ', 'Sao Kim'], answer: 'Sao Thổ' },
+    { q: 'Mặt Trời là gì?', options: ['Hành tinh', 'Ngôi sao', 'Vệ tinh', 'Sao chổi'], answer: 'Ngôi sao' },
+    { q: 'Ban đêm ta thấy gì trên trời?', options: ['Mặt Trời', 'Mặt Trăng và sao', 'Cầu vồng'], answer: 'Mặt Trăng và sao' },
+  ],
+  
+  // S8: Nước
+  s8: [
+    { q: 'Nước có màu gì?', options: ['Xanh', 'Trắng', 'Không màu', 'Vàng'], answer: 'Không màu' },
+    { q: 'Nước đóng băng ở nhiệt độ?', options: ['0°C', '10°C', '50°C', '100°C'], answer: '0°C' },
+    { q: 'Nước sôi ở nhiệt độ?', options: ['0°C', '50°C', '100°C', '200°C'], answer: '100°C' },
+    { q: 'Nước có thể ở dạng nào?', options: ['Lỏng', 'Rắn (đá)', 'Khí (hơi)', 'Cả 3'], answer: 'Cả 3' },
+    { q: 'Con người cần nước để?', options: ['Thở', 'Sống', 'Bay', 'Ngủ'], answer: 'Sống' },
+    { q: 'Nguồn nước nào uống được?', options: ['Nước biển', 'Nước sông', 'Nước lọc', 'Nước ao'], answer: 'Nước lọc' },
+    { q: 'Mây được tạo từ?', options: ['Khói', 'Hơi nước', 'Bụi', 'Không khí'], answer: 'Hơi nước' },
+    { q: 'Khi nước bốc hơi thành?', options: ['Đá', 'Hơi nước', 'Mưa', 'Tuyết'], answer: 'Hơi nước' },
+  ],
+};
