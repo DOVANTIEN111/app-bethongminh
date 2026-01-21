@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
@@ -10,10 +10,15 @@ export default function SubjectPage() {
   const { subjectId } = useParams();
   const navigate = useNavigate();
   const { currentChild } = useAuth();
-  const { playSound } = useAudio();
+  const { playSound, stopAudio } = useAudio();
   
   const subject = getSubject(subjectId);
   const progress = currentChild?.progress?.[subjectId] || { completed: [], scores: {} };
+
+  // Dừng tất cả audio khi vào trang danh sách bài học
+  useEffect(() => {
+    stopAudio();
+  }, [stopAudio]);
   
   if (!subject) {
     return (
