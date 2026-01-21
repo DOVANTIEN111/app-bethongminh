@@ -1,11 +1,8 @@
-// src/contexts/AuthContext.jsx
-// QUẢN LÝ ĐĂNG NHẬP, THIẾT BỊ, SUBSCRIPTION
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { supabase, getDeviceInfo, getOrCreateDeviceId } from '../lib/supabase';
 
 const AuthContext = createContext(null);
 
-// Gói subscription
 const PLANS = {
   free: { name: 'Miễn phí', maxDevices: 1, maxChildren: 1, price: 0 },
   plus: { name: 'Plus', maxDevices: 3, maxChildren: 3, price: 49000 },
@@ -13,22 +10,16 @@ const PLANS = {
 };
 
 export function AuthProvider({ children }) {
-  // Auth state
   const [user, setUser] = useState(null);
   const [account, setAccount] = useState(null);
   const [subscription, setSubscription] = useState(null);
   const [devices, setDevices] = useState([]);
   const [childrenList, setChildrenList] = useState([]);
   const [currentChild, setCurrentChild] = useState(null);
-  
-  // UI state
   const [loading, setLoading] = useState(true);
   const [deviceAllowed, setDeviceAllowed] = useState(true);
   const [deviceError, setDeviceError] = useState(null);
 
-  // =====================================================
-  // INITIALIZATION
-  // =====================================================
   useEffect(() => {
     initAuth();
   }, []);
@@ -36,7 +27,6 @@ export function AuthProvider({ children }) {
   const initAuth = async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      
       if (session?.user) {
         setUser(session.user);
         await loadAccountData(session.user.id);
@@ -50,7 +40,6 @@ export function AuthProvider({ children }) {
     const { data: { subscription: authSub } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         setUser(session?.user ?? null);
-        
         if (session?.user) {
           await loadAccountData(session.user.id);
         } else {
@@ -58,7 +47,6 @@ export function AuthProvider({ children }) {
         }
       }
     );
-
     return () => authSub.unsubscribe();
   };
 
@@ -72,9 +60,6 @@ export function AuthProvider({ children }) {
     setDeviceError(null);
   };
 
-  // =====================================================
-  // LOAD ACCOUNT DATA
-  // =====================================================
   const loadAccountData = async (userId) => {
     try {
       const { data: accountData } = await supabase
@@ -83,11 +68,7 @@ export function AuthProvider({ children }) {
         .eq('user_id', userId)
         .single();
 
-      if (!accountData) {
-        console.log('No account found');
-        return;
-      }
-
+      if (!accountData) return;
       setAccount(accountData);
 
       const { data: subData } = await supabase
@@ -97,19 +78,14 @@ export function AuthProvider({ children }) {
         .single();
 
       setSubscription(subData || { plan: 'free', max_devices: 1, max_children: 1 });
-
       await checkAndRegisterDevice(accountData.id);
       await loadDevices(accountData.id);
       await loadChildren(accountData.id);
-
     } catch (err) {
       console.error('Load account error:', err);
     }
   };
 
-  // =====================================================
-  // DEVICE MANAGEMENT
-  // =====================================================
   const checkAndRegisterDevice = async (accountId) => {
     try {
       const deviceInfo = getDeviceInfo();
@@ -141,7 +117,6 @@ export function AuthProvider({ children }) {
       setDeviceAllowed(true);
       setDeviceError(null);
       return true;
-
     } catch (err) {
       console.error('Device check error:', err);
       setDeviceAllowed(true);
@@ -157,7 +132,6 @@ export function AuthProvider({ children }) {
         .eq('account_id', accountId)
         .eq('is_active', true)
         .order('last_active', { ascending: false });
-
       setDevices(data || []);
     } catch (err) {
       console.error('Load devices error:', err);
@@ -166,18 +140,15 @@ export function AuthProvider({ children }) {
 
   const removeDevice = async (deviceId) => {
     if (!account) return { error: 'Chưa đăng nhập' };
-
     try {
       const { data } = await supabase.rpc('remove_device', {
         p_account_id: account.id,
         p_device_id: deviceId,
       });
-
       if (data?.success) {
         await loadDevices(account.id);
         return { success: true };
       }
-
       return { error: data?.message || 'Không thể xóa thiết bị' };
     } catch (err) {
       return { error: err.message };
@@ -186,11 +157,7 @@ export function AuthProvider({ children }) {
 
   const renameDevice = async (deviceId, newName) => {
     try {
-      await supabase
-        .from('user_devices')
-        .update({ device_name: newName })
-        .eq('id', deviceId);
-
+      await supabase.from('user_devices').update({ device_name: newName }).eq('id', deviceId);
       await loadDevices(account.id);
       return { success: true };
     } catch (err) {
@@ -198,9 +165,6 @@ export function AuthProvider({ children }) {
     }
   };
 
-  // =====================================================
-  // CHILDREN MANAGEMENT
-  // =====================================================
   const loadChildren = async (accountId) => {
     try {
       const { data } = await supabase
@@ -208,7 +172,6 @@ export function AuthProvider({ children }) {
         .select('*')
         .eq('account_id', accountId)
         .order('created_at', { ascending: true });
-
       setChildrenList(data || []);
 
       const lastChildId = localStorage.getItem('gdtm_current_child');
@@ -223,7 +186,6 @@ export function AuthProvider({ children }) {
 
   const addChild = async (name, avatar = '👦', age = null, gender = null) => {
     if (!account) return { error: 'Chưa đăng nhập' };
-
     try {
       const { data } = await supabase.rpc('add_child', {
         p_account_id: account.id,
@@ -232,12 +194,10 @@ export function AuthProvider({ children }) {
         p_age: age,
         p_gender: gender,
       });
-
       if (data?.success) {
         await loadChildren(account.id);
         return { success: true, childId: data.child_id };
       }
-
       return { error: data?.message || 'Không thể thêm bé' };
     } catch (err) {
       return { error: err.message };
@@ -246,17 +206,11 @@ export function AuthProvider({ children }) {
 
   const updateChild = async (childId, updates) => {
     try {
-      await supabase
-        .from('children')
-        .update({ ...updates, updated_at: new Date().toISOString() })
-        .eq('id', childId);
-
+      await supabase.from('children').update({ ...updates, updated_at: new Date().toISOString() }).eq('id', childId);
       await loadChildren(account.id);
-
       if (currentChild?.id === childId) {
         setCurrentChild(prev => ({ ...prev, ...updates }));
       }
-
       return { success: true };
     } catch (err) {
       return { error: err.message };
@@ -267,12 +221,10 @@ export function AuthProvider({ children }) {
     try {
       await supabase.from('children').delete().eq('id', childId);
       await loadChildren(account.id);
-
       if (currentChild?.id === childId) {
         setCurrentChild(null);
         localStorage.removeItem('gdtm_current_child');
       }
-
       return { success: true };
     } catch (err) {
       return { error: err.message };
@@ -285,23 +237,15 @@ export function AuthProvider({ children }) {
     supabase.rpc('update_child_streak', { p_child_id: child.id });
   }, []);
 
-  // =====================================================
-  // AUTH METHODS
-  // =====================================================
   const signUp = async (email, password, parentName) => {
     setLoading(true);
-
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: {
-          data: { name: parentName, role: 'parent' }
-        }
+        options: { data: { name: parentName, role: 'parent' } }
       });
-
       if (error) throw error;
-
       return { data, error: null };
     } catch (err) {
       return { data: null, error: err.message };
@@ -312,15 +256,9 @@ export function AuthProvider({ children }) {
 
   const signIn = async (email, password) => {
     setLoading(true);
-
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
-
       return { data, error: null };
     } catch (err) {
       return { data: null, error: err.message };
@@ -337,7 +275,6 @@ export function AuthProvider({ children }) {
 
   const updateAccount = async (updates) => {
     if (!account) return { error: 'Chưa đăng nhập' };
-
     try {
       const { data, error } = await supabase
         .from('accounts')
@@ -345,9 +282,7 @@ export function AuthProvider({ children }) {
         .eq('id', account.id)
         .select()
         .single();
-
       if (error) throw error;
-
       setAccount(data);
       return { data, error: null };
     } catch (err) {
@@ -355,95 +290,66 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const verifyParentPin = (pin) => {
-    return account?.parent_pin === pin;
-  };
+  const verifyParentPin = (pin) => account?.parent_pin === pin;
 
-  const changeParentPin = async (newPin) => {
-    return updateAccount({ parent_pin: newPin });
-  };
+  const changeParentPin = async (newPin) => updateAccount({ parent_pin: newPin });
 
-  // =====================================================
-  // SUBSCRIPTION
-  // =====================================================
   const upgradePlan = async (plan, paymentMethod = null) => {
     if (!account) return { error: 'Chưa đăng nhập' };
-
     try {
       const { data } = await supabase.rpc('upgrade_subscription', {
         p_account_id: account.id,
         p_plan: plan,
         p_payment_method: paymentMethod,
       });
-
       if (data?.success) {
         const { data: newSub } = await supabase
           .from('subscriptions')
           .select('*')
           .eq('account_id', account.id)
           .single();
-
         setSubscription(newSub);
         return { success: true, data };
       }
-
       return { error: 'Không thể nâng cấp gói' };
     } catch (err) {
       return { error: err.message };
     }
   };
 
-  // =====================================================
-  // CONTEXT VALUE
-  // =====================================================
   const value = {
-    // State
     user,
     account,
-    subscription,
     devices,
     children: childrenList,
     currentChild,
     loading,
     deviceAllowed,
     deviceError,
-
-    // Auth methods
     signUp,
     signIn,
     signOut,
     updateAccount,
     verifyParentPin,
     changeParentPin,
-
-    // Children methods
     addChild,
     updateChild,
     deleteChild,
     selectChild,
     loadChildren: () => loadChildren(account?.id),
-
-    // Device methods
     removeDevice,
     renameDevice,
     loadDevices: () => loadDevices(account?.id),
-
-    // Upgrade
     upgradePlan,
+    subscription,
     planInfo: PLANS[subscription?.plan || 'free'],
-
-    // Helpers
     isAuthenticated: !!user,
     isLoaded: !loading,
     canAddChild: childrenList.length < (subscription?.max_children || 1),
     canAddDevice: devices.length < (subscription?.max_devices || 1),
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
