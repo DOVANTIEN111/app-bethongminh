@@ -1,6 +1,8 @@
+// src/App.jsx
+// APP CHÍNH - Routes mới với Auth
 import React, { Suspense, lazy } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useMember } from './contexts/MemberContext';
+import { useAuth } from './contexts/AuthContext';
 
 // Loading component
 const Loading = () => (
@@ -11,14 +13,15 @@ const Loading = () => (
 );
 
 // Lazy load pages
-const MemberSelectPage = lazy(() => import('./pages/MemberSelectPage'));
+const AuthPage = lazy(() => import('./pages/AuthPage'));
+const SelectRolePage = lazy(() => import('./pages/SelectRolePage'));
+const ParentPage = lazy(() => import('./pages/ParentPage'));
 const HomePage = lazy(() => import('./pages/HomePage'));
 const SubjectPage = lazy(() => import('./pages/SubjectPage'));
 const LessonPage = lazy(() => import('./pages/LessonPage'));
 const GamesPage = lazy(() => import('./pages/GamesPage'));
 const GamePlayPage = lazy(() => import('./pages/GamePlayPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
-const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const SettingsPage = lazy(() => import('./pages/SettingsPage'));
 const PetPage = lazy(() => import('./pages/PetPage'));
 const StoryListPage = lazy(() => import('./pages/StoryListPage'));
@@ -29,13 +32,26 @@ const EnglishHubPage = lazy(() => import('./pages/EnglishHubPage'));
 const EnglishTopicPage = lazy(() => import('./pages/EnglishTopicPage'));
 const EnglishGamePage = lazy(() => import('./pages/EnglishGamePage'));
 
-// Layout with navigation
+// Layout
 const Layout = lazy(() => import('./components/Layout'));
 
-// Protected Route
+// Protected Route - Phải đăng nhập
 const ProtectedRoute = ({ children }) => {
-  const { currentMember } = useMember();
-  if (!currentMember) return <Navigate to="/member-select" replace />;
+  const { isAuthenticated, loading } = useAuth();
+  
+  if (loading) return <Loading />;
+  if (!isAuthenticated) return <Navigate to="/auth" replace />;
+  
+  return children;
+};
+
+// Child Route - Phải chọn bé
+const ChildRoute = ({ children }) => {
+  const { currentChild, loading } = useAuth();
+  
+  if (loading) return <Loading />;
+  if (!currentChild) return <Navigate to="/select-role" replace />;
+  
   return children;
 };
 
@@ -43,11 +59,28 @@ function App() {
   return (
     <Suspense fallback={<Loading />}>
       <Routes>
-        <Route path="/member-select" element={<MemberSelectPage />} />
+        {/* Public routes */}
+        <Route path="/auth" element={<AuthPage />} />
         
+        {/* Protected routes - cần đăng nhập */}
+        <Route path="/select-role" element={
+          <ProtectedRoute>
+            <SelectRolePage />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/parent" element={
+          <ProtectedRoute>
+            <ParentPage />
+          </ProtectedRoute>
+        } />
+        
+        {/* Child routes - cần chọn bé */}
         <Route path="/" element={
           <ProtectedRoute>
-            <Layout />
+            <ChildRoute>
+              <Layout />
+            </ChildRoute>
           </ProtectedRoute>
         }>
           <Route index element={<HomePage />} />
@@ -65,8 +98,12 @@ function App() {
           <Route path="settings" element={<SettingsPage />} />
         </Route>
         
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        {/* Legacy routes - redirect */}
+        <Route path="/member-select" element={<Navigate to="/select-role" replace />} />
+        <Route path="/dashboard" element={<Navigate to="/parent" replace />} />
+        
+        {/* Catch all */}
+        <Route path="*" element={<Navigate to="/auth" replace />} />
       </Routes>
     </Suspense>
   );
