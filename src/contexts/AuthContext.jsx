@@ -237,6 +237,206 @@ export function AuthProvider({ children }) {
     supabase.rpc('update_child_streak', { p_child_id: child.id });
   }, []);
 
+  // =====================================================
+  // LEARNING FUNCTIONS - Lưu kết quả học tập
+  // =====================================================
+  
+  const completeLesson = async (subjectId, lessonId, score, duration = 10) => {
+    if (!currentChild || !account) {
+      console.log('No child or account selected');
+      return;
+    }
+
+    const xpEarned = Math.round(score * 0.8) + 20; // 20-100 XP based on score
+
+    try {
+      // 1. Lưu vào learning_logs
+      await supabase.from('learning_logs').insert({
+        account_id: account.id,
+        child_id: currentChild.id,
+        type: 'lesson',
+        title: `Bài học ${subjectId} - ${lessonId}`,
+        subject: subjectId,
+        score: score,
+        xp_earned: xpEarned,
+        duration: duration,
+        date: new Date().toISOString().split('T')[0],
+      });
+
+      // 2. Cập nhật XP và stats cho child
+      const newXp = (currentChild.xp || 0) + xpEarned;
+      const newTotalLessons = (currentChild.total_lessons || 0) + 1;
+      const newLevel = calculateLevel(newXp);
+
+      await supabase.from('children').update({
+        xp: newXp,
+        level: newLevel,
+        total_lessons: newTotalLessons,
+        total_time_minutes: (currentChild.total_time_minutes || 0) + duration,
+        updated_at: new Date().toISOString(),
+      }).eq('id', currentChild.id);
+
+      // 3. Cập nhật state local
+      setCurrentChild(prev => ({
+        ...prev,
+        xp: newXp,
+        level: newLevel,
+        total_lessons: newTotalLessons,
+      }));
+
+      console.log('Lesson completed:', { xpEarned, newXp, newLevel });
+      return { success: true, xpEarned, newXp, newLevel };
+    } catch (err) {
+      console.error('Complete lesson error:', err);
+      return { error: err.message };
+    }
+  };
+
+  const completeGame = async (gameId, score, duration = 5) => {
+    if (!currentChild || !account) {
+      console.log('No child or account selected');
+      return;
+    }
+
+    const xpEarned = Math.round(score / 10) + 10; // 10-100 XP based on score
+
+    try {
+      // 1. Lưu vào learning_logs
+      await supabase.from('learning_logs').insert({
+        account_id: account.id,
+        child_id: currentChild.id,
+        type: 'game',
+        title: `Trò chơi ${gameId}`,
+        score: score,
+        xp_earned: xpEarned,
+        duration: duration,
+        date: new Date().toISOString().split('T')[0],
+      });
+
+      // 2. Cập nhật XP và stats cho child
+      const newXp = (currentChild.xp || 0) + xpEarned;
+      const newTotalGames = (currentChild.total_games || 0) + 1;
+      const newLevel = calculateLevel(newXp);
+
+      // Cập nhật game high score
+      const gameScores = currentChild.game_scores || {};
+      if (!gameScores[gameId] || score > gameScores[gameId]) {
+        gameScores[gameId] = score;
+      }
+
+      await supabase.from('children').update({
+        xp: newXp,
+        level: newLevel,
+        total_games: newTotalGames,
+        total_time_minutes: (currentChild.total_time_minutes || 0) + duration,
+        game_scores: gameScores,
+        updated_at: new Date().toISOString(),
+      }).eq('id', currentChild.id);
+
+      // 3. Cập nhật state local
+      setCurrentChild(prev => ({
+        ...prev,
+        xp: newXp,
+        level: newLevel,
+        total_games: newTotalGames,
+        game_scores: gameScores,
+      }));
+
+      console.log('Game completed:', { xpEarned, newXp, newLevel });
+      return { success: true, xpEarned, newXp, newLevel };
+    } catch (err) {
+      console.error('Complete game error:', err);
+      return { error: err.message };
+    }
+  };
+
+  const completeStory = async (storyId, duration = 10) => {
+    if (!currentChild || !account) return;
+
+    const xpEarned = 30;
+
+    try {
+      await supabase.from('learning_logs').insert({
+        account_id: account.id,
+        child_id: currentChild.id,
+        type: 'story',
+        title: `Truyện ${storyId}`,
+        xp_earned: xpEarned,
+        duration: duration,
+        date: new Date().toISOString().split('T')[0],
+      });
+
+      const newXp = (currentChild.xp || 0) + xpEarned;
+      const newLevel = calculateLevel(newXp);
+
+      await supabase.from('children').update({
+        xp: newXp,
+        level: newLevel,
+        total_time_minutes: (currentChild.total_time_minutes || 0) + duration,
+        updated_at: new Date().toISOString(),
+      }).eq('id', currentChild.id);
+
+      setCurrentChild(prev => ({ ...prev, xp: newXp, level: newLevel }));
+      return { success: true, xpEarned };
+    } catch (err) {
+      console.error('Complete story error:', err);
+      return { error: err.message };
+    }
+  };
+
+  const completeVocabulary = async (topicId, wordsLearned, duration = 5) => {
+    if (!currentChild || !account) return;
+
+    const xpEarned = wordsLearned * 5;
+
+    try {
+      await supabase.from('learning_logs').insert({
+        account_id: account.id,
+        child_id: currentChild.id,
+        type: 'vocabulary',
+        title: `Từ vựng ${topicId}`,
+        words_learned: wordsLearned,
+        xp_earned: xpEarned,
+        duration: duration,
+        date: new Date().toISOString().split('T')[0],
+      });
+
+      const newXp = (currentChild.xp || 0) + xpEarned;
+      const newLevel = calculateLevel(newXp);
+
+      await supabase.from('children').update({
+        xp: newXp,
+        level: newLevel,
+        total_time_minutes: (currentChild.total_time_minutes || 0) + duration,
+        updated_at: new Date().toISOString(),
+      }).eq('id', currentChild.id);
+
+      setCurrentChild(prev => ({ ...prev, xp: newXp, level: newLevel }));
+      return { success: true, xpEarned };
+    } catch (err) {
+      console.error('Complete vocabulary error:', err);
+      return { error: err.message };
+    }
+  };
+
+  // Tính level từ XP
+  const calculateLevel = (xp) => {
+    if (xp >= 5000) return 10;
+    if (xp >= 4000) return 9;
+    if (xp >= 3000) return 8;
+    if (xp >= 2300) return 7;
+    if (xp >= 1700) return 6;
+    if (xp >= 1200) return 5;
+    if (xp >= 800) return 4;
+    if (xp >= 500) return 3;
+    if (xp >= 250) return 2;
+    return 1;
+  };
+
+  // =====================================================
+  // AUTH METHODS
+  // =====================================================
+
   const signUp = async (email, password, parentName) => {
     setLoading(true);
     try {
@@ -347,6 +547,11 @@ export function AuthProvider({ children }) {
     isLoaded: !loading,
     canAddChild: childrenList.length < (subscription?.max_children || 1),
     canAddDevice: devices.length < (subscription?.max_devices || 1),
+    // Learning functions
+    completeLesson,
+    completeGame,
+    completeStory,
+    completeVocabulary,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
