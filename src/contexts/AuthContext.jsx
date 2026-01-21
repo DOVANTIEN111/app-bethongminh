@@ -428,7 +428,7 @@ export function AuthProvider({ children }) {
     renameDevice,
     loadDevices: () => loadDevices(account?.id),
 
-    // Subscription
+    // Upgrade
     upgradePlan,
     planInfo: PLANS[subscription?.plan || 'free'],
 
