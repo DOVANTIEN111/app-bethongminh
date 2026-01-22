@@ -54,7 +54,12 @@ export default function SubjectPage() {
   
   const handleLesson = (lesson) => {
     playSound('click');
-    navigate(`/lesson/${subjectId}/${lesson.id}`);
+    // Nếu là môn Toán với bài học mới, dùng MathLessonPage
+    if (subjectId === 'math' && lesson.id.startsWith('math-')) {
+      navigate(`/math/${lesson.id}`);
+    } else {
+      navigate(`/lesson/${subjectId}/${lesson.id}`);
+    }
   };
 
   // Logic mở khóa bài học
