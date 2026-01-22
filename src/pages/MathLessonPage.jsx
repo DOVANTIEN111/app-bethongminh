@@ -29,13 +29,15 @@ const Confetti = ({ show }) => {
 };
 
 // Image display with animation
-const ImageDisplay = ({ emoji, count, size = 'large' }) => {
+const ImageDisplay = ({ emoji, count = 1, size = 'large' }) => {
+  // Đảm bảo count là số hợp lệ
+  const validCount = Math.max(1, Math.min(count || 1, 20));
   const sizeClass = { small: 'text-2xl', medium: 'text-4xl', large: 'text-5xl', xlarge: 'text-6xl' }[size];
-  const gridClass = count <= 3 ? 'flex gap-2 justify-center' : count <= 6 ? 'grid grid-cols-3 gap-2' : 'grid grid-cols-5 gap-1';
+  const gridClass = validCount <= 3 ? 'flex gap-2 justify-center' : validCount <= 6 ? 'grid grid-cols-3 gap-2' : 'grid grid-cols-5 gap-1';
   
   return (
     <div className={gridClass}>
-      {Array(count).fill(null).map((_, i) => (
+      {Array(validCount).fill(null).map((_, i) => (
         <motion.span
           key={i}
           initial={{ scale: 0 }}
