@@ -425,7 +425,11 @@ export default function VietnameseLessonPage() {
             
             {/* Answer options (for non-compare types) */}
             {question.type !== 'compare' && question.options && question.options.length > 0 && (
-              <div className={`grid ${question.options.length === 2 ? 'grid-cols-2' : question.options.length === 3 ? 'grid-cols-3' : 'grid-cols-2'} gap-3`}>
+              <div className={`grid gap-3 ${
+                question.options.length === 2 ? 'grid-cols-2' : 
+                question.options.length === 3 ? 'grid-cols-3' : 
+                'grid-cols-2'  /* 4 options = 2x2 grid */
+              }`}>
                 {question.options.map((opt, i) => {
                   let correct = false;
                   if (question.type === 'select') {
@@ -446,7 +450,7 @@ export default function VietnameseLessonPage() {
                       showResult={showResult}
                       isCorrect={correct}
                       onSelect={handleAnswer}
-                      large={question.options.length <= 3}
+                      large={question.options.length <= 2}
                     />
                   );
                 })}

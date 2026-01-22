@@ -400,9 +400,13 @@ export default function MathLessonPage() {
             </div>
             
             {/* Answer options (for non-compare types) */}
-            {question.type !== 'compare' && (
-              <div className={`grid ${question.options?.length === 2 ? 'grid-cols-2' : 'grid-cols-3'} gap-3`}>
-                {question.options?.map((opt, i) => {
+            {question.type !== 'compare' && question.options && (
+              <div className={`grid gap-3 ${
+                question.options.length === 2 ? 'grid-cols-2' : 
+                question.options.length === 3 ? 'grid-cols-3' : 
+                'grid-cols-2'  /* 4+ options = 2 columns */
+              }`}>
+                {question.options.map((opt, i) => {
                   let correct = false;
                   if (question.type === 'select') {
                     correct = i === question.answer;
@@ -410,16 +414,18 @@ export default function MathLessonPage() {
                     correct = opt === question.answer;
                   }
                   
+                  const displayText = question.type === 'select' ? `${opt.count}` : opt;
+                  
                   return (
                     <AnswerButton
                       key={i}
-                      option={question.type === 'select' ? `${opt.count}` : opt}
+                      option={displayText}
                       index={i}
                       selected={selected}
                       showResult={showResult}
                       isCorrect={correct}
                       onSelect={handleAnswer}
-                      large={question.options.length <= 3}
+                      large={question.options.length <= 2}
                     />
                   );
                 })}
