@@ -13,6 +13,7 @@ const HomePage = lazy(() => import('./pages/HomePage'));
 const SubjectPage = lazy(() => import('./pages/SubjectPage'));
 const LessonPage = lazy(() => import('./pages/LessonPage'));
 const MathLessonPage = lazy(() => import('./pages/MathLessonPage'));
+const VietnameseLessonPage = lazy(() => import('./pages/VietnameseLessonPage'));
 const GamesPage = lazy(() => import('./pages/GamesPage'));
 const GamePlayPage = lazy(() => import('./pages/GamePlayPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
@@ -81,6 +82,7 @@ function App() {
           <Route path="subject/:subjectId" element={<SubjectPage />} />
           <Route path="lesson/:subjectId/:lessonId" element={<LessonPage />} />
           <Route path="math/:lessonId" element={<MathLessonPage />} />
+          <Route path="vietnamese/:lessonId" element={<VietnameseLessonPage />} />
           <Route path="games" element={<GamesPage />} />
           <Route path="games/:gameId" element={<GamePlayPage />} />
           <Route path="english" element={<EnglishHubPage />} />

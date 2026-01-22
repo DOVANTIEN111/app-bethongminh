@@ -66,7 +66,12 @@ export default function SubjectPage() {
     // Nếu là môn Toán với bài học mới, dùng MathLessonPage
     if (subjectId === 'math' && lesson.id.startsWith('math-')) {
       navigate(`/math/${lesson.id}`);
-    } else {
+    } 
+    // Nếu là môn Tiếng Việt với bài học mới, dùng VietnameseLessonPage
+    else if (subjectId === 'vietnamese' && lesson.id.startsWith('viet-')) {
+      navigate(`/vietnamese/${lesson.id}`);
+    }
+    else {
       navigate(`/lesson/${subjectId}/${lesson.id}`);
     }
   };
