@@ -286,6 +286,19 @@ export default function VietnameseLessonPage() {
   }
   
   // ==================== LEARNING SCREEN ====================
+  // Check if question exists
+  if (!question) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-b from-indigo-100 to-purple-100">
+        <div className="text-8xl mb-4">⏳</div>
+        <p className="text-xl text-gray-600 mb-4">Đang tải bài học...</p>
+        <button onClick={() => navigate(-1)} className="px-6 py-3 bg-indigo-500 text-white rounded-xl font-bold">
+          Quay lại
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-indigo-50 to-purple-50">
       {/* Header */}
@@ -405,15 +418,15 @@ export default function VietnameseLessonPage() {
                 </div>
               )}
               
-              {question.hint && showResult && !([...Array(questions.length)].map((_, i) => i < currentQ ? questions[i] : null).filter(Boolean).some(q => q?.answer === selected)) && (
+              {question.hint && showResult && selected !== null && question.answer !== question.options?.[selected] && (
                 <p className="text-center text-amber-600 text-sm mt-2">💡 {question.hint}</p>
               )}
             </div>
             
             {/* Answer options (for non-compare types) */}
-            {question.type !== 'compare' && (
-              <div className={`grid ${question.options?.length === 2 ? 'grid-cols-2' : 'grid-cols-3'} gap-3`}>
-                {question.options?.map((opt, i) => {
+            {question.type !== 'compare' && question.options && question.options.length > 0 && (
+              <div className={`grid ${question.options.length === 2 ? 'grid-cols-2' : question.options.length === 3 ? 'grid-cols-3' : 'grid-cols-2'} gap-3`}>
+                {question.options.map((opt, i) => {
                   let correct = false;
                   if (question.type === 'select') {
                     correct = i === question.answer;
@@ -421,10 +434,13 @@ export default function VietnameseLessonPage() {
                     correct = opt === question.answer;
                   }
                   
+                  // Hiển thị option text
+                  const displayText = typeof opt === 'object' ? (opt.text || opt.count || JSON.stringify(opt)) : opt;
+                  
                   return (
                     <AnswerButton
                       key={i}
-                      option={question.type === 'select' ? `${opt.count}` : opt}
+                      option={displayText}
                       index={i}
                       selected={selected}
                       showResult={showResult}
