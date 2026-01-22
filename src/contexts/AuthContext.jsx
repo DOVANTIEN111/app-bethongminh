@@ -92,36 +92,64 @@ export function AuthProvider({ children }) {
   const checkAndRegisterDevice = async (accountId) => {
     try {
       const deviceInfo = getDeviceInfo();
-      const deviceId = getOrCreateDeviceId();
+      const deviceFingerprint = getOrCreateDeviceId();
 
-      const { data: checkResult } = await supabase.rpc('check_device_limit', {
-        p_account_id: accountId,
-        p_device_fingerprint: deviceId,
-      });
+      // Kiểm tra thiết bị đã tồn tại chưa
+      const { data: existingDevice } = await supabase
+        .from('user_devices')
+        .select('id')
+        .eq('account_id', accountId)
+        .eq('device_fingerprint', deviceFingerprint)
+        .eq('is_active', true)
+        .single();
 
-      if (!checkResult?.allowed) {
+      if (existingDevice) {
+        // Cập nhật last_active
+        await supabase
+          .from('user_devices')
+          .update({ last_active: new Date().toISOString() })
+          .eq('id', existingDevice.id);
+
+        setDeviceAllowed(true);
+        setDeviceError(null);
+        return true;
+      }
+
+      // Kiểm tra giới hạn thiết bị
+      const { data: deviceCount } = await supabase
+        .from('user_devices')
+        .select('id', { count: 'exact' })
+        .eq('account_id', accountId)
+        .eq('is_active', true);
+
+      const maxDevices = subscription?.max_devices || 1;
+      const currentCount = deviceCount?.length || 0;
+
+      if (currentCount >= maxDevices) {
         setDeviceAllowed(false);
-        setDeviceError(checkResult?.message || 'Đã đạt giới hạn thiết bị');
+        setDeviceError(`Đã đạt giới hạn ${maxDevices} thiết bị. Vui lòng xóa thiết bị cũ.`);
         return false;
       }
 
-      if (checkResult?.is_new) {
-        await supabase.rpc('register_device', {
-          p_account_id: accountId,
-          p_device_fingerprint: deviceId,
-          p_device_name: deviceInfo.suggestedName,
-          p_device_type: deviceInfo.deviceType,
-          p_browser: deviceInfo.browser,
-          p_os: deviceInfo.os,
-          p_screen_size: deviceInfo.screenSize,
-        });
-      }
+      // Đăng ký thiết bị mới
+      await supabase.from('user_devices').insert({
+        account_id: accountId,
+        device_fingerprint: deviceFingerprint,
+        device_name: deviceInfo.suggestedName,
+        device_type: deviceInfo.deviceType,
+        browser: deviceInfo.browser,
+        os: deviceInfo.os,
+        screen_size: deviceInfo.screenSize,
+        is_active: true,
+        last_active: new Date().toISOString(),
+      });
 
       setDeviceAllowed(true);
       setDeviceError(null);
       return true;
     } catch (err) {
       console.error('Device check error:', err);
+      // Cho phép truy cập nếu có lỗi (graceful fallback)
       setDeviceAllowed(true);
       return true;
     }
@@ -129,33 +157,57 @@ export function AuthProvider({ children }) {
 
   const loadDevices = async (accountId) => {
     try {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('user_devices')
         .select('*')
         .eq('account_id', accountId)
         .eq('is_active', true)
         .order('last_active', { ascending: false });
-      setDevices(data || []);
+
+      if (error) {
+        console.error('Load devices error:', error);
+        // Nếu bảng không tồn tại, tạo thiết bị hiện tại
+        const deviceInfo = getDeviceInfo();
+        const currentDevice = {
+          id: 'current',
+          device_name: deviceInfo.suggestedName,
+          device_type: deviceInfo.deviceType,
+          browser: deviceInfo.browser,
+          os: deviceInfo.os,
+          is_current: true,
+        };
+        setDevices([currentDevice]);
+      } else {
+        // Đánh dấu thiết bị hiện tại
+        const currentFingerprint = getOrCreateDeviceId();
+        const devicesWithCurrent = (data || []).map(d => ({
+          ...d,
+          is_current: d.device_fingerprint === currentFingerprint,
+        }));
+        setDevices(devicesWithCurrent);
+      }
     } catch (err) {
       console.error('Load devices error:', err);
+      setDevices([]);
     }
   };
 
   const removeDevice = async (deviceId) => {
     if (!account) return { error: 'Chưa đăng nhập' };
     try {
-      // Thử dùng RPC trước
-      const { data, error: rpcError } = await supabase.rpc('remove_device', {
-        p_account_id: account.id,
-        p_device_id: deviceId,
-      });
+      // Cách 1: Soft delete - đánh dấu is_active = false
+      const { error: updateError } = await supabase
+        .from('user_devices')
+        .update({ is_active: false })
+        .eq('id', deviceId)
+        .eq('account_id', account.id);
 
-      if (!rpcError && data?.success) {
+      if (!updateError) {
         await loadDevices(account.id);
         return { success: true };
       }
 
-      // Fallback: Xóa trực tiếp từ bảng nếu RPC không tồn tại
+      // Cách 2: Hard delete nếu soft delete không thành công
       const { error: deleteError } = await supabase
         .from('user_devices')
         .delete()

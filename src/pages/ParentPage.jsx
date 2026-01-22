@@ -193,16 +193,21 @@ export default function ParentPage() {
 
         <div className="space-y-3">
           {devices.map((device) => (
-            <div key={device.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-              <div className="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center text-2xl">
+            <div key={device.id} className={`flex items-center gap-3 p-3 rounded-xl ${device.is_current ? 'bg-green-50 border-2 border-green-200' : 'bg-gray-50'}`}>
+              <div className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl ${device.is_current ? 'bg-green-100' : 'bg-indigo-100'}`}>
                 {device.device_type === 'phone' ? Icons.phone : device.device_type === 'tablet' ? Icons.tablet : Icons.desktop}
               </div>
               <div className="flex-1">
-                <p className="font-medium text-gray-800">{device.device_name || 'Thiết bị'}</p>
+                <div className="flex items-center gap-2">
+                  <p className="font-medium text-gray-800">{device.device_name || 'Thiết bị'}</p>
+                  {device.is_current && <span className="px-2 py-0.5 bg-green-500 text-white text-xs rounded-full">Đang dùng</span>}
+                </div>
                 <p className="text-xs text-gray-500">{device.os} • {device.browser}</p>
               </div>
               <button onClick={() => setShowRenameDevice(device)} className="p-2 text-gray-400 hover:text-gray-600">{Icons.edit}</button>
-              <button onClick={() => setShowDeleteDevice(device)} className="p-2 text-red-400 hover:text-red-600">{Icons.trash}</button>
+              {!device.is_current && (
+                <button onClick={() => setShowDeleteDevice(device)} className="p-2 text-red-400 hover:text-red-600">{Icons.trash}</button>
+              )}
             </div>
           ))}
           {devices.length === 0 && <p className="text-center text-gray-400 py-4">Chưa có thiết bị nào</p>}
