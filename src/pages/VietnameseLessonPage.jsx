@@ -204,8 +204,8 @@ export default function VietnameseLessonPage() {
               <div className="grid grid-cols-2 gap-2">
                 {lesson.examples.slice(0, 4).map((ex, i) => (
                   <div key={i} className="bg-white rounded-xl p-3 text-center shadow">
-                    <div className="text-2xl mb-1">{Array(Math.min(ex.count, 5)).fill(ex.image).join('')}</div>
-                    <p className="text-xs text-gray-600">{ex.text}</p>
+                    <div className="text-3xl mb-1">{ex.image}</div>
+                    <p className="text-sm font-medium text-gray-700">{ex.text}</p>
                   </div>
                 ))}
               </div>
