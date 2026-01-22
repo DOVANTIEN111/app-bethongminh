@@ -1,25 +1,30 @@
 // src/pages/SettingsPage.jsx
-// Trang cài đặt - v3.1.0
+// Trang cài đặt - v3.5.0
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import { useAudio } from '../contexts/AudioContext';
+import { useTheme } from '../contexts/ThemeContext';
 import ConfirmDialog from '../components/ConfirmDialog';
-import { 
+import NotificationSettings from '../components/NotificationSettings';
+import {
   Volume2, VolumeX, Music, Download, Trash2, Shield,
   ChevronRight, Smartphone, CreditCard, LogOut,
-  HelpCircle, MessageCircle, Star, Heart
+  HelpCircle, MessageCircle, Star, Heart, Bell, Moon
 } from 'lucide-react';
 
 export default function SettingsPage() {
   const navigate = useNavigate();
   const { signOut, account, subscription, planInfo } = useAuth();
   const { soundEnabled, musicEnabled, toggleSound, toggleMusic, playSound } = useAudio();
+  const { isDark, toggleTheme } = useTheme();
   
   const [showClearDialog, setShowClearDialog] = useState(false);
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   
+  const [showNotifications, setShowNotifications] = useState(false);
+
   // Settings sections
   const sections = [
     {
@@ -45,6 +50,37 @@ export default function SettingsPage() {
           toggle: true,
           value: musicEnabled,
           onChange: toggleMusic
+        }
+      ]
+    },
+    {
+      title: 'Giao diện',
+      items: [
+        {
+          icon: Moon,
+          iconColor: isDark ? 'text-indigo-400' : 'text-gray-400',
+          label: 'Chế độ tối',
+          description: isDark ? 'Đang bật' : 'Đang tắt',
+          toggle: true,
+          value: isDark,
+          onChange: () => {
+            toggleTheme();
+            playSound('click');
+          }
+        }
+      ]
+    },
+    {
+      title: 'Thông báo',
+      items: [
+        {
+          icon: Bell,
+          iconColor: 'text-blue-500',
+          label: 'Cài đặt thông báo',
+          description: 'Nhắc học tập, thành tích',
+          onClick: () => setShowNotifications(!showNotifications),
+          expanded: showNotifications,
+          expandedContent: <NotificationSettings />
         }
       ]
     },
@@ -131,7 +167,7 @@ export default function SettingsPage() {
       // Collect all relevant localStorage data
       const data = {
         exportDate: new Date().toISOString(),
-        appVersion: '3.1.0',
+        appVersion: '3.5.0',
         settings: {
           soundEnabled: localStorage.getItem('soundEnabled'),
           musicEnabled: localStorage.getItem('musicEnabled'),
@@ -179,7 +215,7 @@ export default function SettingsPage() {
   }
   
   return (
-    <div className="px-4 py-4 pb-8">
+    <div className="px-4 py-4 pb-8 dark:text-gray-100">
       {/* Account Info Card */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
@@ -217,35 +253,35 @@ export default function SettingsPage() {
           transition={{ delay: sectionIndex * 0.1 }}
           className="mb-6"
         >
-          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2 px-1">
+          <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2 px-1">
             {section.title}
           </h3>
-          
-          <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm overflow-hidden">
             {section.items.map((item, itemIndex) => {
               const Icon = item.icon;
               
               return (
                 <div key={itemIndex}>
-                  {itemIndex > 0 && <div className="h-px bg-gray-100 mx-4" />}
-                  
+                  {itemIndex > 0 && <div className="h-px bg-gray-100 dark:bg-slate-700 mx-4" />}
+
                   <button
                     onClick={item.onClick}
                     className={`w-full flex items-center gap-4 p-4 transition-colors ${
-                      item.danger ? 'hover:bg-red-50' : 'hover:bg-gray-50'
+                      item.danger ? 'hover:bg-red-50 dark:hover:bg-red-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700'
                     }`}
                   >
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                      item.danger ? 'bg-red-50' : 'bg-gray-50'
+                      item.danger ? 'bg-red-50 dark:bg-red-900/30' : 'bg-gray-50 dark:bg-slate-700'
                     }`}>
                       <Icon className={`w-5 h-5 ${item.iconColor}`} />
                     </div>
-                    
+
                     <div className="flex-1 text-left">
-                      <p className={`font-medium ${item.danger ? 'text-red-600' : 'text-gray-800'}`}>
+                      <p className={`font-medium ${item.danger ? 'text-red-600 dark:text-red-400' : 'text-gray-800 dark:text-gray-100'}`}>
                         {item.label}
                       </p>
-                      <p className={`text-sm ${item.danger ? 'text-red-400' : 'text-gray-500'}`}>
+                      <p className={`text-sm ${item.danger ? 'text-red-400 dark:text-red-300' : 'text-gray-500 dark:text-gray-400'}`}>
                         {item.description}
                       </p>
                     </div>
@@ -266,16 +302,30 @@ export default function SettingsPage() {
                           item.value ? 'bg-indigo-500' : 'bg-gray-200'
                         }`}
                       >
-                        <motion.div 
+                        <motion.div
                           animate={{ x: item.value ? 22 : 2 }}
                           transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                           className="w-5 h-5 mt-1 bg-white rounded-full shadow"
                         />
                       </div>
                     ) : (
-                      <ChevronRight className="w-5 h-5 text-gray-300" />
+                      <ChevronRight className={`w-5 h-5 text-gray-300 transition-transform ${
+                        item.expanded ? 'rotate-90' : ''
+                      }`} />
                     )}
                   </button>
+
+                  {/* Expanded content for notifications */}
+                  {item.expandedContent && item.expanded && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="px-4 pb-4 bg-gray-50"
+                    >
+                      {item.expandedContent}
+                    </motion.div>
+                  )}
                 </div>
               );
             })}
@@ -289,7 +339,7 @@ export default function SettingsPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
         onClick={() => setShowLogoutDialog(true)}
-        className="w-full flex items-center justify-center gap-2 py-4 bg-white rounded-2xl shadow-sm text-red-500 font-medium hover:bg-red-50 transition"
+        className="w-full flex items-center justify-center gap-2 py-4 bg-white dark:bg-slate-800 rounded-2xl shadow-sm text-red-500 dark:text-red-400 font-medium hover:bg-red-50 dark:hover:bg-red-900/20 transition"
       >
         <LogOut className="w-5 h-5" />
         Đăng xuất
@@ -307,7 +357,7 @@ export default function SettingsPage() {
           <span className="text-sm">Made with love for kids</span>
         </div>
         <p className="text-sm text-gray-400">
-          Gia Đình Thông Minh v3.1.0
+          Gia Đình Thông Minh v3.5.0
         </p>
         <p className="text-xs text-gray-300 mt-1">
           © 2024 GDTM. All rights reserved.

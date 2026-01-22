@@ -19,6 +19,13 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Dark mode body background */
+.dark body,
+html.dark body {
+  background: #0f172a;
+  color: #f1f5f9;
+}
+
 /* Prevent pull-to-refresh on mobile */
 body {
   overscroll-behavior-y: contain;
@@ -138,6 +145,29 @@ input, textarea, select {
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+}
+
+.dark .glass {
+  background: rgba(30, 41, 59, 0.8);
+}
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Dark mode selection */
+.dark ::selection {
+  background: #4f46e5;
+  color: #e0e7ff;
+}
+
+/* Dark mode focus */
+.dark *:focus-visible {
+  outline-color: #818cf8;
 }
 
 /* Card hover effect */

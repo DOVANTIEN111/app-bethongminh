@@ -4,6 +4,7 @@ export const GAME_CATEGORIES = [
   { id: 'math', name: 'Toán', icon: '🔢' },
   { id: 'english', name: 'Tiếng Anh', icon: '🌍' },
   { id: 'reflex', name: 'Phản xạ', icon: '⚡' },
+  { id: 'science', name: 'Khoa học', icon: '🔬' },
 ];
 
 export const GAMES = {
@@ -70,6 +71,56 @@ export const GAMES = {
     color: 'from-sky-500 to-blue-500',
     desc: 'Bấm nổ bóng bay',
     category: 'reflex',
+  },
+
+  // === 6 GAMES MỚI ===
+  puzzle: {
+    id: 'puzzle',
+    name: 'Ghép Hình',
+    icon: '🧩',
+    color: 'from-indigo-500 to-blue-500',
+    desc: 'Kéo thả ghép hình 3x3, 4x4',
+    category: 'brain',
+  },
+  spellingBee: {
+    id: 'spellingBee',
+    name: 'Đánh Vần',
+    icon: '📝',
+    color: 'from-emerald-500 to-teal-500',
+    desc: 'Viết đúng chữ cái tiếng Việt',
+    category: 'brain',
+  },
+  animalSounds: {
+    id: 'animalSounds',
+    name: 'Tiếng Con Gì',
+    icon: '🔊',
+    color: 'from-orange-500 to-amber-500',
+    desc: 'Nghe tiếng đoán con vật',
+    category: 'science',
+  },
+  shapeMatch: {
+    id: 'shapeMatch',
+    name: 'Ghép Hình Dạng',
+    icon: '🔷',
+    color: 'from-cyan-500 to-blue-500',
+    desc: 'Nhận biết hình học cơ bản',
+    category: 'math',
+  },
+  storyOrder: {
+    id: 'storyOrder',
+    name: 'Sắp Xếp Truyện',
+    icon: '📚',
+    color: 'from-rose-500 to-pink-500',
+    desc: 'Sắp xếp đúng thứ tự câu chuyện',
+    category: 'brain',
+  },
+  countingGame: {
+    id: 'countingGame',
+    name: 'Đếm Nhanh',
+    icon: '🔢',
+    color: 'from-violet-500 to-indigo-500',
+    desc: 'Đếm số lượng trong thời gian',
+    category: 'math',
   },
 };
 

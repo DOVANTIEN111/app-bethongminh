@@ -1,13 +1,13 @@
 // src/components/Layout.jsx
-// Layout chính với Header + Bottom Navigation - v3.1.0
+// Layout chính với Header + Bottom Navigation - v3.5.0
 import React, { useState, useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import { useAudio } from '../contexts/AudioContext';
-import { 
-  Home, Gamepad2, User, Settings, Volume2, VolumeX, 
-  BookOpen, Star, Flame, ChevronLeft
+import {
+  Home, Gamepad2, User, Settings, Volume2, VolumeX,
+  BookOpen, Star, Flame, ChevronLeft, Trophy
 } from 'lucide-react';
 import EncouragementBanner from './EncouragementBanner';
 
@@ -23,6 +23,7 @@ export default function Layout() {
   const navItems = [
     { icon: Home, label: 'Trang chủ', path: '/', emoji: '🏠' },
     { icon: BookOpen, label: 'Học tập', path: '/english', emoji: '📚' },
+    { icon: Trophy, label: 'Xếp hạng', path: '/leaderboard', emoji: '🏆' },
     { icon: Gamepad2, label: 'Trò chơi', path: '/games', emoji: '🎮' },
     { icon: User, label: 'Hồ sơ', path: '/profile', emoji: '👤' },
   ];
@@ -53,7 +54,7 @@ export default function Layout() {
   const pageTitle = getPageTitle(location.pathname);
   
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex flex-col transition-colors">
       {/* Encouragement Banner */}
       <EncouragementBanner />
 
@@ -65,14 +66,14 @@ export default function Layout() {
           opacity: showHeader ? 1 : 0 
         }}
         transition={{ duration: 0.2 }}
-        className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-100"
+        className="sticky top-0 z-40 bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm border-b border-gray-100 dark:border-slate-700"
       >
         <div className="flex items-center justify-between px-4 py-3">
           {/* Left side - User info or Back button */}
           {needsBackButton ? (
-            <button 
-              onClick={() => navigate(-1)} 
-              className="flex items-center gap-1 text-gray-600 hover:text-gray-800 transition"
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-1 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 transition"
             >
               <ChevronLeft className="w-5 h-5" />
               <span className="text-sm font-medium">Quay lại</span>
@@ -102,7 +103,7 @@ export default function Layout() {
 
           {/* Center - Page title (for sub pages) */}
           {needsBackButton && pageTitle && (
-            <h1 className="text-lg font-bold text-gray-800 absolute left-1/2 -translate-x-1/2">
+            <h1 className="text-lg font-bold text-gray-800 dark:text-gray-100 absolute left-1/2 -translate-x-1/2">
               {pageTitle}
             </h1>
           )}
@@ -145,7 +146,7 @@ export default function Layout() {
         {/* Progress bar */}
         {!needsBackButton && levelInfo && (
           <div className="px-4 pb-2">
-            <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-1.5 bg-gray-100 dark:bg-slate-700 rounded-full overflow-hidden">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${levelInfo.progress || 0}%` }}
@@ -173,7 +174,7 @@ export default function Layout() {
       </main>
       
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm border-t border-gray-100 pb-safe">
+      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm border-t border-gray-100 dark:border-slate-700 pb-safe">
         <div className="flex items-center justify-around py-2 px-2 max-w-lg mx-auto">
           {navItems.map(({ icon: Icon, label, path, emoji }) => {
             const isActive = location.pathname === path || 
@@ -226,6 +227,7 @@ function getPageTitle(pathname) {
     '/english': 'English Zone',
     '/stories': 'Truyện cổ tích',
     '/pet': 'Pet của tôi',
+    '/leaderboard': 'Bảng xếp hạng',
   };
   
   // Check exact match first

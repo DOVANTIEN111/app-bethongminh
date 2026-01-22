@@ -179,15 +179,37 @@ export const SUBJECTS = {
     icon: '🔬',
     color: 'from-purple-500 to-pink-500',
     desc: 'Khám phá thế giới xung quanh',
+    useScienceLessons: true, // Flag để dùng scienceLessons.js
     lessons: [
-      { id: 's1', title: 'Con vật nuôi', level: 1, desc: 'Chó, mèo, gà, vịt...' },
-      { id: 's2', title: 'Con vật hoang dã', level: 1, desc: 'Sư tử, voi, hổ...' },
-      { id: 's3', title: 'Cây cối', level: 1, desc: 'Các bộ phận của cây' },
-      { id: 's4', title: 'Thời tiết', level: 2, desc: 'Nắng, mưa, gió, mây' },
-      { id: 's5', title: 'Cơ thể người', level: 2, desc: 'Các bộ phận cơ thể' },
-      { id: 's6', title: 'Giác quan', level: 2, desc: 'Nghe, nhìn, ngửi, nếm, sờ' },
-      { id: 's7', title: 'Hệ mặt trời', level: 3, desc: 'Mặt trời, trái đất, mặt trăng' },
-      { id: 's8', title: 'Nước', level: 3, desc: 'Tính chất của nước' },
+      // Level 1: Thế giới động vật (6 bài)
+      { id: 's1-1', title: 'Con vật nuôi', level: 1, desc: 'Chó, mèo, gà, vịt...' },
+      { id: 's1-2', title: 'Con vật hoang dã', level: 1, desc: 'Sư tử, voi, hổ...' },
+      { id: 's1-3', title: 'Con vật dưới nước', level: 1, desc: 'Cá, tôm, cua, cá heo...' },
+      { id: 's1-4', title: 'Côn trùng', level: 1, desc: 'Bướm, ong, kiến, đom đóm...' },
+      { id: 's1-5', title: 'Chim chóc', level: 1, desc: 'Chim sẻ, vẹt, cánh cụt...' },
+      { id: 's1-6', title: 'Ôn tập động vật', level: 1, desc: 'Ôn lại kiến thức động vật' },
+
+      // Level 2: Thực vật & Môi trường (6 bài)
+      { id: 's2-1', title: 'Cây cối', level: 2, desc: 'Rễ, thân, lá, hoa, quả' },
+      { id: 's2-2', title: 'Hoa quả', level: 2, desc: 'Táo, chuối, cam, dưa hấu...' },
+      { id: 's2-3', title: 'Thời tiết', level: 2, desc: 'Nắng, mưa, mây, cầu vồng' },
+      { id: 's2-4', title: 'Mùa trong năm', level: 2, desc: 'Xuân, hạ, thu, đông' },
+      { id: 's2-5', title: 'Bảo vệ môi trường', level: 2, desc: 'Tái chế, tiết kiệm nước' },
+      { id: 's2-6', title: 'Ôn tập thực vật', level: 2, desc: 'Ôn lại thực vật & môi trường' },
+
+      // Level 3: Cơ thể người (5 bài)
+      { id: 's3-1', title: 'Các bộ phận cơ thể', level: 3, desc: 'Mắt, tai, tim, não...' },
+      { id: 's3-2', title: '5 giác quan', level: 3, desc: 'Nghe, nhìn, ngửi, nếm, sờ' },
+      { id: 's3-3', title: 'Dinh dưỡng', level: 3, desc: 'Ăn uống lành mạnh' },
+      { id: 's3-4', title: 'Vệ sinh cá nhân', level: 3, desc: 'Rửa tay, đánh răng, tắm' },
+      { id: 's3-5', title: 'Ôn tập cơ thể', level: 3, desc: 'Ôn lại kiến thức cơ thể' },
+
+      // Level 4: Khoa học vui (5 bài)
+      { id: 's4-1', title: 'Hệ mặt trời', level: 4, desc: 'Mặt trời, trái đất, hành tinh' },
+      { id: 's4-2', title: 'Nước và trạng thái', level: 4, desc: 'Rắn, lỏng, khí' },
+      { id: 's4-3', title: 'Âm thanh', level: 4, desc: 'Âm thanh truyền đi thế nào' },
+      { id: 's4-4', title: 'Ánh sáng và màu sắc', level: 4, desc: 'Ánh sáng, bóng tối, cầu vồng' },
+      { id: 's4-5', title: 'Ôn tập khoa học', level: 4, desc: 'Ôn tập toàn bộ khoa học' },
     ],
   },
 };

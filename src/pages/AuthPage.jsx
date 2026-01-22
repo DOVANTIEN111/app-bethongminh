@@ -1,11 +1,12 @@
 // src/pages/AuthPage.jsx
-// TRANG ĐĂNG NHẬP / ĐĂNG KÝ - v3.1.0
+// TRANG ĐĂNG NHẬP / ĐĂNG KÝ - v3.5.0
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import Onboarding from '../components/Onboarding';
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Sparkles } from 'lucide-react';
+import { validateEmail, validatePassword, validateParentName, getPasswordStrength } from '../utils/validation';
 
 export default function AuthPage() {
   const navigate = useNavigate();
@@ -42,28 +43,28 @@ export default function AuthPage() {
     setError('');
     setSuccess('');
 
-    // Validation
-    if (!email || !password) {
-      setError('Vui lòng nhập đầy đủ thông tin');
+    // Validate email
+    const emailResult = validateEmail(email);
+    if (!emailResult.valid) {
+      setError(emailResult.error);
       return;
     }
 
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setError('Email không hợp lệ');
+    // Validate password
+    const passwordResult = validatePassword(password);
+    if (!passwordResult.valid) {
+      setError(passwordResult.error);
       return;
     }
 
     if (!isLogin) {
-      if (!parentName.trim()) {
-        setError('Vui lòng nhập tên phụ huynh');
+      // Validate parent name
+      const nameResult = validateParentName(parentName);
+      if (!nameResult.valid) {
+        setError(nameResult.error);
         return;
       }
-      if (password.length < 6) {
-        setError('Mật khẩu phải có ít nhất 6 ký tự');
-        return;
-      }
+
       if (password !== confirmPassword) {
         setError('Mật khẩu xác nhận không khớp');
         return;
@@ -405,7 +406,7 @@ export default function AuthPage() {
           className="text-center mt-6"
         >
           <p className="text-white/60 text-sm">
-            Phiên bản 3.1.0 • Made with ❤️ for kids
+            Phiên bản 3.5.0 • Made with ❤️ for kids
           </p>
           
           {/* View Onboarding again */}

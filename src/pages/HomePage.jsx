@@ -6,6 +6,7 @@ import { useAudio } from '../contexts/AudioContext';
 import { getAllSubjects } from '../data/subjects';
 import { getTodayChallenges, getDailyWords } from '../data/dailyChallenge';
 import { PETS, getPetStage, calculatePetMood, PET_MOODS } from '../data/pets';
+import { LeaderboardWidget } from '../components/LeaderboardCard';
 import { Flame, Star, Trophy, ChevronRight, Sparkles, Gamepad2, Gift, Target, CheckCircle2, Volume2, Heart } from 'lucide-react';
 
 // Confetti component for celebrations
@@ -77,19 +78,27 @@ const AchievementPopup = ({ achievement, onClose }) => {
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const { currentChild, levelInfo } = useAuth();
+  const { currentChild, levelInfo, fetchLeaderboard } = useAuth();
   const { playSound, speak } = useAudio();
   const subjects = getAllSubjects();
-  
+
   const [challenges, setChallenges] = useState([]);
   const [dailyWords, setDailyWords] = useState([]);
   const [showConfetti, setShowConfetti] = useState(false);
   const [newAchievement, setNewAchievement] = useState(null);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  
+  const [leaderboardData, setLeaderboardData] = useState([]);
+
   useEffect(() => {
     setChallenges(getTodayChallenges());
     setDailyWords(getDailyWords(5));
+
+    // Fetch leaderboard data
+    const loadLeaderboard = async () => {
+      const data = await fetchLeaderboard('all', 10);
+      setLeaderboardData(data);
+    };
+    loadLeaderboard();
   }, []);
   
   // Check for new achievements
@@ -242,6 +251,15 @@ export default function HomePage() {
         </div>
       </motion.div>
       
+      {/* Leaderboard Widget */}
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mb-4">
+        <LeaderboardWidget
+          users={leaderboardData}
+          currentChildId={currentChild?.id}
+          onViewAll={() => { playSound('click'); navigate('/leaderboard'); }}
+        />
+      </motion.div>
+
       {/* Daily Words */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="mb-4">
         <h2 className="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">

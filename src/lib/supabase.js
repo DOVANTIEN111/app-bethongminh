@@ -1,12 +1,31 @@
 // src/lib/supabase.js
 import { createClient } from '@supabase/supabase-js';
 
-// Lấy config từ environment variables (bảo mật hơn)
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://kombmceddsnwisymrlwn.supabase.co';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvbWJtY2VkZHNud2lzeW1ybHduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg5MjE4MDIsImV4cCI6MjA4NDQ5NzgwMn0.Bzyf00VQG35L_N0h71TrmsWvI5gj1rn_gtf--E8sx50';
+// Lấy config từ environment variables
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// TODO: Sau khi deploy, tạo file .env.local và xóa fallback values ở trên
-// Xem file .env.example để biết cách setup
+// Kiểm tra env vars bắt buộc
+if (!supabaseUrl || !supabaseAnonKey) {
+  const missingVars = [];
+  if (!supabaseUrl) missingVars.push('VITE_SUPABASE_URL');
+  if (!supabaseAnonKey) missingVars.push('VITE_SUPABASE_ANON_KEY');
+
+  console.error(
+    `❌ Missing required environment variables: ${missingVars.join(', ')}\n` +
+    'Vui lòng tạo file .env.local với các giá trị Supabase.\n' +
+    'Xem file .env.example để biết cách setup.'
+  );
+
+  // Trong development, hiển thị hướng dẫn
+  if (import.meta.env.DEV) {
+    throw new Error(
+      `Missing Supabase configuration. Please create .env.local file with:\n` +
+      `VITE_SUPABASE_URL=https://your-project.supabase.co\n` +
+      `VITE_SUPABASE_ANON_KEY=your-anon-key`
+    );
+  }
+}
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 

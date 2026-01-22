@@ -1,5 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { supabase, getDeviceInfo, getOrCreateDeviceId } from '../lib/supabase';
+import { analytics } from '../lib/analytics';
+import { setUser as setSentryUser } from '../lib/sentry';
+import { validateChildData, validateChildName, sanitizeString } from '../utils/validation';
 
 const AuthContext = createContext(null);
 
@@ -186,16 +189,27 @@ export function AuthProvider({ children }) {
 
   const addChild = async (name, avatar = '👦', age = null, gender = null) => {
     if (!account) return { error: 'Chưa đăng nhập' };
+
+    // Validate input
+    const validation = validateChildData({ name, avatar, age, gender });
+    if (!validation.valid) {
+      return { error: validation.errors[0] };
+    }
+
+    const { name: validName, avatar: validAvatar, age: validAge, gender: validGender } = validation.data;
+
     try {
       const { data } = await supabase.rpc('add_child', {
         p_account_id: account.id,
-        p_name: name,
-        p_avatar: avatar,
-        p_age: age,
-        p_gender: gender,
+        p_name: sanitizeString(validName),
+        p_avatar: validAvatar,
+        p_age: validAge,
+        p_gender: validGender,
       });
       if (data?.success) {
         await loadChildren(account.id);
+        // Track child created
+        analytics.childCreated(validAge, validGender);
         return { success: true, childId: data.child_id };
       }
       return { error: data?.message || 'Không thể thêm bé' };
@@ -205,6 +219,15 @@ export function AuthProvider({ children }) {
   };
 
   const updateChild = async (childId, updates) => {
+    // Validate name if provided
+    if (updates.name !== undefined) {
+      const nameResult = validateChildName(updates.name);
+      if (!nameResult.valid) {
+        return { error: nameResult.error };
+      }
+      updates.name = sanitizeString(nameResult.value);
+    }
+
     try {
       await supabase.from('children').update({ ...updates, updated_at: new Date().toISOString() }).eq('id', childId);
       await loadChildren(account.id);
@@ -235,6 +258,8 @@ export function AuthProvider({ children }) {
     setCurrentChild(child);
     localStorage.setItem('gdtm_current_child', child.id);
     supabase.rpc('update_child_streak', { p_child_id: child.id });
+    // Track child selected
+    analytics.childSelected(child.id);
   }, []);
 
   // =====================================================
@@ -300,6 +325,12 @@ export function AuthProvider({ children }) {
         progress: newProgress,
       }));
 
+      // Track analytics
+      analytics.lessonCompleted(subjectId, lessonId, score, duration);
+      if (newLevel > (currentChild.level || 1)) {
+        analytics.levelUp(newLevel);
+      }
+
       console.log('Lesson completed:', { lessonId, xpEarned, newXp, newLevel, completed: subjectProgress.completed });
       return { success: true, xpEarned, newXp, newLevel };
     } catch (err) {
@@ -358,6 +389,12 @@ export function AuthProvider({ children }) {
         game_scores: gameScores,
       }));
 
+      // Track analytics
+      analytics.gameCompleted(gameId, score, duration);
+      if (newLevel > (currentChild.level || 1)) {
+        analytics.levelUp(newLevel);
+      }
+
       console.log('Game completed:', { xpEarned, newXp, newLevel });
       return { success: true, xpEarned, newXp, newLevel };
     } catch (err) {
@@ -393,6 +430,13 @@ export function AuthProvider({ children }) {
       }).eq('id', currentChild.id);
 
       setCurrentChild(prev => ({ ...prev, xp: newXp, level: newLevel }));
+
+      // Track analytics
+      analytics.storyCompleted(storyId, duration);
+      if (newLevel > (currentChild.level || 1)) {
+        analytics.levelUp(newLevel);
+      }
+
       return { success: true, xpEarned };
     } catch (err) {
       console.error('Complete story error:', err);
@@ -432,6 +476,86 @@ export function AuthProvider({ children }) {
     } catch (err) {
       console.error('Complete vocabulary error:', err);
       return { error: err.message };
+    }
+  };
+
+  // =====================================================
+  // LEADERBOARD FUNCTIONS
+  // =====================================================
+
+  const fetchLeaderboard = async (period = 'all', limit = 100) => {
+    try {
+      let query = supabase
+        .from('children')
+        .select('id, name, avatar, xp, level')
+        .order('xp', { ascending: false })
+        .limit(limit);
+
+      // Filter theo thời gian nếu cần (sử dụng learning_logs)
+      if (period === 'week' || period === 'month') {
+        const now = new Date();
+        let startDate;
+        if (period === 'week') {
+          startDate = new Date(now.setDate(now.getDate() - 7));
+        } else {
+          startDate = new Date(now.setMonth(now.getMonth() - 1));
+        }
+
+        // Lấy XP từ learning_logs trong khoảng thời gian
+        const { data: logs } = await supabase
+          .from('learning_logs')
+          .select('child_id, xp_earned')
+          .gte('created_at', startDate.toISOString());
+
+        if (logs) {
+          // Tính tổng XP theo child_id
+          const xpByChild = {};
+          logs.forEach(log => {
+            xpByChild[log.child_id] = (xpByChild[log.child_id] || 0) + (log.xp_earned || 0);
+          });
+
+          // Lấy thông tin children
+          const childIds = Object.keys(xpByChild);
+          if (childIds.length === 0) return [];
+
+          const { data: children } = await supabase
+            .from('children')
+            .select('id, name, avatar, level')
+            .in('id', childIds);
+
+          if (children) {
+            return children
+              .map(child => ({
+                ...child,
+                xp: xpByChild[child.id] || 0,
+              }))
+              .sort((a, b) => b.xp - a.xp)
+              .slice(0, limit);
+          }
+        }
+        return [];
+      }
+
+      const { data } = await query;
+      return data || [];
+    } catch (err) {
+      console.error('Fetch leaderboard error:', err);
+      return [];
+    }
+  };
+
+  // Lấy vị trí của child hiện tại trong leaderboard
+  const getChildRank = async (childId) => {
+    try {
+      const { data, count } = await supabase
+        .from('children')
+        .select('id', { count: 'exact' })
+        .gt('xp', currentChild?.xp || 0);
+
+      return (data?.length || 0) + 1;
+    } catch (err) {
+      console.error('Get child rank error:', err);
+      return null;
     }
   };
 
@@ -489,6 +613,11 @@ export function AuthProvider({ children }) {
         options: { data: { name: parentName, role: 'parent' } }
       });
       if (error) throw error;
+
+      // Track sign up
+      analytics.userSignUp('email');
+      setSentryUser({ id: data.user?.id, email });
+
       return { data, error: null };
     } catch (err) {
       return { data: null, error: err.message };
@@ -502,6 +631,11 @@ export function AuthProvider({ children }) {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
+
+      // Track login
+      analytics.userLogin('email');
+      setSentryUser({ id: data.user?.id, email });
+
       return { data, error: null };
     } catch (err) {
       return { data: null, error: err.message };
@@ -514,6 +648,10 @@ export function AuthProvider({ children }) {
     await supabase.auth.signOut();
     resetState();
     localStorage.removeItem('gdtm_current_child');
+
+    // Track logout
+    analytics.userLogout();
+    setSentryUser(null);
   };
 
   const updateAccount = async (updates) => {
@@ -596,6 +734,9 @@ export function AuthProvider({ children }) {
     completeGame,
     completeStory,
     completeVocabulary,
+    // Leaderboard functions
+    fetchLeaderboard,
+    getChildRank,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

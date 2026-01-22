@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gdtm-v2.4';
+const CACHE_NAME = 'gdtm-v3.5';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -82,4 +82,72 @@ self.addEventListener('message', (event) => {
   if (event.data === 'skipWaiting') {
     self.skipWaiting();
   }
+});
+
+// =====================================================
+// PUSH NOTIFICATIONS
+// =====================================================
+
+// Handle push events
+self.addEventListener('push', (event) => {
+  let data = {
+    title: 'Gia Đình Thông Minh',
+    body: 'Bạn có thông báo mới!',
+    icon: '/icons/icon-192x192.png',
+    badge: '/icons/icon-72x72.png',
+  };
+
+  if (event.data) {
+    try {
+      data = { ...data, ...event.data.json() };
+    } catch (e) {
+      data.body = event.data.text();
+    }
+  }
+
+  const options = {
+    body: data.body,
+    icon: data.icon || '/icons/icon-192x192.png',
+    badge: data.badge || '/icons/icon-72x72.png',
+    tag: data.tag || 'gdtm-notification',
+    data: data.data || {},
+    requireInteraction: data.requireInteraction || false,
+    actions: data.actions || [],
+  };
+
+  event.waitUntil(
+    self.registration.showNotification(data.title, options)
+  );
+});
+
+// Handle notification click
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+
+  // Handle action button clicks
+  if (event.action) {
+    console.log('Notification action clicked:', event.action);
+  }
+
+  // Open or focus the app
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true })
+      .then((clientList) => {
+        // Check if app is already open
+        for (const client of clientList) {
+          if (client.url.includes(self.location.origin) && 'focus' in client) {
+            return client.focus();
+          }
+        }
+        // Open new window
+        if (clients.openWindow) {
+          return clients.openWindow('/');
+        }
+      })
+  );
+});
+
+// Handle notification close
+self.addEventListener('notificationclose', (event) => {
+  console.log('Notification dismissed:', event.notification.tag);
 });

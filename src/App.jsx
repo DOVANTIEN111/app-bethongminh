@@ -1,5 +1,5 @@
 // src/App.jsx
-// APP CHÍNH - v3.1.0 với PWA + Onboarding
+// APP CHÍNH - v3.5.0 với PWA + Onboarding + Leaderboard + Dark Mode
 import React, { Suspense, lazy } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
@@ -21,6 +21,7 @@ const SettingsPage = lazy(() => import('./pages/SettingsPage'));
 const PetPage = lazy(() => import('./pages/PetPage'));
 const StoryListPage = lazy(() => import('./pages/StoryListPage'));
 const StoryReadPage = lazy(() => import('./pages/StoryReadPage'));
+const LeaderboardPage = lazy(() => import('./pages/LeaderboardPage'));
 
 // English Zone
 const EnglishHubPage = lazy(() => import('./pages/EnglishHubPage'));
@@ -93,6 +94,7 @@ function App() {
           <Route path="story/:storyId" element={<StoryReadPage />} />
           <Route path="profile" element={<ProfilePage />} />
           <Route path="settings" element={<SettingsPage />} />
+          <Route path="leaderboard" element={<LeaderboardPage />} />
         </Route>
         
         {/* Legacy routes - redirect */}

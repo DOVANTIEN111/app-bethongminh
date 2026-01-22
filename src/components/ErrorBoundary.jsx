@@ -1,5 +1,6 @@
 // src/components/ErrorBoundary.jsx
 import React from 'react';
+import { captureError } from '../lib/sentry';
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -13,15 +14,16 @@ class ErrorBoundary extends React.Component {
 
   componentDidCatch(error, errorInfo) {
     this.setState({ error, errorInfo });
-    
-    // Log error to console (có thể gửi lên Sentry sau)
+
+    // Log error to console
     console.error('🔴 App Error:', error);
     console.error('Error Info:', errorInfo);
-    
-    // TODO: Gửi error lên error tracking service
-    // if (import.meta.env.VITE_SENTRY_DSN) {
-    //   Sentry.captureException(error);
-    // }
+
+    // Báo cáo lỗi lên Sentry
+    captureError(error, {
+      componentStack: errorInfo?.componentStack,
+      errorBoundary: true,
+    });
   }
 
   handleReload = () => {

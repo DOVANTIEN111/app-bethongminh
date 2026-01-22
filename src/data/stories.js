@@ -790,6 +790,788 @@ Từ đó, mỗi khi Cóc nghiến răng kêu là trời đổ mưa. Người ta
         answer: 1
       }
     ]
+  },
+
+  // ==========================================
+  // 8. CÂY KHẾ
+  // ==========================================
+  {
+    id: 'cay_khe',
+    title: 'Cây Khế',
+    titleEn: 'The Star Fruit Tree',
+    icon: '⭐',
+    cover: '🌳',
+    color: 'from-lime-500 to-green-500',
+    description: 'Ăn khế trả vàng - Lòng tham sẽ bị trừng phạt',
+    totalChapters: 5,
+    chapters: [
+      {
+        id: 1,
+        title: 'Hai anh em',
+        content: `Ngày xưa, có hai anh em nhà nọ. Cha mẹ mất sớm, để lại cho hai anh em một gia tài khá giả.
+
+Người anh tham lam, khi chia gia tài liền chiếm hết ruộng vườn, nhà cửa, trâu bò. Người em hiền lành chỉ được một mảnh vườn nhỏ có cây khế.
+
+Người em không hề oán trách, cặm cụi làm ăn, chăm sóc cây khế. Cây khế lớn nhanh, mỗi năm cho rất nhiều quả.
+
+Năm ấy, cây khế sai trĩu quả. Người em vui lắm, tính đem bán để có tiền đong gạo.
+
+Nhưng có điều lạ: mỗi sáng ra vườn, anh thấy khế bị ăn mất nhiều quả, chỉ còn hạt vương vãi khắp nơi.`,
+        image: '👨‍👦🏠🌳',
+        question: 'Người anh chia gia tài như thế nào?',
+        options: ['Chia đều cho em', 'Chiếm hết, chỉ cho em cây khế', 'Cho em phần nhiều hơn', 'Hai anh em cùng chung'],
+        answer: 1
+      },
+      {
+        id: 2,
+        title: 'Chim thần xuất hiện',
+        content: `Người em quyết định rình xem ai ăn trộm khế. Nửa đêm, bỗng có một con chim lớn bay đến.
+
+Chim to như cái thuyền, bộ lông óng ánh. Nó đậu trên cây khế, ăn quả ngon lành.
+
+Người em kêu lên: "Chim ơi! Chim ăn hết khế của tôi rồi, tôi biết lấy gì mà sống?"
+
+Chim đáp: "Ăn một quả, trả cục vàng. May túi ba gang, mang đi mà đựng."
+
+Nói rồi chim bay đi. Người em may một cái túi vừa đúng ba gang tay.
+
+Mấy hôm sau, chim lại đến, cõng người em bay qua biển đến một hòn đảo đầy vàng bạc châu báu.`,
+        image: '🐦⭐🌙',
+        question: 'Chim thần nói gì với người em?',
+        options: ['Ăn một quả, trả cục vàng. May túi ba gang', 'Đừng trồng khế nữa', 'Chim sẽ không đến nữa', 'Hãy đuổi chim đi'],
+        answer: 0
+      },
+      {
+        id: 3,
+        title: 'Túi vàng ba gang',
+        content: `Trên đảo, người em chỉ lấy vừa đủ một túi ba gang vàng như chim dặn.
+
+Chim cõng người em về. Từ đó, người em trở nên giàu có, nhưng vẫn sống đơn giản, hay giúp đỡ người nghèo.
+
+Người anh thấy em giàu lên bỗng chốc, liền đến hỏi. Người em thật thà kể hết chuyện.
+
+Người anh tham lam, liền đổi hết gia tài lấy cây khế của em.
+
+Anh ta ngồi chờ dưới gốc khế mỗi đêm, mong chim thần đến.`,
+        image: '💰🏝️✨',
+        question: 'Người em lấy bao nhiêu vàng?',
+        options: ['Lấy đầy thuyền', 'Chỉ lấy vừa đủ túi ba gang', 'Lấy hết vàng trên đảo', 'Không lấy gì'],
+        answer: 1
+      },
+      {
+        id: 4,
+        title: 'Lòng tham của người anh',
+        content: `Quả nhiên, chim thần lại đến ăn khế. Người anh vội nói: "Chim ơi, chim ăn hết khế của tôi rồi!"
+
+Chim cũng đáp: "Ăn một quả, trả cục vàng. May túi ba gang, mang đi mà đựng."
+
+Nhưng người anh tham lam, may một cái túi to gấp mười lần, đến mười hai gang.
+
+Chim cõng anh ta đến đảo vàng. Anh ta nhét đầy túi mười hai gang, còn nhét cả vào túi áo, túi quần.
+
+Nặng quá, chim bay chậm lại, nghiêng ngả.`,
+        image: '🐦💰😈',
+        question: 'Người anh may túi bao nhiêu gang?',
+        options: ['Ba gang như chim dặn', 'Mười hai gang', 'Một gang', 'Không may túi'],
+        answer: 1
+      },
+      {
+        id: 5,
+        title: 'Kết cục của lòng tham',
+        content: `Chim bay qua biển, vì quá nặng, chim bảo người anh bỏ bớt vàng đi.
+
+Người anh tham lam không chịu bỏ. Chim mệt quá, cánh yếu dần.
+
+Cuối cùng, chim không chịu nổi nữa, nghiêng cánh. Người anh và túi vàng rơi xuống biển sâu.
+
+Còn người em, sống cuộc đời bình yên, hạnh phúc bên gia đình. Ai trong vùng cũng yêu mến.
+
+🌟 BÀI HỌC: Lòng tham sẽ dẫn đến tai họa. Hãy biết đủ và sống lương thiện, bạn sẽ được hưởng hạnh phúc thật sự.`,
+        image: '🌊💀⚠️',
+        question: 'Điều gì xảy ra với người anh tham lam?',
+        options: ['Trở nên giàu có', 'Rơi xuống biển vì mang quá nặng', 'Sống hạnh phúc', 'Được chim cứu'],
+        answer: 1
+      }
+    ]
+  },
+
+  // ==========================================
+  // 9. CON RỒNG CHÁU TIÊN
+  // ==========================================
+  {
+    id: 'con_rong_chau_tien',
+    title: 'Con Rồng Cháu Tiên',
+    titleEn: 'Children of the Dragon and Fairy',
+    icon: '🐉',
+    cover: '🧚',
+    color: 'from-red-500 to-yellow-500',
+    description: 'Truyền thuyết về nguồn gốc dân tộc Việt Nam',
+    totalChapters: 5,
+    chapters: [
+      {
+        id: 1,
+        title: 'Lạc Long Quân',
+        content: `Ngày xưa, ở miền đất Lĩnh Nam có một vị thần tên là Lạc Long Quân. Ngài là con trai của thần Long Nữ, vua của loài rồng dưới biển.
+
+Lạc Long Quân có sức mạnh phi thường, có thể sống dưới nước lẫn trên cạn. Ngài rất yêu thương dân chúng.
+
+Thời đó, vùng đất còn nhiều yêu quái, thú dữ. Lạc Long Quân đã giúp dân trừ Ngư Tinh (quái vật biển), diệt Hồ Tinh (cáo chín đuôi), và đánh đuổi Mộc Tinh (yêu quái rừng).
+
+Ngài còn dạy dân cách trồng lúa nước, dệt vải, xây nhà.
+
+Lạc Long Quân trở thành vị anh hùng được muôn dân kính yêu.`,
+        image: '🐉⚔️🌊',
+        question: 'Lạc Long Quân là con của ai?',
+        options: ['Vua loài chim', 'Thần Long Nữ - vua loài rồng', 'Ngọc Hoàng', 'Một người nông dân'],
+        answer: 1
+      },
+      {
+        id: 2,
+        title: 'Âu Cơ xinh đẹp',
+        content: `Ở vùng núi cao phương Bắc, có nàng Âu Cơ xinh đẹp tuyệt trần. Nàng là con gái của Đế Lai, thuộc dòng dõi thần tiên.
+
+Âu Cơ nghe tiếng vùng đất Lĩnh Nam tươi đẹp, có hoa thơm cỏ lạ, bèn xin cha cho xuống thăm.
+
+Một hôm, Âu Cơ đang dạo chơi bên bờ biển, gặp Lạc Long Quân. Thấy nàng xinh đẹp, dịu dàng, Lạc Long Quân đem lòng yêu mến.
+
+Âu Cơ thấy Lạc Long Quân tài giỏi, hiền hậu, cũng sinh lòng quý mến.
+
+Hai người kết duyên vợ chồng, sống hạnh phúc bên nhau.`,
+        image: '🧚👸💕',
+        question: 'Âu Cơ là ai?',
+        options: ['Một cô gái nghèo', 'Con gái Đế Lai, dòng dõi thần tiên', 'Một nàng tiên cá', 'Con gái Long Nữ'],
+        answer: 1
+      },
+      {
+        id: 3,
+        title: 'Bọc trăm trứng',
+        content: `Sau một thời gian, Âu Cơ sinh ra một cái bọc lạ. Bọc ấy nở ra một trăm quả trứng, mỗi trứng nở ra một người con trai.
+
+Không cần bú mớm mà một trăm người con đều lớn nhanh như thổi, khỏe mạnh, khôi ngô, tuấn tú.
+
+Đó là điều kỳ diệu của Trời Đất ban cho.
+
+Lạc Long Quân và Âu Cơ rất vui mừng, yêu thương các con hết mực.
+
+Một trăm người con là tổ tiên của dân tộc Việt Nam. Vì thế, người Việt tự hào là Con Rồng Cháu Tiên.`,
+        image: '🥚👶💯',
+        question: 'Âu Cơ sinh ra bao nhiêu người con?',
+        options: ['Mười người', 'Năm mươi người', 'Một trăm người', 'Một nghìn người'],
+        answer: 2
+      },
+      {
+        id: 4,
+        title: 'Chia tay',
+        content: `Nhưng Lạc Long Quân là giống Rồng, quen sống ở nước. Âu Cơ là giống Tiên, quen sống ở núi.
+
+Sống với nhau lâu, họ thấy khó hòa hợp. Lạc Long Quân nói:
+
+"Ta là giống Rồng, nàng là giống Tiên. Nước với lửa khó mà ở cùng được lâu. Nay ta đành chia tay."
+
+Âu Cơ đồng ý. Họ chia con: năm mươi người con theo cha xuống biển, năm mươi người con theo mẹ lên núi.
+
+Trước khi chia tay, Lạc Long Quân dặn: "Khi nào có việc gì khó khăn, hãy giúp đỡ lẫn nhau."`,
+        image: '💔🏔️🌊',
+        question: 'Lạc Long Quân và Âu Cơ chia con như thế nào?',
+        options: ['Tất cả theo mẹ', 'Tất cả theo cha', '50 theo cha, 50 theo mẹ', '70 theo cha, 30 theo mẹ'],
+        answer: 2
+      },
+      {
+        id: 5,
+        title: 'Vua Hùng đầu tiên',
+        content: `Người con cả theo mẹ lên vùng đất Phong Châu, được tôn làm vua, lấy hiệu là Hùng Vương.
+
+Hùng Vương lập ra nước Văn Lang - nhà nước đầu tiên của dân tộc Việt Nam.
+
+Từ đó, mười tám đời vua Hùng kế tiếp nhau trị vì đất nước.
+
+Mỗi năm vào ngày mùng 10 tháng 3 âm lịch, con cháu Việt Nam khắp nơi đều hướng về đền Hùng để tưởng nhớ các Vua Hùng.
+
+🌟 BÀI HỌC: Dân tộc Việt Nam có chung một nguồn gốc, đều là con cháu Lạc Long Quân và Âu Cơ - Con Rồng Cháu Tiên. Chúng ta phải đoàn kết, thương yêu nhau như anh em một nhà.`,
+        image: '👑🏛️🇻🇳',
+        question: 'Vua đầu tiên của nước Văn Lang là ai?',
+        options: ['Lạc Long Quân', 'Hùng Vương', 'Đế Lai', 'Âu Cơ'],
+        answer: 1
+      }
+    ]
+  },
+
+  // ==========================================
+  // 10. THÁNH GIÓNG
+  // ==========================================
+  {
+    id: 'thanh_giong',
+    title: 'Thánh Gióng',
+    titleEn: 'The Legend of Giong',
+    icon: '🐴',
+    cover: '⚔️',
+    color: 'from-orange-500 to-red-600',
+    description: 'Truyền thuyết về người anh hùng đánh giặc Ân',
+    totalChapters: 5,
+    chapters: [
+      {
+        id: 1,
+        title: 'Đứa bé kỳ lạ',
+        content: `Đời Hùng Vương thứ sáu, ở làng Gióng có hai vợ chồng già hiền lành nhưng chưa có con.
+
+Một hôm, bà lão ra đồng, thấy một vết chân to lạ lùng. Bà tò mò đặt chân vào ướm thử.
+
+Về nhà, bà có mang. Mười hai tháng sau mới sinh được một cậu bé khôi ngô.
+
+Nhưng lạ thay, cậu bé lên ba tuổi vẫn không biết nói, biết cười, cũng chẳng biết đi. Suốt ngày cậu chỉ nằm im.
+
+Hai vợ chồng già rất lo lắng, nhưng vẫn yêu thương con hết mực.`,
+        image: '👣👶😶',
+        question: 'Cậu bé Gióng có điều gì khác thường?',
+        options: ['Nói rất giỏi', 'Ba tuổi vẫn không nói, không đi', 'Rất tinh nghịch', 'Biết đọc sách'],
+        answer: 1
+      },
+      {
+        id: 2,
+        title: 'Tiếng nói đầu tiên',
+        content: `Thời ấy, giặc Ân hung bạo từ phương Bắc kéo sang xâm lược. Chúng đông như kiến, mạnh như hổ.
+
+Vua Hùng lo lắng, sai sứ giả đi khắp nơi tìm người tài cứu nước.
+
+Sứ giả đến làng Gióng, rao tin. Nghe tiếng rao, cậu bé bỗng cất tiếng nói:
+
+"Mẹ ơi! Mẹ ra mời sứ giả vào đây cho con!"
+
+Hai vợ chồng sửng sốt mừng rỡ. Sứ giả vào nhà, cậu bé nói:
+
+"Ông về tâu với vua, rèn cho ta một con ngựa sắt, một chiếc roi sắt, một áo giáp sắt. Ta sẽ đánh tan giặc!"`,
+        image: '📯👦⚔️',
+        question: 'Gióng nói câu đầu tiên khi nào?',
+        options: ['Khi được một tuổi', 'Khi nghe sứ giả rao tin tìm người đánh giặc', 'Khi được mười tuổi', 'Khi bố mẹ dạy nói'],
+        answer: 1
+      },
+      {
+        id: 3,
+        title: 'Gióng lớn nhanh',
+        content: `Sứ giả về tâu vua. Vua cho rèn ngựa sắt, roi sắt, áo giáp sắt.
+
+Từ hôm ấy, Gióng lớn nhanh như thổi. Cơm ăn bao nhiêu cũng không đủ, áo mặc bao nhiêu cũng chật.
+
+Bà con hàng xóm nghe chuyện, kẻ góp gạo, người góp cơm, nuôi Gióng đánh giặc.
+
+Chỉ trong ít ngày, Gióng trở thành một tráng sĩ cao lớn, mình đồng da sắt.
+
+Khi vũ khí và áo giáp sắt được mang đến, Gióng vươn vai một cái, trở thành người khổng lồ uy nghiêm.`,
+        image: '🍚📈💪',
+        question: 'Gióng lớn nhanh nhờ đâu?',
+        options: ['Uống thuốc tiên', 'Bà con góp gạo, góp cơm nuôi', 'Tự lớn lên', 'Được thần giúp'],
+        answer: 1
+      },
+      {
+        id: 4,
+        title: 'Đánh tan giặc Ân',
+        content: `Gióng mặc áo giáp sắt, cầm roi sắt, nhảy lên ngựa sắt. Ngựa phun lửa phi như bay ra trận.
+
+Gióng xông vào đánh giặc. Roi sắt vung đến đâu, giặc tan đến đấy.
+
+Đánh một hồi, roi sắt gãy. Gióng nhổ từng bụi tre ven đường quật vào quân giặc.
+
+Giặc Ân chết như rạ, kinh hoàng bỏ chạy tán loạn.
+
+Gióng đuổi giặc đến chân núi Sóc Sơn. Quân giặc tan tành, không còn một tên.`,
+        image: '🐴🔥⚔️',
+        question: 'Khi roi sắt gãy, Gióng dùng gì đánh giặc?',
+        options: ['Roi mới', 'Bụi tre', 'Gươm báu', 'Đá núi'],
+        answer: 1
+      },
+      {
+        id: 5,
+        title: 'Bay về trời',
+        content: `Đánh tan giặc, Gióng cởi áo giáp sắt để lại, rồi cả người lẫn ngựa từ từ bay lên trời.
+
+Vua nhớ công ơn, phong Gióng là "Phù Đổng Thiên Vương" và lập đền thờ ở làng Gióng.
+
+Những bụi tre bị lửa ngựa sắt cháy xém, từ đó có màu vàng óng - người ta gọi là tre đằng ngà.
+
+Những ao hồ do chân ngựa sắt tạo thành vẫn còn đến ngày nay.
+
+🌟 BÀI HỌC: Tinh thần yêu nước, đoàn kết là sức mạnh vô địch. Khi Tổ quốc cần, mỗi người dân đều sẵn sàng đứng lên bảo vệ đất nước.`,
+        image: '🏔️☁️🌟',
+        question: 'Sau khi đánh tan giặc, Gióng đi đâu?',
+        options: ['Về làng', 'Vào cung vua', 'Bay lên trời', 'Đi du ngoạn'],
+        answer: 2
+      }
+    ]
+  },
+
+  // ==========================================
+  // 11. SỰ TÍCH DƯA HẤU
+  // ==========================================
+  {
+    id: 'su_tich_dua_hau',
+    title: 'Sự Tích Dưa Hấu',
+    titleEn: 'The Legend of Watermelon',
+    icon: '🍉',
+    cover: '🏝️',
+    color: 'from-green-500 to-red-500',
+    description: 'Truyện về Mai An Tiêm và lòng kiên trì',
+    totalChapters: 5,
+    chapters: [
+      {
+        id: 1,
+        title: 'Mai An Tiêm',
+        content: `Đời vua Hùng Vương, có chàng thanh niên tên là Mai An Tiêm. Chàng được vua nhận làm con nuôi từ nhỏ.
+
+An Tiêm thông minh, tài giỏi, được vua yêu quý, ban cho nhiều bổng lộc.
+
+Chàng lấy vợ và có một con trai, sống cuộc đời sung sướng.
+
+Nhưng An Tiêm có tính kiêu ngạo. Một lần, chàng nói: "Của cải ta có được là do tài năng của ta, không phải do vua ban."
+
+Có kẻ ganh ghét, đem lời ấy tâu lên vua.`,
+        image: '👨👑💰',
+        question: 'Mai An Tiêm là ai?',
+        options: ['Con ruột vua Hùng', 'Con nuôi vua Hùng', 'Một nông dân nghèo', 'Một thương gia'],
+        answer: 1
+      },
+      {
+        id: 2,
+        title: 'Bị đày ra đảo',
+        content: `Vua Hùng nghe lời tâu, vô cùng tức giận. Ngài ra lệnh đày Mai An Tiêm cùng vợ con ra một hòn đảo hoang giữa biển.
+
+Hòn đảo toàn cát với đá, không có cây cỏ, không có nước ngọt.
+
+Vua chỉ cho mang theo ít lương thực và dụng cụ đơn giản.
+
+An Tiêm hiểu mình đã sai, nhưng không nản lòng. Chàng nói với vợ:
+
+"Đừng buồn. Trời sinh voi, trời sinh cỏ. Ta hãy cố gắng, sẽ có cách sống."
+
+Gia đình An Tiêm bắt đầu cuộc sống trên đảo hoang.`,
+        image: '🏝️😢⛵',
+        question: 'Vua Hùng phạt An Tiêm như thế nào?',
+        options: ['Bỏ tù', 'Đày ra đảo hoang', 'Phạt tiền', 'Đuổi khỏi kinh thành'],
+        answer: 1
+      },
+      {
+        id: 3,
+        title: 'Hạt giống lạ',
+        content: `Một hôm, An Tiêm thấy một đàn chim lạ bay đến đảo. Chúng ăn một loại quả rồi nhả hạt xuống cát.
+
+An Tiêm nhặt những hạt ấy, gieo xuống đất ẩm gần suối ngầm mà chàng đã tìm được.
+
+Chàng chăm sóc cẩn thận, tưới nước mỗi ngày.
+
+Ít lâu sau, hạt nảy mầm, mọc thành dây leo xanh tốt.
+
+Dây ra hoa, kết quả. Quả tròn to, vỏ xanh bóng. An Tiêm hồi hộp chờ quả chín.`,
+        image: '🐦🌱🌿',
+        question: 'An Tiêm có được hạt giống từ đâu?',
+        options: ['Mua từ thương gia', 'Từ đàn chim nhả hạt', 'Vua ban cho', 'Tự tìm trong rừng'],
+        answer: 1
+      },
+      {
+        id: 4,
+        title: 'Quả dưa hấu',
+        content: `Khi quả chín, An Tiêm bổ ra thử. Bên trong ruột đỏ au, vị ngọt mát, thơm lừng!
+
+An Tiêm vui mừng khôn xiết. Chàng đặt tên là "dưa hấu" vì quả to như quả bầu, vị ngọt hấp dẫn.
+
+Chàng trồng thêm nhiều dưa. Năm sau, đảo hoang phủ kín dây dưa xanh mướt.
+
+An Tiêm khắc tên mình lên vỏ dưa, thả xuống biển.
+
+Các thuyền buôn nhặt được, nếm thử thấy ngon, bèn tìm đến đảo của An Tiêm để đổi lương thực, vải vóc lấy dưa.`,
+        image: '🍉😋✨',
+        question: 'Ruột quả dưa hấu có màu gì?',
+        options: ['Màu vàng', 'Màu trắng', 'Màu đỏ', 'Màu xanh'],
+        answer: 2
+      },
+      {
+        id: 5,
+        title: 'Được tha tội',
+        content: `Tin đồn về loại quả ngon lành lan đến kinh thành. Vua Hùng cũng được nếm thử.
+
+Thấy dưa ngon, đọc tên An Tiêm trên vỏ, vua nhớ đến người con nuôi năm xưa.
+
+Vua ân hận, sai người ra đảo đón gia đình An Tiêm về.
+
+An Tiêm quỳ tạ tội, thưa: "Con đã hiểu, mọi thứ con có được đều nhờ ơn vua và sự giúp đỡ của mọi người."
+
+Vua tha tội, phong thưởng cho An Tiêm. Giống dưa hấu từ đó được trồng khắp nơi.
+
+🌟 BÀI HỌC: Đừng kiêu ngạo về những gì mình có. Lòng kiên trì, chịu khó sẽ giúp ta vượt qua mọi khó khăn.`,
+        image: '👑🍉❤️',
+        question: 'Bài học từ câu chuyện là gì?',
+        options: ['Phải kiêu ngạo để thành công', 'Đừng kiêu ngạo, hãy kiên trì', 'Không cần cố gắng', 'Phải có nhiều tiền'],
+        answer: 1
+      }
+    ]
+  },
+
+  // ==========================================
+  // 12. SỰ TÍCH BÁNH CHƯNG BÁNH DÀY
+  // ==========================================
+  {
+    id: 'banh_chung_banh_day',
+    title: 'Bánh Chưng Bánh Dày',
+    titleEn: 'The Legend of Chung and Day Cakes',
+    icon: '🎍',
+    cover: '🍚',
+    color: 'from-green-600 to-emerald-500',
+    description: 'Sự tích bánh truyền thống ngày Tết',
+    totalChapters: 5,
+    chapters: [
+      {
+        id: 1,
+        title: 'Cuộc thi chọn vua',
+        content: `Đời Hùng Vương thứ sáu, vua đã già yếu, muốn chọn người nối ngôi.
+
+Vua có hai mươi người con trai, ai cũng tài giỏi. Vua không biết chọn ai, bèn ra thử thách:
+
+"Nhân dịp lễ Tiên Vương, ai dâng lên được món ăn ngon nhất, ta sẽ truyền ngôi."
+
+Các hoàng tử háo hức đi tìm sơn hào hải vị. Họ lên rừng săn thú quý, xuống biển tìm hải sản ngon.
+
+Riêng hoàng tử thứ mười tám tên là Lang Liêu, mẹ mất sớm, không có ai giúp đỡ. Chàng lo lắng không biết phải làm sao.`,
+        image: '👑🏆🤔',
+        question: 'Vua Hùng thử thách các hoàng tử điều gì?',
+        options: ['Ai khỏe nhất', 'Ai dâng món ăn ngon nhất', 'Ai học giỏi nhất', 'Ai đẹp trai nhất'],
+        answer: 1
+      },
+      {
+        id: 2,
+        title: 'Giấc mơ của Lang Liêu',
+        content: `Đêm ấy, Lang Liêu nằm mơ thấy một ông tiên hiện ra và dạy:
+
+"Trong trời đất, không gì quý bằng gạo. Gạo là thứ nuôi sống con người."
+
+"Hãy lấy gạo nếp làm hai loại bánh: một bánh hình vuông tượng trưng cho Đất, một bánh hình tròn tượng trưng cho Trời."
+
+Lang Liêu tỉnh dậy, vui mừng hiểu ra ý nghĩa của giấc mơ.
+
+Chàng lấy gạo nếp, đậu xanh, thịt lợn, lá dong để làm bánh.`,
+        image: '💭🧓✨',
+        question: 'Ông tiên dạy Lang Liêu dùng gì làm bánh?',
+        options: ['Thịt quý', 'Gạo nếp', 'Hải sản', 'Trái cây'],
+        answer: 1
+      },
+      {
+        id: 3,
+        title: 'Làm bánh Chưng, bánh Dày',
+        content: `Lang Liêu lấy gạo nếp vo sạch, ngâm nước. Đậu xanh đãi vỏ, thịt lợn thái miếng.
+
+Chàng lấy lá dong rửa sạch, gói gạo, đậu, thịt thành hình vuông. Đó là bánh Chưng, tượng trưng cho Đất.
+
+Rồi chàng đồ gạo nếp chín, giã nhuyễn, nặn thành hình tròn. Đó là bánh Dày, tượng trưng cho Trời.
+
+Lang Liêu làm bánh suốt đêm, mong sao vừa ý vua cha.
+
+Khi bánh chưng chín, mùi thơm nức lan tỏa khắp nơi.`,
+        image: '🍚🌿🔥',
+        question: 'Bánh Chưng hình gì, tượng trưng cho gì?',
+        options: ['Hình tròn - Trời', 'Hình vuông - Đất', 'Hình tam giác - Núi', 'Hình chữ nhật - Sông'],
+        answer: 1
+      },
+      {
+        id: 4,
+        title: 'Lễ dâng bánh',
+        content: `Ngày lễ Tiên Vương, các hoàng tử mang lễ vật đến dâng.
+
+Hoàng tử cả dâng nem công chả phượng. Hoàng tử thứ hai dâng sơn hào hải vị. Ai cũng có món ngon hiếm lạ.
+
+Đến lượt Lang Liêu, chàng chỉ dâng hai loại bánh đơn sơ.
+
+Vua Hùng nếm thử. Bánh Chưng dẻo thơm, nhân đậm đà. Bánh Dày mềm mịn, ngọt bùi.
+
+Vua hỏi ý nghĩa. Lang Liêu thưa: "Bánh Chưng vuông là Đất, bánh Dày tròn là Trời. Con dâng lên với lòng hiếu thảo và biết ơn Trời Đất."`,
+        image: '🎁👑😊',
+        question: 'Các hoàng tử khác dâng gì?',
+        options: ['Bánh đơn giản', 'Sơn hào hải vị, món quý', 'Hoa quả', 'Vải lụa'],
+        answer: 1
+      },
+      {
+        id: 5,
+        title: 'Lang Liêu được chọn',
+        content: `Vua Hùng cảm động, phán: "Bánh của Lang Liêu tuy đơn sơ nhưng chứa đựng ý nghĩa sâu xa."
+
+"Bánh này vừa ngon, vừa thể hiện lòng biết ơn Trời Đất, tổ tiên. Đây mới là món ăn quý nhất!"
+
+Vua quyết định truyền ngôi cho Lang Liêu.
+
+Từ đó, mỗi dịp Tết đến, người Việt Nam đều gói bánh Chưng, làm bánh Dày để dâng cúng tổ tiên và quây quần bên gia đình.
+
+🌟 BÀI HỌC: Quý trọng những gì gần gũi, giản dị trong cuộc sống. Lòng hiếu thảo, biết ơn mới là điều quý giá nhất.`,
+        image: '👨‍👩‍👦🎍🏠',
+        question: 'Vì sao vua chọn Lang Liêu?',
+        options: ['Vì bánh đắt tiền nhất', 'Vì bánh có ý nghĩa sâu xa về lòng hiếu thảo', 'Vì Lang Liêu khỏe nhất', 'Vì Lang Liêu là con cả'],
+        answer: 1
+      }
+    ]
+  },
+
+  // ==========================================
+  // 13. HAI CÔ GÁI VÀ CỤC BÔNG
+  // ==========================================
+  {
+    id: 'hai_co_gai_cuc_bong',
+    title: 'Hai Cô Gái và Cục Bông',
+    titleEn: 'Two Girls and the Cotton',
+    icon: '☁️',
+    cover: '👧',
+    color: 'from-pink-400 to-purple-500',
+    description: 'Lòng tốt sẽ được đền đáp',
+    totalChapters: 4,
+    chapters: [
+      {
+        id: 1,
+        title: 'Hai chị em',
+        content: `Ngày xưa, có hai chị em nhà nọ. Chị tên là Lý, em tên là Hoa.
+
+Lý lười biếng, kiêu căng, suốt ngày chỉ biết ăn diện. Còn Hoa thì chăm chỉ, hiền lành, hay giúp đỡ mọi người.
+
+Một hôm, mẹ sai hai chị em đi hái bông vải trên núi. Lý lười không muốn đi, nhưng vì ham có vải mới nên đành theo.
+
+Hai chị em lên núi. Hoa chăm chỉ hái bông, còn Lý chỉ đứng ngắm cảnh, than mệt.
+
+Chiều đến, Hoa hái được đầy gùi bông trắng xóa.`,
+        image: '👩‍👧☁️🏔️',
+        question: 'Tính cách của Hoa như thế nào?',
+        options: ['Lười biếng', 'Chăm chỉ, hiền lành', 'Kiêu căng', 'Hay ghen tị'],
+        answer: 1
+      },
+      {
+        id: 2,
+        title: 'Bà cụ và cục bông',
+        content: `Trên đường về, Hoa gặp một bà cụ già yếu đang ngồi bên vệ đường. Bà cụ rách rưới, đói lả.
+
+Hoa động lòng thương, lấy nắm cơm mang theo chia cho bà cụ ăn.
+
+Bà cụ ăn xong, nói: "Cháu ơi, bà đổi cho cháu cục bông này. Cháu cầm về, nhớ đừng mở ra xem."
+
+Hoa nhận cục bông xù nhỏ như nắm tay, cảm ơn bà cụ rồi đi về.
+
+Còn Lý thấy vậy, cười chê em dại, đổi cả gùi bông lấy cục bông bé tẹo.`,
+        image: '👵🤝❤️',
+        question: 'Hoa đã làm gì khi gặp bà cụ?',
+        options: ['Bỏ đi', 'Chia cơm cho bà cụ', 'Cười chê bà', 'Xin bà tiền'],
+        answer: 1
+      },
+      {
+        id: 3,
+        title: 'Phép màu của cục bông',
+        content: `Về đến nhà, Hoa đặt cục bông xuống góc nhà rồi đi nấu cơm.
+
+Sáng hôm sau, cả nhà kinh ngạc: cục bông nhỏ đã biến thành một đống bông to như núi, trắng tinh, mịn màng!
+
+Mẹ đem bông đi bán, đổi được nhiều gạo, tiền, vải vóc. Từ đó gia đình Hoa không còn nghèo khó.
+
+Lý thấy vậy, ganh tị vô cùng. Cô ta quyết định lên núi tìm bà cụ để xin đổi bông như em.`,
+        image: '☁️✨💰',
+        question: 'Điều gì xảy ra với cục bông của Hoa?',
+        options: ['Biến mất', 'Biến thành đống bông to như núi', 'Vẫn như cũ', 'Bay đi'],
+        answer: 1
+      },
+      {
+        id: 4,
+        title: 'Kết cục của Lý',
+        content: `Lý lên núi, cũng gặp bà cụ. Nhưng Lý không chia cơm, lại còn mắng bà.
+
+Bà cụ cũng đưa cho Lý một cục bông, dặn không được mở ra.
+
+Trên đường về, Lý tò mò, nóng lòng muốn xem thử có gì trong cục bông. Cô ta mở ra xem.
+
+Tức thì, cục bông biến thành một bầy ong vò vẽ, đốt Lý chạy khắp nơi. Từ đó Lý biết hối hận.
+
+🌟 BÀI HỌC: Lòng tốt, sự chăm chỉ sẽ được đền đáp. Còn kẻ tham lam, ích kỷ sẽ gặp quả báo. Hãy luôn giúp đỡ người khó khăn hơn mình.`,
+        image: '🐝😱⚡',
+        question: 'Vì sao Lý bị ong đốt?',
+        options: ['Vì giúp đỡ bà cụ', 'Vì tham lam và không nghe lời dặn', 'Vì chăm chỉ', 'Vì tốt bụng'],
+        answer: 1
+      }
+    ]
+  },
+
+  // ==========================================
+  // 14. BA CÔ GÁI
+  // ==========================================
+  {
+    id: 'ba_co_gai',
+    title: 'Ba Cô Gái',
+    titleEn: 'The Three Daughters',
+    icon: '👩‍👩‍👧',
+    cover: '🏠',
+    color: 'from-rose-500 to-pink-600',
+    description: 'Câu chuyện về lòng hiếu thảo với mẹ',
+    totalChapters: 4,
+    chapters: [
+      {
+        id: 1,
+        title: 'Bà mẹ và ba cô con gái',
+        content: `Ngày xưa, có một bà mẹ nghèo nuôi ba cô con gái. Bà tần tảo sớm hôm để nuôi các con khôn lớn.
+
+Ba cô gái đều xinh đẹp, được mẹ yêu thương, dạy dỗ chu đáo.
+
+Khi ba cô đến tuổi lấy chồng, cô cả lấy một người buôn vải, cô hai lấy một người buôn muối, còn cô út lấy một người nông dân nghèo.
+
+Bà mẹ ở lại một mình trong căn nhà cũ.
+
+Năm tháng trôi qua, bà ngày càng già yếu. Bà nhớ các con, muốn gặp mặt.`,
+        image: '👵👩👩👧',
+        question: 'Cô út lấy ai?',
+        options: ['Người buôn vải', 'Người buôn muối', 'Người nông dân nghèo', 'Một ông quan'],
+        answer: 2
+      },
+      {
+        id: 2,
+        title: 'Bà mẹ đi thăm con',
+        content: `Bà mẹ quyết định đi thăm các con. Bà đến nhà cô cả đầu tiên.
+
+Cô cả tiếp mẹ trong căn nhà rộng rãi. Nhưng suốt ngày cô bận rộn với hàng vải, không có thời gian nói chuyện với mẹ.
+
+Bà mẹ buồn, đi đến nhà cô thứ hai.
+
+Cô thứ hai sống trong ngôi nhà đẹp đẽ. Nhưng cô cũng bận rộn đếm tiền, bán muối, chẳng hỏi han mẹ được mấy câu.
+
+Bà mẹ lại buồn, quyết định đi thăm cô út.`,
+        image: '🏠💔😢',
+        question: 'Cô cả và cô hai đối xử với mẹ như thế nào?',
+        options: ['Rất quan tâm', 'Bận rộn, không quan tâm mẹ', 'Cho mẹ nhiều tiền', 'Cùng mẹ nói chuyện'],
+        answer: 1
+      },
+      {
+        id: 3,
+        title: 'Nhà cô út',
+        content: `Cô út sống trong căn nhà nhỏ đơn sơ. Thấy mẹ đến, cô vui mừng chạy ra đón:
+
+"Mẹ ơi! Con nhớ mẹ quá! Mẹ vào nhà nghỉ ngơi đi!"
+
+Tuy nghèo khó, cô út vẫn dọn cơm thơm, canh ngọt cho mẹ ăn. Cô ngồi bên mẹ, hỏi han ân cần.
+
+"Mẹ có mệt không? Mẹ ở đây với con nhé!"
+
+Cô chăm sóc mẹ chu đáo, tắm rửa, giặt áo cho mẹ. Bà mẹ cảm động rơi nước mắt vì hạnh phúc.`,
+        image: '🏚️❤️👨‍👩‍👧',
+        question: 'Cô út đã làm gì khi mẹ đến?',
+        options: ['Không tiếp mẹ', 'Đón mẹ vui vẻ, chăm sóc ân cần', 'Xin tiền mẹ', 'Bận rộn làm việc'],
+        answer: 1
+      },
+      {
+        id: 4,
+        title: 'Phần thưởng xứng đáng',
+        content: `Ít lâu sau, có ông tiên đi qua. Ông thấy cô út nghèo mà hiếu thảo, bèn ban phép:
+
+Cánh đồng của cô út năm ấy trúng mùa lớn. Lúa vàng óng, trĩu hạt. Gia đình cô từ đó no đủ.
+
+Còn hai cô chị, vì không quan tâm mẹ, gặp thất bại trong làm ăn. Họ hiểu ra và hối hận.
+
+Họ đến xin lỗi mẹ và em gái, từ đó biết quan tâm mẹ già hơn.
+
+🌟 BÀI HỌC: Lòng hiếu thảo không cần giàu sang, chỉ cần tấm lòng chân thành. Hãy luôn yêu thương, chăm sóc cha mẹ khi còn có thể.`,
+        image: '🌾✨👨‍👩‍👧‍👦',
+        question: 'Bài học từ câu chuyện là gì?',
+        options: ['Phải giàu có mới hiếu thảo được', 'Lòng hiếu thảo chân thành sẽ được đền đáp', 'Không cần quan tâm cha mẹ', 'Chỉ cần cho tiền là đủ'],
+        answer: 1
+      }
+    ]
+  },
+
+  // ==========================================
+  // 15. CHÚ CUỘI CUNG TRĂNG
+  // ==========================================
+  {
+    id: 'chu_cuoi_cung_trang',
+    title: 'Chú Cuội Cung Trăng',
+    titleEn: 'Cuoi and the Moon',
+    icon: '🌙',
+    cover: '🌳',
+    color: 'from-indigo-500 to-purple-600',
+    description: 'Sự tích chú Cuội ngồi gốc cây đa trên cung trăng',
+    totalChapters: 5,
+    chapters: [
+      {
+        id: 1,
+        title: 'Chàng tiều phu Cuội',
+        content: `Ngày xưa, có chàng tiều phu tên là Cuội. Chàng mồ côi từ nhỏ, sống bằng nghề đốn củi.
+
+Cuội thật thà, tốt bụng, hay giúp đỡ mọi người. Nhưng chàng có tật hay nói dối để chọc cười.
+
+Một hôm, Cuội vào rừng đốn củi. Chàng vô tình gặp hang cọp.
+
+Cọp mẹ không có nhà. Cuội thấy bốn con cọp con, bèn lấy đá đập chết.
+
+Cuội sợ cọp mẹ về trả thù, vội leo lên cây đa gần đó ẩn nấp.`,
+        image: '🪓🌲🐯',
+        question: 'Cuội làm nghề gì?',
+        options: ['Đánh cá', 'Tiều phu (đốn củi)', 'Buôn bán', 'Làm ruộng'],
+        answer: 1
+      },
+      {
+        id: 2,
+        title: 'Cây thuốc thần',
+        content: `Cọp mẹ về, thấy con chết, gầm lên đau đớn. Rồi nó chạy đi đâu đó.
+
+Lát sau, cọp mẹ quay về, miệng ngậm một nắm lá cây lạ. Nó nhai lá, phun vào miệng các con.
+
+Kỳ diệu thay! Bốn con cọp con sống dậy, chạy nhảy vui vẻ!
+
+Cuội kinh ngạc. Đợi cọp đi, chàng tìm đến chỗ cây lạ ấy, đào cả gốc mang về.
+
+Từ đó, Cuội dùng lá cây chữa bệnh cho dân làng. Ai ốm đau gì, nhai lá là khỏi.`,
+        image: '🌿🐯✨',
+        question: 'Lá cây thần có tác dụng gì?',
+        options: ['Biến thành vàng', 'Chữa bệnh, cứu người', 'Làm người bay', 'Thành tiên'],
+        answer: 1
+      },
+      {
+        id: 3,
+        title: 'Cưới vợ',
+        content: `Một hôm, có cô gái con nhà phú ông đi qua sông, chẳng may bị rơi xuống nước chết đuối.
+
+Cuội dùng lá cây thần cứu sống cô gái. Phú ông cảm ơn, gả con gái cho Cuội.
+
+Vợ Cuội tên là Hằng, xinh đẹp nhưng hay quên. Cuội dặn: "Đừng bao giờ tưới phân vào gốc cây thuốc, cây sẽ bay mất!"
+
+Hằng vâng lời chồng, nhưng cô có tính hay quên.
+
+Cuội trồng cây thuốc thần trước sân nhà, hàng ngày chăm sóc cẩn thận.`,
+        image: '💑🌳🏠',
+        question: 'Cuội dặn vợ điều gì?',
+        options: ['Không được tưới nước', 'Không được tưới phân vào gốc cây', 'Không được hái lá', 'Không được nhìn cây'],
+        answer: 1
+      },
+      {
+        id: 4,
+        title: 'Cây thuốc bay lên trời',
+        content: `Một hôm Cuội đi vắng, Hằng ở nhà dọn dẹp. Cô quên lời chồng dặn, đổ cả thùng phân vào gốc cây thuốc.
+
+Tức thì, mặt đất rung chuyển. Cây thuốc thần bật rễ, từ từ bay lên trời!
+
+Cuội về đến nhà, thấy cây đang bay, vội nhảy lên bám vào rễ cây.
+
+Nhưng muộn rồi! Cây cứ bay lên cao mãi, mang theo cả Cuội.
+
+Cuối cùng, cây dừng lại trên cung trăng. Cuội ngồi trên đó, không thể trở về.`,
+        image: '🌳🚀🌙',
+        question: 'Vì sao cây thuốc bay lên trời?',
+        options: ['Vì Cuội muốn bay', 'Vì vợ Cuội tưới phân vào gốc', 'Vì trời muốn lấy cây', 'Vì cây già rồi'],
+        answer: 1
+      },
+      {
+        id: 5,
+        title: 'Chú Cuội cung trăng',
+        content: `Từ đó, Cuội sống mãi trên cung trăng, ngồi dưới gốc cây đa.
+
+Mỗi đêm rằm, nhìn lên mặt trăng sáng, ta có thể thấy bóng chú Cuội ngồi dưới gốc cây.
+
+Cuội nhớ nhà, nhớ vợ, nhớ quê hương. Những đêm trăng sáng, chàng ngồi buồn, mong được trở về.
+
+Trẻ em Việt Nam có bài đồng dao:
+"Chú Cuội ngồi gốc cây đa,
+Thả trâu ăn lúa, gọi cha ời ời..."
+
+🌟 BÀI HỌC: Hãy nhớ kỹ lời người khác dặn dò. Sự đãng trí, hay quên có thể gây ra hậu quả đáng tiếc.`,
+        image: '🌕👤🌳',
+        question: 'Chú Cuội bây giờ ở đâu?',
+        options: ['Ở dưới biển', 'Trên cung trăng', 'Trong rừng', 'Về nhà rồi'],
+        answer: 1
+      }
+    ]
   }
 ];
 
