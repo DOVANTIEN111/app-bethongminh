@@ -144,16 +144,33 @@ export function AuthProvider({ children }) {
   const removeDevice = async (deviceId) => {
     if (!account) return { error: 'Chưa đăng nhập' };
     try {
-      const { data } = await supabase.rpc('remove_device', {
+      // Thử dùng RPC trước
+      const { data, error: rpcError } = await supabase.rpc('remove_device', {
         p_account_id: account.id,
         p_device_id: deviceId,
       });
-      if (data?.success) {
+
+      if (!rpcError && data?.success) {
         await loadDevices(account.id);
         return { success: true };
       }
-      return { error: data?.message || 'Không thể xóa thiết bị' };
+
+      // Fallback: Xóa trực tiếp từ bảng nếu RPC không tồn tại
+      const { error: deleteError } = await supabase
+        .from('user_devices')
+        .delete()
+        .eq('id', deviceId)
+        .eq('account_id', account.id);
+
+      if (deleteError) {
+        console.error('Delete device error:', deleteError);
+        return { error: 'Không thể xóa thiết bị. Vui lòng thử lại.' };
+      }
+
+      await loadDevices(account.id);
+      return { success: true };
     } catch (err) {
+      console.error('Remove device error:', err);
       return { error: err.message };
     }
   };

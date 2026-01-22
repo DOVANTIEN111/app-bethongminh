@@ -43,6 +43,8 @@ export default function ParentPage() {
   const [showMessage, setShowMessage] = useState(false);
   const [showPinChange, setShowPinChange] = useState(false);
   const [showRenameDevice, setShowRenameDevice] = useState(null);
+  const [showDeleteDevice, setShowDeleteDevice] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   useEffect(() => {
     if (children.length > 0 && !selectedChild) {
@@ -200,7 +202,7 @@ export default function ParentPage() {
                 <p className="text-xs text-gray-500">{device.os} • {device.browser}</p>
               </div>
               <button onClick={() => setShowRenameDevice(device)} className="p-2 text-gray-400 hover:text-gray-600">{Icons.edit}</button>
-              <button onClick={async () => { if (confirm('Xóa thiết bị này?')) await removeDevice(device.id); }} className="p-2 text-red-400 hover:text-red-600">{Icons.trash}</button>
+              <button onClick={() => setShowDeleteDevice(device)} className="p-2 text-red-400 hover:text-red-600">{Icons.trash}</button>
             </div>
           ))}
           {devices.length === 0 && <p className="text-center text-gray-400 py-4">Chưa có thiết bị nào</p>}
@@ -407,6 +409,78 @@ export default function ParentPage() {
     );
   };
 
+  const DeleteDeviceModal = () => {
+    const [error, setError] = useState('');
+
+    const handleDelete = async () => {
+      if (!showDeleteDevice) return;
+      setDeleteLoading(true);
+      setError('');
+
+      try {
+        const result = await removeDevice(showDeleteDevice.id);
+        if (result?.error) {
+          setError(result.error);
+        } else {
+          setShowDeleteDevice(null);
+        }
+      } catch (err) {
+        setError('Không thể xóa thiết bị. Vui lòng thử lại.');
+      }
+      setDeleteLoading(false);
+    };
+
+    if (!showDeleteDevice) return null;
+
+    return (
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-2xl p-6 w-full max-w-md">
+          <div className="text-center mb-4">
+            <div className="w-16 h-16 mx-auto bg-red-100 rounded-full flex items-center justify-center text-3xl mb-3">
+              {showDeleteDevice.device_type === 'phone' ? Icons.phone : showDeleteDevice.device_type === 'tablet' ? Icons.tablet : Icons.desktop}
+            </div>
+            <h3 className="text-xl font-bold text-gray-800">Xóa thiết bị?</h3>
+            <p className="text-gray-500 mt-2">
+              Bạn có chắc muốn xóa <strong>{showDeleteDevice.device_name || 'thiết bị này'}</strong>?
+            </p>
+            <p className="text-sm text-gray-400 mt-1">
+              {showDeleteDevice.os} • {showDeleteDevice.browser}
+            </p>
+          </div>
+
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-xl text-sm text-center">
+              ⚠️ {error}
+            </div>
+          )}
+
+          <div className="bg-amber-50 rounded-xl p-3 mb-4">
+            <p className="text-sm text-amber-700">
+              <strong>⚠️ Lưu ý:</strong> Thiết bị này sẽ bị đăng xuất và cần đăng nhập lại nếu muốn sử dụng tiếp.
+            </p>
+          </div>
+
+          <div className="flex gap-3">
+            <button
+              onClick={() => { setShowDeleteDevice(null); setError(''); }}
+              className="flex-1 py-3 border rounded-xl font-medium text-gray-600 hover:bg-gray-50"
+              disabled={deleteLoading}
+            >
+              Hủy
+            </button>
+            <button
+              onClick={handleDelete}
+              disabled={deleteLoading}
+              className="flex-1 py-3 bg-red-500 text-white rounded-xl font-medium disabled:opacity-50 hover:bg-red-600"
+            >
+              {deleteLoading ? 'Đang xóa...' : '🗑️ Xóa thiết bị'}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   // =====================================================
   // MAIN RENDER
   // =====================================================
@@ -445,6 +519,7 @@ export default function ParentPage() {
       <MessageModal />
       <PinChangeModal />
       <RenameDeviceModal />
+      <DeleteDeviceModal />
     </div>
   );
 }
