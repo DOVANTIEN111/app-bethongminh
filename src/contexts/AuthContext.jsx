@@ -276,15 +276,31 @@ export function AuthProvider({ children }) {
         updated_at: new Date().toISOString(),
       }).eq('id', currentChild.id);
 
-      // 3. Cập nhật state local
+      // 3. Cập nhật progress.completed trong state local
+      const currentProgress = currentChild.progress || {};
+      const subjectProgress = currentProgress[subjectId] || { completed: [], scores: {} };
+      
+      // Thêm lessonId vào completed nếu chưa có
+      if (!subjectProgress.completed.includes(lessonId)) {
+        subjectProgress.completed.push(lessonId);
+      }
+      subjectProgress.scores[lessonId] = Math.max(subjectProgress.scores[lessonId] || 0, score);
+
+      const newProgress = {
+        ...currentProgress,
+        [subjectId]: subjectProgress,
+      };
+
+      // 4. Cập nhật state local
       setCurrentChild(prev => ({
         ...prev,
         xp: newXp,
         level: newLevel,
         total_lessons: newTotalLessons,
+        progress: newProgress,
       }));
 
-      console.log('Lesson completed:', { xpEarned, newXp, newLevel });
+      console.log('Lesson completed:', { lessonId, xpEarned, newXp, newLevel, completed: subjectProgress.completed });
       return { success: true, xpEarned, newXp, newLevel };
     } catch (err) {
       console.error('Complete lesson error:', err);

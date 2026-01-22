@@ -62,12 +62,14 @@ export default function SubjectPage() {
     }
   };
 
-  // Logic mở khóa bài học
+  // Logic mở khóa bài học - Hoàn thành bài trước để mở bài sau
   const isLessonLocked = (index) => {
+    // 3 bài đầu luôn mở
     if (index < 3) return false;
-    const requiredLessonIndex = index - 3;
-    const requiredLessonId = subject.lessons[requiredLessonIndex]?.id;
-    return !progress.completed.includes(requiredLessonId);
+    
+    // Bài thứ 4 trở đi: cần hoàn thành bài ngay trước đó
+    const prevLessonId = subject.lessons[index - 1]?.id;
+    return !progress.completed.includes(prevLessonId);
   };
 
   // Find next recommended lesson
