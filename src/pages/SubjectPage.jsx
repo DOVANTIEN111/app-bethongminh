@@ -1,22 +1,31 @@
 // src/pages/SubjectPage.jsx
-// Trang danh sách bài học của môn học - v3.1.0
+// Trang danh sách bài học của môn học - v3.3.0
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import { useAudio } from '../contexts/AudioContext';
 import { getSubject } from '../data/subjects';
-import { CheckCircle, Lock, Star, Play, Trophy, Flame, ChevronRight } from 'lucide-react';
+import { CheckCircle, Lock, Star, Play, Trophy, Flame, ChevronRight, Unlock, ShieldCheck } from 'lucide-react';
 
 export default function SubjectPage() {
   const { subjectId } = useParams();
   const navigate = useNavigate();
-  const { currentChild } = useAuth();
+  const { currentChild, account } = useAuth();
   const { playSound, stopAudio } = useAudio();
   const [selectedLevel, setSelectedLevel] = useState('all');
+  const [devMode, setDevMode] = useState(false);
   
   const subject = getSubject(subjectId);
   const progress = currentChild?.progress?.[subjectId] || { completed: [], scores: {} };
+
+  // Check if user is admin or teacher (by email or role)
+  const isAdminOrTeacher = account?.email?.includes('admin') || 
+                           account?.email?.includes('teacher') ||
+                           account?.email?.includes('giaovien') ||
+                           account?.role === 'admin' ||
+                           account?.role === 'teacher' ||
+                           devMode;
 
   // Dừng tất cả audio khi vào trang danh sách bài học
   useEffect(() => {
@@ -62,8 +71,11 @@ export default function SubjectPage() {
     }
   };
 
-  // Logic mở khóa bài học - Hoàn thành bài trước để mở bài sau
+  // Logic mở khóa bài học - Admin/Teacher mở tất cả
   const isLessonLocked = (index) => {
+    // Admin/Teacher mở khóa tất cả
+    if (isAdminOrTeacher) return false;
+    
     // 3 bài đầu luôn mở
     if (index < 3) return false;
     
@@ -77,11 +89,34 @@ export default function SubjectPage() {
     return !progress.completed.includes(lesson.id) && !isLessonLocked(index);
   });
   
+  // Secret tap to enable dev mode (tap header 5 times)
+  const [tapCount, setTapCount] = useState(0);
+  const handleHeaderTap = () => {
+    const newCount = tapCount + 1;
+    setTapCount(newCount);
+    if (newCount >= 5) {
+      setDevMode(!devMode);
+      setTapCount(0);
+      playSound('complete');
+    }
+  };
+  
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Admin/Dev Mode Banner */}
+      {isAdminOrTeacher && (
+        <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-2 flex items-center justify-center gap-2 text-sm">
+          <ShieldCheck className="w-4 h-4" />
+          <span className="font-medium">
+            {devMode ? 'Chế độ Dev - Mở khóa tất cả' : 'Admin/Giáo viên - Mở khóa tất cả'}
+          </span>
+          <Unlock className="w-4 h-4" />
+        </div>
+      )}
+      
       {/* Header */}
       <div className={`bg-gradient-to-br ${subject.color} text-white px-4 pt-4 pb-8`}>
-        <div className="flex items-center gap-4 mb-6">
+        <div className="flex items-center gap-4 mb-6" onClick={handleHeaderTap}>
           <motion.div 
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
@@ -93,6 +128,9 @@ export default function SubjectPage() {
           <div className="flex-1">
             <h1 className="text-2xl font-bold">{subject.name}</h1>
             <p className="text-white/80">{subject.desc}</p>
+            {tapCount > 0 && tapCount < 5 && (
+              <p className="text-xs text-white/50 mt-1">Tap {5 - tapCount} lần nữa để bật Dev Mode</p>
+            )}
           </div>
         </div>
         
