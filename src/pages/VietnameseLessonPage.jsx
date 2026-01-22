@@ -325,9 +325,20 @@ export default function VietnameseLessonPage() {
               <p className="text-xl font-bold text-gray-800 text-center mb-6">{question.question}</p>
               
               {/* Visual based on question type */}
-              {question.type === 'count' && (
+              {question.type === 'count' && question.image && (
                 <div className="flex justify-center py-4">
-                  <ImageDisplay emoji={question.image} count={question.imageCount} size={question.imageCount > 6 ? 'medium' : 'large'} />
+                  <ImageDisplay emoji={question.image} count={question.imageCount || 1} size={(question.imageCount || 1) > 6 ? 'medium' : 'large'} />
+                </div>
+              )}
+              
+              {/* Tiếng Việt: identify, spell, read, match_word, sound - hiển thị visual nếu có */}
+              {(question.type === 'identify' || question.type === 'spell' || question.type === 'read' || question.type === 'match_word' || question.type === 'sound' || question.type === 'sequence') && question.visual && (
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 mb-4">
+                  <div className="flex flex-wrap justify-center gap-2">
+                    {question.visual.options?.map((opt, i) => (
+                      <span key={i} className="text-lg bg-white px-3 py-1 rounded-lg shadow-sm">{opt}</span>
+                    ))}
+                  </div>
                 </div>
               )}
               
