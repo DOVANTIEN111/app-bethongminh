@@ -343,6 +343,24 @@ export default function MathLessonPage() {
                 </div>
               )}
               
+              {question.type === 'subtraction' && question.visual && (
+                <div className="flex items-center justify-center gap-3 flex-wrap py-4">
+                  <div className="bg-blue-50 rounded-xl p-3 relative">
+                    <ImageDisplay emoji={question.visual.emoji} count={question.visual.startCount} size={question.visual.startCount > 6 ? 'small' : 'medium'} />
+                  </div>
+                  <span className="text-4xl font-bold text-red-500">−</span>
+                  <div className="bg-red-50 rounded-xl p-3 opacity-50">
+                    <ImageDisplay emoji={question.visual.emoji} count={question.visual.removeCount} size={question.visual.removeCount > 6 ? 'small' : 'medium'} />
+                  </div>
+                </div>
+              )}
+              
+              {question.type === 'word_problem' && (
+                <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 text-center">
+                  <p className="text-lg text-gray-700 leading-relaxed">{question.question}</p>
+                </div>
+              )}
+              
               {question.type === 'compare' && (
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <motion.button

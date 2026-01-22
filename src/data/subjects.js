@@ -10,7 +10,7 @@ export const SUBJECTS = {
     desc: 'Học đếm, phép tính, hình học',
     useMathLessons: true, // Flag để dùng mathLessons.js
     lessons: [
-      // Level 1: Làm quen số (3-4 tuổi)
+      // Level 1: Làm quen số (3-4 tuổi) - 15 bài
       { id: 'math-1-1', title: 'Số 1 - Một', level: 1, desc: 'Học số 1 qua hình ảnh' },
       { id: 'math-1-2', title: 'Số 2 - Hai', level: 1, desc: 'Học số 2 qua hình ảnh' },
       { id: 'math-1-3', title: 'Số 3 - Ba', level: 1, desc: 'Học số 3 qua hình ảnh' },
@@ -25,9 +25,9 @@ export const SUBJECTS = {
       { id: 'math-1-12', title: 'Ôn tập số 6-10', level: 1, desc: 'Ôn lại các số 6 đến 10' },
       { id: 'math-1-13', title: 'So sánh: Nhiều hơn', level: 1, desc: 'Học cách so sánh' },
       { id: 'math-1-14', title: 'So sánh: Ít hơn', level: 1, desc: 'Học cách so sánh' },
-      { id: 'math-1-15', title: 'Kiểm tra Level 1', level: 1, desc: 'Bài kiểm tra số 1-10' },
+      { id: 'math-1-15', title: '🏆 Kiểm tra Level 1', level: 1, desc: 'Bài kiểm tra số 1-10' },
       
-      // Level 2: Phép cộng (4-5 tuổi)
+      // Level 2: Phép cộng (4-5 tuổi) - 10 bài
       { id: 'math-2-1', title: 'Cộng với 1', level: 2, desc: 'Học phép cộng với 1' },
       { id: 'math-2-2', title: 'Cộng với 2', level: 2, desc: 'Học phép cộng với 2' },
       { id: 'math-2-3', title: 'Cộng trong phạm vi 5', level: 2, desc: 'Cộng có kết quả ≤ 5' },
@@ -38,6 +38,35 @@ export const SUBJECTS = {
       { id: 'math-2-8', title: 'Phép cộng ngược', level: 2, desc: 'Tính chất giao hoán' },
       { id: 'math-2-9', title: 'Cộng với 0', level: 2, desc: 'Số 0 trong phép cộng' },
       { id: 'math-2-10', title: 'Tìm số còn thiếu', level: 2, desc: 'Điền số vào ô trống' },
+      
+      // Level 3: Phép trừ (5-6 tuổi) - 15 bài
+      { id: 'math-3-1', title: 'Trừ đi 1', level: 3, desc: 'Học phép trừ với 1' },
+      { id: 'math-3-2', title: 'Trừ đi 2', level: 3, desc: 'Học phép trừ với 2' },
+      { id: 'math-3-3', title: 'Trừ trong phạm vi 5', level: 3, desc: 'Trừ có kết quả ≤ 5' },
+      { id: 'math-3-4', title: 'Trừ đi 3', level: 3, desc: 'Học phép trừ với 3' },
+      { id: 'math-3-5', title: 'Trừ đi 4', level: 3, desc: 'Học phép trừ với 4' },
+      { id: 'math-3-6', title: 'Trừ đi 5', level: 3, desc: 'Trừ 5 - một bàn tay' },
+      { id: 'math-3-7', title: 'Trừ trong phạm vi 10', level: 3, desc: 'Trừ trong phạm vi 10' },
+      { id: 'math-3-8', title: 'Trừ với 0', level: 3, desc: 'Số 0 trong phép trừ' },
+      { id: 'math-3-9', title: 'Tìm số bị trừ', level: 3, desc: 'Điền số vào ô trống' },
+      { id: 'math-3-10', title: 'Tìm số trừ', level: 3, desc: 'Điền số trừ' },
+      { id: 'math-3-11', title: 'Cộng và Trừ', level: 3, desc: 'Luyện cả cộng và trừ' },
+      { id: 'math-3-12', title: 'Bài toán có lời văn 1', level: 3, desc: 'Giải bài toán đơn giản' },
+      { id: 'math-3-13', title: 'Bài toán có lời văn 2', level: 3, desc: 'Giải thêm bài toán' },
+      { id: 'math-3-14', title: 'Ôn tập Level 3', level: 3, desc: 'Ôn lại phép trừ' },
+      { id: 'math-3-15', title: '🏆 Kiểm tra Level 3', level: 3, desc: 'Bài kiểm tra phép trừ' },
+      
+      // Level 4: Số đến 20 (6-7 tuổi) - 10 bài
+      { id: 'math-4-1', title: 'Số 11 - Mười một', level: 4, desc: 'Học số 11' },
+      { id: 'math-4-2', title: 'Số 12-15', level: 4, desc: 'Học số từ 12 đến 15' },
+      { id: 'math-4-3', title: 'Số 16-20', level: 4, desc: 'Học số từ 16 đến 20' },
+      { id: 'math-4-4', title: 'Đếm 11-20', level: 4, desc: 'Luyện đếm số 11-20' },
+      { id: 'math-4-5', title: 'Cộng có kết quả đến 20', level: 4, desc: 'Phép cộng lớn hơn' },
+      { id: 'math-4-6', title: 'Trừ từ số đến 20', level: 4, desc: 'Phép trừ với số lớn' },
+      { id: 'math-4-7', title: 'So sánh số đến 20', level: 4, desc: 'Lớn hơn, nhỏ hơn' },
+      { id: 'math-4-8', title: 'Bài toán đến 20', level: 4, desc: 'Giải bài toán' },
+      { id: 'math-4-9', title: 'Ôn tập Level 4', level: 4, desc: 'Ôn lại số đến 20' },
+      { id: 'math-4-10', title: '🏆 Kiểm tra Level 4', level: 4, desc: 'Bài kiểm tra cuối' },
     ],
   },
   

@@ -1870,7 +1870,1716 @@ export const MATH_LESSONS = {
     },
   },
 
-  // Thêm nhiều bài học nữa...
+  // ==========================================
+  // LEVEL 3: PHÉP TRỪ (5-6 tuổi) - 15 bài
+  // ==========================================
+
+  'math-3-1': {
+    id: 'math-3-1',
+    title: 'Trừ đi 1',
+    level: 3,
+    description: 'Học phép trừ với số 1',
+    icon: '➖',
+    color: 'from-orange-400 to-red-500',
+    
+    intro: {
+      title: 'Phép trừ',
+      subtitle: 'Bớt đi 1',
+      image: '➖',
+      imageCount: 1,
+      voice: 'Khi trừ đi 1, ta bớt đi 1 cái!',
+      animation: 'bounce',
+    },
+    
+    examples: [
+      { image: '🍎🍎 ➡️ 🍎', count: 1, text: '2 - 1 = 1' },
+      { image: '🐱🐱🐱 ➡️ 🐱🐱', count: 1, text: '3 - 1 = 2' },
+      { image: '⭐⭐⭐⭐ ➡️ ⭐⭐⭐', count: 1, text: '4 - 1 = 3' },
+    ],
+    
+    questions: [
+      {
+        type: 'subtraction',
+        question: '2 - 1 = ?',
+        visual: { emoji: '🍎', startCount: 2, removeCount: 1 },
+        options: ['0', '1', '2'],
+        answer: '1',
+        hint: 'Có 2 quả táo, bớt 1 còn mấy?',
+      },
+      {
+        type: 'subtraction',
+        question: '3 - 1 = ?',
+        visual: { emoji: '🐱', startCount: 3, removeCount: 1 },
+        options: ['1', '2', '3'],
+        answer: '2',
+      },
+      {
+        type: 'subtraction',
+        question: '4 - 1 = ?',
+        visual: { emoji: '⭐', startCount: 4, removeCount: 1 },
+        options: ['2', '3', '4'],
+        answer: '3',
+      },
+      {
+        type: 'subtraction',
+        question: '5 - 1 = ?',
+        visual: { emoji: '🎈', startCount: 5, removeCount: 1 },
+        options: ['3', '4', '5'],
+        answer: '4',
+      },
+      {
+        type: 'subtraction',
+        question: '6 - 1 = ?',
+        visual: { emoji: '🌸', startCount: 6, removeCount: 1 },
+        options: ['4', '5', '6'],
+        answer: '5',
+      },
+    ],
+    
+    reward: {
+      xp: 15,
+      message: 'Giỏi lắm! Bé biết trừ 1 rồi! ➖',
+    },
+  },
+
+  'math-3-2': {
+    id: 'math-3-2',
+    title: 'Trừ đi 2',
+    level: 3,
+    description: 'Học phép trừ với số 2',
+    icon: '➖',
+    color: 'from-red-400 to-pink-500',
+    
+    intro: {
+      title: 'Trừ đi 2',
+      subtitle: 'Bớt đi 2 cái',
+      image: '➖',
+      imageCount: 1,
+      voice: 'Khi trừ đi 2, ta bớt đi 2 cái!',
+      animation: 'bounce',
+    },
+    
+    examples: [
+      { image: '🍎🍎🍎 ➡️ 🍎', count: 1, text: '3 - 2 = 1' },
+      { image: '🐱🐱🐱🐱 ➡️ 🐱🐱', count: 1, text: '4 - 2 = 2' },
+      { image: '⭐⭐⭐⭐⭐ ➡️ ⭐⭐⭐', count: 1, text: '5 - 2 = 3' },
+    ],
+    
+    questions: [
+      {
+        type: 'subtraction',
+        question: '3 - 2 = ?',
+        visual: { emoji: '🍎', startCount: 3, removeCount: 2 },
+        options: ['0', '1', '2'],
+        answer: '1',
+      },
+      {
+        type: 'subtraction',
+        question: '4 - 2 = ?',
+        visual: { emoji: '🐱', startCount: 4, removeCount: 2 },
+        options: ['1', '2', '3'],
+        answer: '2',
+      },
+      {
+        type: 'subtraction',
+        question: '5 - 2 = ?',
+        visual: { emoji: '⭐', startCount: 5, removeCount: 2 },
+        options: ['2', '3', '4'],
+        answer: '3',
+      },
+      {
+        type: 'subtraction',
+        question: '6 - 2 = ?',
+        visual: { emoji: '🎈', startCount: 6, removeCount: 2 },
+        options: ['3', '4', '5'],
+        answer: '4',
+      },
+      {
+        type: 'subtraction',
+        question: '7 - 2 = ?',
+        visual: { emoji: '🌸', startCount: 7, removeCount: 2 },
+        options: ['4', '5', '6'],
+        answer: '5',
+      },
+    ],
+    
+    reward: {
+      xp: 15,
+      message: 'Tuyệt vời! Bé trừ 2 giỏi lắm! 🌟',
+    },
+  },
+
+  'math-3-3': {
+    id: 'math-3-3',
+    title: 'Trừ trong phạm vi 5',
+    level: 3,
+    description: 'Luyện phép trừ trong phạm vi 5',
+    icon: '➖',
+    color: 'from-amber-400 to-orange-500',
+    
+    intro: {
+      title: 'Trừ trong 5',
+      subtitle: 'Luyện tập phép trừ',
+      image: '✋',
+      imageCount: 1,
+      voice: 'Hãy tính các phép trừ với số nhỏ hơn hoặc bằng 5 nhé!',
+      animation: 'bounce',
+    },
+    
+    examples: [
+      { image: '🍎🍎🍎 - 🍎 = 🍎🍎', count: 1, text: '3 - 1 = 2' },
+      { image: '⭐⭐⭐⭐ - ⭐⭐ = ⭐⭐', count: 1, text: '4 - 2 = 2' },
+      { image: '🌸🌸🌸🌸🌸 - 🌸🌸🌸 = 🌸🌸', count: 1, text: '5 - 3 = 2' },
+    ],
+    
+    questions: [
+      {
+        type: 'subtraction',
+        question: '4 - 1 = ?',
+        visual: { emoji: '🍎', startCount: 4, removeCount: 1 },
+        options: ['2', '3', '4'],
+        answer: '3',
+      },
+      {
+        type: 'subtraction',
+        question: '5 - 2 = ?',
+        visual: { emoji: '🐱', startCount: 5, removeCount: 2 },
+        options: ['2', '3', '4'],
+        answer: '3',
+      },
+      {
+        type: 'subtraction',
+        question: '5 - 3 = ?',
+        visual: { emoji: '⭐', startCount: 5, removeCount: 3 },
+        options: ['1', '2', '3'],
+        answer: '2',
+      },
+      {
+        type: 'subtraction',
+        question: '4 - 3 = ?',
+        visual: { emoji: '🎈', startCount: 4, removeCount: 3 },
+        options: ['0', '1', '2'],
+        answer: '1',
+      },
+      {
+        type: 'subtraction',
+        question: '5 - 4 = ?',
+        visual: { emoji: '🌸', startCount: 5, removeCount: 4 },
+        options: ['0', '1', '2'],
+        answer: '1',
+      },
+      {
+        type: 'subtraction',
+        question: '3 - 3 = ?',
+        visual: { emoji: '🍓', startCount: 3, removeCount: 3 },
+        options: ['0', '1', '2'],
+        answer: '0',
+        hint: 'Bớt hết còn gì?',
+      },
+    ],
+    
+    reward: {
+      xp: 20,
+      message: 'Xuất sắc! Bé trừ trong 5 giỏi lắm! ✋',
+    },
+  },
+
+  'math-3-4': {
+    id: 'math-3-4',
+    title: 'Trừ đi 3',
+    level: 3,
+    description: 'Học phép trừ với số 3',
+    icon: '➖',
+    color: 'from-rose-400 to-red-500',
+    
+    intro: {
+      title: 'Trừ đi 3',
+      subtitle: 'Bớt đi 3 cái',
+      image: '➖',
+      imageCount: 1,
+      voice: 'Khi trừ đi 3, ta bớt đi 3 cái!',
+      animation: 'bounce',
+    },
+    
+    examples: [
+      { image: '🍎🍎🍎🍎 ➡️ 🍎', count: 1, text: '4 - 3 = 1' },
+      { image: '🐱🐱🐱🐱🐱 ➡️ 🐱🐱', count: 1, text: '5 - 3 = 2' },
+      { image: '⭐⭐⭐⭐⭐⭐ ➡️ ⭐⭐⭐', count: 1, text: '6 - 3 = 3' },
+    ],
+    
+    questions: [
+      {
+        type: 'subtraction',
+        question: '4 - 3 = ?',
+        visual: { emoji: '🍎', startCount: 4, removeCount: 3 },
+        options: ['0', '1', '2'],
+        answer: '1',
+      },
+      {
+        type: 'subtraction',
+        question: '5 - 3 = ?',
+        visual: { emoji: '🐱', startCount: 5, removeCount: 3 },
+        options: ['1', '2', '3'],
+        answer: '2',
+      },
+      {
+        type: 'subtraction',
+        question: '6 - 3 = ?',
+        visual: { emoji: '⭐', startCount: 6, removeCount: 3 },
+        options: ['2', '3', '4'],
+        answer: '3',
+      },
+      {
+        type: 'subtraction',
+        question: '7 - 3 = ?',
+        visual: { emoji: '🎈', startCount: 7, removeCount: 3 },
+        options: ['3', '4', '5'],
+        answer: '4',
+      },
+      {
+        type: 'subtraction',
+        question: '8 - 3 = ?',
+        visual: { emoji: '🌸', startCount: 8, removeCount: 3 },
+        options: ['4', '5', '6'],
+        answer: '5',
+      },
+    ],
+    
+    reward: {
+      xp: 20,
+      message: 'Siêu giỏi! Bé trừ 3 rất nhanh! 🚀',
+    },
+  },
+
+  'math-3-5': {
+    id: 'math-3-5',
+    title: 'Trừ đi 4',
+    level: 3,
+    description: 'Học phép trừ với số 4',
+    icon: '➖',
+    color: 'from-purple-400 to-pink-500',
+    
+    intro: {
+      title: 'Trừ đi 4',
+      subtitle: 'Bớt đi 4 cái',
+      image: '➖',
+      imageCount: 1,
+      voice: 'Khi trừ đi 4, ta bớt đi 4 cái!',
+      animation: 'bounce',
+    },
+    
+    examples: [
+      { image: '🍎🍎🍎🍎🍎 ➡️ 🍎', count: 1, text: '5 - 4 = 1' },
+      { image: '🐱🐱🐱🐱🐱🐱 ➡️ 🐱🐱', count: 1, text: '6 - 4 = 2' },
+      { image: '⭐⭐⭐⭐⭐⭐⭐ ➡️ ⭐⭐⭐', count: 1, text: '7 - 4 = 3' },
+    ],
+    
+    questions: [
+      {
+        type: 'subtraction',
+        question: '5 - 4 = ?',
+        visual: { emoji: '🍎', startCount: 5, removeCount: 4 },
+        options: ['0', '1', '2'],
+        answer: '1',
+      },
+      {
+        type: 'subtraction',
+        question: '6 - 4 = ?',
+        visual: { emoji: '🐱', startCount: 6, removeCount: 4 },
+        options: ['1', '2', '3'],
+        answer: '2',
+      },
+      {
+        type: 'subtraction',
+        question: '7 - 4 = ?',
+        visual: { emoji: '⭐', startCount: 7, removeCount: 4 },
+        options: ['2', '3', '4'],
+        answer: '3',
+      },
+      {
+        type: 'subtraction',
+        question: '8 - 4 = ?',
+        visual: { emoji: '🎈', startCount: 8, removeCount: 4 },
+        options: ['3', '4', '5'],
+        answer: '4',
+      },
+      {
+        type: 'subtraction',
+        question: '9 - 4 = ?',
+        visual: { emoji: '🌸', startCount: 9, removeCount: 4 },
+        options: ['4', '5', '6'],
+        answer: '5',
+      },
+    ],
+    
+    reward: {
+      xp: 20,
+      message: 'Tuyệt vời! Bé trừ 4 giỏi quá! 🎉',
+    },
+  },
+
+  'math-3-6': {
+    id: 'math-3-6',
+    title: 'Trừ đi 5',
+    level: 3,
+    description: 'Học phép trừ với số 5',
+    icon: '➖',
+    color: 'from-indigo-400 to-purple-500',
+    
+    intro: {
+      title: 'Trừ đi 5',
+      subtitle: 'Bớt đi một bàn tay!',
+      image: '✋',
+      imageCount: 1,
+      voice: 'Trừ 5 giống như bớt đi một bàn tay - 5 ngón!',
+      animation: 'bounce',
+    },
+    
+    examples: [
+      { image: '✋✋ - ✋ = ✋', count: 1, text: '10 - 5 = 5' },
+      { image: '🍎🍎🍎🍎🍎🍎 ➡️ 🍎', count: 1, text: '6 - 5 = 1' },
+      { image: '⭐⭐⭐⭐⭐⭐⭐ ➡️ ⭐⭐', count: 1, text: '7 - 5 = 2' },
+    ],
+    
+    questions: [
+      {
+        type: 'subtraction',
+        question: '6 - 5 = ?',
+        visual: { emoji: '🍎', startCount: 6, removeCount: 5 },
+        options: ['0', '1', '2'],
+        answer: '1',
+      },
+      {
+        type: 'subtraction',
+        question: '7 - 5 = ?',
+        visual: { emoji: '🐱', startCount: 7, removeCount: 5 },
+        options: ['1', '2', '3'],
+        answer: '2',
+      },
+      {
+        type: 'subtraction',
+        question: '8 - 5 = ?',
+        visual: { emoji: '⭐', startCount: 8, removeCount: 5 },
+        options: ['2', '3', '4'],
+        answer: '3',
+      },
+      {
+        type: 'subtraction',
+        question: '9 - 5 = ?',
+        visual: { emoji: '🎈', startCount: 9, removeCount: 5 },
+        options: ['3', '4', '5'],
+        answer: '4',
+      },
+      {
+        type: 'subtraction',
+        question: '10 - 5 = ?',
+        visual: { emoji: '✋', startCount: 2, removeCount: 1 },
+        options: ['4', '5', '6'],
+        answer: '5',
+        hint: 'Hai bàn tay bớt một bàn tay!',
+      },
+    ],
+    
+    reward: {
+      xp: 25,
+      message: 'Xuất sắc! 10 - 5 = 5! Một bàn tay! ✋',
+    },
+  },
+
+  'math-3-7': {
+    id: 'math-3-7',
+    title: 'Trừ trong phạm vi 10',
+    level: 3,
+    description: 'Luyện phép trừ trong phạm vi 10',
+    icon: '🔟',
+    color: 'from-teal-400 to-cyan-500',
+    
+    intro: {
+      title: 'Trừ trong 10',
+      subtitle: 'Luyện tập tổng hợp',
+      image: '🙌',
+      imageCount: 1,
+      voice: 'Hãy tính các phép trừ trong phạm vi 10 nhé!',
+      animation: 'bounce',
+    },
+    
+    examples: [
+      { image: '8 - 3 = 5', count: 1, text: 'Tám trừ ba bằng năm' },
+      { image: '9 - 4 = 5', count: 1, text: 'Chín trừ bốn bằng năm' },
+      { image: '10 - 6 = 4', count: 1, text: 'Mười trừ sáu bằng bốn' },
+    ],
+    
+    questions: [
+      {
+        type: 'subtraction',
+        question: '8 - 3 = ?',
+        visual: { emoji: '🍎', startCount: 8, removeCount: 3 },
+        options: ['4', '5', '6'],
+        answer: '5',
+      },
+      {
+        type: 'subtraction',
+        question: '9 - 4 = ?',
+        visual: { emoji: '⭐', startCount: 9, removeCount: 4 },
+        options: ['4', '5', '6'],
+        answer: '5',
+      },
+      {
+        type: 'subtraction',
+        question: '10 - 3 = ?',
+        visual: { emoji: '🐱', startCount: 10, removeCount: 3 },
+        options: ['6', '7', '8'],
+        answer: '7',
+      },
+      {
+        type: 'subtraction',
+        question: '10 - 6 = ?',
+        visual: { emoji: '🎈', startCount: 10, removeCount: 6 },
+        options: ['3', '4', '5'],
+        answer: '4',
+      },
+      {
+        type: 'subtraction',
+        question: '7 - 4 = ?',
+        visual: { emoji: '🌸', startCount: 7, removeCount: 4 },
+        options: ['2', '3', '4'],
+        answer: '3',
+      },
+      {
+        type: 'subtraction',
+        question: '10 - 7 = ?',
+        visual: { emoji: '🍓', startCount: 10, removeCount: 7 },
+        options: ['2', '3', '4'],
+        answer: '3',
+      },
+    ],
+    
+    reward: {
+      xp: 25,
+      message: 'Tuyệt vời! Bé trừ trong 10 rất giỏi! 🙌',
+    },
+  },
+
+  'math-3-8': {
+    id: 'math-3-8',
+    title: 'Trừ với 0',
+    level: 3,
+    description: 'Số 0 trong phép trừ',
+    icon: '0️⃣',
+    color: 'from-gray-400 to-slate-500',
+    
+    intro: {
+      title: 'Trừ với 0',
+      subtitle: 'Số 0 đặc biệt!',
+      image: '0️⃣',
+      imageCount: 1,
+      voice: 'Khi trừ đi 0, kết quả vẫn là số ban đầu! Khi trừ cho chính nó, kết quả là 0!',
+      animation: 'bounce',
+    },
+    
+    examples: [
+      { image: '🍎🍎🍎 - 0 = 🍎🍎🍎', count: 1, text: '3 - 0 = 3' },
+      { image: '⭐⭐⭐⭐⭐ - ⭐⭐⭐⭐⭐ = 0', count: 1, text: '5 - 5 = 0' },
+    ],
+    
+    questions: [
+      {
+        type: 'subtraction',
+        question: '5 - 0 = ?',
+        visual: { emoji: '🍎', startCount: 5, removeCount: 0 },
+        options: ['0', '5', '4'],
+        answer: '5',
+      },
+      {
+        type: 'subtraction',
+        question: '3 - 3 = ?',
+        visual: { emoji: '⭐', startCount: 3, removeCount: 3 },
+        options: ['0', '1', '3'],
+        answer: '0',
+      },
+      {
+        type: 'subtraction',
+        question: '7 - 0 = ?',
+        visual: { emoji: '🐱', startCount: 7, removeCount: 0 },
+        options: ['0', '7', '6'],
+        answer: '7',
+      },
+      {
+        type: 'subtraction',
+        question: '8 - 8 = ?',
+        visual: { emoji: '🎈', startCount: 8, removeCount: 8 },
+        options: ['0', '8', '1'],
+        answer: '0',
+      },
+      {
+        type: 'subtraction',
+        question: '10 - 0 = ?',
+        visual: { emoji: '🌸', startCount: 10, removeCount: 0 },
+        options: ['0', '10', '9'],
+        answer: '10',
+      },
+    ],
+    
+    reward: {
+      xp: 15,
+      message: 'Giỏi lắm! Bé hiểu số 0 trong phép trừ rồi! 0️⃣',
+    },
+  },
+
+  'math-3-9': {
+    id: 'math-3-9',
+    title: 'Tìm số bị trừ',
+    level: 3,
+    description: 'Điền số vào ô trống',
+    icon: '❓',
+    color: 'from-yellow-400 to-amber-500',
+    
+    intro: {
+      title: 'Tìm số bị trừ',
+      subtitle: 'Điền số còn thiếu',
+      image: '❓',
+      imageCount: 1,
+      voice: 'Hãy tìm số bị trừ trong phép tính nhé!',
+      animation: 'bounce',
+    },
+    
+    examples: [
+      { image: '? - 2 = 3', count: 1, text: '5 - 2 = 3, số thiếu là 5' },
+      { image: '? - 4 = 2', count: 1, text: '6 - 4 = 2, số thiếu là 6' },
+    ],
+    
+    questions: [
+      {
+        type: 'missing',
+        question: '? - 2 = 3',
+        options: ['4', '5', '6'],
+        answer: '5',
+        hint: 'Số nào trừ 2 bằng 3?',
+      },
+      {
+        type: 'missing',
+        question: '? - 3 = 4',
+        options: ['6', '7', '8'],
+        answer: '7',
+      },
+      {
+        type: 'missing',
+        question: '? - 1 = 5',
+        options: ['5', '6', '7'],
+        answer: '6',
+      },
+      {
+        type: 'missing',
+        question: '? - 4 = 3',
+        options: ['6', '7', '8'],
+        answer: '7',
+      },
+      {
+        type: 'missing',
+        question: '? - 5 = 5',
+        options: ['8', '9', '10'],
+        answer: '10',
+      },
+    ],
+    
+    reward: {
+      xp: 25,
+      message: 'Xuất sắc! Bé tìm số bị trừ giỏi lắm! 🧠',
+    },
+  },
+
+  'math-3-10': {
+    id: 'math-3-10',
+    title: 'Tìm số trừ',
+    level: 3,
+    description: 'Điền số trừ vào ô trống',
+    icon: '❓',
+    color: 'from-cyan-400 to-blue-500',
+    
+    intro: {
+      title: 'Tìm số trừ',
+      subtitle: 'Trừ đi bao nhiêu?',
+      image: '❓',
+      imageCount: 1,
+      voice: 'Hãy tìm số trừ trong phép tính nhé!',
+      animation: 'bounce',
+    },
+    
+    examples: [
+      { image: '5 - ? = 3', count: 1, text: '5 - 2 = 3, số thiếu là 2' },
+      { image: '8 - ? = 5', count: 1, text: '8 - 3 = 5, số thiếu là 3' },
+    ],
+    
+    questions: [
+      {
+        type: 'missing',
+        question: '5 - ? = 3',
+        options: ['1', '2', '3'],
+        answer: '2',
+        hint: '5 trừ mấy bằng 3?',
+      },
+      {
+        type: 'missing',
+        question: '7 - ? = 4',
+        options: ['2', '3', '4'],
+        answer: '3',
+      },
+      {
+        type: 'missing',
+        question: '9 - ? = 5',
+        options: ['3', '4', '5'],
+        answer: '4',
+      },
+      {
+        type: 'missing',
+        question: '10 - ? = 6',
+        options: ['3', '4', '5'],
+        answer: '4',
+      },
+      {
+        type: 'missing',
+        question: '8 - ? = 2',
+        options: ['5', '6', '7'],
+        answer: '6',
+      },
+    ],
+    
+    reward: {
+      xp: 25,
+      message: 'Tuyệt vời! Bé tìm số trừ rất giỏi! 🌟',
+    },
+  },
+
+  'math-3-11': {
+    id: 'math-3-11',
+    title: 'Cộng và Trừ',
+    level: 3,
+    description: 'Luyện tập cả cộng và trừ',
+    icon: '🔄',
+    color: 'from-emerald-400 to-teal-500',
+    
+    intro: {
+      title: 'Cộng và Trừ',
+      subtitle: 'Luyện tập tổng hợp',
+      image: '🔄',
+      imageCount: 1,
+      voice: 'Hãy tính cả phép cộng và phép trừ nhé!',
+      animation: 'bounce',
+    },
+    
+    examples: [
+      { image: '3 + 2 = 5', count: 1, text: 'Phép cộng' },
+      { image: '5 - 2 = 3', count: 1, text: 'Phép trừ' },
+    ],
+    
+    questions: [
+      {
+        type: 'addition',
+        question: '4 + 3 = ?',
+        visual: { left: '🍎', leftCount: 4, right: '🍎', rightCount: 3 },
+        options: ['6', '7', '8'],
+        answer: '7',
+      },
+      {
+        type: 'subtraction',
+        question: '8 - 3 = ?',
+        visual: { emoji: '⭐', startCount: 8, removeCount: 3 },
+        options: ['4', '5', '6'],
+        answer: '5',
+      },
+      {
+        type: 'addition',
+        question: '5 + 4 = ?',
+        visual: { left: '🐱', leftCount: 5, right: '🐱', rightCount: 4 },
+        options: ['8', '9', '10'],
+        answer: '9',
+      },
+      {
+        type: 'subtraction',
+        question: '10 - 4 = ?',
+        visual: { emoji: '🎈', startCount: 10, removeCount: 4 },
+        options: ['5', '6', '7'],
+        answer: '6',
+      },
+      {
+        type: 'addition',
+        question: '6 + 3 = ?',
+        visual: { left: '🌸', leftCount: 6, right: '🌸', rightCount: 3 },
+        options: ['8', '9', '10'],
+        answer: '9',
+      },
+      {
+        type: 'subtraction',
+        question: '9 - 6 = ?',
+        visual: { emoji: '🍓', startCount: 9, removeCount: 6 },
+        options: ['2', '3', '4'],
+        answer: '3',
+      },
+    ],
+    
+    reward: {
+      xp: 30,
+      message: 'Siêu giỏi! Bé tính cả cộng và trừ! 🔄',
+    },
+  },
+
+  'math-3-12': {
+    id: 'math-3-12',
+    title: 'Bài toán có lời văn 1',
+    level: 3,
+    description: 'Giải bài toán đơn giản',
+    icon: '📝',
+    color: 'from-violet-400 to-purple-500',
+    
+    intro: {
+      title: 'Bài toán có lời văn',
+      subtitle: 'Đọc và giải toán',
+      image: '📝',
+      imageCount: 1,
+      voice: 'Đọc bài toán và tìm đáp án nhé!',
+      animation: 'bounce',
+    },
+    
+    examples: [
+      { image: '🍎🍎🍎 + 🍎🍎 = ?', count: 1, text: 'An có 3 quả táo, mẹ cho thêm 2 quả. An có tất cả mấy quả?' },
+    ],
+    
+    questions: [
+      {
+        type: 'word_problem',
+        question: 'An có 3 quả táo 🍎🍎🍎. Mẹ cho thêm 2 quả 🍎🍎. An có tất cả mấy quả?',
+        options: ['4', '5', '6'],
+        answer: '5',
+      },
+      {
+        type: 'word_problem',
+        question: 'Bình có 5 viên kẹo 🍬🍬🍬🍬🍬. Bình cho em 2 viên. Bình còn mấy viên?',
+        options: ['2', '3', '4'],
+        answer: '3',
+      },
+      {
+        type: 'word_problem',
+        question: 'Trên cây có 4 con chim 🐦🐦🐦🐦. Bay đến thêm 3 con 🐦🐦🐦. Có tất cả mấy con?',
+        options: ['6', '7', '8'],
+        answer: '7',
+      },
+      {
+        type: 'word_problem',
+        question: 'Lan có 8 bông hoa 🌸. Lan tặng bạn 3 bông. Lan còn mấy bông?',
+        options: ['4', '5', '6'],
+        answer: '5',
+      },
+      {
+        type: 'word_problem',
+        question: 'Trong rổ có 6 quả cam 🍊. Mẹ bỏ thêm 4 quả. Có tất cả mấy quả?',
+        options: ['9', '10', '11'],
+        answer: '10',
+      },
+    ],
+    
+    reward: {
+      xp: 30,
+      message: 'Xuất sắc! Bé giải toán có lời văn giỏi lắm! 📝',
+    },
+  },
+
+  'math-3-13': {
+    id: 'math-3-13',
+    title: 'Bài toán có lời văn 2',
+    level: 3,
+    description: 'Giải thêm bài toán',
+    icon: '📝',
+    color: 'from-pink-400 to-rose-500',
+    
+    intro: {
+      title: 'Bài toán có lời văn',
+      subtitle: 'Tiếp tục giải toán',
+      image: '📝',
+      imageCount: 1,
+      voice: 'Đọc kỹ bài toán và tính nhé!',
+      animation: 'bounce',
+    },
+    
+    examples: [],
+    
+    questions: [
+      {
+        type: 'word_problem',
+        question: 'Chuồng có 7 con gà 🐔. Mẹ mua thêm 2 con 🐔🐔. Có tất cả mấy con?',
+        options: ['8', '9', '10'],
+        answer: '9',
+      },
+      {
+        type: 'word_problem',
+        question: 'Em có 10 viên bi ⚽. Em cho bạn 4 viên. Em còn mấy viên?',
+        options: ['5', '6', '7'],
+        answer: '6',
+      },
+      {
+        type: 'word_problem',
+        question: 'Mẹ có 5 quả trứng 🥚. Mẹ mua thêm 5 quả. Mẹ có tất cả mấy quả?',
+        options: ['9', '10', '11'],
+        answer: '10',
+      },
+      {
+        type: 'word_problem',
+        question: 'Bể có 9 con cá 🐟. Chết mất 3 con. Còn lại mấy con?',
+        options: ['5', '6', '7'],
+        answer: '6',
+      },
+      {
+        type: 'word_problem',
+        question: 'Bạn Hoa có 4 cái kẹo 🍭. Bạn Mai cho 5 cái. Hoa có tất cả mấy cái?',
+        options: ['8', '9', '10'],
+        answer: '9',
+      },
+    ],
+    
+    reward: {
+      xp: 30,
+      message: 'Tuyệt vời! Bé giải toán ngày càng giỏi! 🌟',
+    },
+  },
+
+  'math-3-14': {
+    id: 'math-3-14',
+    title: 'Ôn tập Level 3',
+    level: 3,
+    description: 'Ôn lại phép trừ',
+    icon: '📝',
+    color: 'from-blue-400 to-indigo-500',
+    
+    intro: {
+      title: 'Ôn tập',
+      subtitle: 'Ôn lại kiến thức',
+      image: '📚',
+      imageCount: 1,
+      voice: 'Cùng ôn lại những gì đã học nhé!',
+      animation: 'bounce',
+    },
+    
+    examples: [],
+    
+    questions: [
+      {
+        type: 'subtraction',
+        question: '7 - 3 = ?',
+        visual: { emoji: '🍎', startCount: 7, removeCount: 3 },
+        options: ['3', '4', '5'],
+        answer: '4',
+      },
+      {
+        type: 'subtraction',
+        question: '9 - 5 = ?',
+        visual: { emoji: '⭐', startCount: 9, removeCount: 5 },
+        options: ['3', '4', '5'],
+        answer: '4',
+      },
+      {
+        type: 'missing',
+        question: '? - 3 = 5',
+        options: ['7', '8', '9'],
+        answer: '8',
+      },
+      {
+        type: 'missing',
+        question: '10 - ? = 4',
+        options: ['5', '6', '7'],
+        answer: '6',
+      },
+      {
+        type: 'word_problem',
+        question: 'Có 8 con bướm 🦋. Bay đi 5 con. Còn mấy con?',
+        options: ['2', '3', '4'],
+        answer: '3',
+      },
+      {
+        type: 'addition',
+        question: '6 + 4 = ?',
+        visual: { left: '🐱', leftCount: 6, right: '🐱', rightCount: 4 },
+        options: ['9', '10', '11'],
+        answer: '10',
+      },
+    ],
+    
+    reward: {
+      xp: 25,
+      message: 'Giỏi quá! Bé ôn tập rất tốt! 📚',
+    },
+  },
+
+  'math-3-15': {
+    id: 'math-3-15',
+    title: 'Kiểm tra Level 3',
+    level: 3,
+    description: 'Bài kiểm tra phép trừ',
+    icon: '🏆',
+    color: 'from-yellow-400 to-amber-500',
+    isTest: true,
+    
+    intro: {
+      title: 'Bài kiểm tra',
+      subtitle: 'Thử sức nào!',
+      image: '🏆',
+      imageCount: 1,
+      voice: 'Bé ơi, làm bài kiểm tra phép trừ nhé! Cố gắng lên!',
+      animation: 'bounce',
+    },
+    
+    examples: [],
+    
+    questions: [
+      {
+        type: 'subtraction',
+        question: '8 - 2 = ?',
+        visual: { emoji: '🍎', startCount: 8, removeCount: 2 },
+        options: ['5', '6', '7'],
+        answer: '6',
+      },
+      {
+        type: 'subtraction',
+        question: '10 - 4 = ?',
+        visual: { emoji: '⭐', startCount: 10, removeCount: 4 },
+        options: ['5', '6', '7'],
+        answer: '6',
+      },
+      {
+        type: 'subtraction',
+        question: '7 - 7 = ?',
+        visual: { emoji: '🐱', startCount: 7, removeCount: 7 },
+        options: ['0', '1', '7'],
+        answer: '0',
+      },
+      {
+        type: 'missing',
+        question: '? - 4 = 5',
+        options: ['8', '9', '10'],
+        answer: '9',
+      },
+      {
+        type: 'missing',
+        question: '8 - ? = 3',
+        options: ['4', '5', '6'],
+        answer: '5',
+      },
+      {
+        type: 'addition',
+        question: '5 + 5 = ?',
+        visual: { left: '🎈', leftCount: 5, right: '🎈', rightCount: 5 },
+        options: ['9', '10', '11'],
+        answer: '10',
+      },
+      {
+        type: 'word_problem',
+        question: 'Có 9 con vịt 🦆. Bơi đi 4 con. Còn mấy con?',
+        options: ['4', '5', '6'],
+        answer: '5',
+      },
+      {
+        type: 'word_problem',
+        question: 'Lan có 3 quả cam 🍊. Mẹ cho thêm 6 quả. Lan có tất cả mấy quả?',
+        options: ['8', '9', '10'],
+        answer: '9',
+      },
+    ],
+    
+    reward: {
+      xp: 50,
+      badge: 'math_level3',
+      message: 'TUYỆT VỜI! Bé đã hoàn thành Level 3! 🏆🎉',
+    },
+  },
+
+  // ==========================================
+  // LEVEL 4: SỐ ĐẾN 20 (6-7 tuổi) - 10 bài
+  // ==========================================
+
+  'math-4-1': {
+    id: 'math-4-1',
+    title: 'Số 11 - Mười một',
+    level: 4,
+    description: 'Học số 11',
+    icon: '1️⃣1️⃣',
+    color: 'from-purple-400 to-pink-500',
+    
+    intro: {
+      title: 'Số 11',
+      subtitle: 'Mười một - Eleven',
+      image: '🔟',
+      imageCount: 1,
+      voice: 'Số 11 đọc là MƯỜI MỘT. 10 và thêm 1!',
+      animation: 'bounce',
+    },
+    
+    examples: [
+      { image: '🙌 + ☝️', count: 1, text: '10 + 1 = 11' },
+      { image: '⭐⭐⭐⭐⭐ ⭐⭐⭐⭐⭐ ⭐', count: 1, text: '11 ngôi sao' },
+    ],
+    
+    questions: [
+      {
+        type: 'count',
+        question: 'Có mấy quả táo?',
+        image: '🍎',
+        imageCount: 11,
+        options: ['10', '11', '12'],
+        answer: '11',
+      },
+      {
+        type: 'addition',
+        question: '10 + 1 = ?',
+        visual: { left: '🙌', leftCount: 1, right: '☝️', rightCount: 1 },
+        options: ['10', '11', '12'],
+        answer: '11',
+      },
+      {
+        type: 'match',
+        question: 'Số 11 đọc là gì?',
+        options: ['Mười', 'Mười một', 'Mười hai'],
+        answer: 'Mười một',
+      },
+      {
+        type: 'count',
+        question: 'Đếm số ngôi sao',
+        image: '⭐',
+        imageCount: 11,
+        options: ['10', '11', '12'],
+        answer: '11',
+      },
+      {
+        type: 'sequence',
+        question: 'Số tiếp theo: 9, 10, ?',
+        options: ['8', '11', '12'],
+        answer: '11',
+      },
+    ],
+    
+    reward: {
+      xp: 15,
+      message: 'Giỏi lắm! Bé đã học số 11! 🌟',
+    },
+  },
+
+  'math-4-2': {
+    id: 'math-4-2',
+    title: 'Số 12-15',
+    level: 4,
+    description: 'Học số từ 12 đến 15',
+    icon: '🔢',
+    color: 'from-blue-400 to-indigo-500',
+    
+    intro: {
+      title: 'Số 12-15',
+      subtitle: 'Mười hai đến Mười lăm',
+      image: '🔢',
+      imageCount: 1,
+      voice: '12, 13, 14, 15 - Mười hai, Mười ba, Mười bốn, Mười lăm!',
+      animation: 'bounce',
+    },
+    
+    examples: [
+      { image: '🙌 + ✌️', count: 1, text: '10 + 2 = 12' },
+      { image: '🙌 + 🖐️', count: 1, text: '10 + 5 = 15' },
+    ],
+    
+    questions: [
+      {
+        type: 'count',
+        question: 'Có mấy bông hoa?',
+        image: '🌸',
+        imageCount: 12,
+        options: ['11', '12', '13'],
+        answer: '12',
+      },
+      {
+        type: 'count',
+        question: 'Có mấy con cá?',
+        image: '🐟',
+        imageCount: 13,
+        options: ['12', '13', '14'],
+        answer: '13',
+      },
+      {
+        type: 'count',
+        question: 'Có mấy ngôi sao?',
+        image: '⭐',
+        imageCount: 14,
+        options: ['13', '14', '15'],
+        answer: '14',
+      },
+      {
+        type: 'count',
+        question: 'Có mấy quả bóng?',
+        image: '🎈',
+        imageCount: 15,
+        options: ['14', '15', '16'],
+        answer: '15',
+      },
+      {
+        type: 'match',
+        question: 'Số 15 đọc là gì?',
+        options: ['Mười bốn', 'Mười lăm', 'Mười sáu'],
+        answer: 'Mười lăm',
+      },
+    ],
+    
+    reward: {
+      xp: 20,
+      message: 'Tuyệt vời! Bé biết số 12-15 rồi! 🎉',
+    },
+  },
+
+  'math-4-3': {
+    id: 'math-4-3',
+    title: 'Số 16-20',
+    level: 4,
+    description: 'Học số từ 16 đến 20',
+    icon: '🔢',
+    color: 'from-green-400 to-teal-500',
+    
+    intro: {
+      title: 'Số 16-20',
+      subtitle: 'Mười sáu đến Hai mươi',
+      image: '🔢',
+      imageCount: 1,
+      voice: '16, 17, 18, 19, 20 - Mười sáu đến Hai mươi!',
+      animation: 'bounce',
+    },
+    
+    examples: [
+      { image: '🙌🙌', count: 1, text: '10 + 10 = 20' },
+      { image: '20 = Hai mươi', count: 1, text: 'Số 20' },
+    ],
+    
+    questions: [
+      {
+        type: 'count',
+        question: 'Có mấy viên kẹo?',
+        image: '🍬',
+        imageCount: 16,
+        options: ['15', '16', '17'],
+        answer: '16',
+      },
+      {
+        type: 'count',
+        question: 'Có mấy con bướm?',
+        image: '🦋',
+        imageCount: 17,
+        options: ['16', '17', '18'],
+        answer: '17',
+      },
+      {
+        type: 'count',
+        question: 'Có mấy quả dâu?',
+        image: '🍓',
+        imageCount: 18,
+        options: ['17', '18', '19'],
+        answer: '18',
+      },
+      {
+        type: 'count',
+        question: 'Có mấy bông hoa?',
+        image: '🌺',
+        imageCount: 20,
+        options: ['19', '20', '21'],
+        answer: '20',
+      },
+      {
+        type: 'match',
+        question: 'Số 20 đọc là gì?',
+        options: ['Mười chín', 'Hai mươi', 'Hai mốt'],
+        answer: 'Hai mươi',
+      },
+    ],
+    
+    reward: {
+      xp: 20,
+      message: 'Xuất sắc! Bé biết đếm đến 20! 🙌🙌',
+    },
+  },
+
+  'math-4-4': {
+    id: 'math-4-4',
+    title: 'Đếm 11-20',
+    level: 4,
+    description: 'Luyện đếm số từ 11 đến 20',
+    icon: '🔢',
+    color: 'from-orange-400 to-amber-500',
+    
+    intro: {
+      title: 'Đếm 11-20',
+      subtitle: 'Luyện tập đếm',
+      image: '🔢',
+      imageCount: 1,
+      voice: 'Cùng luyện đếm từ 11 đến 20 nhé!',
+      animation: 'bounce',
+    },
+    
+    examples: [],
+    
+    questions: [
+      {
+        type: 'count',
+        question: 'Có mấy ngôi sao?',
+        image: '⭐',
+        imageCount: 13,
+        options: ['12', '13', '14'],
+        answer: '13',
+      },
+      {
+        type: 'count',
+        question: 'Có mấy quả táo?',
+        image: '🍎',
+        imageCount: 16,
+        options: ['15', '16', '17'],
+        answer: '16',
+      },
+      {
+        type: 'count',
+        question: 'Có mấy con mèo?',
+        image: '🐱',
+        imageCount: 19,
+        options: ['18', '19', '20'],
+        answer: '19',
+      },
+      {
+        type: 'count',
+        question: 'Có mấy bông hoa?',
+        image: '🌸',
+        imageCount: 14,
+        options: ['13', '14', '15'],
+        answer: '14',
+      },
+      {
+        type: 'sequence',
+        question: 'Số tiếp theo: 17, 18, 19, ?',
+        options: ['16', '20', '21'],
+        answer: '20',
+      },
+      {
+        type: 'sequence',
+        question: 'Số tiếp theo: 11, 12, 13, ?',
+        options: ['10', '14', '15'],
+        answer: '14',
+      },
+    ],
+    
+    reward: {
+      xp: 20,
+      message: 'Giỏi lắm! Bé đếm 11-20 rất giỏi! 🌟',
+    },
+  },
+
+  'math-4-5': {
+    id: 'math-4-5',
+    title: 'Cộng có kết quả đến 20',
+    level: 4,
+    description: 'Phép cộng với kết quả từ 11-20',
+    icon: '➕',
+    color: 'from-emerald-400 to-green-500',
+    
+    intro: {
+      title: 'Cộng đến 20',
+      subtitle: 'Phép cộng lớn hơn',
+      image: '➕',
+      imageCount: 1,
+      voice: 'Học phép cộng có kết quả từ 11 đến 20 nhé!',
+      animation: 'bounce',
+    },
+    
+    examples: [
+      { image: '10 + 5 = 15', count: 1, text: 'Mười cộng năm bằng mười lăm' },
+      { image: '9 + 8 = 17', count: 1, text: 'Chín cộng tám bằng mười bảy' },
+    ],
+    
+    questions: [
+      {
+        type: 'addition',
+        question: '10 + 3 = ?',
+        visual: { left: '🙌', leftCount: 1, right: '🍎', rightCount: 3 },
+        options: ['12', '13', '14'],
+        answer: '13',
+      },
+      {
+        type: 'addition',
+        question: '10 + 7 = ?',
+        visual: { left: '🙌', leftCount: 1, right: '⭐', rightCount: 7 },
+        options: ['16', '17', '18'],
+        answer: '17',
+      },
+      {
+        type: 'addition',
+        question: '9 + 5 = ?',
+        visual: { left: '🐱', leftCount: 9, right: '🐱', rightCount: 5 },
+        options: ['13', '14', '15'],
+        answer: '14',
+      },
+      {
+        type: 'addition',
+        question: '8 + 8 = ?',
+        visual: { left: '🎈', leftCount: 8, right: '🎈', rightCount: 8 },
+        options: ['15', '16', '17'],
+        answer: '16',
+      },
+      {
+        type: 'addition',
+        question: '10 + 10 = ?',
+        visual: { left: '🙌', leftCount: 1, right: '🙌', rightCount: 1 },
+        options: ['19', '20', '21'],
+        answer: '20',
+        hint: 'Hai bàn tay có 20 ngón!',
+      },
+    ],
+    
+    reward: {
+      xp: 25,
+      message: 'Tuyệt vời! Bé cộng đến 20 rất giỏi! ➕',
+    },
+  },
+
+  'math-4-6': {
+    id: 'math-4-6',
+    title: 'Trừ từ số đến 20',
+    level: 4,
+    description: 'Phép trừ với số từ 11-20',
+    icon: '➖',
+    color: 'from-rose-400 to-red-500',
+    
+    intro: {
+      title: 'Trừ từ số lớn',
+      subtitle: 'Phép trừ với số 11-20',
+      image: '➖',
+      imageCount: 1,
+      voice: 'Học phép trừ với các số từ 11 đến 20 nhé!',
+      animation: 'bounce',
+    },
+    
+    examples: [
+      { image: '15 - 5 = 10', count: 1, text: 'Mười lăm trừ năm bằng mười' },
+      { image: '18 - 8 = 10', count: 1, text: 'Mười tám trừ tám bằng mười' },
+    ],
+    
+    questions: [
+      {
+        type: 'subtraction',
+        question: '12 - 2 = ?',
+        visual: { emoji: '🍎', startCount: 12, removeCount: 2 },
+        options: ['9', '10', '11'],
+        answer: '10',
+      },
+      {
+        type: 'subtraction',
+        question: '15 - 5 = ?',
+        visual: { emoji: '⭐', startCount: 15, removeCount: 5 },
+        options: ['9', '10', '11'],
+        answer: '10',
+      },
+      {
+        type: 'subtraction',
+        question: '18 - 3 = ?',
+        visual: { emoji: '🐱', startCount: 18, removeCount: 3 },
+        options: ['14', '15', '16'],
+        answer: '15',
+      },
+      {
+        type: 'subtraction',
+        question: '20 - 5 = ?',
+        visual: { emoji: '🎈', startCount: 20, removeCount: 5 },
+        options: ['14', '15', '16'],
+        answer: '15',
+      },
+      {
+        type: 'subtraction',
+        question: '16 - 6 = ?',
+        visual: { emoji: '🌸', startCount: 16, removeCount: 6 },
+        options: ['9', '10', '11'],
+        answer: '10',
+      },
+    ],
+    
+    reward: {
+      xp: 25,
+      message: 'Xuất sắc! Bé trừ từ số lớn rất giỏi! ➖',
+    },
+  },
+
+  'math-4-7': {
+    id: 'math-4-7',
+    title: 'So sánh số đến 20',
+    level: 4,
+    description: 'So sánh các số từ 1-20',
+    icon: '⚖️',
+    color: 'from-cyan-400 to-blue-500',
+    
+    intro: {
+      title: 'So sánh số',
+      subtitle: 'Lớn hơn, nhỏ hơn, bằng',
+      image: '⚖️',
+      imageCount: 1,
+      voice: 'So sánh các số: số nào lớn hơn, số nào nhỏ hơn?',
+      animation: 'bounce',
+    },
+    
+    examples: [
+      { image: '15 > 12', count: 1, text: '15 lớn hơn 12' },
+      { image: '8 < 16', count: 1, text: '8 nhỏ hơn 16' },
+    ],
+    
+    questions: [
+      {
+        type: 'compare',
+        question: 'Số nào LỚN HƠN?',
+        optionA: { image: '1️⃣5️⃣', count: 1, text: '15' },
+        optionB: { image: '1️⃣2️⃣', count: 1, text: '12' },
+        answer: 'A',
+      },
+      {
+        type: 'compare',
+        question: 'Số nào NHỎ HƠN?',
+        optionA: { image: '1️⃣8️⃣', count: 1, text: '18' },
+        optionB: { image: '1️⃣4️⃣', count: 1, text: '14' },
+        answer: 'B',
+      },
+      {
+        type: 'compare',
+        question: 'Số nào LỚN HƠN?',
+        optionA: { image: '🔟', count: 1, text: '10' },
+        optionB: { image: '2️⃣0️⃣', count: 1, text: '20' },
+        answer: 'B',
+      },
+      {
+        type: 'count',
+        question: '13 và 17, số nào lớn hơn?',
+        image: '⚖️',
+        imageCount: 1,
+        options: ['13', '17', 'Bằng nhau'],
+        answer: '17',
+      },
+      {
+        type: 'count',
+        question: '19 và 16, số nào nhỏ hơn?',
+        image: '⚖️',
+        imageCount: 1,
+        options: ['19', '16', 'Bằng nhau'],
+        answer: '16',
+      },
+    ],
+    
+    reward: {
+      xp: 20,
+      message: 'Giỏi lắm! Bé so sánh số rất giỏi! ⚖️',
+    },
+  },
+
+  'math-4-8': {
+    id: 'math-4-8',
+    title: 'Bài toán đến 20',
+    level: 4,
+    description: 'Giải bài toán với số đến 20',
+    icon: '📝',
+    color: 'from-violet-400 to-purple-500',
+    
+    intro: {
+      title: 'Bài toán đến 20',
+      subtitle: 'Giải toán có lời văn',
+      image: '📝',
+      imageCount: 1,
+      voice: 'Giải các bài toán với số đến 20 nhé!',
+      animation: 'bounce',
+    },
+    
+    examples: [],
+    
+    questions: [
+      {
+        type: 'word_problem',
+        question: 'Lớp có 12 bạn nam và 8 bạn nữ. Lớp có tất cả bao nhiêu bạn?',
+        options: ['19', '20', '21'],
+        answer: '20',
+      },
+      {
+        type: 'word_problem',
+        question: 'Có 15 con chim. Bay đi 5 con. Còn lại mấy con?',
+        options: ['9', '10', '11'],
+        answer: '10',
+      },
+      {
+        type: 'word_problem',
+        question: 'Mẹ có 11 quả trứng. Mẹ mua thêm 6 quả. Mẹ có tất cả mấy quả?',
+        options: ['16', '17', '18'],
+        answer: '17',
+      },
+      {
+        type: 'word_problem',
+        question: 'Trong vườn có 18 cây hoa. Héo mất 8 cây. Còn lại mấy cây?',
+        options: ['9', '10', '11'],
+        answer: '10',
+      },
+      {
+        type: 'word_problem',
+        question: 'Em có 7 viên bi. Anh cho thêm 9 viên. Em có tất cả mấy viên?',
+        options: ['15', '16', '17'],
+        answer: '16',
+      },
+    ],
+    
+    reward: {
+      xp: 30,
+      message: 'Tuyệt vời! Bé giải toán đến 20 rất giỏi! 📝',
+    },
+  },
+
+  'math-4-9': {
+    id: 'math-4-9',
+    title: 'Ôn tập Level 4',
+    level: 4,
+    description: 'Ôn lại số đến 20',
+    icon: '📚',
+    color: 'from-teal-400 to-cyan-500',
+    
+    intro: {
+      title: 'Ôn tập',
+      subtitle: 'Ôn lại kiến thức',
+      image: '📚',
+      imageCount: 1,
+      voice: 'Cùng ôn lại những gì đã học nhé!',
+      animation: 'bounce',
+    },
+    
+    examples: [],
+    
+    questions: [
+      {
+        type: 'count',
+        question: 'Có mấy quả táo?',
+        image: '🍎',
+        imageCount: 14,
+        options: ['13', '14', '15'],
+        answer: '14',
+      },
+      {
+        type: 'addition',
+        question: '9 + 6 = ?',
+        visual: { left: '⭐', leftCount: 9, right: '⭐', rightCount: 6 },
+        options: ['14', '15', '16'],
+        answer: '15',
+      },
+      {
+        type: 'subtraction',
+        question: '17 - 7 = ?',
+        visual: { emoji: '🐱', startCount: 17, removeCount: 7 },
+        options: ['9', '10', '11'],
+        answer: '10',
+      },
+      {
+        type: 'sequence',
+        question: 'Số tiếp theo: 15, 16, 17, ?',
+        options: ['14', '18', '19'],
+        answer: '18',
+      },
+      {
+        type: 'match',
+        question: 'Số 19 đọc là gì?',
+        options: ['Mười tám', 'Mười chín', 'Hai mươi'],
+        answer: 'Mười chín',
+      },
+      {
+        type: 'word_problem',
+        question: 'Có 16 cái bánh. Ăn hết 4 cái. Còn lại mấy cái?',
+        options: ['11', '12', '13'],
+        answer: '12',
+      },
+    ],
+    
+    reward: {
+      xp: 25,
+      message: 'Giỏi quá! Bé ôn tập rất tốt! 📚',
+    },
+  },
+
+  'math-4-10': {
+    id: 'math-4-10',
+    title: 'Kiểm tra Level 4',
+    level: 4,
+    description: 'Bài kiểm tra số đến 20',
+    icon: '🏆',
+    color: 'from-yellow-400 to-amber-500',
+    isTest: true,
+    
+    intro: {
+      title: 'Bài kiểm tra',
+      subtitle: 'Kiểm tra tổng hợp!',
+      image: '🏆',
+      imageCount: 1,
+      voice: 'Bé ơi, làm bài kiểm tra cuối cùng nhé! Cố gắng lên!',
+      animation: 'bounce',
+    },
+    
+    examples: [],
+    
+    questions: [
+      {
+        type: 'count',
+        question: 'Có mấy ngôi sao?',
+        image: '⭐',
+        imageCount: 18,
+        options: ['17', '18', '19'],
+        answer: '18',
+      },
+      {
+        type: 'addition',
+        question: '11 + 5 = ?',
+        visual: { left: '🍎', leftCount: 11, right: '🍎', rightCount: 5 },
+        options: ['15', '16', '17'],
+        answer: '16',
+      },
+      {
+        type: 'subtraction',
+        question: '20 - 8 = ?',
+        visual: { emoji: '🐱', startCount: 20, removeCount: 8 },
+        options: ['11', '12', '13'],
+        answer: '12',
+      },
+      {
+        type: 'addition',
+        question: '8 + 9 = ?',
+        visual: { left: '🎈', leftCount: 8, right: '🎈', rightCount: 9 },
+        options: ['16', '17', '18'],
+        answer: '17',
+      },
+      {
+        type: 'subtraction',
+        question: '14 - 6 = ?',
+        visual: { emoji: '🌸', startCount: 14, removeCount: 6 },
+        options: ['7', '8', '9'],
+        answer: '8',
+      },
+      {
+        type: 'sequence',
+        question: 'Số tiếp theo: 18, 19, ?',
+        options: ['17', '20', '21'],
+        answer: '20',
+      },
+      {
+        type: 'word_problem',
+        question: 'Có 13 quả cam. Mẹ mua thêm 7 quả. Có tất cả mấy quả?',
+        options: ['19', '20', '21'],
+        answer: '20',
+      },
+      {
+        type: 'word_problem',
+        question: 'Lớp có 19 bạn. Về sớm 4 bạn. Còn lại mấy bạn?',
+        options: ['14', '15', '16'],
+        answer: '15',
+      },
+    ],
+    
+    reward: {
+      xp: 60,
+      badge: 'math_level4',
+      message: 'TUYỆT VỜI! Bé đã hoàn thành tất cả bài Toán! 🏆🎉🌟',
+    },
+  },
 };
 
 // ============================================
