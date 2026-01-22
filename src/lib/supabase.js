@@ -1,8 +1,12 @@
 // src/lib/supabase.js
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = 'https://kombmceddsnwisymrlwn.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvbWJtY2VkZHNud2lzeW1ybHduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg5MjE4MDIsImV4cCI6MjA4NDQ5NzgwMn0.Bzyf00VQG35L_N0h71TrmsWvI5gj1rn_gtf--E8sx50';
+// Lấy config từ environment variables (bảo mật hơn)
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://kombmceddsnwisymrlwn.supabase.co';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvbWJtY2VkZHNud2lzeW1ybHduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg5MjE4MDIsImV4cCI6MjA4NDQ5NzgwMn0.Bzyf00VQG35L_N0h71TrmsWvI5gj1rn_gtf--E8sx50';
+
+// TODO: Sau khi deploy, tạo file .env.local và xóa fallback values ở trên
+// Xem file .env.example để biết cách setup
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 

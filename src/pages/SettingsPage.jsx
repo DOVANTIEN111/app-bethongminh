@@ -1,97 +1,339 @@
-import React from 'react';
+// src/pages/SettingsPage.jsx
+// Trang cài đặt - v3.1.0
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { useAuth } from '../contexts/AuthContext';
 import { useAudio } from '../contexts/AudioContext';
-import { ArrowLeft, Volume2, VolumeX, Download, Trash2 } from 'lucide-react';
+import ConfirmDialog from '../components/ConfirmDialog';
+import { 
+  Volume2, VolumeX, Music, Download, Trash2, Shield,
+  ChevronRight, Smartphone, CreditCard, LogOut,
+  HelpCircle, MessageCircle, Star, Heart
+} from 'lucide-react';
 
 export default function SettingsPage() {
   const navigate = useNavigate();
-  const { soundEnabled, toggleSound } = useAudio();
+  const { signOut, account, subscription, planInfo } = useAuth();
+  const { soundEnabled, musicEnabled, toggleSound, toggleMusic, playSound } = useAudio();
   
-  const handleExport = () => {
-    const data = localStorage.getItem('gdtm_data') || '{}';
-    const blob = new Blob([data], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `gdtm_backup_${new Date().toISOString().split('T')[0]}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
+  const [showClearDialog, setShowClearDialog] = useState(false);
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   
-  const handleClear = () => {
-    if (window.confirm('Xóa TẤT CẢ dữ liệu? Không thể hoàn tác!')) {
-      localStorage.clear();
-      window.location.reload();
+  // Settings sections
+  const sections = [
+    {
+      title: 'Âm thanh',
+      items: [
+        {
+          icon: soundEnabled ? Volume2 : VolumeX,
+          iconColor: soundEnabled ? 'text-indigo-500' : 'text-gray-400',
+          label: 'Hiệu ứng âm thanh',
+          description: soundEnabled ? 'Đang bật' : 'Đang tắt',
+          toggle: true,
+          value: soundEnabled,
+          onChange: () => {
+            toggleSound();
+            playSound('click');
+          }
+        },
+        {
+          icon: Music,
+          iconColor: musicEnabled ? 'text-pink-500' : 'text-gray-400',
+          label: 'Nhạc nền',
+          description: musicEnabled ? 'Đang bật' : 'Đang tắt',
+          toggle: true,
+          value: musicEnabled,
+          onChange: toggleMusic
+        }
+      ]
+    },
+    {
+      title: 'Tài khoản',
+      items: [
+        {
+          icon: Smartphone,
+          iconColor: 'text-blue-500',
+          label: 'Quản lý thiết bị',
+          description: `${planInfo?.maxDevices || 1} thiết bị`,
+          onClick: () => navigate('/parent'),
+        },
+        {
+          icon: CreditCard,
+          iconColor: 'text-green-500',
+          label: 'Gói đăng ký',
+          description: planInfo?.name || 'Miễn phí',
+          badge: subscription?.plan === 'family' ? 'PRO' : null,
+          onClick: () => navigate('/parent'),
+        },
+        {
+          icon: Shield,
+          iconColor: 'text-purple-500',
+          label: 'Khu vực phụ huynh',
+          description: 'Quản lý, báo cáo',
+          onClick: () => navigate('/parent'),
+        }
+      ]
+    },
+    {
+      title: 'Dữ liệu',
+      items: [
+        {
+          icon: Download,
+          iconColor: 'text-cyan-500',
+          label: 'Xuất dữ liệu',
+          description: 'Tải file backup',
+          onClick: handleExport,
+        },
+        {
+          icon: Trash2,
+          iconColor: 'text-red-500',
+          label: 'Xóa dữ liệu local',
+          description: 'Xóa cache trên thiết bị này',
+          danger: true,
+          onClick: () => setShowClearDialog(true),
+        }
+      ]
+    },
+    {
+      title: 'Hỗ trợ',
+      items: [
+        {
+          icon: HelpCircle,
+          iconColor: 'text-amber-500',
+          label: 'Hướng dẫn sử dụng',
+          description: 'Xem cách dùng app',
+          onClick: () => {
+            localStorage.removeItem('gdtm_onboarding_seen');
+            navigate('/auth');
+          },
+        },
+        {
+          icon: MessageCircle,
+          iconColor: 'text-green-500',
+          label: 'Liên hệ hỗ trợ',
+          description: 'Gửi phản hồi',
+          onClick: () => window.open('mailto:support@gdtm.app'),
+        },
+        {
+          icon: Star,
+          iconColor: 'text-yellow-500',
+          label: 'Đánh giá app',
+          description: 'Cho chúng tôi 5 sao nhé!',
+          onClick: () => alert('Cảm ơn bạn! ⭐⭐⭐⭐⭐'),
+        }
+      ]
     }
-  };
+  ];
+
+  function handleExport() {
+    try {
+      // Collect all relevant localStorage data
+      const data = {
+        exportDate: new Date().toISOString(),
+        appVersion: '3.1.0',
+        settings: {
+          soundEnabled: localStorage.getItem('soundEnabled'),
+          musicEnabled: localStorage.getItem('musicEnabled'),
+        }
+      };
+      
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `gdtm_backup_${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      
+      playSound('complete');
+    } catch (error) {
+      console.error('Export error:', error);
+      alert('Không thể xuất dữ liệu');
+    }
+  }
+
+  function handleClearData() {
+    // Only clear local cache, not account data
+    const keysToKeep = ['gdtm_device_id'];
+    const savedValues = {};
+    
+    keysToKeep.forEach(key => {
+      savedValues[key] = localStorage.getItem(key);
+    });
+    
+    localStorage.clear();
+    
+    keysToKeep.forEach(key => {
+      if (savedValues[key]) {
+        localStorage.setItem(key, savedValues[key]);
+      }
+    });
+    
+    window.location.reload();
+  }
+
+  function handleLogout() {
+    signOut();
+    navigate('/auth');
+  }
   
   return (
-    <div className="px-4 py-4">
-      <div className="flex items-center gap-3 mb-6">
-        <button onClick={() => navigate(-1)} className="p-2 rounded-full hover:bg-gray-100">
-          <ArrowLeft className="w-6 h-6" />
-        </button>
-        <h1 className="text-xl font-bold">Cài Đặt</h1>
-      </div>
-      
-      {/* Sound */}
-      <div className="bg-white rounded-2xl p-4 shadow mb-4">
-        <h3 className="font-bold text-gray-800 mb-4">Âm thanh</h3>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {soundEnabled ? <Volume2 className="w-6 h-6 text-indigo-500" /> : <VolumeX className="w-6 h-6 text-gray-400" />}
-            <div>
-              <p className="font-medium">Hiệu ứng âm thanh</p>
-              <p className="text-sm text-gray-500">{soundEnabled ? 'Đang bật' : 'Đang tắt'}</p>
+    <div className="px-4 py-4 pb-8">
+      {/* Account Info Card */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-3xl p-5 mb-6 text-white"
+      >
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-3xl">
+            👤
+          </div>
+          <div className="flex-1">
+            <p className="font-bold text-lg">{account?.parent_name || 'Phụ huynh'}</p>
+            <p className="text-white/80 text-sm">{account?.email || ''}</p>
+            <div className="flex items-center gap-2 mt-1">
+              <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                subscription?.plan === 'family' 
+                  ? 'bg-amber-400 text-amber-900' 
+                  : subscription?.plan === 'plus'
+                    ? 'bg-blue-400 text-blue-900'
+                    : 'bg-white/20 text-white'
+              }`}>
+                {planInfo?.name || 'Free'}
+              </span>
             </div>
           </div>
-          <button
-            onClick={toggleSound}
-            className={`w-14 h-8 rounded-full transition-colors ${soundEnabled ? 'bg-indigo-500' : 'bg-gray-300'}`}
-          >
-            <div className={`w-6 h-6 bg-white rounded-full shadow transition-transform ${soundEnabled ? 'translate-x-7' : 'translate-x-1'}`} />
-          </button>
         </div>
-      </div>
-      
-      {/* Data */}
-      <div className="bg-white rounded-2xl p-4 shadow mb-4">
-        <h3 className="font-bold text-gray-800 mb-4">Dữ liệu</h3>
-        <div className="space-y-3">
-          <button onClick={handleExport} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50">
-            <Download className="w-6 h-6 text-green-500" />
-            <div className="text-left">
-              <p className="font-medium">Xuất dữ liệu</p>
-              <p className="text-sm text-gray-500">Tải file backup</p>
-            </div>
-          </button>
-          <button onClick={handleClear} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-red-50">
-            <Trash2 className="w-6 h-6 text-red-500" />
-            <div className="text-left">
-              <p className="font-medium text-red-600">Xóa tất cả</p>
-              <p className="text-sm text-red-400">Không thể hoàn tác</p>
-            </div>
-          </button>
-        </div>
-      </div>
-      
-      {/* Info */}
-      <div className="bg-white rounded-2xl p-4 shadow">
-        <h3 className="font-bold text-gray-800 mb-4">Thông tin</h3>
-        <div className="space-y-2 text-sm">
-          <div className="flex justify-between">
-            <span className="text-gray-600">Phiên bản</span>
-            <span className="font-medium">2.0.0</span>
+      </motion.div>
+
+      {/* Settings Sections */}
+      {sections.map((section, sectionIndex) => (
+        <motion.div
+          key={section.title}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: sectionIndex * 0.1 }}
+          className="mb-6"
+        >
+          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2 px-1">
+            {section.title}
+          </h3>
+          
+          <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+            {section.items.map((item, itemIndex) => {
+              const Icon = item.icon;
+              
+              return (
+                <div key={itemIndex}>
+                  {itemIndex > 0 && <div className="h-px bg-gray-100 mx-4" />}
+                  
+                  <button
+                    onClick={item.onClick}
+                    className={`w-full flex items-center gap-4 p-4 transition-colors ${
+                      item.danger ? 'hover:bg-red-50' : 'hover:bg-gray-50'
+                    }`}
+                  >
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                      item.danger ? 'bg-red-50' : 'bg-gray-50'
+                    }`}>
+                      <Icon className={`w-5 h-5 ${item.iconColor}`} />
+                    </div>
+                    
+                    <div className="flex-1 text-left">
+                      <p className={`font-medium ${item.danger ? 'text-red-600' : 'text-gray-800'}`}>
+                        {item.label}
+                      </p>
+                      <p className={`text-sm ${item.danger ? 'text-red-400' : 'text-gray-500'}`}>
+                        {item.description}
+                      </p>
+                    </div>
+                    
+                    {item.badge && (
+                      <span className="px-2 py-1 bg-gradient-to-r from-amber-400 to-orange-400 text-white text-xs font-bold rounded-full">
+                        {item.badge}
+                      </span>
+                    )}
+                    
+                    {item.toggle ? (
+                      <div
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          item.onChange();
+                        }}
+                        className={`w-12 h-7 rounded-full transition-colors cursor-pointer ${
+                          item.value ? 'bg-indigo-500' : 'bg-gray-200'
+                        }`}
+                      >
+                        <motion.div 
+                          animate={{ x: item.value ? 22 : 2 }}
+                          transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                          className="w-5 h-5 mt-1 bg-white rounded-full shadow"
+                        />
+                      </div>
+                    ) : (
+                      <ChevronRight className="w-5 h-5 text-gray-300" />
+                    )}
+                  </button>
+                </div>
+              );
+            })}
           </div>
-          <div className="flex justify-between">
-            <span className="text-gray-600">Build</span>
-            <span className="font-medium">React + Vite</span>
-          </div>
+        </motion.div>
+      ))}
+
+      {/* Logout Button */}
+      <motion.button
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+        onClick={() => setShowLogoutDialog(true)}
+        className="w-full flex items-center justify-center gap-2 py-4 bg-white rounded-2xl shadow-sm text-red-500 font-medium hover:bg-red-50 transition"
+      >
+        <LogOut className="w-5 h-5" />
+        Đăng xuất
+      </motion.button>
+
+      {/* App Info */}
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+        className="mt-8 text-center"
+      >
+        <div className="flex items-center justify-center gap-2 text-gray-400 mb-2">
+          <Heart className="w-4 h-4 text-pink-400" />
+          <span className="text-sm">Made with love for kids</span>
         </div>
-        <p className="text-center text-sm text-gray-500 mt-4">
-          🎓 Gia Đình Thông Minh
+        <p className="text-sm text-gray-400">
+          Gia Đình Thông Minh v3.1.0
         </p>
-      </div>
+        <p className="text-xs text-gray-300 mt-1">
+          © 2024 GDTM. All rights reserved.
+        </p>
+      </motion.div>
+
+      {/* Confirm Dialogs */}
+      <ConfirmDialog
+        isOpen={showClearDialog}
+        onClose={() => setShowClearDialog(false)}
+        onConfirm={handleClearData}
+        title="Xóa dữ liệu?"
+        message="Dữ liệu cache trên thiết bị này sẽ bị xóa. Dữ liệu tài khoản trên server vẫn được giữ nguyên."
+        confirmText="Xóa"
+        variant="warning"
+      />
+
+      <ConfirmDialog
+        isOpen={showLogoutDialog}
+        onClose={() => setShowLogoutDialog(false)}
+        onConfirm={handleLogout}
+        title="Đăng xuất?"
+        message="Bạn sẽ cần đăng nhập lại để tiếp tục sử dụng app."
+        confirmText="Đăng xuất"
+        variant="danger"
+      />
     </div>
   );
 }

@@ -433,6 +433,33 @@ export function AuthProvider({ children }) {
     return 1;
   };
 
+  // Lấy thông tin level đầy đủ
+  const getLevelInfo = (xp) => {
+    const levelThresholds = [0, 250, 500, 800, 1200, 1700, 2300, 3000, 4000, 5000, 999999];
+    const levelTitles = [
+      'Người mới', 'Học viên', 'Học sinh chăm', 'Nhà thông thái nhí',
+      'Siêu sao học tập', 'Thần đồng', 'Cao thủ', 'Bậc thầy',
+      'Huyền thoại', 'Siêu huyền thoại', 'Tối thượng'
+    ];
+    
+    const currentXp = xp || 0;
+    const level = calculateLevel(currentXp);
+    const currentThreshold = levelThresholds[level - 1];
+    const nextThreshold = levelThresholds[level];
+    const xpInLevel = currentXp - currentThreshold;
+    const xpToNext = nextThreshold - currentThreshold;
+    const progress = Math.min(100, Math.round((xpInLevel / xpToNext) * 100));
+    
+    return {
+      level,
+      title: levelTitles[level - 1] || 'Người mới',
+      currentXp,
+      xpInLevel,
+      xpToNext: nextThreshold - currentXp,
+      progress,
+    };
+  };
+
   // =====================================================
   // AUTH METHODS
   // =====================================================
@@ -543,6 +570,7 @@ export function AuthProvider({ children }) {
     upgradePlan,
     subscription,
     planInfo: PLANS[subscription?.plan || 'free'],
+    levelInfo: getLevelInfo(currentChild?.xp),
     isAuthenticated: !!user,
     isLoaded: !loading,
     canAddChild: childrenList.length < (subscription?.max_children || 1),

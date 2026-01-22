@@ -1,35 +1,57 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#6366F1">
-  <meta name="description" content="Gia Đình Thông Minh - Ứng dụng học tập vui vẻ cho trẻ em 3-10 tuổi">
-  <meta name="keywords" content="học tập, trẻ em, giáo dục, toán, tiếng anh, tiếng việt, game">
-  
-  <!-- PWA -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="GĐTM">
-  <link rel="apple-touch-icon" href="/icon-192.svg">
-  <link rel="manifest" href="/manifest.json">
-  
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <title>🎓 Gia Đình Thông Minh</title>
-  
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').catch(() => {});
-      });
-    }
-  </script>
-</head>
-<body>
-  <div id="root"></div>
-  <script type="module" src="/src/main.jsx"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#6366f1" />
+    <meta name="description" content="Ứng dụng học tập vui nhộn cho bé 3-10 tuổi. Học Toán, Tiếng Việt, Tiếng Anh, Khoa học qua trò chơi." />
+    <meta name="keywords" content="học tập, trẻ em, giáo dục, toán, tiếng việt, tiếng anh, game học tập" />
+    <meta name="author" content="Gia Đình Thông Minh" />
+    
+    <!-- iOS Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="GDTM" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16x16.png" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Gia Đình Thông Minh - Học vui mỗi ngày" />
+    <meta property="og:description" content="Ứng dụng học tập vui nhộn cho bé 3-10 tuổi" />
+    <meta property="og:image" content="/og-image.png" />
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Gia Đình Thông Minh" />
+    <meta name="twitter:description" content="Ứng dụng học tập vui nhộn cho bé 3-10 tuổi" />
+    
+    <!-- Prevent zoom on iOS inputs -->
+    <style>
+      input, select, textarea {
+        font-size: 16px !important;
+      }
+    </style>
+    
+    <title>Gia Đình Thông Minh - Học vui mỗi ngày</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    
+    <!-- Noscript fallback -->
+    <noscript>
+      <div style="padding: 20px; text-align: center; font-family: Arial, sans-serif;">
+        <h1>📚 Gia Đình Thông Minh</h1>
+        <p>Vui lòng bật JavaScript để sử dụng ứng dụng.</p>
+      </div>
+    </noscript>
+    
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>

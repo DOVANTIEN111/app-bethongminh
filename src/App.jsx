@@ -1,16 +1,9 @@
 // src/App.jsx
-// APP CHÍNH - Routes mới với Auth
+// APP CHÍNH - v3.1.0 với PWA + Onboarding
 import React, { Suspense, lazy } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
-
-// Loading component
-const Loading = () => (
-  <div className="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600 flex flex-col items-center justify-center">
-    <div className="text-6xl mb-4 animate-bounce">🎓</div>
-    <div className="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
-  </div>
-);
+import SplashScreen from './components/SplashScreen';
 
 // Lazy load pages
 const AuthPage = lazy(() => import('./pages/AuthPage'));
@@ -39,7 +32,7 @@ const Layout = lazy(() => import('./components/Layout'));
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
   
-  if (loading) return <Loading />;
+  if (loading) return <SplashScreen message="Đang kiểm tra đăng nhập..." />;
   if (!isAuthenticated) return <Navigate to="/auth" replace />;
   
   return children;
@@ -49,7 +42,7 @@ const ProtectedRoute = ({ children }) => {
 const ChildRoute = ({ children }) => {
   const { currentChild, loading } = useAuth();
   
-  if (loading) return <Loading />;
+  if (loading) return <SplashScreen message="Đang tải dữ liệu..." />;
   if (!currentChild) return <Navigate to="/select-role" replace />;
   
   return children;
@@ -57,7 +50,7 @@ const ChildRoute = ({ children }) => {
 
 function App() {
   return (
-    <Suspense fallback={<Loading />}>
+    <Suspense fallback={<SplashScreen />}>
       <Routes>
         {/* Public routes */}
         <Route path="/auth" element={<AuthPage />} />

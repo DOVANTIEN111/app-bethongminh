@@ -1,16 +1,19 @@
-import React, { useEffect } from 'react';
+// src/pages/SubjectPage.jsx
+// Trang danh sách bài học của môn học - v3.1.0
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import { useAudio } from '../contexts/AudioContext';
 import { getSubject } from '../data/subjects';
-import { ArrowLeft, CheckCircle, Lock, Star } from 'lucide-react';
+import { CheckCircle, Lock, Star, Play, Trophy, Flame, ChevronRight } from 'lucide-react';
 
 export default function SubjectPage() {
   const { subjectId } = useParams();
   const navigate = useNavigate();
   const { currentChild } = useAuth();
   const { playSound, stopAudio } = useAudio();
+  const [selectedLevel, setSelectedLevel] = useState('all');
   
   const subject = getSubject(subjectId);
   const progress = currentChild?.progress?.[subjectId] || { completed: [], scores: {} };
@@ -22,113 +25,279 @@ export default function SubjectPage() {
   
   if (!subject) {
     return (
-      <div className="p-4 text-center">
-        <p className="text-gray-500">Môn học không tồn tại</p>
-        <button onClick={() => navigate('/')} className="mt-4 text-indigo-600">Về trang chủ</button>
+      <div className="min-h-screen flex flex-col items-center justify-center p-4">
+        <div className="text-6xl mb-4">📚</div>
+        <p className="text-gray-500 mb-4">Môn học không tồn tại</p>
+        <button 
+          onClick={() => navigate('/')} 
+          className="px-6 py-3 bg-indigo-500 text-white rounded-xl font-medium"
+        >
+          Về trang chủ
+        </button>
       </div>
     );
   }
+
+  // Group lessons by level
+  const levels = [...new Set(subject.lessons.map(l => l.level))].sort((a, b) => a - b);
+  const filteredLessons = selectedLevel === 'all' 
+    ? subject.lessons 
+    : subject.lessons.filter(l => l.level === parseInt(selectedLevel));
+  
+  // Calculate stats
+  const totalCompleted = progress.completed.length;
+  const totalLessons = subject.lessons.length;
+  const progressPercent = Math.round((totalCompleted / totalLessons) * 100);
+  const avgScore = Object.values(progress.scores).length > 0
+    ? Math.round(Object.values(progress.scores).reduce((a, b) => a + b, 0) / Object.values(progress.scores).length)
+    : 0;
   
   const handleLesson = (lesson) => {
     playSound('click');
     navigate(`/lesson/${subjectId}/${lesson.id}`);
   };
 
-  // Logic mở khóa bài học:
-  // - 3 bài đầu (index 0, 1, 2) luôn mở
-  // - Bài 4 (index 3) mở khi bài 1 (index 0) hoàn thành
-  // - Bài 5 (index 4) mở khi bài 2 (index 1) hoàn thành
-  // - Bài N mở khi bài (N-3) hoàn thành
+  // Logic mở khóa bài học
   const isLessonLocked = (index) => {
-    // 3 bài đầu luôn mở
     if (index < 3) return false;
-    
-    // Bài thứ N (index >= 3) cần bài (index - 3) đã hoàn thành
     const requiredLessonIndex = index - 3;
     const requiredLessonId = subject.lessons[requiredLessonIndex]?.id;
-    
     return !progress.completed.includes(requiredLessonId);
   };
+
+  // Find next recommended lesson
+  const nextLesson = subject.lessons.find((lesson, index) => {
+    return !progress.completed.includes(lesson.id) && !isLessonLocked(index);
+  });
   
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className={`bg-gradient-to-r ${subject.color} text-white px-4 py-6`}>
-        <div className="flex items-center gap-3 mb-4">
-          <button onClick={() => navigate(-1)} className="p-2 rounded-full hover:bg-white/20">
-            <ArrowLeft className="w-6 h-6" />
-          </button>
-          <span className="text-4xl">{subject.icon}</span>
-          <div>
+      <div className={`bg-gradient-to-br ${subject.color} text-white px-4 pt-4 pb-8`}>
+        <div className="flex items-center gap-4 mb-6">
+          <motion.div 
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: 'spring' }}
+            className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center text-4xl"
+          >
+            {subject.icon}
+          </motion.div>
+          <div className="flex-1">
             <h1 className="text-2xl font-bold">{subject.name}</h1>
             <p className="text-white/80">{subject.desc}</p>
           </div>
         </div>
         
-        {/* Progress */}
-        <div className="bg-white/20 rounded-xl p-3">
-          <div className="flex justify-between text-sm mb-2">
-            <span>Tiến độ</span>
-            <span>{progress.completed.length}/{subject.lessons.length} bài</span>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-3 gap-3 mb-4">
+          <div className="bg-white/20 backdrop-blur-sm rounded-xl p-3 text-center">
+            <div className="flex items-center justify-center gap-1 mb-1">
+              <Trophy className="w-4 h-4" />
+            </div>
+            <p className="text-xl font-bold">{totalCompleted}/{totalLessons}</p>
+            <p className="text-xs text-white/70">Hoàn thành</p>
           </div>
-          <div className="h-2 bg-white/30 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-white rounded-full"
-              style={{ width: `${(progress.completed.length / subject.lessons.length) * 100}%` }}
-            />
+          <div className="bg-white/20 backdrop-blur-sm rounded-xl p-3 text-center">
+            <div className="flex items-center justify-center gap-1 mb-1">
+              <Star className="w-4 h-4" />
+            </div>
+            <p className="text-xl font-bold">{avgScore || '-'}</p>
+            <p className="text-xs text-white/70">Điểm TB</p>
           </div>
+          <div className="bg-white/20 backdrop-blur-sm rounded-xl p-3 text-center">
+            <div className="flex items-center justify-center gap-1 mb-1">
+              <Flame className="w-4 h-4" />
+            </div>
+            <p className="text-xl font-bold">{progressPercent}%</p>
+            <p className="text-xs text-white/70">Tiến độ</p>
+          </div>
+        </div>
+        
+        {/* Progress Bar */}
+        <div className="bg-white/20 rounded-full h-3 overflow-hidden">
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${progressPercent}%` }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
+            className="h-full bg-white rounded-full"
+          />
         </div>
       </div>
       
-      {/* Lessons */}
-      <div className="p-4 space-y-3">
-        {subject.lessons.map((lesson, i) => {
-          const isCompleted = progress.completed.includes(lesson.id);
-          const score = progress.scores[lesson.id];
-          const isLocked = isLessonLocked(i);
-          
-          return (
-            <motion.div
-              key={lesson.id}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.05 }}
-            >
+      {/* Continue Learning Card */}
+      {nextLesson && (
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="px-4 -mt-4"
+        >
+          <button
+            onClick={() => handleLesson(nextLesson)}
+            className="w-full bg-white rounded-2xl p-4 shadow-lg flex items-center gap-4"
+          >
+            <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${subject.color} flex items-center justify-center`}>
+              <Play className="w-6 h-6 text-white fill-white" />
+            </div>
+            <div className="flex-1 text-left">
+              <p className="text-xs text-indigo-600 font-medium mb-0.5">TIẾP TỤC HỌC</p>
+              <p className="font-bold text-gray-800">{nextLesson.title}</p>
+              <p className="text-sm text-gray-500">{nextLesson.desc}</p>
+            </div>
+            <ChevronRight className="w-5 h-5 text-gray-400" />
+          </button>
+        </motion.div>
+      )}
+
+      {/* Level Filter */}
+      <div className="px-4 mt-4 mb-2">
+        <div className="flex gap-2 overflow-x-auto pb-2">
+          <button
+            onClick={() => { playSound('click'); setSelectedLevel('all'); }}
+            className={`px-4 py-2 rounded-full whitespace-nowrap font-medium text-sm transition-all ${
+              selectedLevel === 'all' 
+                ? `bg-gradient-to-r ${subject.color} text-white shadow` 
+                : 'bg-white text-gray-600 shadow-sm'
+            }`}
+          >
+            Tất cả ({totalLessons})
+          </button>
+          {levels.map(level => {
+            const count = subject.lessons.filter(l => l.level === level).length;
+            const completed = subject.lessons.filter(l => 
+              l.level === level && progress.completed.includes(l.id)
+            ).length;
+            
+            return (
               <button
-                onClick={() => !isLocked && handleLesson(lesson)}
-                disabled={isLocked}
-                className={`w-full p-4 rounded-2xl flex items-center gap-4 text-left transition-all ${
-                  isLocked
-                    ? 'bg-gray-100 opacity-60'
-                    : isCompleted
-                    ? 'bg-green-50 border-2 border-green-200'
-                    : 'bg-white shadow-lg hover:shadow-xl'
+                key={level}
+                onClick={() => { playSound('click'); setSelectedLevel(level.toString()); }}
+                className={`px-4 py-2 rounded-full whitespace-nowrap font-medium text-sm transition-all ${
+                  selectedLevel === level.toString()
+                    ? `bg-gradient-to-r ${subject.color} text-white shadow`
+                    : 'bg-white text-gray-600 shadow-sm'
                 }`}
               >
-                {/* Number */}
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
-                  isCompleted ? 'bg-green-500 text-white' : isLocked ? 'bg-gray-300 text-gray-500' : `bg-gradient-to-r ${subject.color} text-white`
-                }`}>
-                  {isCompleted ? <CheckCircle className="w-5 h-5" /> : isLocked ? <Lock className="w-4 h-4" /> : i + 1}
-                </div>
-                
-                {/* Info */}
-                <div className="flex-1">
-                  <p className={`font-semibold ${isLocked ? 'text-gray-400' : 'text-gray-800'}`}>{lesson.title}</p>
-                  <p className="text-sm text-gray-500">Cấp độ {lesson.level}</p>
-                </div>
-                
-                {/* Score */}
-                {isCompleted && score && (
-                  <div className="flex items-center gap-1 text-amber-500">
-                    <Star className="w-4 h-4 fill-amber-500" />
-                    <span className="font-bold">{score}</span>
-                  </div>
-                )}
+                Cấp {level} ({completed}/{count})
               </button>
-            </motion.div>
-          );
-        })}
+            );
+          })}
+        </div>
+      </div>
+      
+      {/* Lessons List */}
+      <div className="px-4 pb-8">
+        <div className="space-y-3">
+          {filteredLessons.map((lesson, i) => {
+            const originalIndex = subject.lessons.findIndex(l => l.id === lesson.id);
+            const isCompleted = progress.completed.includes(lesson.id);
+            const score = progress.scores[lesson.id];
+            const isLocked = isLessonLocked(originalIndex);
+            const isNext = nextLesson?.id === lesson.id;
+            
+            return (
+              <motion.div
+                key={lesson.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.03 }}
+              >
+                <button
+                  onClick={() => !isLocked && handleLesson(lesson)}
+                  disabled={isLocked}
+                  className={`w-full p-4 rounded-2xl flex items-center gap-4 text-left transition-all ${
+                    isLocked
+                      ? 'bg-gray-100 opacity-60 cursor-not-allowed'
+                      : isNext
+                      ? `bg-gradient-to-r ${subject.color} text-white shadow-lg`
+                      : isCompleted
+                      ? 'bg-green-50 border-2 border-green-200'
+                      : 'bg-white shadow hover:shadow-lg'
+                  }`}
+                >
+                  {/* Number/Status */}
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg ${
+                    isNext
+                      ? 'bg-white/20'
+                      : isCompleted 
+                      ? 'bg-green-500 text-white' 
+                      : isLocked 
+                      ? 'bg-gray-200 text-gray-400' 
+                      : `bg-gradient-to-br ${subject.color} text-white`
+                  }`}>
+                    {isCompleted ? (
+                      <CheckCircle className="w-6 h-6" />
+                    ) : isLocked ? (
+                      <Lock className="w-5 h-5" />
+                    ) : (
+                      originalIndex + 1
+                    )}
+                  </div>
+                  
+                  {/* Info */}
+                  <div className="flex-1 min-w-0">
+                    <p className={`font-bold truncate ${
+                      isNext ? 'text-white' : isLocked ? 'text-gray-400' : 'text-gray-800'
+                    }`}>
+                      {lesson.title}
+                    </p>
+                    <p className={`text-sm truncate ${
+                      isNext ? 'text-white/80' : 'text-gray-500'
+                    }`}>
+                      {lesson.desc}
+                    </p>
+                    <div className={`flex items-center gap-2 mt-1 text-xs ${
+                      isNext ? 'text-white/70' : 'text-gray-400'
+                    }`}>
+                      <span>Cấp độ {lesson.level}</span>
+                      {isCompleted && score && (
+                        <>
+                          <span>•</span>
+                          <span className="flex items-center gap-1">
+                            <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                            {score} điểm
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {/* Action indicator */}
+                  {!isLocked && (
+                    <div className={isNext ? 'text-white' : 'text-gray-300'}>
+                      {isNext ? (
+                        <Play className="w-5 h-5 fill-current" />
+                      ) : (
+                        <ChevronRight className="w-5 h-5" />
+                      )}
+                    </div>
+                  )}
+                </button>
+              </motion.div>
+            );
+          })}
+        </div>
+        
+        {/* Empty state */}
+        {filteredLessons.length === 0 && (
+          <div className="text-center py-12">
+            <div className="text-4xl mb-2">📭</div>
+            <p className="text-gray-500">Không có bài học nào ở cấp độ này</p>
+          </div>
+        )}
+        
+        {/* Completed all */}
+        {progressPercent === 100 && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="mt-6 bg-gradient-to-r from-amber-400 to-orange-400 rounded-2xl p-6 text-center text-white"
+          >
+            <div className="text-4xl mb-2">🎉</div>
+            <p className="font-bold text-lg">Tuyệt vời!</p>
+            <p className="text-white/90">Bạn đã hoàn thành tất cả bài học của {subject.name}!</p>
+          </motion.div>
+        )}
       </div>
     </div>
   );

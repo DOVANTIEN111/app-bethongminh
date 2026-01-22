@@ -445,17 +445,6 @@ export default function HomePage() {
           })}
         </div>
       </motion.div>
-      
-      {/* Install PWA Banner */}
-      <motion.div 
-        initial={{ opacity: 0 }} 
-        animate={{ opacity: 1 }} 
-        transition={{ delay: 1 }}
-        className="mt-6 bg-gradient-to-r from-gray-800 to-gray-900 rounded-2xl p-4 text-white"
-      >
-        <p className="font-bold mb-1">📱 Cài đặt ứng dụng</p>
-        <p className="text-sm text-gray-300">Thêm vào màn hình chính để học offline!</p>
-      </motion.div>
     </div>
   );
 }
