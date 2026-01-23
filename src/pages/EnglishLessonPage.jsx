@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
@@ -358,19 +358,23 @@ const ListenMode = ({ topic, progress, onComplete, onBack, onMarkLearned }) => {
 
   const currentQuestion = questions[currentQ];
 
-  const handlePlayAudio = () => {
+  const handlePlayAudio = useCallback(() => {
     if (currentQuestion?.word?.word) {
       speak(currentQuestion.word.word);
     }
-  };
+  }, [currentQuestion, speak]);
 
   // Tự động phát âm khi hiện câu hỏi
   useEffect(() => {
     if (currentQuestion && !showCorrect) {
-      const timer = setTimeout(handlePlayAudio, 500);
+      const timer = setTimeout(() => {
+        if (currentQuestion?.word?.word) {
+          speak(currentQuestion.word.word);
+        }
+      }, 500);
       return () => clearTimeout(timer);
     }
-  }, [currentQ, questions.length]);
+  }, [currentQuestion, showCorrect, speak]);
 
   const handleSelect = (option) => {
     if (showCorrect || !currentQuestion) return;

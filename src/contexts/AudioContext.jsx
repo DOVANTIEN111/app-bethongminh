@@ -10,13 +10,19 @@ const SOUNDS = {
   complete: { freq: [523.25, 659.25, 783.99, 1046.5], duration: 0.2 },
   levelUp: { freq: [392, 523.25, 659.25, 783.99], duration: 0.25 },
   star: { freq: [880, 1108.73], duration: 0.15 },
+  achievement: { freq: [523.25, 659.25, 783.99, 1046.5, 1318.5], duration: 0.3 },
+  pop: { freq: [600, 900], duration: 0.08 },
 };
+
+// Check if Speech Recognition is supported
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
 const AudioContext = createContext(null);
 
 export function AudioProvider({ children }) {
   const audioCtxRef = useRef(null);
   const audioRef = useRef(null);
+  const recognitionRef = useRef(null);
   const [soundEnabled, setSoundEnabled] = useState(() => {
     const saved = localStorage.getItem('soundEnabled');
     return saved !== null ? JSON.parse(saved) : true;
@@ -25,6 +31,10 @@ export function AudioProvider({ children }) {
     const saved = localStorage.getItem('musicEnabled');
     return saved !== null ? JSON.parse(saved) : false;
   });
+  const [isListening, setIsListening] = useState(false);
+
+  // Check if speech recognition is supported
+  const speechSupported = !!SpeechRecognition;
   
   // Detect iOS/iPad
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
@@ -245,10 +255,126 @@ export function AudioProvider({ children }) {
     setMusicEnabled(prev => !prev);
   }, []);
 
+  // Speech Recognition - for pronunciation practice
+  const startListening = useCallback((targetWord, callback) => {
+    if (!speechSupported || !targetWord) {
+      callback?.({ error: 'not_supported' });
+      return;
+    }
+
+    // Stop any existing recognition
+    if (recognitionRef.current) {
+      recognitionRef.current.abort();
+    }
+
+    try {
+      const recognition = new SpeechRecognition();
+      recognitionRef.current = recognition;
+
+      recognition.lang = 'en-US';
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 3;
+
+      recognition.onstart = () => {
+        setIsListening(true);
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+      };
+
+      recognition.onerror = (event) => {
+        setIsListening(false);
+        if (event.error === 'no-speech') {
+          callback?.({ error: 'no_speech' });
+        } else if (event.error === 'not-allowed') {
+          callback?.({ error: 'not_allowed' });
+        } else {
+          callback?.({ error: event.error });
+        }
+      };
+
+      recognition.onresult = (event) => {
+        setIsListening(false);
+        const results = event.results[0];
+
+        // Check all alternatives for a match
+        let bestMatch = null;
+        let bestScore = 0;
+
+        for (let i = 0; i < results.length; i++) {
+          const transcript = results[i].transcript.toLowerCase().trim();
+          const target = targetWord.toLowerCase().trim();
+
+          // Calculate similarity score
+          const score = calculateSimilarity(transcript, target);
+
+          if (score > bestScore) {
+            bestScore = score;
+            bestMatch = transcript;
+          }
+        }
+
+        const scorePercent = Math.round(bestScore * 100);
+
+        callback?.({
+          success: scorePercent >= 70,
+          score: scorePercent,
+          transcript: bestMatch || results[0].transcript,
+        });
+      };
+
+      recognition.start();
+    } catch (error) {
+      console.error('Speech recognition error:', error);
+      setIsListening(false);
+      callback?.({ error: 'failed' });
+    }
+  }, [speechSupported]);
+
+  // Stop speech recognition
+  const stopListening = useCallback(() => {
+    if (recognitionRef.current) {
+      recognitionRef.current.abort();
+      setIsListening(false);
+    }
+  }, []);
+
+  // Calculate similarity between two strings (Levenshtein distance based)
+  const calculateSimilarity = (str1, str2) => {
+    if (str1 === str2) return 1;
+    if (!str1 || !str2) return 0;
+
+    const len1 = str1.length;
+    const len2 = str2.length;
+
+    // Create distance matrix
+    const matrix = Array(len2 + 1).fill(null).map(() => Array(len1 + 1).fill(null));
+
+    for (let i = 0; i <= len1; i++) matrix[0][i] = i;
+    for (let j = 0; j <= len2; j++) matrix[j][0] = j;
+
+    for (let j = 1; j <= len2; j++) {
+      for (let i = 1; i <= len1; i++) {
+        const cost = str1[i - 1] === str2[j - 1] ? 0 : 1;
+        matrix[j][i] = Math.min(
+          matrix[j][i - 1] + 1,
+          matrix[j - 1][i] + 1,
+          matrix[j - 1][i - 1] + cost
+        );
+      }
+    }
+
+    const distance = matrix[len2][len1];
+    const maxLen = Math.max(len1, len2);
+    return 1 - (distance / maxLen);
+  };
+
   return (
-    <AudioContext.Provider value={{ 
-      playSound, 
-      speak, 
+    <AudioContext.Provider value={{
+      playSound,
+      speak,
       speakSlow,
       speakVietnamese,
       stopAudio,
@@ -257,6 +383,11 @@ export function AudioProvider({ children }) {
       toggleSound,
       toggleMusic,
       isIOS,
+      // Speech Recognition
+      speechSupported,
+      isListening,
+      startListening,
+      stopListening,
     }}>
       {children}
     </AudioContext.Provider>
