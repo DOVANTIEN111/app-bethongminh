@@ -25,10 +25,8 @@ const StoryListPage = lazy(() => import('./pages/StoryListPage'));
 const StoryReadPage = lazy(() => import('./pages/StoryReadPage'));
 const LeaderboardPage = lazy(() => import('./pages/LeaderboardPage'));
 
-// English Zone
-const EnglishHubPage = lazy(() => import('./pages/EnglishHubPage'));
-const EnglishTopicPage = lazy(() => import('./pages/EnglishTopicPage'));
-const EnglishGamePage = lazy(() => import('./pages/EnglishGamePage'));
+// English Lesson
+const EnglishLessonPage = lazy(() => import('./pages/EnglishLessonPage'));
 
 // Layout
 const Layout = lazy(() => import('./components/Layout'));
@@ -90,9 +88,7 @@ function App() {
           <Route path="lifeskills/:lessonId" element={<LifeSkillsLessonPage />} />
           <Route path="games" element={<GamesPage />} />
           <Route path="games/:gameId" element={<GamePlayPage />} />
-          <Route path="english" element={<EnglishHubPage />} />
-          <Route path="english/topic/:topicId" element={<EnglishTopicPage />} />
-          <Route path="english/game/:gameId" element={<EnglishGamePage />} />
+          <Route path="english/:lessonId" element={<EnglishLessonPage />} />
           <Route path="pet" element={<PetPage />} />
           <Route path="stories" element={<StoryListPage />} />
           <Route path="story/:storyId" element={<StoryReadPage />} />

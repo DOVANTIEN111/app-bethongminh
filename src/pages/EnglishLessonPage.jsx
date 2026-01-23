@@ -39,7 +39,7 @@ const ModeSelector = ({ topic, onSelect, progress }) => {
       {/* Header */}
       <div className={`bg-gradient-to-r ${topic.color} text-white px-4 py-6`}>
         <div className="flex items-center gap-3 mb-4">
-          <button onClick={() => navigate('/english')} className="p-2 rounded-full hover:bg-white/20">
+          <button onClick={() => navigate('/subject/english')} className="p-2 rounded-full hover:bg-white/20">
             <ArrowLeft className="w-6 h-6" />
           </button>
           <span className="text-5xl">{topic.icon}</span>
@@ -1095,26 +1095,52 @@ const CompletionScreen = ({ score, topic, onRestart, onBack }) => {
   );
 };
 
+// Mapping lessonId (e1, e2...) to topic
+const LESSON_TO_TOPIC = {
+  'e1': 'food',      // Trái cây
+  'e2': 'animals',   // Con vật
+  'e3': 'colors',    // Màu sắc
+  'e4': 'numbers',   // Số 1-5
+  'e5': 'family',    // Gia đình
+  'e6': 'food',      // Đồ ăn
+  'e7': 'animals',   // Thú hoang dã
+  'e8': 'food',      // Rau củ
+  'e9': 'numbers',   // Hình dạng
+  'e10': 'numbers',  // Số 6-10
+  'e11': 'clothes',  // Quần áo
+  'e12': 'toys',     // Đồ chơi
+  'e13': 'home',     // Trong nhà
+  'e14': 'body',     // Cơ thể
+  'e15': 'family',   // Chào hỏi
+  'e16': 'body',     // Cảm xúc
+  'e17': 'weather',  // Thời tiết
+  'e18': 'actions',  // Hành động
+  'e19': 'school',   // Hỏi đáp
+  'e20': 'actions',  // Câu ngắn
+};
+
 // MAIN COMPONENT
-export default function EnglishTopicPage() {
-  const { topicId } = useParams();
+export default function EnglishLessonPage() {
+  const { lessonId } = useParams();
   const navigate = useNavigate();
   const { currentChild, updateChild } = useAuth();
   const { playSound } = useAudio();
-  
+
+  // Map lessonId to topicId
+  const topicId = LESSON_TO_TOPIC[lessonId] || 'animals';
   const topic = getTopic(topicId);
   const [mode, setMode] = useState(null); // null = selector, or mode id
   const [completed, setCompleted] = useState(false);
   const [finalScore, setFinalScore] = useState(0);
-  
+
   if (!topic) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">Chủ đề không tồn tại</p>
+        <p className="text-gray-500">Bài học không tồn tại</p>
       </div>
     );
   }
-  
+
   const progress = currentChild?.englishProgress?.[topicId] || { learned: [] };
   
   const handleMarkLearned = (word) => {

@@ -61,30 +61,6 @@ export default function SubjectPage() {
     ? Math.round(Object.values(progress.scores).reduce((a, b) => a + b, 0) / Object.values(progress.scores).length)
     : 0;
   
-  // Mapping English lessons (e1, e2...) to English Zone topics
-  const englishTopicMap = {
-    'e1': 'food',      // Trái cây
-    'e2': 'animals',   // Con vật
-    'e3': 'colors',    // Màu sắc
-    'e4': 'numbers',   // Số 1-5
-    'e5': 'family',    // Gia đình
-    'e6': 'food',      // Đồ ăn
-    'e7': 'animals',   // Thú hoang dã
-    'e8': 'food',      // Rau củ
-    'e9': 'numbers',   // Hình dạng
-    'e10': 'numbers',  // Số 6-10
-    'e11': 'clothes',  // Quần áo
-    'e12': 'toys',     // Đồ chơi
-    'e13': 'home',     // Trong nhà
-    'e14': 'body',     // Cơ thể
-    'e15': 'family',   // Chào hỏi
-    'e16': 'body',     // Cảm xúc
-    'e17': 'weather',  // Thời tiết
-    'e18': 'actions',  // Hành động
-    'e19': 'school',   // Hỏi đáp
-    'e20': 'actions',  // Câu ngắn
-  };
-
   const handleLesson = (lesson) => {
     playSound('click');
     // Nếu là môn Toán với bài học mới, dùng MathLessonPage
@@ -103,10 +79,9 @@ export default function SubjectPage() {
     else if (subjectId === 'lifeskills' && lesson.id.startsWith('ls')) {
       navigate(`/lifeskills/${lesson.id}`);
     }
-    // Nếu là môn Tiếng Anh, chuyển sang English Zone
+    // Nếu là môn Tiếng Anh, dùng EnglishLessonPage
     else if (subjectId === 'english' && lesson.id.startsWith('e')) {
-      const topicId = englishTopicMap[lesson.id] || 'animals';
-      navigate(`/english/topic/${topicId}`);
+      navigate(`/english/${lesson.id}`);
     }
     else {
       navigate(`/lesson/${subjectId}/${lesson.id}`);
