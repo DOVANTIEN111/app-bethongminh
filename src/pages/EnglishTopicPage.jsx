@@ -359,7 +359,7 @@ const ListenMode = ({ topic, progress, onComplete, onBack, onMarkLearned }) => {
   const currentQuestion = questions[currentQ];
 
   const handlePlayAudio = () => {
-    if (currentQuestion) {
+    if (currentQuestion?.word?.word) {
       speak(currentQuestion.word.word);
     }
   };
@@ -372,15 +372,17 @@ const ListenMode = ({ topic, progress, onComplete, onBack, onMarkLearned }) => {
   }, [currentQ, questions]);
 
   const handleSelect = (option) => {
-    if (showCorrect) return;
+    if (showCorrect || !currentQuestion) return;
 
-    const isCorrect = option.word === currentQuestion.word.word;
+    const isCorrect = option.word === currentQuestion?.word?.word;
 
     if (isCorrect) {
       // Đúng: hiện thông báo và chuyển câu tiếp
       playSound('correct');
       setScore(s => s + 1);
-      onMarkLearned(currentQuestion.word.word);
+      if (currentQuestion?.word?.word) {
+        onMarkLearned(currentQuestion.word.word);
+      }
       setShowCorrect(true);
 
       // Chuyển câu tiếp sau 1.5 giây
@@ -406,8 +408,16 @@ const ListenMode = ({ topic, progress, onComplete, onBack, onMarkLearned }) => {
     }
   };
 
-  if (questions.length === 0) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  // Safety check - wait for questions to load
+  if (questions.length === 0 || !currentQuestion) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-purple-100 to-pink-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-6xl mb-4">👂</div>
+          <p className="text-gray-600">Đang tải câu hỏi...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -453,7 +463,7 @@ const ListenMode = ({ topic, progress, onComplete, onBack, onMarkLearned }) => {
             }}
             className="text-[120px] leading-none mb-4"
           >
-            {currentQuestion.word.emoji}
+            {currentQuestion?.word?.emoji || '🎧'}
           </motion.div>
 
           {/* Nút Nghe lại */}
@@ -479,14 +489,14 @@ const ListenMode = ({ topic, progress, onComplete, onBack, onMarkLearned }) => {
               <p className="text-3xl mb-1">🎉</p>
               <p className="text-green-700 font-bold text-lg">Đúng rồi!</p>
               <p className="text-green-600">
-                <strong>{currentQuestion.word.word}</strong> = {currentQuestion.word.vn}
+                <strong>{currentQuestion?.word?.word}</strong> = {currentQuestion?.word?.vn}
               </p>
             </motion.div>
           )}
         </AnimatePresence>
 
         {/* Options - Chữ tiếng Việt */}
-        {!showCorrect && (
+        {!showCorrect && currentQuestion?.options && (
           <div className="grid grid-cols-2 gap-3">
             {currentQuestion.options.map((option, i) => {
               const isWrong = wrongAnswer === option.word;
