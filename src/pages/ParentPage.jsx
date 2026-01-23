@@ -10,7 +10,9 @@ const Icons = {
   back: '←', child: '👦', chart: '📊', device: '📱', crown: '👑',
   settings: '⚙️', bell: '🔔', fire: '🔥', star: '⭐', book: '📚',
   game: '🎮', time: '⏱️', send: '💌', trash: '🗑️', edit: '✏️',
-  lock: '🔒', phone: '📱', tablet: '📟', desktop: '💻',
+  lock: '🔒', phone: '📱', tablet: '📟', desktop: '💻', report: '📋',
+  math: '🔢', vietnamese: '📖', english: '🌍', science: '🔬', lifeskills: '🌱',
+  up: '📈', down: '📉', medal: '🏅', trophy: '🏆', target: '🎯',
 };
 
 const formatTime = (mins) => {
@@ -179,6 +181,250 @@ export default function ParentPage() {
       </div>
     </div>
   );
+
+  // =====================================================
+  // TAB: REPORT - Báo cáo chi tiết
+  // =====================================================
+  const renderReport = () => {
+    // Lấy progress của bé từ selectedChild
+    const progress = selectedChild?.progress || {};
+
+    // Định nghĩa các môn học
+    const subjects = [
+      { id: 'math', name: 'Toán học', icon: Icons.math, color: 'bg-blue-500', total: 50 },
+      { id: 'vietnamese', name: 'Tiếng Việt', icon: Icons.vietnamese, color: 'bg-green-500', total: 50 },
+      { id: 'english', name: 'Tiếng Anh', icon: Icons.english, color: 'bg-red-500', total: 20 },
+      { id: 'science', name: 'Khoa học', icon: Icons.science, color: 'bg-purple-500', total: 28 },
+      { id: 'lifeskills', name: 'Kỹ năng sống', icon: Icons.lifeskills, color: 'bg-teal-500', total: 24 },
+    ];
+
+    // Tính toán thống kê cho từng môn
+    const subjectStats = subjects.map(subject => {
+      const subjectProgress = progress[subject.id] || { completed: [], scores: {} };
+      const completedCount = subjectProgress.completed?.length || 0;
+      const scores = Object.values(subjectProgress.scores || {});
+      const avgScore = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
+      const percentComplete = Math.round((completedCount / subject.total) * 100);
+
+      return {
+        ...subject,
+        completed: completedCount,
+        avgScore,
+        percentComplete,
+      };
+    });
+
+    // Tính điểm tổng hợp
+    const totalCompleted = subjectStats.reduce((a, b) => a + b.completed, 0);
+    const totalLessons = subjectStats.reduce((a, b) => a + b.total, 0);
+    const overallPercent = Math.round((totalCompleted / totalLessons) * 100);
+    const avgAllScores = subjectStats.filter(s => s.avgScore > 0).length > 0
+      ? Math.round(subjectStats.filter(s => s.avgScore > 0).reduce((a, b) => a + b.avgScore, 0) / subjectStats.filter(s => s.avgScore > 0).length)
+      : 0;
+
+    // Nhận xét tự động
+    const getRecommendation = () => {
+      if (overallPercent < 20) return { text: 'Con đang bắt đầu hành trình học tập. Hãy khuyến khích con học đều đặn mỗi ngày nhé!', emoji: '🌱', color: 'bg-blue-50 text-blue-700' };
+      if (overallPercent < 50) return { text: 'Con đang tiến bộ tốt! Tiếp tục duy trì thói quen học tập đều đặn nhé!', emoji: '📈', color: 'bg-green-50 text-green-700' };
+      if (overallPercent < 80) return { text: 'Xuất sắc! Con đang học rất tốt. Hãy thử thách với các bài học khó hơn!', emoji: '🌟', color: 'bg-yellow-50 text-yellow-700' };
+      return { text: 'Tuyệt vời! Con đã hoàn thành gần hết chương trình. Hãy tiếp tục ôn tập để ghi nhớ!', emoji: '🏆', color: 'bg-purple-50 text-purple-700' };
+    };
+
+    // Xác định môn cần cải thiện
+    const getWeakSubjects = () => {
+      return subjectStats
+        .filter(s => s.completed > 0 && s.avgScore < 70)
+        .sort((a, b) => a.avgScore - b.avgScore)
+        .slice(0, 2);
+    };
+
+    // Xác định môn học giỏi
+    const getStrongSubjects = () => {
+      return subjectStats
+        .filter(s => s.avgScore >= 80)
+        .sort((a, b) => b.avgScore - a.avgScore)
+        .slice(0, 2);
+    };
+
+    const recommendation = getRecommendation();
+    const weakSubjects = getWeakSubjects();
+    const strongSubjects = getStrongSubjects();
+
+    return (
+      <div className="space-y-4">
+        {/* Chọn bé */}
+        {children.length > 1 && (
+          <div className="flex gap-2 overflow-x-auto pb-2">
+            {children.map((child) => (
+              <button
+                key={child.id}
+                onClick={() => setSelectedChild(child)}
+                className={`flex-shrink-0 px-4 py-2 rounded-full flex items-center gap-2 transition ${
+                  selectedChild?.id === child.id ? 'bg-indigo-500 text-white' : 'bg-white text-gray-700 border'
+                }`}
+              >
+                <span>{child.avatar}</span>
+                <span className="font-medium">{child.name}</span>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Tổng quan */}
+        <div className="bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl p-4 text-white">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center text-3xl">
+              {selectedChild?.avatar || '👦'}
+            </div>
+            <div className="flex-1">
+              <h3 className="text-xl font-bold">{selectedChild?.name || 'Bé'}</h3>
+              <p className="text-white/80">Báo cáo học tập</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            <div className="bg-white/10 rounded-xl p-3 text-center">
+              <div className="text-2xl font-bold">{totalCompleted}</div>
+              <div className="text-xs text-white/70">Bài hoàn thành</div>
+            </div>
+            <div className="bg-white/10 rounded-xl p-3 text-center">
+              <div className="text-2xl font-bold">{overallPercent}%</div>
+              <div className="text-xs text-white/70">Tiến độ</div>
+            </div>
+            <div className="bg-white/10 rounded-xl p-3 text-center">
+              <div className="text-2xl font-bold">{avgAllScores || '-'}</div>
+              <div className="text-xs text-white/70">Điểm TB</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Nhận xét */}
+        <div className={`${recommendation.color} rounded-2xl p-4`}>
+          <div className="flex items-start gap-3">
+            <span className="text-3xl">{recommendation.emoji}</span>
+            <div>
+              <h4 className="font-semibold mb-1">Nhận xét</h4>
+              <p className="text-sm">{recommendation.text}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Chi tiết từng môn */}
+        <div className="bg-white rounded-2xl p-4 shadow-sm">
+          <h4 className="font-semibold text-gray-700 mb-4">{Icons.chart} Chi tiết theo môn học</h4>
+          <div className="space-y-4">
+            {subjectStats.map((subject) => (
+              <div key={subject.id} className="border rounded-xl p-3">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className={`w-10 h-10 rounded-full ${subject.color} flex items-center justify-center text-xl`}>
+                    {subject.icon}
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-gray-800">{subject.name}</span>
+                      <span className="text-sm text-gray-500">{subject.completed}/{subject.total} bài</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
+                      <div
+                        className={`${subject.color} h-2 rounded-full transition-all duration-500`}
+                        style={{ width: `${subject.percentComplete}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between text-sm pl-13">
+                  <span className="text-gray-500">Tiến độ: {subject.percentComplete}%</span>
+                  <span className={`font-medium ${
+                    subject.avgScore >= 80 ? 'text-green-600' :
+                    subject.avgScore >= 60 ? 'text-yellow-600' :
+                    subject.avgScore > 0 ? 'text-red-600' : 'text-gray-400'
+                  }`}>
+                    Điểm TB: {subject.avgScore > 0 ? subject.avgScore : '-'}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Điểm mạnh */}
+        {strongSubjects.length > 0 && (
+          <div className="bg-green-50 rounded-2xl p-4">
+            <h4 className="font-semibold text-green-700 mb-3">{Icons.trophy} Môn học giỏi</h4>
+            <div className="space-y-2">
+              {strongSubjects.map((subject) => (
+                <div key={subject.id} className="flex items-center gap-3 bg-white rounded-xl p-3">
+                  <span className="text-2xl">{subject.icon}</span>
+                  <div className="flex-1">
+                    <span className="font-medium text-gray-800">{subject.name}</span>
+                    <p className="text-sm text-gray-500">Điểm trung bình: {subject.avgScore}</p>
+                  </div>
+                  <span className="text-green-500 text-xl">{Icons.medal}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Cần cải thiện */}
+        {weakSubjects.length > 0 && (
+          <div className="bg-orange-50 rounded-2xl p-4">
+            <h4 className="font-semibold text-orange-700 mb-3">{Icons.target} Cần luyện tập thêm</h4>
+            <div className="space-y-2">
+              {weakSubjects.map((subject) => (
+                <div key={subject.id} className="flex items-center gap-3 bg-white rounded-xl p-3">
+                  <span className="text-2xl">{subject.icon}</span>
+                  <div className="flex-1">
+                    <span className="font-medium text-gray-800">{subject.name}</span>
+                    <p className="text-sm text-gray-500">Điểm TB: {subject.avgScore} - Cần ôn tập</p>
+                  </div>
+                  <span className="text-orange-500">{Icons.up}</span>
+                </div>
+              ))}
+            </div>
+            <p className="text-sm text-orange-600 mt-3">
+              💡 Gợi ý: Hãy khuyến khích con học lại các bài có điểm thấp để củng cố kiến thức.
+            </p>
+          </div>
+        )}
+
+        {/* Thời gian học tuần này */}
+        {childStats && (
+          <div className="bg-white rounded-2xl p-4 shadow-sm">
+            <h4 className="font-semibold text-gray-700 mb-3">{Icons.time} Hoạt động 7 ngày qua</h4>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-indigo-50 rounded-xl p-3 text-center">
+                <div className="text-2xl font-bold text-indigo-600">{childStats.days_active || 0}/7</div>
+                <div className="text-sm text-indigo-600/70">Ngày học</div>
+              </div>
+              <div className="bg-green-50 rounded-xl p-3 text-center">
+                <div className="text-2xl font-bold text-green-600">{formatTime(childStats.total_time || 0)}</div>
+                <div className="text-sm text-green-600/70">Tổng thời gian</div>
+              </div>
+              <div className="bg-purple-50 rounded-xl p-3 text-center">
+                <div className="text-2xl font-bold text-purple-600">{childStats.total_lessons || 0}</div>
+                <div className="text-sm text-purple-600/70">Bài học</div>
+              </div>
+              <div className="bg-yellow-50 rounded-xl p-3 text-center">
+                <div className="text-2xl font-bold text-yellow-600">+{childStats.total_xp || 0}</div>
+                <div className="text-sm text-yellow-600/70">XP kiếm được</div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Gợi ý hành động */}
+        <div className="bg-blue-50 rounded-2xl p-4">
+          <h4 className="font-semibold text-blue-700 mb-2">{Icons.bell} Gợi ý cho phụ huynh</h4>
+          <ul className="text-sm text-blue-600 space-y-2">
+            <li>• Đặt mục tiêu học 15-30 phút mỗi ngày</li>
+            <li>• Khen ngợi khi con hoàn thành bài học</li>
+            <li>• Cùng con ôn lại các bài có điểm thấp</li>
+            <li>• Tạo thói quen học tập đều đặn</li>
+          </ul>
+        </div>
+      </div>
+    );
+  };
 
   // =====================================================
   // TAB: DEVICES
@@ -503,6 +749,7 @@ export default function ParentPage() {
         <div className="bg-white rounded-2xl shadow-lg p-2 flex gap-1 overflow-x-auto">
           {[
             { id: 'overview', icon: Icons.chart, label: 'Tổng quan' },
+            { id: 'report', icon: Icons.report, label: 'Báo cáo' },
             { id: 'devices', icon: Icons.device, label: 'Thiết bị' },
             { id: 'subscription', icon: Icons.crown, label: 'Gói' },
             { id: 'settings', icon: Icons.settings, label: 'Cài đặt' },
@@ -516,6 +763,7 @@ export default function ParentPage() {
 
       <div className="p-4 pt-6">
         {activeTab === 'overview' && renderOverview()}
+        {activeTab === 'report' && renderReport()}
         {activeTab === 'devices' && renderDevices()}
         {activeTab === 'subscription' && renderSubscription()}
         {activeTab === 'settings' && renderSettings()}

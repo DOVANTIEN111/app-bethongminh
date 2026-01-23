@@ -75,6 +75,10 @@ export default function SubjectPage() {
     else if (subjectId === 'science' && lesson.id.startsWith('s')) {
       navigate(`/science/${lesson.id}`);
     }
+    // Nếu là môn Kỹ năng sống, dùng LifeSkillsLessonPage
+    else if (subjectId === 'lifeskills' && lesson.id.startsWith('ls')) {
+      navigate(`/lifeskills/${lesson.id}`);
+    }
     else {
       navigate(`/lesson/${subjectId}/${lesson.id}`);
     }

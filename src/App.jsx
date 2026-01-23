@@ -15,6 +15,7 @@ const LessonPage = lazy(() => import('./pages/LessonPage'));
 const MathLessonPage = lazy(() => import('./pages/MathLessonPage'));
 const VietnameseLessonPage = lazy(() => import('./pages/VietnameseLessonPage'));
 const ScienceLessonPage = lazy(() => import('./pages/ScienceLessonPage'));
+const LifeSkillsLessonPage = lazy(() => import('./pages/LifeSkillsLessonPage'));
 const GamesPage = lazy(() => import('./pages/GamesPage'));
 const GamePlayPage = lazy(() => import('./pages/GamePlayPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
@@ -86,6 +87,7 @@ function App() {
           <Route path="math/:lessonId" element={<MathLessonPage />} />
           <Route path="vietnamese/:lessonId" element={<VietnameseLessonPage />} />
           <Route path="science/:lessonId" element={<ScienceLessonPage />} />
+          <Route path="lifeskills/:lessonId" element={<LifeSkillsLessonPage />} />
           <Route path="games" element={<GamesPage />} />
           <Route path="games/:gameId" element={<GamePlayPage />} />
           <Route path="english" element={<EnglishHubPage />} />

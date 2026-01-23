@@ -220,6 +220,48 @@ export const SUBJECTS = {
       { id: 's5-6', title: 'Ôn tập công nghệ', level: 5, desc: 'Ôn tập Level 5' },
     ],
   },
+
+  lifeskills: {
+    id: 'lifeskills',
+    name: 'Kỹ Năng Sống',
+    icon: '🌱',
+    color: 'from-teal-500 to-cyan-500',
+    desc: 'An toàn, lễ phép, cảm xúc, tự lập',
+    useLifeSkillsLessons: true,
+    lessons: [
+      // Level 1: An toàn cá nhân (6 bài)
+      { id: 'ls1-1', title: 'An toàn giao thông', level: 1, desc: 'Qua đường, đèn giao thông' },
+      { id: 'ls1-2', title: 'An toàn với người lạ', level: 1, desc: 'Không nhận đồ, không đi theo' },
+      { id: 'ls1-3', title: 'An toàn ở nhà', level: 1, desc: 'Điện, dao kéo, không mở cửa' },
+      { id: 'ls1-4', title: 'Phòng cháy chữa cháy', level: 1, desc: 'Thoát hiểm, số 114' },
+      { id: 'ls1-5', title: 'An toàn khi chơi', level: 1, desc: 'Chơi an toàn, tránh nước' },
+      { id: 'ls1-6', title: 'Ôn tập an toàn', level: 1, desc: 'Ôn lại kiến thức an toàn' },
+
+      // Level 2: Lễ phép & ứng xử (6 bài)
+      { id: 'ls2-1', title: 'Lễ phép với người lớn', level: 2, desc: 'Chào hỏi, cảm ơn, xin lỗi' },
+      { id: 'ls2-2', title: 'Ứng xử với bạn bè', level: 2, desc: 'Chia sẻ, giúp đỡ, yêu thương' },
+      { id: 'ls2-3', title: 'Lịch sự nơi công cộng', level: 2, desc: 'Xếp hàng, bỏ rác đúng chỗ' },
+      { id: 'ls2-4', title: 'Lịch sự khi ăn uống', level: 2, desc: 'Rửa tay, ngồi ngay ngắn' },
+      { id: 'ls2-5', title: 'Nói lời hay ý đẹp', level: 2, desc: 'Khen ngợi, động viên, thật thà' },
+      { id: 'ls2-6', title: 'Ôn tập lễ phép', level: 2, desc: 'Ôn lại cách ứng xử' },
+
+      // Level 3: Cảm xúc & tâm lý (6 bài)
+      { id: 'ls3-1', title: 'Nhận biết cảm xúc', level: 3, desc: 'Vui, buồn, giận, sợ' },
+      { id: 'ls3-2', title: 'Khi con buồn', level: 3, desc: 'Cách xử lý khi buồn' },
+      { id: 'ls3-3', title: 'Khi con giận', level: 3, desc: 'Kiểm soát cơn giận' },
+      { id: 'ls3-4', title: 'Sự tự tin', level: 3, desc: 'Tin vào bản thân' },
+      { id: 'ls3-5', title: 'Yêu thương bản thân', level: 3, desc: 'Chăm sóc và yêu mình' },
+      { id: 'ls3-6', title: 'Ôn tập cảm xúc', level: 3, desc: 'Ôn lại kiến thức cảm xúc' },
+
+      // Level 4: Tự lập & trách nhiệm (6 bài)
+      { id: 'ls4-1', title: 'Tự chăm sóc bản thân', level: 4, desc: 'Đánh răng, gấp quần áo' },
+      { id: 'ls4-2', title: 'Giúp đỡ gia đình', level: 4, desc: 'Quét nhà, dọn bàn' },
+      { id: 'ls4-3', title: 'Quản lý thời gian', level: 4, desc: 'Ngủ đủ, học xong mới chơi' },
+      { id: 'ls4-4', title: 'Bảo vệ môi trường', level: 4, desc: 'Tiết kiệm điện, nước' },
+      { id: 'ls4-5', title: 'Tiết kiệm và chia sẻ', level: 4, desc: 'Tiết kiệm, quyên góp' },
+      { id: 'ls4-6', title: 'Ôn tập tự lập', level: 4, desc: 'Ôn lại kiến thức tự lập' },
+    ],
+  },
 };
 
 export const getSubject = (id) => SUBJECTS[id];
