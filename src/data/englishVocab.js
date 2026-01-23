@@ -399,6 +399,144 @@ export const ENGLISH_TOPICS = {
       { en: 'I sleep in my bedroom.', vn: 'Tôi ngủ trong phòng ngủ.' },
       { en: 'Open the door, please.', vn: 'Làm ơn mở cửa.' }
     ]
+  },
+  vegetables: {
+    id: 'vegetables',
+    name: 'Vegetables',
+    nameVn: 'Rau củ',
+    icon: '🥕',
+    color: 'from-green-500 to-lime-500',
+    words: [
+      { word: 'Carrot', vn: 'Cà rốt', emoji: '🥕' },
+      { word: 'Tomato', vn: 'Cà chua', emoji: '🍅' },
+      { word: 'Potato', vn: 'Khoai tây', emoji: '🥔' },
+      { word: 'Corn', vn: 'Ngô/Bắp', emoji: '🌽' },
+      { word: 'Broccoli', vn: 'Bông cải xanh', emoji: '🥦' },
+      { word: 'Cucumber', vn: 'Dưa chuột', emoji: '🥒' },
+      { word: 'Onion', vn: 'Hành tây', emoji: '🧅' },
+      { word: 'Garlic', vn: 'Tỏi', emoji: '🧄' },
+      { word: 'Pepper', vn: 'Ớt chuông', emoji: '🫑' },
+      { word: 'Lettuce', vn: 'Rau xà lách', emoji: '🥬' },
+      { word: 'Pumpkin', vn: 'Bí ngô', emoji: '🎃' },
+      { word: 'Mushroom', vn: 'Nấm', emoji: '🍄' },
+      { word: 'Cabbage', vn: 'Bắp cải', emoji: '🥬' },
+      { word: 'Peas', vn: 'Đậu Hà Lan', emoji: '🫛' }
+    ],
+    sentences: [
+      { en: 'I eat vegetables.', vn: 'Tôi ăn rau.' },
+      { en: 'Carrots are orange.', vn: 'Cà rốt màu cam.' },
+      { en: 'I like corn.', vn: 'Tôi thích ngô.' }
+    ]
+  },
+  greetings: {
+    id: 'greetings',
+    name: 'Greetings',
+    nameVn: 'Chào hỏi',
+    icon: '👋',
+    color: 'from-yellow-500 to-orange-500',
+    words: [
+      { word: 'Hello', vn: 'Xin chào', emoji: '👋' },
+      { word: 'Hi', vn: 'Chào', emoji: '🙋' },
+      { word: 'Goodbye', vn: 'Tạm biệt', emoji: '👋' },
+      { word: 'Bye', vn: 'Tạm biệt', emoji: '✋' },
+      { word: 'Please', vn: 'Làm ơn', emoji: '🙏' },
+      { word: 'Thank you', vn: 'Cảm ơn', emoji: '🙏' },
+      { word: 'Thanks', vn: 'Cảm ơn', emoji: '😊' },
+      { word: 'Sorry', vn: 'Xin lỗi', emoji: '😔' },
+      { word: 'Yes', vn: 'Vâng/Có', emoji: '✅' },
+      { word: 'No', vn: 'Không', emoji: '❌' },
+      { word: 'Good morning', vn: 'Chào buổi sáng', emoji: '🌅' },
+      { word: 'Good night', vn: 'Chúc ngủ ngon', emoji: '🌙' },
+      { word: 'Welcome', vn: 'Chào mừng', emoji: '🎉' },
+      { word: 'See you', vn: 'Hẹn gặp lại', emoji: '👀' }
+    ],
+    sentences: [
+      { en: 'Hello! How are you?', vn: 'Xin chào! Bạn khỏe không?' },
+      { en: 'Thank you very much!', vn: 'Cảm ơn rất nhiều!' },
+      { en: 'Goodbye! See you!', vn: 'Tạm biệt! Hẹn gặp lại!' }
+    ]
+  },
+  emotions: {
+    id: 'emotions',
+    name: 'Emotions',
+    nameVn: 'Cảm xúc',
+    icon: '😊',
+    color: 'from-pink-500 to-rose-500',
+    words: [
+      { word: 'Happy', vn: 'Vui vẻ', emoji: '😊' },
+      { word: 'Sad', vn: 'Buồn', emoji: '😢' },
+      { word: 'Angry', vn: 'Giận dữ', emoji: '😠' },
+      { word: 'Scared', vn: 'Sợ hãi', emoji: '😨' },
+      { word: 'Tired', vn: 'Mệt mỏi', emoji: '😴' },
+      { word: 'Hungry', vn: 'Đói', emoji: '😋' },
+      { word: 'Thirsty', vn: 'Khát', emoji: '🥤' },
+      { word: 'Excited', vn: 'Hào hứng', emoji: '🤩' },
+      { word: 'Surprised', vn: 'Ngạc nhiên', emoji: '😲' },
+      { word: 'Bored', vn: 'Chán', emoji: '😑' },
+      { word: 'Shy', vn: 'Ngại ngùng', emoji: '🙈' },
+      { word: 'Proud', vn: 'Tự hào', emoji: '😎' },
+      { word: 'Sick', vn: 'Ốm/Bệnh', emoji: '🤒' },
+      { word: 'Love', vn: 'Yêu thương', emoji: '❤️' }
+    ],
+    sentences: [
+      { en: 'I am happy!', vn: 'Tôi vui!' },
+      { en: 'Are you hungry?', vn: 'Bạn có đói không?' },
+      { en: 'I feel tired.', vn: 'Tôi thấy mệt.' }
+    ]
+  },
+  questions: {
+    id: 'questions',
+    name: 'Questions',
+    nameVn: 'Câu hỏi',
+    icon: '❓',
+    color: 'from-indigo-500 to-purple-500',
+    words: [
+      { word: 'What', vn: 'Cái gì', emoji: '❓' },
+      { word: 'Where', vn: 'Ở đâu', emoji: '📍' },
+      { word: 'Who', vn: 'Ai', emoji: '👤' },
+      { word: 'When', vn: 'Khi nào', emoji: '🕐' },
+      { word: 'Why', vn: 'Tại sao', emoji: '🤔' },
+      { word: 'How', vn: 'Như thế nào', emoji: '💭' },
+      { word: 'How many', vn: 'Bao nhiêu', emoji: '🔢' },
+      { word: 'How old', vn: 'Bao nhiêu tuổi', emoji: '🎂' },
+      { word: 'Which', vn: 'Cái nào', emoji: '👆' },
+      { word: 'Can', vn: 'Có thể', emoji: '💪' },
+      { word: 'Do you', vn: 'Bạn có...', emoji: '🙋' },
+      { word: 'Is this', vn: 'Đây có phải...', emoji: '👀' }
+    ],
+    sentences: [
+      { en: 'What is this?', vn: 'Đây là cái gì?' },
+      { en: 'Where is the cat?', vn: 'Con mèo ở đâu?' },
+      { en: 'How many apples?', vn: 'Có bao nhiêu quả táo?' }
+    ]
+  },
+  phrases: {
+    id: 'phrases',
+    name: 'Common Phrases',
+    nameVn: 'Câu thông dụng',
+    icon: '💬',
+    color: 'from-cyan-500 to-blue-500',
+    words: [
+      { word: 'I like', vn: 'Tôi thích', emoji: '❤️' },
+      { word: 'I have', vn: 'Tôi có', emoji: '✋' },
+      { word: 'I want', vn: 'Tôi muốn', emoji: '🙋' },
+      { word: 'I can', vn: 'Tôi có thể', emoji: '💪' },
+      { word: 'I see', vn: 'Tôi thấy', emoji: '👀' },
+      { word: 'This is', vn: 'Đây là', emoji: '👆' },
+      { word: 'It is', vn: 'Nó là', emoji: '👉' },
+      { word: 'I am', vn: 'Tôi là/Tôi đang', emoji: '🙋' },
+      { word: 'Let\'s go', vn: 'Đi thôi', emoji: '🚶' },
+      { word: 'Come here', vn: 'Lại đây', emoji: '👋' },
+      { word: 'Look at', vn: 'Nhìn vào', emoji: '👀' },
+      { word: 'I don\'t know', vn: 'Tôi không biết', emoji: '🤷' },
+      { word: 'Help me', vn: 'Giúp tôi', emoji: '🆘' },
+      { word: 'Wait', vn: 'Đợi đã', emoji: '✋' }
+    ],
+    sentences: [
+      { en: 'I like apples.', vn: 'Tôi thích táo.' },
+      { en: 'This is my dog.', vn: 'Đây là con chó của tôi.' },
+      { en: 'I can run fast.', vn: 'Tôi chạy nhanh được.' }
+    ]
   }
 };
 

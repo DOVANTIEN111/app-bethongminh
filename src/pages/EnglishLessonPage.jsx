@@ -1101,26 +1101,29 @@ const CompletionScreen = ({ score, topic, onRestart, onBack }) => {
 
 // Mapping lessonId (e1, e2...) to topic
 const LESSON_TO_TOPIC = {
-  'e1': 'food',      // Trái cây
-  'e2': 'animals',   // Con vật
-  'e3': 'colors',    // Màu sắc
-  'e4': 'numbers',   // Số 1-5
-  'e5': 'family',    // Gia đình
-  'e6': 'food',      // Đồ ăn
-  'e7': 'animals',   // Thú hoang dã
-  'e8': 'food',      // Rau củ
-  'e9': 'numbers',   // Hình dạng
-  'e10': 'numbers',  // Số 6-10
-  'e11': 'clothes',  // Quần áo
-  'e12': 'toys',     // Đồ chơi
-  'e13': 'home',     // Trong nhà
-  'e14': 'body',     // Cơ thể
-  'e15': 'family',   // Chào hỏi
-  'e16': 'body',     // Cảm xúc
-  'e17': 'weather',  // Thời tiết
-  'e18': 'actions',  // Hành động
-  'e19': 'school',   // Hỏi đáp
-  'e20': 'actions',  // Câu ngắn
+  // Level 1: Làm quen (3-4 tuổi)
+  'e1': 'food',        // 🍎 Trái cây
+  'e2': 'animals',     // 🐕 Con vật
+  'e3': 'colors',      // 🔴 Màu sắc
+  'e4': 'numbers',     // 1️⃣ Số 1-5
+  'e5': 'family',      // 👨‍👩‍👧 Gia đình
+  'e6': 'food',        // 🍕 Đồ ăn
+  // Level 2: Mở rộng (4-5 tuổi)
+  'e7': 'animals',     // 🐘 Thú hoang dã
+  'e8': 'vegetables',  // 🥕 Rau củ ✅ SỬA
+  'e9': 'shapes',      // ⭕ Hình dạng ✅ SỬA
+  'e10': 'numbers',    // 6️⃣ Số 6-10
+  'e11': 'clothes',    // 👕 Quần áo
+  'e12': 'toys',       // 🧸 Đồ chơi
+  'e13': 'home',       // 🏠 Trong nhà
+  'e14': 'body',       // 👀 Cơ thể
+  // Level 3: Giao tiếp (5-6 tuổi)
+  'e15': 'greetings',  // 👋 Chào hỏi ✅ SỬA
+  'e16': 'emotions',   // 😊 Cảm xúc ✅ SỬA
+  'e17': 'weather',    // 🌤️ Thời tiết
+  'e18': 'actions',    // 🎯 Hành động
+  'e19': 'questions',  // ❓ Hỏi đáp ✅ SỬA
+  'e20': 'phrases',    // 💬 Câu ngắn ✅ SỬA
 };
 
 // MAIN COMPONENT
