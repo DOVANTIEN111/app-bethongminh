@@ -331,16 +331,15 @@ const FlashcardMode = ({ topic, progress, onComplete, onBack, onMarkLearned }) =
   );
 };
 
-// LISTEN MODE - Nghe và chọn đáp án
+// LISTEN MODE - Nghe và chọn đáp án (Thiết kế mới)
 const ListenMode = ({ topic, progress, onComplete, onBack, onMarkLearned }) => {
   const { playSound, speak } = useAudio();
   const [questions, setQuestions] = useState([]);
   const [currentQ, setCurrentQ] = useState(0);
-  const [selected, setSelected] = useState(null);
-  const [showResult, setShowResult] = useState(false);
   const [score, setScore] = useState(0);
-  const [answers, setAnswers] = useState([]);
-  
+  const [showCorrect, setShowCorrect] = useState(false);
+  const [wrongAnswer, setWrongAnswer] = useState(null);
+
   useEffect(() => {
     // Tạo 10 câu hỏi nghe
     const shuffled = [...topic.words].sort(() => Math.random() - 0.5);
@@ -349,61 +348,68 @@ const ListenMode = ({ topic, progress, onComplete, onBack, onMarkLearned }) => {
         .filter(w => w.word !== word.word)
         .sort(() => Math.random() - 0.5)
         .slice(0, 3);
-      
+
       const options = [...wrongOptions, word].sort(() => Math.random() - 0.5);
-      
+
       return { word, options };
     });
     setQuestions(qs);
   }, [topic]);
-  
+
   const currentQuestion = questions[currentQ];
-  
+
   const handlePlayAudio = () => {
     if (currentQuestion) {
       speak(currentQuestion.word.word);
     }
   };
-  
+
+  // Tự động phát âm khi hiện câu hỏi
   useEffect(() => {
-    if (currentQuestion && !showResult) {
+    if (currentQuestion && !showCorrect) {
       setTimeout(handlePlayAudio, 500);
     }
   }, [currentQ, questions]);
-  
+
   const handleSelect = (option) => {
-    if (showResult) return;
-    
-    setSelected(option);
-    setShowResult(true);
-    
+    if (showCorrect) return;
+
     const isCorrect = option.word === currentQuestion.word.word;
-    setAnswers([...answers, { question: currentQuestion, selected: option, correct: isCorrect }]);
-    
+
     if (isCorrect) {
+      // Đúng: hiện thông báo và chuyển câu tiếp
       playSound('correct');
       setScore(s => s + 1);
       onMarkLearned(currentQuestion.word.word);
+      setShowCorrect(true);
+
+      // Chuyển câu tiếp sau 1.5 giây
+      setTimeout(() => {
+        if (currentQ < questions.length - 1) {
+          setCurrentQ(q => q + 1);
+          setShowCorrect(false);
+          setWrongAnswer(null);
+        } else {
+          const finalScore = Math.round(((score + 1) / questions.length) * 100);
+          onComplete(finalScore);
+        }
+      }, 1500);
     } else {
+      // Sai: rung nhẹ và cho chọn lại
       playSound('wrong');
+      setWrongAnswer(option.word);
+
+      // Reset trạng thái sai sau 500ms
+      setTimeout(() => {
+        setWrongAnswer(null);
+      }, 500);
     }
   };
-  
-  const handleNext = () => {
-    if (currentQ < questions.length - 1) {
-      setCurrentQ(q => q + 1);
-      setSelected(null);
-      setShowResult(false);
-    } else {
-      const finalScore = Math.round((score / questions.length) * 100);
-      onComplete(finalScore);
-    }
-  };
-  
+
   if (questions.length === 0) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   }
-  
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-100 to-pink-100 pb-8">
       {/* Header */}
@@ -416,93 +422,101 @@ const ListenMode = ({ topic, progress, onComplete, onBack, onMarkLearned }) => {
           <p className="text-sm text-gray-500">Câu {currentQ + 1} / {questions.length}</p>
         </div>
         <div className="bg-green-100 px-3 py-1 rounded-full text-green-600 font-bold">
-          {score}/{currentQ + (showResult ? 1 : 0)}
+          {score}/{currentQ + (showCorrect ? 1 : 0)}
         </div>
       </div>
-      
+
       {/* Progress */}
       <div className="px-4 py-2">
         <div className="h-2 bg-white rounded-full overflow-hidden">
-          <div 
+          <div
             className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all"
             style={{ width: `${((currentQ + 1) / questions.length) * 100}%` }}
           />
         </div>
       </div>
-      
+
       {/* Question */}
       <div className="px-4 py-6">
-        <div className="bg-white rounded-3xl shadow-xl p-6 text-center">
-          <p className="text-gray-500 mb-4">Nghe và chọn từ đúng</p>
-          
+        {/* Hình ảnh lớn + nút nghe */}
+        <div className="bg-white rounded-3xl shadow-xl p-6 text-center mb-6">
+          <p className="text-gray-500 mb-2">Nghe và chọn nghĩa đúng</p>
+
+          {/* Emoji/Hình ảnh lớn */}
+          <motion.div
+            key={currentQ}
+            initial={{ scale: 0 }}
+            animate={{ scale: 1, y: [0, -8, 0] }}
+            transition={{
+              scale: { duration: 0.3 },
+              y: { duration: 2, repeat: Infinity, ease: 'easeInOut' }
+            }}
+            className="text-[120px] leading-none mb-4"
+          >
+            {currentQuestion.word.emoji}
+          </motion.div>
+
+          {/* Nút Nghe lại */}
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={handlePlayAudio}
-            className="w-24 h-24 mx-auto bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg mb-6"
+            className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full flex items-center gap-2 mx-auto shadow-lg"
           >
-            <Volume2 className="w-12 h-12 text-white" />
+            <Volume2 className="w-6 h-6" />
+            <span className="font-bold">Nghe lại</span>
           </motion.button>
-          
-          <p className="text-gray-600">Bấm để nghe lại</p>
         </div>
-        
-        {/* Options */}
-        <div className="grid grid-cols-2 gap-3 mt-6">
-          {currentQuestion.options.map((option, i) => {
-            const isCorrect = option.word === currentQuestion.word.word;
-            const isSelected = selected?.word === option.word;
-            
-            let bgClass = 'bg-white';
-            if (showResult) {
-              if (isCorrect) bgClass = 'bg-green-100 border-green-500';
-              else if (isSelected) bgClass = 'bg-red-100 border-red-500';
-            }
-            
-            return (
-              <motion.button
-                key={option.word}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-                onClick={() => handleSelect(option)}
-                disabled={showResult}
-                className={`${bgClass} border-2 rounded-2xl p-4 text-center transition-all ${
-                  showResult ? '' : 'hover:border-purple-300 active:scale-95'
-                }`}
-              >
-                <span className="text-4xl block mb-2">{option.emoji}</span>
-                <p className="font-bold text-gray-800">{option.word}</p>
-                <p className="text-sm text-gray-500">{option.vn}</p>
-              </motion.button>
-            );
-          })}
-        </div>
-        
-        {/* Result & Next */}
-        {showResult && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mt-6"
-          >
-            <div className={`p-4 rounded-2xl text-center mb-4 ${
-              selected?.word === currentQuestion.word.word 
-                ? 'bg-green-100 text-green-700' 
-                : 'bg-red-100 text-red-700'
-            }`}>
-              <p className="text-2xl mb-1">
-                {selected?.word === currentQuestion.word.word ? '🎉 Đúng rồi!' : '😅 Sai rồi!'}
-              </p>
-              <p>Đáp án: <strong>{currentQuestion.word.word}</strong> - {currentQuestion.word.vn}</p>
-            </div>
-            
-            <button
-              onClick={handleNext}
-              className="w-full py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-2xl font-bold text-lg"
+
+        {/* Thông báo đúng */}
+        <AnimatePresence>
+          {showCorrect && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              className="bg-green-100 border-2 border-green-400 rounded-2xl p-4 text-center mb-4"
             >
-              {currentQ < questions.length - 1 ? 'Câu tiếp theo →' : 'Xem kết quả 🏆'}
-            </button>
-          </motion.div>
+              <p className="text-3xl mb-1">🎉</p>
+              <p className="text-green-700 font-bold text-lg">Đúng rồi!</p>
+              <p className="text-green-600">
+                <strong>{currentQuestion.word.word}</strong> = {currentQuestion.word.vn}
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Options - Chữ tiếng Việt */}
+        {!showCorrect && (
+          <div className="grid grid-cols-2 gap-3">
+            {currentQuestion.options.map((option, i) => {
+              const isWrong = wrongAnswer === option.word;
+
+              return (
+                <motion.button
+                  key={option.word}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                    x: isWrong ? [-8, 8, -8, 8, 0] : 0
+                  }}
+                  transition={{
+                    opacity: { delay: i * 0.1 },
+                    y: { delay: i * 0.1 },
+                    x: { duration: 0.4 }
+                  }}
+                  onClick={() => handleSelect(option)}
+                  className={`bg-white border-2 rounded-2xl p-5 text-center transition-all ${
+                    isWrong
+                      ? 'border-red-400 bg-red-50'
+                      : 'border-gray-200 hover:border-purple-400 active:scale-95'
+                  }`}
+                >
+                  <p className="font-bold text-xl text-gray-800">{option.vn}</p>
+                </motion.button>
+              );
+            })}
+          </div>
         )}
       </div>
     </div>
