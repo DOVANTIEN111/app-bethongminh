@@ -36,14 +36,16 @@ export function RBACProvider({ children }) {
   }, []);
 
   const initAuth = async () => {
+    console.log('[RBAC] Initializing auth...');
     try {
       const { data: { session } } = await supabase.auth.getSession();
+      console.log('[RBAC] Current session:', session?.user?.email || 'none');
       if (session?.user) {
         setUser(session.user);
         await loadUserProfile(session.user.id);
       }
     } catch (err) {
-      console.error('Init auth error:', err);
+      console.error('[RBAC] Init auth error:', err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -51,10 +53,12 @@ export function RBACProvider({ children }) {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('[RBAC] Auth state changed:', event, session?.user?.email);
         if (event === 'SIGNED_IN' && session?.user) {
           setUser(session.user);
           await loadUserProfile(session.user.id);
         } else if (event === 'SIGNED_OUT') {
+          console.log('[RBAC] User signed out');
           setUser(null);
           setUserProfile(null);
         }
@@ -65,19 +69,72 @@ export function RBACProvider({ children }) {
   };
 
   const loadUserProfile = async (userId) => {
+    console.log('[RBAC] Loading user profile for:', userId);
     try {
+      // Bước 1: Thử lấy profile hiện có
       const { data, error } = await supabase
         .from('rbac_users')
         .select('*')
         .eq('id', userId)
         .single();
 
-      if (error) throw error;
-      setUserProfile(data);
-      return data;
+      if (data) {
+        console.log('[RBAC] Profile found:', data);
+        setUserProfile(data);
+        return data;
+      }
+
+      // Bước 2: Nếu không có, thử gọi RPC để tạo
+      if (error && error.code === 'PGRST116') {
+        console.log('[RBAC] Profile not found, creating new one...');
+        const { data: newProfile, error: rpcError } = await supabase
+          .rpc('ensure_user_profile', { p_user_id: userId });
+
+        if (newProfile) {
+          console.log('[RBAC] Profile created via RPC:', newProfile);
+          setUserProfile(newProfile);
+          return newProfile;
+        }
+
+        // Bước 3: Fallback - tạo trực tiếp nếu RPC không có
+        if (rpcError) {
+          console.log('[RBAC] RPC failed, creating directly...');
+          const { data: session } = await supabase.auth.getSession();
+          const authUser = session?.session?.user;
+
+          if (authUser) {
+            const newProfileData = {
+              id: userId,
+              email: authUser.email,
+              name: authUser.user_metadata?.name || authUser.email?.split('@')[0] || 'User',
+              role: authUser.user_metadata?.role || 'student',
+              is_active: true,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            };
+
+            const { data: insertedProfile, error: insertError } = await supabase
+              .from('rbac_users')
+              .upsert(newProfileData)
+              .select()
+              .single();
+
+            if (insertedProfile) {
+              console.log('[RBAC] Profile created directly:', insertedProfile);
+              setUserProfile(insertedProfile);
+              return insertedProfile;
+            }
+            console.error('[RBAC] Insert error:', insertError);
+          }
+        }
+      }
+
+      if (error) {
+        console.error('[RBAC] Load profile error:', error);
+      }
+      return null;
     } catch (err) {
-      console.error('Load user profile error:', err);
-      // Nếu chưa có profile, tạo mới với role mặc định
+      console.error('[RBAC] Load user profile exception:', err);
       return null;
     }
   };
@@ -87,6 +144,7 @@ export function RBACProvider({ children }) {
   // =====================================================
 
   const signUp = async (email, password, name, role = 'student') => {
+    console.log('[RBAC] SignUp attempt:', { email, name, role });
     setLoading(true);
     setError(null);
     try {
@@ -97,9 +155,14 @@ export function RBACProvider({ children }) {
           data: { name, role }
         }
       });
-      if (error) throw error;
+      if (error) {
+        console.error('[RBAC] SignUp error:', error);
+        throw error;
+      }
+      console.log('[RBAC] SignUp success:', data.user?.id);
       return { data, error: null };
     } catch (err) {
+      console.error('[RBAC] SignUp exception:', err.message);
       setError(err.message);
       return { data: null, error: err.message };
     } finally {
@@ -108,6 +171,7 @@ export function RBACProvider({ children }) {
   };
 
   const signIn = async (email, password) => {
+    console.log('[RBAC] SignIn attempt:', email);
     setLoading(true);
     setError(null);
     try {
@@ -115,9 +179,14 @@ export function RBACProvider({ children }) {
         email,
         password
       });
-      if (error) throw error;
+      if (error) {
+        console.error('[RBAC] SignIn error:', error);
+        throw error;
+      }
+      console.log('[RBAC] SignIn success:', data.user?.id);
       return { data, error: null };
     } catch (err) {
+      console.error('[RBAC] SignIn exception:', err.message);
       setError(err.message);
       return { data: null, error: err.message };
     } finally {

@@ -130,9 +130,12 @@ export default function LoginPage() {
     setLoading(true);
     setErrors({});
 
+    console.log('[LoginPage] Submit:', { isLogin, email: formData.email, role: selectedRole });
+
     try {
       if (isLogin) {
-        const { error } = await signIn(formData.email, formData.password);
+        const { data, error } = await signIn(formData.email, formData.password);
+        console.log('[LoginPage] SignIn result:', { data: data?.user?.id, error });
         if (error) {
           if (error.includes('Invalid login')) {
             setErrors({ general: 'Email hoặc mật khẩu không đúng' });
@@ -141,12 +144,13 @@ export default function LoginPage() {
           }
         }
       } else {
-        const { error } = await signUp(
+        const { data, error } = await signUp(
           formData.email,
           formData.password,
           formData.name,
           selectedRole
         );
+        console.log('[LoginPage] SignUp result:', { data: data?.user?.id, error });
         if (error) {
           if (error.includes('already registered')) {
             setErrors({ general: 'Email này đã được đăng ký' });
@@ -158,6 +162,7 @@ export default function LoginPage() {
         }
       }
     } catch (err) {
+      console.error('[LoginPage] Exception:', err);
       setErrors({ general: 'Đã xảy ra lỗi. Vui lòng thử lại.' });
     } finally {
       setLoading(false);

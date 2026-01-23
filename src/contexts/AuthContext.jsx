@@ -28,20 +28,23 @@ export function AuthProvider({ children }) {
   }, []);
 
   const initAuth = async () => {
+    console.log('[Auth] Initializing auth...');
     try {
       const { data: { session } } = await supabase.auth.getSession();
+      console.log('[Auth] Current session:', session?.user?.email || 'none');
       if (session?.user) {
         setUser(session.user);
         await loadAccountData(session.user.id);
       }
     } catch (err) {
-      console.error('Init auth error:', err);
+      console.error('[Auth] Init auth error:', err);
     } finally {
       setLoading(false);
     }
 
     const { data: { subscription: authSub } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('[Auth] Auth state changed:', event, session?.user?.email);
         setUser(session?.user ?? null);
         if (session?.user) {
           await loadAccountData(session.user.id);
@@ -64,14 +67,63 @@ export function AuthProvider({ children }) {
   };
 
   const loadAccountData = async (userId) => {
+    console.log('[Auth] Loading account data for:', userId);
     try {
-      const { data: accountData } = await supabase
+      // Thử lấy account hiện có
+      let { data: accountData, error } = await supabase
         .from('accounts')
         .select('*')
         .eq('user_id', userId)
         .single();
 
-      if (!accountData) return;
+      // Nếu không có, thử query bằng id
+      if (!accountData && error?.code === 'PGRST116') {
+        console.log('[Auth] Account not found by user_id, trying id...');
+        const { data: accountById } = await supabase
+          .from('accounts')
+          .select('*')
+          .eq('id', userId)
+          .single();
+        accountData = accountById;
+      }
+
+      // Nếu vẫn không có, tạo mới
+      if (!accountData) {
+        console.log('[Auth] Account not found, creating new one...');
+        const { data: session } = await supabase.auth.getSession();
+        const authUser = session?.session?.user;
+
+        const newAccountData = {
+          id: userId,
+          user_id: userId,
+          email: authUser?.email || '',
+          name: authUser?.user_metadata?.name || authUser?.email?.split('@')[0] || 'User',
+          parent_pin: '1234',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        };
+
+        const { data: insertedAccount, error: insertError } = await supabase
+          .from('accounts')
+          .upsert(newAccountData)
+          .select()
+          .single();
+
+        if (insertError) {
+          console.error('[Auth] Create account error:', insertError);
+          // Không return, tiếp tục với các bước khác
+        } else {
+          accountData = insertedAccount;
+          console.log('[Auth] Account created:', accountData);
+        }
+      }
+
+      if (!accountData) {
+        console.log('[Auth] No account data available');
+        return;
+      }
+
+      console.log('[Auth] Account loaded:', accountData.id);
       setAccount(accountData);
 
       const { data: subData } = await supabase
@@ -81,11 +133,13 @@ export function AuthProvider({ children }) {
         .single();
 
       setSubscription(subData || { plan: 'free', max_devices: 1, max_children: 1 });
+      console.log('[Auth] Subscription:', subData?.plan || 'free');
+
       await checkAndRegisterDevice(accountData.id);
       await loadDevices(accountData.id);
       await loadChildren(accountData.id);
     } catch (err) {
-      console.error('Load account error:', err);
+      console.error('[Auth] Load account error:', err);
     }
   };
 
@@ -674,6 +728,7 @@ export function AuthProvider({ children }) {
   // =====================================================
 
   const signUp = async (email, password, parentName) => {
+    console.log('[Auth] SignUp attempt:', email);
     setLoading(true);
     try {
       const { data, error } = await supabase.auth.signUp({
@@ -681,14 +736,19 @@ export function AuthProvider({ children }) {
         password,
         options: { data: { name: parentName, role: 'parent' } }
       });
-      if (error) throw error;
+      if (error) {
+        console.error('[Auth] SignUp error:', error);
+        throw error;
+      }
 
+      console.log('[Auth] SignUp success:', data.user?.id);
       // Track sign up
       analytics.userSignUp('email');
       setSentryUser({ id: data.user?.id, email });
 
       return { data, error: null };
     } catch (err) {
+      console.error('[Auth] SignUp exception:', err.message);
       return { data: null, error: err.message };
     } finally {
       setLoading(false);
@@ -696,17 +756,23 @@ export function AuthProvider({ children }) {
   };
 
   const signIn = async (email, password) => {
+    console.log('[Auth] SignIn attempt:', email);
     setLoading(true);
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
+      if (error) {
+        console.error('[Auth] SignIn error:', error);
+        throw error;
+      }
 
+      console.log('[Auth] SignIn success:', data.user?.id);
       // Track login
       analytics.userLogin('email');
       setSentryUser({ id: data.user?.id, email });
 
       return { data, error: null };
     } catch (err) {
+      console.error('[Auth] SignIn exception:', err.message);
       return { data: null, error: err.message };
     } finally {
       setLoading(false);
