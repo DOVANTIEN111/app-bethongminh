@@ -263,6 +263,142 @@ export const ENGLISH_TOPICS = {
       { en: 'I go to school.', vn: 'Tôi đi học.' },
       { en: 'Open your book.', vn: 'Mở sách ra.' }
     ]
+  },
+  actions: {
+    id: 'actions',
+    name: 'Actions',
+    nameVn: 'Hành động',
+    icon: '🏃',
+    color: 'from-lime-500 to-green-500',
+    words: [
+      { word: 'Run', vn: 'Chạy', emoji: '🏃' },
+      { word: 'Walk', vn: 'Đi bộ', emoji: '🚶' },
+      { word: 'Jump', vn: 'Nhảy', emoji: '🦘' },
+      { word: 'Swim', vn: 'Bơi', emoji: '🏊' },
+      { word: 'Dance', vn: 'Nhảy múa', emoji: '💃' },
+      { word: 'Sing', vn: 'Hát', emoji: '🎤' },
+      { word: 'Read', vn: 'Đọc', emoji: '📖' },
+      { word: 'Write', vn: 'Viết', emoji: '✍️' },
+      { word: 'Sleep', vn: 'Ngủ', emoji: '😴' },
+      { word: 'Eat', vn: 'Ăn', emoji: '🍽️' },
+      { word: 'Drink', vn: 'Uống', emoji: '🥤' },
+      { word: 'Play', vn: 'Chơi', emoji: '🎮' },
+      { word: 'Study', vn: 'Học', emoji: '📚' },
+      { word: 'Draw', vn: 'Vẽ', emoji: '🎨' }
+    ],
+    sentences: [
+      { en: 'I can run fast.', vn: 'Tôi chạy nhanh được.' },
+      { en: 'She likes to dance.', vn: 'Cô ấy thích nhảy múa.' },
+      { en: 'Let\'s play together!', vn: 'Cùng chơi nào!' }
+    ]
+  },
+  toys: {
+    id: 'toys',
+    name: 'Toys',
+    nameVn: 'Đồ chơi',
+    icon: '🧸',
+    color: 'from-fuchsia-500 to-purple-500',
+    words: [
+      { word: 'Ball', vn: 'Quả bóng', emoji: '⚽' },
+      { word: 'Doll', vn: 'Búp bê', emoji: '🎎' },
+      { word: 'Teddy bear', vn: 'Gấu bông', emoji: '🧸' },
+      { word: 'Car', vn: 'Xe ô tô', emoji: '🚗' },
+      { word: 'Train', vn: 'Tàu hỏa', emoji: '🚂' },
+      { word: 'Puzzle', vn: 'Xếp hình', emoji: '🧩' },
+      { word: 'Blocks', vn: 'Khối xếp', emoji: '🧱' },
+      { word: 'Kite', vn: 'Diều', emoji: '🪁' },
+      { word: 'Robot', vn: 'Người máy', emoji: '🤖' },
+      { word: 'Balloon', vn: 'Bóng bay', emoji: '🎈' },
+      { word: 'Drum', vn: 'Trống', emoji: '🥁' },
+      { word: 'Piano', vn: 'Đàn piano', emoji: '🎹' }
+    ],
+    sentences: [
+      { en: 'I have a ball.', vn: 'Tôi có một quả bóng.' },
+      { en: 'This is my teddy bear.', vn: 'Đây là gấu bông của tôi.' },
+      { en: 'Let\'s fly the kite!', vn: 'Thả diều nào!' }
+    ]
+  },
+  nature: {
+    id: 'nature',
+    name: 'Nature',
+    nameVn: 'Thiên nhiên',
+    icon: '🌿',
+    color: 'from-emerald-500 to-teal-500',
+    words: [
+      { word: 'Tree', vn: 'Cây', emoji: '🌳' },
+      { word: 'Flower', vn: 'Hoa', emoji: '🌸' },
+      { word: 'Grass', vn: 'Cỏ', emoji: '🌿' },
+      { word: 'Mountain', vn: 'Núi', emoji: '⛰️' },
+      { word: 'River', vn: 'Sông', emoji: '🏞️' },
+      { word: 'Sea', vn: 'Biển', emoji: '🌊' },
+      { word: 'Lake', vn: 'Hồ', emoji: '🏝️' },
+      { word: 'Forest', vn: 'Rừng', emoji: '🌲' },
+      { word: 'Sky', vn: 'Bầu trời', emoji: '🌤️' },
+      { word: 'Moon', vn: 'Mặt trăng', emoji: '🌙' },
+      { word: 'Sun', vn: 'Mặt trời', emoji: '☀️' },
+      { word: 'Star', vn: 'Ngôi sao', emoji: '⭐' },
+      { word: 'Rock', vn: 'Đá', emoji: '🪨' },
+      { word: 'Sand', vn: 'Cát', emoji: '🏖️' }
+    ],
+    sentences: [
+      { en: 'The tree is big.', vn: 'Cây to.' },
+      { en: 'I see the moon.', vn: 'Tôi thấy mặt trăng.' },
+      { en: 'The flowers are beautiful.', vn: 'Những bông hoa đẹp.' }
+    ]
+  },
+  time: {
+    id: 'time',
+    name: 'Time',
+    nameVn: 'Thời gian',
+    icon: '⏰',
+    color: 'from-violet-500 to-indigo-500',
+    words: [
+      { word: 'Morning', vn: 'Buổi sáng', emoji: '🌅' },
+      { word: 'Afternoon', vn: 'Buổi chiều', emoji: '🌤️' },
+      { word: 'Evening', vn: 'Buổi tối', emoji: '🌆' },
+      { word: 'Night', vn: 'Ban đêm', emoji: '🌙' },
+      { word: 'Today', vn: 'Hôm nay', emoji: '📅' },
+      { word: 'Tomorrow', vn: 'Ngày mai', emoji: '📆' },
+      { word: 'Yesterday', vn: 'Hôm qua', emoji: '⏮️' },
+      { word: 'Week', vn: 'Tuần', emoji: '🗓️' },
+      { word: 'Month', vn: 'Tháng', emoji: '📆' },
+      { word: 'Year', vn: 'Năm', emoji: '🎊' },
+      { word: 'Clock', vn: 'Đồng hồ', emoji: '🕐' },
+      { word: 'Hour', vn: 'Giờ', emoji: '⏰' }
+    ],
+    sentences: [
+      { en: 'Good morning!', vn: 'Chào buổi sáng!' },
+      { en: 'See you tomorrow.', vn: 'Hẹn gặp ngày mai.' },
+      { en: 'What time is it?', vn: 'Mấy giờ rồi?' }
+    ]
+  },
+  home: {
+    id: 'home',
+    name: 'Home',
+    nameVn: 'Ngôi nhà',
+    icon: '🏠',
+    color: 'from-orange-500 to-red-500',
+    words: [
+      { word: 'House', vn: 'Ngôi nhà', emoji: '🏠' },
+      { word: 'Door', vn: 'Cửa ra vào', emoji: '🚪' },
+      { word: 'Window', vn: 'Cửa sổ', emoji: '🪟' },
+      { word: 'Room', vn: 'Phòng', emoji: '🛋️' },
+      { word: 'Bedroom', vn: 'Phòng ngủ', emoji: '🛏️' },
+      { word: 'Kitchen', vn: 'Nhà bếp', emoji: '🍳' },
+      { word: 'Bathroom', vn: 'Phòng tắm', emoji: '🛁' },
+      { word: 'Table', vn: 'Bàn', emoji: '🪑' },
+      { word: 'Bed', vn: 'Giường', emoji: '🛏️' },
+      { word: 'Lamp', vn: 'Đèn', emoji: '💡' },
+      { word: 'TV', vn: 'Tivi', emoji: '📺' },
+      { word: 'Sofa', vn: 'Ghế sofa', emoji: '🛋️' },
+      { word: 'Garden', vn: 'Vườn', emoji: '🌷' },
+      { word: 'Roof', vn: 'Mái nhà', emoji: '🏠' }
+    ],
+    sentences: [
+      { en: 'This is my house.', vn: 'Đây là nhà tôi.' },
+      { en: 'I sleep in my bedroom.', vn: 'Tôi ngủ trong phòng ngủ.' },
+      { en: 'Open the door, please.', vn: 'Làm ơn mở cửa.' }
+    ]
   }
 };
 

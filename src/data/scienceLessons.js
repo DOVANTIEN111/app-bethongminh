@@ -831,6 +831,232 @@ export const SCIENCE_LESSONS = {
       },
     ],
   },
+
+  // =====================================================
+  // LEVEL 5: CÔNG NGHỆ & TRÁI ĐẤT (6 bài)
+  // =====================================================
+
+  's5-1': {
+    id: 's5-1',
+    title: 'Điện trong cuộc sống',
+    level: 5,
+    icon: '⚡',
+    questions: [
+      {
+        question: 'Điện dùng để làm gì?',
+        image: '💡',
+        options: ['Uống', 'Thắp sáng và chạy máy', 'Ăn', 'Mặc'],
+        answer: 1,
+        explanation: 'Điện giúp thắp sáng đèn và chạy các thiết bị điện.',
+      },
+      {
+        question: 'Khi ra khỏi phòng, nên làm gì với đèn?',
+        image: '🔌',
+        options: ['Để nguyên', 'Tắt đèn', 'Bật thêm', 'Đập vỡ'],
+        answer: 1,
+        explanation: 'Tắt đèn khi ra khỏi phòng để tiết kiệm điện.',
+      },
+      {
+        question: 'Thiết bị nào dùng điện?',
+        image: '📺',
+        options: ['Bàn gỗ', 'Tivi', 'Ghế đá', 'Cây xanh'],
+        answer: 1,
+        explanation: 'Tivi, tủ lạnh, máy tính đều cần điện để hoạt động.',
+      },
+      {
+        question: 'Chạm vào ổ điện có nguy hiểm không?',
+        image: '⚠️',
+        options: ['Không sao', 'Rất nguy hiểm', 'Tốt cho sức khỏe', 'Vui lắm'],
+        answer: 1,
+        explanation: 'Điện rất nguy hiểm, không được chạm vào ổ điện!',
+      },
+    ],
+  },
+
+  's5-2': {
+    id: 's5-2',
+    title: 'Máy tính và công nghệ',
+    level: 5,
+    icon: '💻',
+    questions: [
+      {
+        question: 'Máy tính dùng để làm gì?',
+        image: '💻',
+        options: ['Nấu cơm', 'Học tập và làm việc', 'Quét nhà', 'Giặt đồ'],
+        answer: 1,
+        explanation: 'Máy tính giúp học tập, làm việc và giải trí.',
+      },
+      {
+        question: 'Điện thoại thông minh có thể làm gì?',
+        image: '📱',
+        options: ['Chỉ gọi điện', 'Gọi, nhắn tin, chụp ảnh, lên mạng', 'Chỉ chụp ảnh', 'Không làm gì'],
+        answer: 1,
+        explanation: 'Điện thoại thông minh có nhiều chức năng: gọi, nhắn, chụp ảnh, xem video...',
+      },
+      {
+        question: 'Internet là gì?',
+        image: '🌐',
+        options: ['Món ăn', 'Mạng kết nối toàn cầu', 'Trò chơi', 'Cuốn sách'],
+        answer: 1,
+        explanation: 'Internet kết nối máy tính khắp thế giới để chia sẻ thông tin.',
+      },
+      {
+        question: 'Robot là gì?',
+        image: '🤖',
+        options: ['Động vật', 'Máy móc thông minh', 'Loại cây', 'Món ăn'],
+        answer: 1,
+        explanation: 'Robot là máy móc có thể làm việc theo chương trình.',
+      },
+    ],
+  },
+
+  's5-3': {
+    id: 's5-3',
+    title: 'Phương tiện giao thông',
+    level: 5,
+    icon: '🚗',
+    questions: [
+      {
+        question: 'Xe đạp chạy bằng gì?',
+        image: '🚲',
+        options: ['Xăng', 'Điện', 'Sức người đạp', 'Nước'],
+        answer: 2,
+        explanation: 'Xe đạp chạy bằng sức người đạp pedal.',
+      },
+      {
+        question: 'Máy bay di chuyển ở đâu?',
+        image: '✈️',
+        options: ['Dưới nước', 'Trên đường', 'Trên trời', 'Dưới đất'],
+        answer: 2,
+        explanation: 'Máy bay bay trên bầu trời để di chuyển nhanh.',
+      },
+      {
+        question: 'Tàu thủy di chuyển ở đâu?',
+        image: '🚢',
+        options: ['Trên đường', 'Trên nước', 'Trên trời', 'Dưới đất'],
+        answer: 1,
+        explanation: 'Tàu thủy nổi trên mặt nước biển, sông.',
+      },
+      {
+        question: 'Tàu hỏa chạy trên gì?',
+        image: '🚂',
+        options: ['Đường bộ', 'Đường ray', 'Đường thủy', 'Đường không'],
+        answer: 1,
+        explanation: 'Tàu hỏa chạy trên đường ray sắt.',
+      },
+    ],
+  },
+
+  's5-4': {
+    id: 's5-4',
+    title: 'Núi lửa và động đất',
+    level: 5,
+    icon: '🌋',
+    questions: [
+      {
+        question: 'Núi lửa phun ra gì?',
+        image: '🌋',
+        options: ['Nước', 'Dung nham nóng chảy', 'Tuyết', 'Hoa'],
+        answer: 1,
+        explanation: 'Núi lửa phun ra dung nham nóng đỏ từ lòng đất.',
+      },
+      {
+        question: 'Động đất là gì?',
+        image: '🏚️',
+        options: ['Mưa to', 'Mặt đất rung chuyển', 'Gió lớn', 'Nắng nóng'],
+        answer: 1,
+        explanation: 'Động đất là khi các mảng đất trong lòng đất dịch chuyển.',
+      },
+      {
+        question: 'Sóng thần thường xảy ra sau?',
+        image: '🌊',
+        options: ['Mưa', 'Động đất dưới biển', 'Nắng', 'Gió'],
+        answer: 1,
+        explanation: 'Động đất dưới đáy biển có thể gây ra sóng thần.',
+      },
+      {
+        question: 'Khi động đất nên làm gì?',
+        image: '🏃',
+        options: ['Đứng yên', 'Chui xuống gầm bàn, tránh xa cửa kính', 'Chạy lên cao', 'Bơi lội'],
+        answer: 1,
+        explanation: 'Khi động đất, nên chui xuống gầm bàn chắc chắn.',
+      },
+    ],
+  },
+
+  's5-5': {
+    id: 's5-5',
+    title: 'Tài nguyên thiên nhiên',
+    level: 5,
+    icon: '🌍',
+    questions: [
+      {
+        question: 'Nước sạch là tài nguyên gì?',
+        image: '💧',
+        options: ['Vô hạn', 'Có hạn, cần bảo vệ', 'Không quan trọng', 'Dễ tạo ra'],
+        answer: 1,
+        explanation: 'Nước sạch có hạn, cần tiết kiệm và bảo vệ nguồn nước.',
+      },
+      {
+        question: 'Rừng cây có tác dụng gì?',
+        image: '🌲',
+        options: ['Làm nóng', 'Tạo oxy và bảo vệ đất', 'Gây ô nhiễm', 'Không có tác dụng'],
+        answer: 1,
+        explanation: 'Rừng tạo oxy, chống xói mòn và là nhà của động vật.',
+      },
+      {
+        question: 'Than đá và dầu mỏ là?',
+        image: '⛽',
+        options: ['Thực phẩm', 'Nhiên liệu', 'Đồ chơi', 'Quần áo'],
+        answer: 1,
+        explanation: 'Than đá và dầu mỏ là nhiên liệu để tạo ra năng lượng.',
+      },
+      {
+        question: 'Năng lượng mặt trời có gì tốt?',
+        image: '☀️',
+        options: ['Gây ô nhiễm', 'Sạch và vô tận', 'Rất đắt', 'Không dùng được'],
+        answer: 1,
+        explanation: 'Năng lượng mặt trời sạch, không gây ô nhiễm.',
+      },
+    ],
+  },
+
+  's5-6': {
+    id: 's5-6',
+    title: 'Ôn tập công nghệ',
+    level: 5,
+    icon: '📝',
+    questions: [
+      {
+        question: 'Thiết bị nào cần điện?',
+        image: '🔌',
+        options: ['Xe đạp', 'Tủ lạnh', 'Ghế gỗ', 'Bàn'],
+        answer: 1,
+        explanation: 'Tủ lạnh là thiết bị điện, cần điện để hoạt động.',
+      },
+      {
+        question: 'Internet giúp?',
+        image: '🌐',
+        options: ['Nấu ăn', 'Kết nối và tìm thông tin', 'Giặt đồ', 'Dọn nhà'],
+        answer: 1,
+        explanation: 'Internet giúp kết nối mọi người và tìm kiếm thông tin.',
+      },
+      {
+        question: 'Máy bay bay ở đâu?',
+        image: '✈️',
+        options: ['Dưới nước', 'Trên đường', 'Trên trời', 'Trong đất'],
+        answer: 2,
+        explanation: 'Máy bay bay trên bầu trời.',
+      },
+      {
+        question: 'Tài nguyên nào cần tiết kiệm?',
+        image: '💧',
+        options: ['Không có', 'Nước sạch', 'Rác thải', 'Khói bụi'],
+        answer: 1,
+        explanation: 'Nước sạch có hạn, cần tiết kiệm và bảo vệ.',
+      },
+    ],
+  },
 };
 
 // Lấy bài học khoa học theo ID

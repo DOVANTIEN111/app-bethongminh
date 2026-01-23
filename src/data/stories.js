@@ -1572,6 +1572,982 @@ Thả trâu ăn lúa, gọi cha ời ời..."
         answer: 1
       }
     ]
+  },
+
+  // ==========================================
+  // 16. CẬU BÉ THÔNG MINH
+  // ==========================================
+  {
+    id: 'cau_be_thong_minh',
+    title: 'Cậu Bé Thông Minh',
+    titleEn: 'The Clever Boy',
+    icon: '🧒',
+    cover: '💡',
+    color: 'from-amber-500 to-orange-500',
+    description: 'Trí thông minh giúp giải quyết mọi khó khăn',
+    totalChapters: 4,
+    chapters: [
+      {
+        id: 1,
+        title: 'Vua ra câu đố',
+        content: `Ngày xưa, có một ông vua rất thích thử tài dân chúng. Một hôm, vua truyền lệnh:
+
+"Ai làm được con trâu đực đẻ ra con nghé, ta sẽ thưởng cho vàng bạc châu báu."
+
+Cả nước ai cũng lo lắng, bàn tán. Làm sao trâu đực có thể đẻ con được? Đó là điều không thể!
+
+Ở một làng nọ, có một cậu bé rất thông minh. Khi nghe tin, cậu mỉm cười và nói với cha:
+
+"Cha ơi, con sẽ giúp làng ta giải được câu đố này."
+
+Người cha lo lắng: "Con ơi, đó là việc của vua. Con còn nhỏ, đừng liều lĩnh."
+
+Nhưng cậu bé đã có kế hay.`,
+        image: '👑🐃❓',
+        question: 'Vua ra câu đố gì cho dân chúng?',
+        options: ['Xây lâu đài', 'Làm trâu đực đẻ con', 'Tìm kho báu', 'Giải toán'],
+        answer: 1
+      },
+      {
+        id: 2,
+        title: 'Cậu bé vào cung',
+        content: `Cậu bé lên kinh đô, đứng trước cửa cung khóc ầm ĩ.
+
+Vua nghe tiếng khóc, sai lính ra hỏi. Cậu bé nói:
+
+"Mẹ con mới sinh em bé, nhưng cha con không chịu cho em bé bú. Con buồn quá!"
+
+Lính về tâu với vua. Vua thấy lạ, cho gọi cậu bé vào hỏi:
+
+"Này, sao cha mày lại không cho em bé bú?"
+
+Cậu bé đáp: "Dạ, vì cha con là đàn ông ạ. Đàn ông làm sao cho con bú được?"
+
+Vua cười phá lên: "Đàn ông thì làm sao đẻ con, cho con bú được!"
+
+Cậu bé nhanh trí đáp ngay: "Dạ, vậy thì trâu đực cũng làm sao đẻ ra nghé được ạ?"`,
+        image: '😢👑💬',
+        question: 'Cậu bé dùng cách gì để nói với vua?',
+        options: ['Khóc lóc van xin', 'Dùng câu chuyện cha không cho em bú', 'Đánh nhau với lính', 'Trốn vào cung'],
+        answer: 1
+      },
+      {
+        id: 3,
+        title: 'Vua thử tiếp',
+        content: `Vua thấy cậu bé thông minh, bèn thử thêm:
+
+"Ta cho ngươi một con chim sẻ. Hãy làm thành ba mâm cỗ đãi khách!"
+
+Cậu bé nhận con chim sẻ, rồi đưa cho vua một cây kim và nói:
+
+"Dạ, xin bệ hạ rèn cây kim này thành con dao để con làm thịt chim ạ."
+
+Vua lại cười: "Kim nhỏ xíu, sao rèn thành dao được?"
+
+Cậu bé đáp: "Dạ, kim nhỏ không rèn thành dao được, thì chim sẻ nhỏ cũng không làm thành ba mâm cỗ được ạ."
+
+Vua vỗ tay khen: "Giỏi! Giỏi lắm! Thật là cậu bé thông minh!"`,
+        image: '🐦🔪💡',
+        question: 'Cậu bé đối đáp thế nào khi vua bảo làm 3 mâm cỗ từ con chim sẻ?',
+        options: ['Xin vua tha', 'Bảo vua rèn kim thành dao', 'Bỏ chạy', 'Khóc'],
+        answer: 1
+      },
+      {
+        id: 4,
+        title: 'Phần thưởng xứng đáng',
+        content: `Vua rất hài lòng, phong cậu bé làm trạng nguyên nhỏ tuổi nhất trong lịch sử.
+
+Từ đó, mỗi khi có việc khó, vua đều hỏi ý kiến cậu bé.
+
+Cậu bé lớn lên trở thành một vị quan tài giỏi, giúp dân, giúp nước.
+
+Dân làng ai cũng tự hào vì có người con ưu tú như vậy.
+
+🌟 BÀI HỌC: Trí thông minh không phụ thuộc vào tuổi tác. Biết suy nghĩ và đối đáp khéo léo sẽ giúp ta vượt qua mọi khó khăn.`,
+        image: '👑🎓⭐',
+        question: 'Cậu bé được vua ban thưởng gì?',
+        options: ['Vàng bạc', 'Phong làm trạng nguyên', 'Một con ngựa', 'Không có gì'],
+        answer: 1
+      }
+    ]
+  },
+
+  // ==========================================
+  // 17. SỰ TÍCH CÂY VÚ SỮA
+  // ==========================================
+  {
+    id: 'su_tich_cay_vu_sua',
+    title: 'Sự Tích Cây Vú Sữa',
+    titleEn: 'The Legend of Star Apple Tree',
+    icon: '🌳',
+    cover: '💜',
+    color: 'from-purple-500 to-pink-500',
+    description: 'Tình mẫu tử thiêng liêng',
+    totalChapters: 4,
+    chapters: [
+      {
+        id: 1,
+        title: 'Cậu bé hư',
+        content: `Ngày xưa, có một bà mẹ nghèo sống với con trai. Bà rất thương con, nhưng cậu bé lại nghịch ngợm, ham chơi.
+
+Một hôm, cậu bé đòi mẹ mua cho một con quay. Bà mẹ nghèo, không có tiền, nên từ chối.
+
+Cậu bé tức giận, nói những lời hỗn láo với mẹ rồi bỏ nhà đi.
+
+Bà mẹ đau khổ, khóc than gọi con. Bà đi tìm con khắp nơi, hỏi thăm từng người qua đường.
+
+Nhưng cậu bé đã đi rất xa, không ai biết ở đâu.
+
+Bà mẹ ngày đêm ngóng chờ, vừa khóc vừa gọi tên con.`,
+        image: '👩‍👦😢🏃',
+        question: 'Tại sao cậu bé bỏ nhà đi?',
+        options: ['Vì bị đánh', 'Vì mẹ không mua con quay', 'Vì muốn phiêu lưu', 'Vì không có bạn'],
+        answer: 1
+      },
+      {
+        id: 2,
+        title: 'Những ngày lang thang',
+        content: `Cậu bé lang thang khắp nơi. Lúc đầu cậu thấy vui vì được tự do.
+
+Nhưng dần dần, cậu bắt đầu thấy đói, thấy lạnh. Không có ai cho cậu ăn, không ai lo lắng cho cậu như mẹ.
+
+Một đêm mưa gió, cậu co ro dưới gốc cây, nhớ mẹ da diết.
+
+Cậu nhớ những bữa cơm mẹ nấu, nhớ vòng tay mẹ ấm áp, nhớ lời ru của mẹ.
+
+Cậu bé hối hận, khóc thương mẹ:
+
+"Mẹ ơi, con xin lỗi mẹ! Con muốn về với mẹ!"
+
+Cậu quyết định quay về nhà.`,
+        image: '🌧️😭💔',
+        question: 'Khi lang thang, cậu bé cảm thấy thế nào?',
+        options: ['Rất vui', 'Đói, lạnh và nhớ mẹ', 'Không có gì', 'Tìm được nhiều bạn'],
+        answer: 1
+      },
+      {
+        id: 3,
+        title: 'Về nhà muộn màng',
+        content: `Cậu bé chạy về nhà thật nhanh. Nhưng khi về đến nơi, túp lều xưa đã hoang vắng.
+
+Cậu hỏi hàng xóm, mới biết mẹ đã khóc thương con, rồi ngã bệnh mà mất.
+
+Trước khi mất, bà mẹ vẫn gọi tên con, mong con trở về.
+
+Cậu bé đau đớn, ôm lấy ngôi mộ mẹ mà khóc. Cậu khóc ngày khóc đêm, không ăn không uống.
+
+Nước mắt cậu thấm xuống đất, lòng thương mẹ thấu trời xanh.
+
+Ông Trời thương tình, hóa thân bà mẹ thành một cây xanh tươi mọc lên từ mộ.`,
+        image: '🪦😭🌱',
+        question: 'Điều gì xảy ra khi cậu bé về nhà?',
+        options: ['Mẹ đang chờ', 'Mẹ đã mất vì nhớ con', 'Mẹ đi tìm cậu', 'Mẹ đang nấu cơm'],
+        answer: 1
+      },
+      {
+        id: 4,
+        title: 'Cây vú sữa ra đời',
+        content: `Cây mọc lên từ mộ mẹ rất lạ: lá một mặt xanh, một mặt nâu đỏ như ánh mắt mẹ trông con.
+
+Cây ra quả tròn tròn, khi chín có màu tím hồng. Bổ ra, ruột trắng như sữa, ngọt ngào như dòng sữa mẹ.
+
+Cậu bé ôm cây mà khóc: "Mẹ ơi, con xin lỗi mẹ! Con yêu mẹ!"
+
+Từ đó, cây được gọi là cây Vú Sữa.
+
+Mỗi khi ăn quả vú sữa ngọt ngào, người ta lại nhớ đến tình mẹ bao la.
+
+🌟 BÀI HỌC: Hãy yêu thương và kính trọng cha mẹ khi còn có thể. Đừng để hối hận khi đã muộn.`,
+        image: '🌳💜❤️',
+        question: 'Cây vú sữa có gì đặc biệt?',
+        options: ['Rất cao', 'Ruột trắng như sữa mẹ', 'Không có lá', 'Không ra quả'],
+        answer: 1
+      }
+    ]
+  },
+
+  // ==========================================
+  // 18. SỰ TÍCH CON MUỖI
+  // ==========================================
+  {
+    id: 'su_tich_con_muoi',
+    title: 'Sự Tích Con Muỗi',
+    titleEn: 'The Legend of Mosquito',
+    icon: '🦟',
+    cover: '💉',
+    color: 'from-gray-500 to-slate-600',
+    description: 'Vì sao muỗi hay đốt người',
+    totalChapters: 4,
+    chapters: [
+      {
+        id: 1,
+        title: 'Đôi vợ chồng trẻ',
+        content: `Ngày xưa, có một chàng trai nghèo tên là Ngọc Tâm, lấy vợ là một cô gái tên Nhân.
+
+Ngọc Tâm rất yêu vợ. Anh làm lụng vất vả để nuôi vợ sung sướng.
+
+Một hôm, Nhân bị bệnh nặng rồi qua đời. Ngọc Tâm đau khổ vô cùng.
+
+Anh quyết định đi tìm Diêm Vương xin cho vợ được sống lại.
+
+Diêm Vương thương tình, cho Nhân sống lại với một điều kiện:
+
+"Nhân chỉ được sống nếu Ngọc Tâm nhỏ ba giọt máu nuôi dưỡng hồn vợ. Nếu Nhân phản bội, hồn nàng sẽ tan biến."`,
+        image: '💑💔😢',
+        question: 'Diêm Vương yêu cầu gì để cho Nhân sống lại?',
+        options: ['Tiền vàng', 'Ba giọt máu của Ngọc Tâm', 'Một ngọn núi', 'Không có gì'],
+        answer: 1
+      },
+      {
+        id: 2,
+        title: 'Sự phản bội',
+        content: `Nhân sống lại, hai vợ chồng rất hạnh phúc.
+
+Một hôm, Ngọc Tâm phải đi xa buôn bán. Anh dặn vợ ở nhà ngoan ngoãn chờ.
+
+Trong lúc chồng đi vắng, có một thương lái giàu có đến làng. Thấy Nhân xinh đẹp, hắn tán tỉnh.
+
+Nhân dần dần quên mất tình nghĩa vợ chồng, bỏ theo thương lái.
+
+Khi Ngọc Tâm trở về, không thấy vợ đâu. Anh đau khổ đi tìm.
+
+Cuối cùng, anh tìm thấy vợ trên thuyền thương lái. Nhân không muốn về, đẩy Ngọc Tâm xuống sông.`,
+        image: '💔🚢😈',
+        question: 'Nhân đã làm gì khi chồng đi vắng?',
+        options: ['Chờ chồng về', 'Bỏ theo thương lái khác', 'Về thăm mẹ', 'Đi làm'],
+        answer: 1
+      },
+      {
+        id: 3,
+        title: 'Lời nguyền Diêm Vương',
+        content: `Vì Nhân đã phản bội, lời nguyền của Diêm Vương ứng nghiệm.
+
+Ngay lập tức, thân thể Nhân tan biến thành tro bụi.
+
+Nhưng hồn Nhân vẫn còn vương vấn, biến thành một con vật nhỏ bé bay vo ve.
+
+Đó chính là con muỗi.
+
+Con muỗi đi tìm Ngọc Tâm, muốn xin ba giọt máu để được sống lại làm người.
+
+Nhưng Ngọc Tâm đã mất, và người nào cũng có thể là Ngọc Tâm.`,
+        image: '💨🦟😵',
+        question: 'Nhân biến thành con vật gì?',
+        options: ['Con bướm', 'Con muỗi', 'Con ong', 'Con kiến'],
+        answer: 1
+      },
+      {
+        id: 4,
+        title: 'Vì sao muỗi đốt người',
+        content: `Từ đó, con muỗi cứ bay đi tìm người để hút máu.
+
+Nó hy vọng sẽ tìm được ba giọt máu của Ngọc Tâm để sống lại.
+
+Nhưng vì đã phản bội, nên muỗi mãi mãi không thể làm người được nữa.
+
+Chúng ta thấy muỗi thường vo ve bên tai, như thể đang hỏi:
+"Ngọc Tâm đâu? Ngọc Tâm đâu?"
+
+Rồi muỗi đốt để hút máu, tìm kiếm hy vọng mong manh.
+
+🌟 BÀI HỌC: Sự phản bội sẽ bị trừng phạt. Hãy luôn thủy chung và biết ơn những người yêu thương mình.`,
+        image: '🦟💉😤',
+        question: 'Vì sao muỗi hay đốt người?',
+        options: ['Vì đói', 'Vì tìm ba giọt máu của Ngọc Tâm', 'Vì ghét người', 'Vì thích chơi'],
+        answer: 1
+      }
+    ]
+  },
+
+  // ==========================================
+  // 19. SỰ TÍCH HOA MAI
+  // ==========================================
+  {
+    id: 'su_tich_hoa_mai',
+    title: 'Sự Tích Hoa Mai',
+    titleEn: 'The Legend of Apricot Blossom',
+    icon: '🌸',
+    cover: '💛',
+    color: 'from-yellow-400 to-amber-500',
+    description: 'Vì sao hoa mai nở vào mùa xuân',
+    totalChapters: 4,
+    chapters: [
+      {
+        id: 1,
+        title: 'Nàng tiên hoa',
+        content: `Ngày xưa, trên Thiên Đình có một nàng tiên xinh đẹp tên là Mai.
+
+Nàng phụ trách việc chăm sóc các loài hoa trên trời. Hoa nào nàng chạm vào cũng nở rực rỡ.
+
+Một hôm, nàng nhìn xuống trần gian, thấy mùa đông lạnh lẽo, cây cối trơ trụi, con người buồn bã.
+
+Nàng thương xót, muốn mang hoa xuống trần để sưởi ấm lòng người.
+
+Nhưng Ngọc Hoàng không cho phép:
+
+"Hoa của Thiên Đình không được mang xuống trần gian. Đó là luật trời."
+
+Nàng Mai buồn lắm, nhưng không thể làm trái ý vua cha.`,
+        image: '👸🌸☁️',
+        question: 'Nàng tiên Mai muốn làm gì?',
+        options: ['Ở mãi trên trời', 'Mang hoa xuống trần để sưởi ấm lòng người', 'Ngủ', 'Chơi đùa'],
+        answer: 1
+      },
+      {
+        id: 2,
+        title: 'Quyết định dũng cảm',
+        content: `Mùa đông năm ấy rất khắc nghiệt. Nàng Mai nhìn thấy trẻ em dưới trần run rẩy vì lạnh.
+
+Nàng không chịu được nữa. Nàng quyết định vi phạm luật trời.
+
+Nàng lén lấy những cánh hoa vàng óng, bay xuống trần gian.
+
+Đến nơi, nàng rải hoa khắp nơi. Những cánh hoa vàng rực nở, mang theo hơi ấm và niềm vui.
+
+Người dân vui mừng, đón xuân ấm áp với những bông hoa lạ.
+
+Nhưng Ngọc Hoàng biết được, Ngài rất tức giận.`,
+        image: '🌸⬇️🌍',
+        question: 'Nàng Mai đã làm gì?',
+        options: ['Xin phép vua cha', 'Lén mang hoa xuống trần gian', 'Ở yên trên trời', 'Đi ngủ'],
+        answer: 1
+      },
+      {
+        id: 3,
+        title: 'Hình phạt của Ngọc Hoàng',
+        content: `Ngọc Hoàng phạt nàng Mai:
+
+"Ngươi đã vi phạm luật trời. Ta phạt ngươi phải ở lại trần gian, hóa thân thành cây."
+
+Nàng Mai cúi đầu chấp nhận:
+
+"Thưa vua cha, con cam lòng. Chỉ mong con được nở hoa mỗi năm để mang niềm vui cho mọi người."
+
+Ngọc Hoàng thấy lòng nàng tốt đẹp, bèn cho phép:
+
+"Được. Mỗi năm vào mùa xuân, ngươi sẽ được nở hoa một lần."
+
+Nàng Mai hóa thành cây mai, đứng giữa đất trời.`,
+        image: '👸🌳⚡',
+        question: 'Ngọc Hoàng phạt nàng Mai thế nào?',
+        options: ['Nhốt vào ngục', 'Hóa thành cây mai', 'Đuổi đi xa', 'Không phạt'],
+        answer: 1
+      },
+      {
+        id: 4,
+        title: 'Hoa mai mùa xuân',
+        content: `Từ đó, cứ mỗi độ xuân về, cây mai lại nở hoa vàng rực rỡ.
+
+Những cánh hoa năm cánh mềm mại, màu vàng tươi như nắng xuân.
+
+Hương thơm nhẹ nhàng lan tỏa, báo hiệu một năm mới đến.
+
+Người Việt Nam yêu quý hoa mai, trưng hoa mai trong nhà mỗi dịp Tết.
+
+Hoa mai tượng trưng cho sự may mắn, hạnh phúc và hy vọng.
+
+🌟 BÀI HỌC: Lòng tốt và sự hy sinh vì người khác sẽ được đền đáp. Hoa mai là biểu tượng của tình yêu thương và niềm vui.`,
+        image: '🌸🎊🏠',
+        question: 'Hoa mai nở vào mùa nào?',
+        options: ['Mùa hè', 'Mùa thu', 'Mùa xuân', 'Mùa đông'],
+        answer: 2
+      }
+    ]
+  },
+
+  // ==========================================
+  // 20. TRẠNG QUỲNH
+  // ==========================================
+  {
+    id: 'trang_quynh',
+    title: 'Trạng Quỳnh',
+    titleEn: 'The Witty Quynh',
+    icon: '🎓',
+    cover: '😄',
+    color: 'from-red-500 to-rose-500',
+    description: 'Những câu chuyện hài hước của Trạng Quỳnh',
+    totalChapters: 4,
+    chapters: [
+      {
+        id: 1,
+        title: 'Trạng Quỳnh nhỏ tuổi',
+        content: `Ngày xưa, ở làng Bột Thượng có cậu bé tên Quỳnh rất thông minh, lanh lợi.
+
+Từ nhỏ, Quỳnh đã nổi tiếng với những câu đối đáp thông minh, hài hước.
+
+Một lần, có quan lớn đi qua làng, thấy Quỳnh đang chăn trâu. Quan muốn thử tài, bèn hỏi:
+
+"Này trẻ con, trâu mày có mấy cái lông?"
+
+Quỳnh đáp ngay: "Dạ, xin quan đếm thử xem. Trâu con có bao nhiêu lông thì ngựa quan có bấy nhiêu lông ạ!"
+
+Quan đỏ mặt, không nói được gì, phải đi tiếp.
+
+Tiếng đồn về cậu bé thông minh lan khắp vùng.`,
+        image: '🧒🐃👮',
+        question: 'Quỳnh trả lời quan về số lông trâu thế nào?',
+        options: ['Đếm từng sợi', 'Bằng số lông ngựa quan', 'Không biết', 'Không trả lời'],
+        answer: 1
+      },
+      {
+        id: 2,
+        title: 'Thi Trạng nguyên',
+        content: `Lớn lên, Quỳnh đi thi và đỗ Trạng nguyên, được gọi là Trạng Quỳnh.
+
+Trạng Quỳnh được vua Lê tin dùng, thường ở bên cạnh vua để đối đáp, giải trí.
+
+Một hôm, vua nói: "Trạng hay đùa giỡn, hôm nay ta đố Trạng một câu. Trả lời được thì thưởng, không được thì phạt!"
+
+"Xin bệ hạ cứ hỏi."
+
+Vua chỉ vào con gà đang đẻ trứng: "Quả trứng này có trước hay con gà có trước?"
+
+Trạng Quỳnh đáp: "Dạ, cái gì ở trước thì có trước ạ!"
+
+Vua phá lên cười, thưởng cho Trạng một tấm lụa.`,
+        image: '🎓👑🐔',
+        question: 'Trạng Quỳnh trả lời câu hỏi gà-trứng thế nào?',
+        options: ['Gà có trước', 'Trứng có trước', 'Cái gì ở trước thì có trước', 'Không biết'],
+        answer: 2
+      },
+      {
+        id: 3,
+        title: 'Trạng trị quan tham',
+        content: `Trong triều có một viên quan rất tham lam, hay ức hiếp dân chúng.
+
+Trạng Quỳnh muốn dạy cho hắn một bài học.
+
+Một hôm, Trạng mời quan đến nhà ăn tiệc. Trạng bày một mâm toàn đĩa không.
+
+Quan tức giận: "Trạng coi thường ta sao? Mâm cỗ mà không có gì?"
+
+Trạng cười: "Đại nhân à, ngài thường xử án, bắt dân nộp tiền rồi xử như không. Nay mời ngài ăn tiệc như không, có gì lạ?"
+
+Quan đỏ mặt, biết mình bị chế giễu, từ đó bớt tham lam hơn.`,
+        image: '🍽️😤😂',
+        question: 'Trạng Quỳnh dạy quan tham bằng cách nào?',
+        options: ['Mắng chửi', 'Mời ăn tiệc đĩa không', 'Tố cáo với vua', 'Đánh nhau'],
+        answer: 1
+      },
+      {
+        id: 4,
+        title: 'Trạng Quỳnh giúp dân',
+        content: `Trạng Quỳnh không chỉ vui tính mà còn rất thương dân.
+
+Mỗi khi dân có oan ức, Trạng đều tìm cách giúp đỡ.
+
+Nhiều lần, Trạng dùng trí thông minh để can gián vua, bảo vệ dân nghèo.
+
+Vua có lúc tức giận, nhưng rồi lại phải công nhận Trạng nói đúng.
+
+Dân chúng kính yêu Trạng Quỳnh, truyền tụng những câu chuyện về Trạng cho đến ngày nay.
+
+🌟 BÀI HỌC: Trí thông minh và sự hài hước có thể giúp ta giải quyết nhiều vấn đề. Nhưng quan trọng hơn là dùng tài năng để giúp đỡ mọi người.`,
+        image: '👨‍⚖️❤️👥',
+        question: 'Trạng Quỳnh thường làm gì để giúp dân?',
+        options: ['Cho tiền', 'Dùng trí thông minh can gián vua', 'Đánh nhau', 'Bỏ trốn'],
+        answer: 1
+      }
+    ]
+  },
+
+  // ==========================================
+  // 21. CON CÒ MÀ ĐI ĂN ĐÊM
+  // ==========================================
+  {
+    id: 'con_co_ma_di_an_dem',
+    title: 'Con Cò Và Bài Học Vâng Lời',
+    titleEn: 'The Stork and the Lesson of Obedience',
+    icon: '🦢',
+    cover: '🌙',
+    color: 'from-blue-400 to-cyan-500',
+    description: 'Câu chuyện về sự vâng lời cha mẹ',
+    totalChapters: 4,
+    chapters: [
+      {
+        id: 1,
+        title: 'Đàn cò trắng',
+        content: `Ngày xưa, bên bờ ao có gia đình cò sinh sống. Cò mẹ và các cò con hằng ngày kiếm ăn bên ruộng lúa.
+
+Cò mẹ dặn dò các con:
+
+"Các con à, ban ngày ta bắt tôm cá, ban đêm phải ngủ ngon. Đêm tối nguy hiểm lắm, có rắn rết, có cáo đói."
+
+Các cò con ngoan ngoãn vâng lời. Riêng có một chú cò con tên Bông rất nghịch ngợm.
+
+Bông hay thắc mắc: "Đêm có gì đáng sợ đâu? Con muốn đi thử xem!"
+
+Cò mẹ lo lắng: "Con đừng dại! Đêm tối không nhìn thấy gì, rất nguy hiểm!"`,
+        image: '🦢🌙👪',
+        question: 'Cò mẹ dặn các con điều gì?',
+        options: ['Đi chơi ban đêm', 'Ban đêm phải ngủ, không đi ăn', 'Bay đi xa', 'Không được ăn cá'],
+        answer: 1
+      },
+      {
+        id: 2,
+        title: 'Cò Bông lén đi đêm',
+        content: `Một đêm trăng sáng, Bông lén bay ra khỏi tổ.
+
+"Mẹ nói quá! Đêm trăng sáng thế này có gì đáng sợ đâu!" Bông nghĩ bụng.
+
+Bông bay đến ruộng lúa, thấy cá tôm lấp lánh dưới trăng.
+
+"A, còn nhiều hơn ban ngày!" Bông vui mừng lội xuống bắt cá.
+
+Nhưng bỗng nhiên, mây che mất trăng. Trời tối đen như mực.
+
+Bông hoảng sợ, không nhìn thấy đường. Chú ta bay loạn xạ, đâm vào bụi tre.
+
+"Mẹ ơi! Cứu con!" Bông kêu thảm thiết.`,
+        image: '🦢🌑😱',
+        question: 'Điều gì xảy ra khi Bông đi ăn đêm?',
+        options: ['Bắt được nhiều cá', 'Trời tối, Bông bị lạc và hoảng sợ', 'Gặp bạn mới', 'Về nhà an toàn'],
+        answer: 1
+      },
+      {
+        id: 3,
+        title: 'Cò mẹ tìm con',
+        content: `Cò mẹ thức giấc, thấy Bông không có trong tổ.
+
+"Con đâu rồi? Bông ơi!" Mẹ lo lắng bay đi tìm.
+
+Theo tiếng kêu, mẹ tìm thấy Bông đang mắc trong bụi tre, cánh bị xước.
+
+Mẹ dùng mỏ gỡ con ra, ôm Bông vào lòng.
+
+"Con à, mẹ đã dặn con rồi mà. May mà con không bị rắn cắn hay cáo bắt!"
+
+Bông khóc: "Con xin lỗi mẹ! Con không nghe lời mẹ. Con sẽ không dám nữa."
+
+Mẹ đưa Bông về tổ, rửa vết thương cho con.`,
+        image: '🦢❤️🩹',
+        question: 'Cò mẹ đã làm gì khi tìm thấy con?',
+        options: ['Đánh mắng', 'Gỡ con ra và đưa về tổ chăm sóc', 'Bỏ con lại', 'Khóc'],
+        answer: 1
+      },
+      {
+        id: 4,
+        title: 'Bài học nhớ đời',
+        content: `Từ đó, Bông luôn vâng lời mẹ dạy.
+
+Chú hiểu rằng mẹ dặn dò vì thương con, muốn bảo vệ con khỏi nguy hiểm.
+
+Bông kể lại cho các em cò nghe:
+
+"Các em à, đừng như anh. Cha mẹ nói gì cũng có lý do. Hãy nghe lời cha mẹ nhé!"
+
+Các cò con gật đầu, gia đình cò sống vui vẻ bên nhau.
+
+Và đó là nguồn gốc bài đồng dao:
+"Con cò mà đi ăn đêm,
+Đậu phải cành mềm lộn cổ xuống ao..."
+
+🌟 BÀI HỌC: Cha mẹ dặn dò vì yêu thương con. Hãy vâng lời và tin tưởng cha mẹ.`,
+        image: '🦢👨‍👩‍👧‍👦💕',
+        question: 'Bông học được bài học gì?',
+        options: ['Đi ăn đêm vui', 'Phải vâng lời cha mẹ', 'Không cần mẹ', 'Trốn nhà đi chơi'],
+        answer: 1
+      }
+    ]
+  },
+
+  // ==========================================
+  // 22. SỰ TÍCH CON TRÂU
+  // ==========================================
+  {
+    id: 'su_tich_con_trau',
+    title: 'Sự Tích Con Trâu',
+    titleEn: 'The Legend of the Buffalo',
+    icon: '🐃',
+    cover: '🌾',
+    color: 'from-amber-600 to-yellow-600',
+    description: 'Vì sao trâu không có răng hàm trên',
+    totalChapters: 4,
+    chapters: [
+      {
+        id: 1,
+        title: 'Ngọc Hoàng sai việc',
+        content: `Thuở trời đất mới mở, Ngọc Hoàng sai thần Trâu mang hạt giống lúa xuống trần gian.
+
+Ngọc Hoàng dặn kỹ:
+
+"Ngươi xuống trần, cứ ba bước thì gieo một hạt thóc!"
+
+Thần Trâu vâng lệnh, ôm túi hạt giống bay xuống hạ giới.
+
+Nhưng thần Trâu vốn hay quên. Khi đến nơi, thần nhầm lẫn:
+
+"Ngọc Hoàng bảo sao nhỉ? À, một bước gieo ba hạt thóc!"
+
+Thế là thần Trâu đi một bước, gieo liền ba hạt.
+
+Chẳng mấy chốc, cỏ mọc chi chít khắp nơi, dày hơn cả lúa.`,
+        image: '👑🐃🌱',
+        question: 'Ngọc Hoàng dặn thần Trâu làm gì?',
+        options: ['Một bước gieo ba hạt', 'Ba bước gieo một hạt', 'Gieo hết một lúc', 'Không gieo'],
+        answer: 1
+      },
+      {
+        id: 2,
+        title: 'Hậu quả của sự nhầm lẫn',
+        content: `Cỏ mọc quá nhiều, lấn át cả lúa. Dân chúng không có gì ăn.
+
+Họ kêu than lên Thiên Đình:
+
+"Lạy Ngọc Hoàng, cỏ nhiều quá, chúng con không trồng lúa được!"
+
+Ngọc Hoàng tức giận, gọi thần Trâu lên:
+
+"Ngươi đã làm hỏng việc! Vì ngươi mà dân chúng không có gạo ăn!"
+
+Thần Trâu sợ hãi, cúi đầu nhận lỗi:
+
+"Con xin lỗi Ngọc Hoàng! Con đã nhầm lời dặn của Người."
+
+Ngọc Hoàng nổi giận: "Ngươi phải đền tội!"`,
+        image: '🌿😠⚡',
+        question: 'Điều gì xảy ra vì thần Trâu gieo sai?',
+        options: ['Lúa tốt hơn', 'Cỏ mọc quá nhiều, lấn lúa', 'Hoa nở đẹp', 'Không có gì'],
+        answer: 1
+      },
+      {
+        id: 3,
+        title: 'Hình phạt của trời',
+        content: `Ngọc Hoàng phạt thần Trâu:
+
+"Ngươi hãy xuống trần gian, giúp con người cày ruộng, nhổ cỏ. Từ nay, ngươi phải ăn cỏ để bù lại lỗi lầm!"
+
+Thần Trâu hóa thành con trâu, xuống trần gian.
+
+Từ đó, trâu cùng người nông dân cày bừa trên đồng ruộng.
+
+Ngọc Hoàng còn phạt thêm: "Vì ngươi nói sai một câu, ta lấy đi hàm răng trên của ngươi!"
+
+Thế nên đến nay, trâu chỉ có răng hàm dưới, không có răng hàm trên.`,
+        image: '🐃🌾👨‍🌾',
+        question: 'Ngọc Hoàng phạt thần Trâu thế nào?',
+        options: ['Cho về trời', 'Hóa thành trâu, cày ruộng và ăn cỏ', 'Không phạt', 'Cho nghỉ ngơi'],
+        answer: 1
+      },
+      {
+        id: 4,
+        title: 'Người bạn của nhà nông',
+        content: `Con trâu trở thành người bạn thân thiết của nhà nông.
+
+Trâu cần mẫn cày bừa từ sáng đến chiều, không quản nắng mưa.
+
+Dân gian có câu:
+"Con trâu là đầu cơ nghiệp."
+
+Người nông dân yêu quý trâu, cho trâu ăn no, tắm mát cho trâu.
+
+Mỗi khi nhìn trâu ăn cỏ, người ta lại nhớ câu chuyện ngày xưa.
+
+🌟 BÀI HỌC: Làm sai thì phải chịu trách nhiệm. Nhưng biết sửa sai và chăm chỉ làm việc thì vẫn được mọi người yêu quý.`,
+        image: '🐃❤️👨‍🌾',
+        question: 'Con trâu có vai trò gì với nhà nông?',
+        options: ['Không có gì', 'Là người bạn thân thiết, giúp cày ruộng', 'Gây hại', 'Chỉ ăn cỏ'],
+        answer: 1
+      }
+    ]
+  },
+
+  // ==========================================
+  // 23. AI MUA HÀNH TÔI
+  // ==========================================
+  {
+    id: 'ai_mua_hanh_toi',
+    title: 'Nàng Tiên Ốc',
+    titleEn: 'The Snail Fairy',
+    icon: '🐚',
+    cover: '✨',
+    color: 'from-pink-400 to-purple-400',
+    description: 'Câu chuyện về lòng nhân ái được đền đáp',
+    totalChapters: 4,
+    chapters: [
+      {
+        id: 1,
+        title: 'Chàng trai nghèo',
+        content: `Ngày xưa, có một chàng trai mồ côi tên là Khoai, sống một mình trong căn nhà nhỏ.
+
+Khoai rất nghèo nhưng hiền lành, hay giúp đỡ mọi người.
+
+Một hôm, đi làm đồng về, Khoai thấy một con ốc nhỏ xinh bên bờ ruộng.
+
+"Ồ, con ốc này đẹp quá! Để ta mang về nuôi cho vui."
+
+Khoai đặt con ốc vào trong chum nước, cho nó ít rong rêu ăn.
+
+Mỗi ngày đi làm về, Khoai lại nói chuyện với con ốc như một người bạn.
+
+Con ốc có vỏ óng ánh như cầu vồng, rất đặc biệt.`,
+        image: '👨‍🌾🐚💧',
+        question: 'Chàng Khoai tìm thấy gì?',
+        options: ['Vàng bạc', 'Con ốc xinh đẹp', 'Con cá', 'Viên ngọc'],
+        answer: 1
+      },
+      {
+        id: 2,
+        title: 'Điều kỳ lạ',
+        content: `Từ khi có con ốc, mỗi lần Khoai đi làm về, nhà cửa đã được dọn dẹp sạch sẽ.
+
+Cơm nước nấu sẵn, thơm phức, bày biện đẹp đẽ.
+
+Khoai ngạc nhiên: "Ai đã vào nhà giúp ta?"
+
+Anh hỏi hàng xóm, không ai biết.
+
+Khoai quyết định tìm hiểu. Một hôm, anh giả vờ đi làm nhưng lén quay về.
+
+Từ xa, anh thấy từ trong chum nước, một cô gái xinh đẹp bước ra!
+
+Cô mặc áo lụa trắng, tóc dài mềm mại, đang nấu cơm trong bếp.`,
+        image: '🏠✨👸',
+        question: 'Điều gì kỳ lạ xảy ra trong nhà Khoai?',
+        options: ['Có trộm', 'Nhà được dọn dẹp, cơm nấu sẵn', 'Nhà bị cháy', 'Không có gì'],
+        answer: 1
+      },
+      {
+        id: 3,
+        title: 'Nàng tiên ốc',
+        content: `Khoai chạy vội vào nhà, đập vỡ vỏ ốc để cô gái không thể biến đi.
+
+Cô gái sợ hãi, nhưng rồi mỉm cười:
+
+"Chàng đã phá vỏ ốc, ta không thể về trời được nữa rồi."
+
+Cô kể: "Ta là tiên nữ trên Thiên Đình, vì đánh vỡ chén ngọc nên bị đày xuống làm ốc. Thấy chàng hiền lành, tốt bụng, ta muốn giúp đỡ chàng."
+
+Khoai cảm động: "Xin nàng ở lại làm vợ ta!"
+
+Nàng tiên ưng thuận, hai người sống hạnh phúc bên nhau.`,
+        image: '💔🐚💕',
+        question: 'Cô gái trong vỏ ốc là ai?',
+        options: ['Người hàng xóm', 'Nàng tiên bị đày xuống trần', 'Chị của Khoai', 'Người lạ'],
+        answer: 1
+      },
+      {
+        id: 4,
+        title: 'Hạnh phúc viên mãn',
+        content: `Khoai và nàng tiên sống rất hạnh phúc.
+
+Nàng tiên dạy Khoai cách trồng trọt, chăn nuôi. Gia đình ngày càng khấm khá.
+
+Họ có những đứa con ngoan ngoãn, kính yêu cha mẹ.
+
+Nàng tiên nói: "Chàng có tấm lòng nhân hậu, trời đất đã ban phước cho chàng."
+
+Dân làng ai cũng yêu quý gia đình Khoai vì họ luôn giúp đỡ mọi người.
+
+🌟 BÀI HỌC: Lòng tốt và sự nhân ái sẽ được đền đáp xứng đáng. Hãy sống tử tế với mọi người và mọi vật xung quanh.`,
+        image: '👨‍👩‍👧‍👦🏡❤️',
+        question: 'Vì sao Khoai được hạnh phúc?',
+        options: ['Vì giàu có', 'Vì có lòng nhân hậu', 'Vì may mắn', 'Vì thông minh'],
+        answer: 1
+      }
+    ]
+  },
+
+  // ==========================================
+  // 24. QUẠ VÀ CÔNG
+  // ==========================================
+  {
+    id: 'qua_va_cong',
+    title: 'Quạ Và Công',
+    titleEn: 'The Crow and the Peacock',
+    icon: '🦚',
+    cover: '🖤',
+    color: 'from-indigo-500 to-blue-600',
+    description: 'Đừng tự cao tự đại',
+    totalChapters: 4,
+    chapters: [
+      {
+        id: 1,
+        title: 'Cuộc thi sắc đẹp',
+        content: `Ngày xưa, vua loài chim tổ chức cuộc thi chọn chim đẹp nhất.
+
+Các loài chim háo hức chuẩn bị. Công có bộ lông sặc sỡ tự tin lắm:
+
+"Ta đẹp nhất! Chắc chắn ta sẽ thắng!"
+
+Còn Quạ thì buồn bã. Lông Quạ đen thui, xấu xí.
+
+"Ta xấu quá, chẳng ai thèm nhìn ta đâu."
+
+Các loài chim khác rụng lông trong lúc chuẩn bị. Quạ nhặt những chiếc lông đẹp, gắn lên mình.
+
+"Hay quá! Ta sẽ đẹp như các bạn!"
+
+Quạ trở nên lộng lẫy với lông của nhiều loài chim khác.`,
+        image: '🦚🐦🏆',
+        question: 'Quạ đã làm gì để đẹp hơn?',
+        options: ['Tập bay', 'Nhặt lông chim khác gắn lên mình', 'Không làm gì', 'Khóc'],
+        answer: 1
+      },
+      {
+        id: 2,
+        title: 'Ngày thi đến',
+        content: `Đến ngày thi, Quạ đến với bộ lông lộng lẫy.
+
+Vua chim ngắm nhìn: "Ồ, chim này đẹp quá!"
+
+Các loài chim khác ngạc nhiên, ghen tị.
+
+Nhưng bỗng Vẹt nhận ra: "Kìa, lông xanh kia là của ta!"
+
+"Lông đỏ là của ta!" Chim Hồng kêu lên.
+
+"Lông vàng là của ta!" Hoàng Anh tức giận.
+
+Các loài chim xông vào, giật lại lông của mình.
+
+Quạ chỉ còn trơ bộ lông đen, xấu hổ chui vào góc.`,
+        image: '🐦😠🦚',
+        question: 'Điều gì xảy ra trong cuộc thi?',
+        options: ['Quạ thắng cuộc', 'Các chim nhận ra lông mình và giật lại', 'Công thua cuộc', 'Không có gì'],
+        answer: 1
+      },
+      {
+        id: 3,
+        title: 'Bài học của Quạ',
+        content: `Vua chim nói:
+
+"Quạ à, ngươi đã cố gắng giả vờ là người khác. Đó là sai!"
+
+"Nhưng ta xấu quá!" Quạ khóc.
+
+Vua chim ôn tồn:
+
+"Mỗi loài chim đều có vẻ đẹp riêng. Ngươi có giọng hót vang, biết báo tin. Đó là giá trị của ngươi."
+
+"Còn Công," Vua quay sang Công, "ngươi đẹp nhưng hay kiêu ngạo. Vẻ đẹp bên ngoài không quan trọng bằng tâm hồn."
+
+Công đỏ mặt, cúi đầu.`,
+        image: '👑🐦💬',
+        question: 'Vua chim dạy Quạ điều gì?',
+        options: ['Phải đẹp hơn', 'Mỗi loài có vẻ đẹp và giá trị riêng', 'Phải giả vờ', 'Không có gì'],
+        answer: 1
+      },
+      {
+        id: 4,
+        title: 'Cuối cùng',
+        content: `Từ đó, Quạ không còn xấu hổ vì lông đen nữa.
+
+Quạ chăm chỉ bay đi báo tin, giúp đỡ mọi người.
+
+Còn Công, tuy đẹp nhưng học được bài học khiêm tốn.
+
+Công không còn khoe khoang, mà dùng vẻ đẹp để làm vui lòng mọi người.
+
+Cả hai trở thành bạn tốt của nhau.
+
+🌟 BÀI HỌC: Đừng cố gắng trở thành người khác. Hãy tự hào về giá trị riêng của mình. Và đừng kiêu ngạo vì vẻ bề ngoài.`,
+        image: '🦚🐦❤️',
+        question: 'Bài học của câu chuyện là gì?',
+        options: ['Phải đẹp mới tốt', 'Tự hào về giá trị riêng, không kiêu ngạo', 'Phải giả vờ đẹp', 'Không quan trọng'],
+        answer: 1
+      }
+    ]
+  },
+
+  // ==========================================
+  // 25. CÂY ĐÀO THẦN
+  // ==========================================
+  {
+    id: 'cay_dao_than',
+    title: 'Cây Đào Thần',
+    titleEn: 'The Magic Peach Tree',
+    icon: '🍑',
+    cover: '🌸',
+    color: 'from-pink-500 to-red-400',
+    description: 'Sự tích cây đào ngày Tết',
+    totalChapters: 4,
+    chapters: [
+      {
+        id: 1,
+        title: 'Cây đào trên núi',
+        content: `Ngày xưa, trên núi Sóc Sơn có một cây đào cổ thụ rất lớn.
+
+Cây đào này do thần tiên trồng, có ma lực xua đuổi tà ma.
+
+Dưới gốc đào, hai vị thần canh giữ: Thần Trà và Thần Uất.
+
+Thần Trà cao lớn, râu đen, mặt đỏ. Thần Uất thấp hơn, mặt trắng, hiền lành.
+
+Nhiệm vụ của hai thần là bắt ma quỷ, bảo vệ dân làng.
+
+Ma quỷ rất sợ hai vị thần và cây đào thần. Chúng không dám đến gần.
+
+Dân làng sống bình yên dưới sự bảo vệ của cây đào.`,
+        image: '🍑⛰️👹',
+        question: 'Cây đào thần có tác dụng gì?',
+        options: ['Cho quả ăn', 'Xua đuổi tà ma', 'Làm bóng mát', 'Không có gì'],
+        answer: 1
+      },
+      {
+        id: 2,
+        title: 'Ngày Tết đến',
+        content: `Hằng năm, vào dịp Tết, hai vị thần phải về Thiên Đình báo cáo.
+
+Khi đó, ma quỷ được dịp hoành hành.
+
+"Tết này, hai thần đi vắng, ta sẽ phá làng!" Ma vương nói.
+
+Dân làng lo sợ. Họ đến khấn cầu cây đào thần:
+
+"Xin cây đào thiêng bảo vệ chúng con!"
+
+Cây đào rung động, rồi rụng xuống một cành hoa đào.
+
+Một giọng nói vang lên:
+
+"Hãy treo cành đào trước cửa nhà. Ma quỷ sẽ không dám vào."`,
+        image: '🍑🏠👻',
+        question: 'Dân làng được cây đào thần chỉ dẫn làm gì?',
+        options: ['Chạy trốn', 'Treo cành đào trước cửa nhà', 'Đánh ma', 'Cầu nguyện'],
+        answer: 1
+      },
+      {
+        id: 3,
+        title: 'Ma quỷ lui tan',
+        content: `Dân làng làm theo lời cây đào. Nhà nào cũng treo cành đào trước cửa.
+
+Đêm giao thừa, ma quỷ kéo đến.
+
+"Xông vào phá!" Ma vương hô.
+
+Nhưng vừa đến cửa nhà, bọn ma thấy cành đào liền hoảng sợ.
+
+"Cây đào thần! Chạy thôi!" Chúng hét lên.
+
+Hương thơm của hoa đào tỏa ra, ma quỷ không chịu được, bỏ chạy tán loạn.
+
+Dân làng vui mừng, đón Tết an lành.`,
+        image: '🍑👻🏃',
+        question: 'Ma quỷ phản ứng thế nào khi thấy cành đào?',
+        options: ['Xông vào', 'Sợ hãi bỏ chạy', 'Đứng im', 'Cười'],
+        answer: 1
+      },
+      {
+        id: 4,
+        title: 'Tục treo đào ngày Tết',
+        content: `Khi hai vị thần về, thấy dân làng bình an, rất vui.
+
+"Hay lắm! Từ nay, cứ Tết đến, hãy treo cành đào và dán tranh hai ta lên cửa."
+
+Dân làng làm theo. Họ vẽ tranh Thần Trà, Thần Uất dán trước cửa nhà.
+
+Từ đó, tục treo cành đào, dán tranh cửa trở thành phong tục ngày Tết.
+
+Cây đào tượng trưng cho may mắn, bình an, xua đuổi điều xấu.
+
+🌟 BÀI HỌC: Tín ngưỡng và phong tục truyền thống mang ý nghĩa bảo vệ gia đình. Hãy trân trọng và gìn giữ văn hóa dân tộc.`,
+        image: '🍑🏠🎊',
+        question: 'Tục treo đào ngày Tết có ý nghĩa gì?',
+        options: ['Để đẹp', 'Xua đuổi tà ma, mang may mắn', 'Không có ý nghĩa', 'Để bán'],
+        answer: 1
+      }
+    ]
   }
 ];
 
