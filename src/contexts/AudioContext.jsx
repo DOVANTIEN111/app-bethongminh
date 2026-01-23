@@ -179,10 +179,13 @@ export function AudioProvider({ children }) {
     return null;
   }, []);
 
-  // Helper: Play local MP3 file
+  // Helper: Play local MP3 file (tốc độ chậm hơn cho trẻ em)
   const playLocalAudio = useCallback((audioPath, onError) => {
     const audio = new Audio(audioPath);
     audioRef.current = audio;
+
+    // Giảm tốc độ phát để trẻ em dễ nghe hơn
+    audio.playbackRate = 0.85;
 
     audio.onloadstart = () => setIsSpeaking(true);
     audio.onended = () => setIsSpeaking(false);
