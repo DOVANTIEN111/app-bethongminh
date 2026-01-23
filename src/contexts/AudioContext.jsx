@@ -177,63 +177,33 @@ export function AudioProvider({ children }) {
   // Helper function cho speechSynthesis
   const useSpeechSynthesis = useCallback((text, lang = 'en-US', rate = 0.85) => {
     if (!('speechSynthesis' in window)) return;
-
+    
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = lang;
     utterance.rate = rate;
     utterance.pitch = 1;
     utterance.volume = 1;
-
+    
     // Lấy voice phù hợp
     const voices = window.speechSynthesis.getVoices();
-    const langCode = lang.split('-')[0]; // 'en' từ 'en-US'
-
-    // Danh sách voice tiếng Anh ưu tiên (phổ biến trên iOS, Android, Windows, Mac)
-    const englishVoiceNames = [
-      'Google US English', 'Google UK English Female', 'Google UK English Male',
-      'Samantha', 'Daniel', 'Karen', 'Moira', 'Alex', 'Victoria', 'Fiona',
-      'Microsoft David', 'Microsoft Zira', 'Microsoft Mark',
-      'English United States', 'English United Kingdom',
-    ];
-
-    let preferredVoice = null;
-
-    if (langCode === 'en') {
-      // 1. Ưu tiên voice có tên trong danh sách
-      preferredVoice = voices.find(v =>
-        englishVoiceNames.some(name => v.name.includes(name)) &&
-        (v.lang.startsWith('en') || v.lang.includes('en-'))
-      );
-
-      // 2. Tìm voice có lang bắt đầu bằng 'en-US' hoặc 'en-GB'
-      if (!preferredVoice) {
-        preferredVoice = voices.find(v => v.lang === 'en-US' || v.lang === 'en-GB');
-      }
-
-      // 3. Tìm voice có lang bắt đầu bằng 'en'
-      if (!preferredVoice) {
-        preferredVoice = voices.find(v => v.lang.startsWith('en'));
-      }
-
-      // 4. Tìm voice có lang chứa 'en'
-      if (!preferredVoice) {
-        preferredVoice = voices.find(v => v.lang.includes('en'));
-      }
-    } else {
-      // Cho các ngôn ngữ khác
-      preferredVoice = voices.find(v => v.lang.includes(lang)) ||
-                       voices.find(v => v.lang.includes(langCode));
-    }
-
+    const langCode = lang.split('-')[0];
+    
+    // Ưu tiên voice theo thứ tự
+    const preferredVoice = voices.find(v => 
+      v.lang.includes(lang) && (
+        v.name.includes('Google') || 
+        v.name.includes('Samantha') || 
+        v.name.includes('Daniel') ||
+        v.name.includes('Karen') ||
+        v.name.includes('Moira')
+      )
+    ) || voices.find(v => v.lang.includes(lang))
+      || voices.find(v => v.lang.includes(langCode));
+    
     if (preferredVoice) {
       utterance.voice = preferredVoice;
-      // Đảm bảo lang được set đúng theo voice
-      utterance.lang = preferredVoice.lang;
     }
-
-    // Log để debug (có thể bỏ sau khi fix)
-    console.log('TTS:', { text, lang, voiceFound: preferredVoice?.name, voiceLang: preferredVoice?.lang });
-
+    
     window.speechSynthesis.speak(utterance);
   }, []);
 

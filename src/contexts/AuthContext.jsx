@@ -362,10 +362,18 @@ export function AuthProvider({ children }) {
       const newTotalLessons = (currentChild.total_lessons || 0) + 1;
       const newLevel = calculateLevel(newXp);
 
-      // 3. Cập nhật progress
+      await supabase.from('children').update({
+        xp: newXp,
+        level: newLevel,
+        total_lessons: newTotalLessons,
+        total_time_minutes: (currentChild.total_time_minutes || 0) + duration,
+        updated_at: new Date().toISOString(),
+      }).eq('id', currentChild.id);
+
+      // 3. Cập nhật progress.completed trong state local
       const currentProgress = currentChild.progress || {};
       const subjectProgress = currentProgress[subjectId] || { completed: [], scores: {} };
-
+      
       // Thêm lessonId vào completed nếu chưa có
       if (!subjectProgress.completed.includes(lessonId)) {
         subjectProgress.completed.push(lessonId);
@@ -377,17 +385,7 @@ export function AuthProvider({ children }) {
         [subjectId]: subjectProgress,
       };
 
-      // 4. Lưu vào database (bao gồm progress)
-      await supabase.from('children').update({
-        xp: newXp,
-        level: newLevel,
-        total_lessons: newTotalLessons,
-        total_time_minutes: (currentChild.total_time_minutes || 0) + duration,
-        progress: newProgress,
-        updated_at: new Date().toISOString(),
-      }).eq('id', currentChild.id);
-
-      // 5. Cập nhật state local
+      // 4. Cập nhật state local
       setCurrentChild(prev => ({
         ...prev,
         xp: newXp,
