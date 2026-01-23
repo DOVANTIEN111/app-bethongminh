@@ -66,10 +66,14 @@ export default function SubjectPage() {
     // Nếu là môn Toán với bài học mới, dùng MathLessonPage
     if (subjectId === 'math' && lesson.id.startsWith('math-')) {
       navigate(`/math/${lesson.id}`);
-    } 
+    }
     // Nếu là môn Tiếng Việt với bài học mới, dùng VietnameseLessonPage
     else if (subjectId === 'vietnamese' && lesson.id.startsWith('viet-')) {
       navigate(`/vietnamese/${lesson.id}`);
+    }
+    // Nếu là môn Khoa học, dùng ScienceLessonPage
+    else if (subjectId === 'science' && lesson.id.startsWith('s')) {
+      navigate(`/science/${lesson.id}`);
     }
     else {
       navigate(`/lesson/${subjectId}/${lesson.id}`);

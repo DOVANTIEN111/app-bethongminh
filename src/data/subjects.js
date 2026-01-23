@@ -210,6 +210,14 @@ export const SUBJECTS = {
       { id: 's4-3', title: 'Âm thanh', level: 4, desc: 'Âm thanh truyền đi thế nào' },
       { id: 's4-4', title: 'Ánh sáng và màu sắc', level: 4, desc: 'Ánh sáng, bóng tối, cầu vồng' },
       { id: 's4-5', title: 'Ôn tập khoa học', level: 4, desc: 'Ôn tập toàn bộ khoa học' },
+
+      // Level 5: Công nghệ & Trái đất (6 bài)
+      { id: 's5-1', title: 'Điện trong cuộc sống', level: 5, desc: 'An toàn điện, tiết kiệm điện' },
+      { id: 's5-2', title: 'Máy tính và công nghệ', level: 5, desc: 'Internet, robot, điện thoại' },
+      { id: 's5-3', title: 'Phương tiện giao thông', level: 5, desc: 'Xe, máy bay, tàu hỏa, tàu thủy' },
+      { id: 's5-4', title: 'Núi lửa và động đất', level: 5, desc: 'Thiên tai và cách phòng tránh' },
+      { id: 's5-5', title: 'Tài nguyên thiên nhiên', level: 5, desc: 'Nước, rừng, năng lượng xanh' },
+      { id: 's5-6', title: 'Ôn tập công nghệ', level: 5, desc: 'Ôn tập Level 5' },
     ],
   },
 };
