@@ -42,10 +42,10 @@ const Layout = lazy(() => import('./components/Layout'));
 // Protected Route - Phải đăng nhập
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
-  
+
   if (loading) return <SplashScreen message="Đang kiểm tra đăng nhập..." />;
-  if (!isAuthenticated) return <Navigate to="/auth" replace />;
-  
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+
   return children;
 };
 
@@ -64,7 +64,7 @@ function App() {
     <Suspense fallback={<SplashScreen />}>
       <Routes>
         {/* Public routes */}
-        <Route path="/auth" element={<AuthPage />} />
+        <Route path="/auth" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<LoginPage />} />
 
         {/* Role-based redirect after login */}
@@ -135,7 +135,7 @@ function App() {
         <Route path="/dashboard" element={<Navigate to="/parent" replace />} />
 
         {/* Catch all */}
-        <Route path="*" element={<Navigate to="/auth" replace />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </Suspense>
   );
