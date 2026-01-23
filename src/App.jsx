@@ -1,5 +1,5 @@
 // src/App.jsx
-// APP CHÍNH - v3.5.1 với PWA + RBAC + Onboarding + Leaderboard + Dark Mode
+// APP CHÍNH - v3.6.0 với PWA + RBAC + Payment System + Leaderboard + Dark Mode
 import React, { Suspense, lazy } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
@@ -18,6 +18,12 @@ const HomePage = lazy(() => import('./pages/HomePage'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const TeacherDashboard = lazy(() => import('./pages/TeacherDashboard'));
 const ParentDashboard = lazy(() => import('./pages/ParentDashboard'));
+
+// Payment Pages
+const PricingPage = lazy(() => import('./pages/PricingPage'));
+const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
+const SubscriptionPage = lazy(() => import('./pages/SubscriptionPage'));
+const AdminPaymentsPage = lazy(() => import('./pages/AdminPaymentsPage'));
 const SubjectPage = lazy(() => import('./pages/SubjectPage'));
 const LessonPage = lazy(() => import('./pages/LessonPage'));
 const MathLessonPage = lazy(() => import('./pages/MathLessonPage'));
@@ -89,6 +95,26 @@ function App() {
           <RBACProtectedRoute allowedRoles={[ROLES.PARENT]}>
             <ParentDashboard />
           </RBACProtectedRoute>
+        } />
+
+        {/* Admin Payment Management */}
+        <Route path="/admin/payments" element={
+          <RBACProtectedRoute allowedRoles={[ROLES.ADMIN]}>
+            <AdminPaymentsPage />
+          </RBACProtectedRoute>
+        } />
+
+        {/* Payment Routes - Public pricing, protected checkout */}
+        <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/checkout" element={
+          <ProtectedRoute>
+            <CheckoutPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/settings/subscription" element={
+          <ProtectedRoute>
+            <SubscriptionPage />
+          </ProtectedRoute>
         } />
 
         {/* Protected routes - cần đăng nhập */}

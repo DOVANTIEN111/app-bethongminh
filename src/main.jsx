@@ -1,11 +1,12 @@
 // src/main.jsx
-// ENTRY POINT - v3.5.1 với PWA + RBAC + Error Boundary + Toast + Sentry + Analytics
+// ENTRY POINT - v3.6.0 với PWA + RBAC + Payment System + Toast + Sentry + Analytics
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import { AuthProvider } from './contexts/AuthContext';
 import { RBACProvider } from './contexts/RBACContext';
+import { PaymentProvider } from './contexts/PaymentContext';
 import { AppProvider } from './contexts/AppContext';
 import { AudioProvider } from './contexts/AudioContext';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -44,14 +45,16 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <BrowserRouter>
           <AuthProvider>
             <RBACProvider>
-              <AppProvider>
-                <AudioProvider>
-                  <ToastProvider>
-                    <App />
-                    <InstallPWA />
-                  </ToastProvider>
-                </AudioProvider>
-              </AppProvider>
+              <PaymentProvider>
+                <AppProvider>
+                  <AudioProvider>
+                    <ToastProvider>
+                      <App />
+                      <InstallPWA />
+                    </ToastProvider>
+                  </AudioProvider>
+                </AppProvider>
+              </PaymentProvider>
             </RBACProvider>
           </AuthProvider>
         </BrowserRouter>
