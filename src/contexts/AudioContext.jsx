@@ -23,6 +23,7 @@ export function AudioProvider({ children }) {
   const audioCtxRef = useRef(null);
   const audioRef = useRef(null);
   const recognitionRef = useRef(null);
+
   const [soundEnabled, setSoundEnabled] = useState(() => {
     const saved = localStorage.getItem('soundEnabled');
     return saved !== null ? JSON.parse(saved) : true;
@@ -32,13 +33,14 @@ export function AudioProvider({ children }) {
     return saved !== null ? JSON.parse(saved) : false;
   });
   const [isListening, setIsListening] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false); // NEW: Loading state for TTS
 
-  // Check if speech recognition is supported
-  const speechSupported = !!SpeechRecognition;
-  
   // Detect iOS/iPad
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
     (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+  // Check if speech recognition is supported (NOT supported on iOS Safari)
+  const speechSupported = !!SpeechRecognition && !isIOS; // FIX: iOS doesn't support Speech Recognition
 
   const getAudioCtx = useCallback(() => {
     if (!audioCtxRef.current) audioCtxRef.current = new AudioCtx();
@@ -62,7 +64,7 @@ export function AudioProvider({ children }) {
         if (ctx.state === 'suspended') {
           ctx.resume();
         }
-        
+
         // Preload speechSynthesis trên iOS
         if ('speechSynthesis' in window) {
           window.speechSynthesis.cancel();
@@ -84,7 +86,7 @@ export function AudioProvider({ children }) {
     };
   }, [isIOS, getAudioCtx]);
 
-  // Preload voices on iOS
+  // Preload voices
   useEffect(() => {
     if ('speechSynthesis' in window) {
       // Load voices
@@ -97,13 +99,13 @@ export function AudioProvider({ children }) {
 
   const playSound = useCallback((type) => {
     if (!soundEnabled || !SOUNDS[type]) return;
-    
+
     try {
       const ctx = getAudioCtx();
       if (ctx.state === 'suspended') ctx.resume();
-      
+
       const { freq, duration } = SOUNDS[type];
-      
+
       freq.forEach((f, i) => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
@@ -119,119 +121,176 @@ export function AudioProvider({ children }) {
     } catch (e) { console.log('Audio error:', e); }
   }, [soundEnabled, getAudioCtx]);
 
-  // Speak function - ưu tiên speechSynthesis trên iOS
-  const speak = useCallback((text, lang = 'en-US') => {
-    if (!soundEnabled || !text) return;
-    
-    // Dừng audio đang phát
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current = null;
-    }
-    
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-    }
-
-    // Trên iOS - chỉ dùng speechSynthesis
-    if (isIOS) {
-      useSpeechSynthesis(text, lang, 0.85);
-      return;
-    }
-    
-    // Trên Desktop - thử Google TTS trước
-    const encodedText = encodeURIComponent(text);
-    const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=${lang.split('-')[0]}&client=tw-ob&q=${encodedText}`;
-    
-    const audio = new Audio(url);
-    audioRef.current = audio;
-    
-    audio.play().catch((error) => {
-      console.log('Google TTS failed, using fallback:', error);
-      useSpeechSynthesis(text, lang, 0.85);
-    });
-  }, [soundEnabled, isIOS]);
-
-  // Speak slow - cho học từ vựng
-  const speakSlow = useCallback((text, lang = 'en-US') => {
-    if (!soundEnabled || !text) return;
-    
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current = null;
-    }
-    
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-    }
-
-    // Trên iOS - chỉ dùng speechSynthesis
-    if (isIOS) {
-      useSpeechSynthesis(text, lang, 0.6);
-      return;
-    }
-    
-    // Trên Desktop - thử Google TTS trước
-    const encodedText = encodeURIComponent(text);
-    const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=${lang.split('-')[0]}&client=tw-ob&q=${encodedText}&ttsspeed=0.5`;
-    
-    const audio = new Audio(url);
-    audioRef.current = audio;
-    
-    audio.play().catch((error) => {
-      console.log('Google TTS failed, using fallback:', error);
-      useSpeechSynthesis(text, lang, 0.6);
-    });
-  }, [soundEnabled, isIOS]);
-
-  // Helper function cho speechSynthesis
+  // Helper function cho speechSynthesis - MOVED UP before speak/speakSlow
   const useSpeechSynthesis = useCallback((text, lang = 'en-US', rate = 0.85) => {
-    if (!('speechSynthesis' in window)) return;
-    
+    if (!('speechSynthesis' in window)) {
+      setIsSpeaking(false);
+      return;
+    }
+
+    // Cancel any ongoing speech
+    window.speechSynthesis.cancel();
+
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = lang;
     utterance.rate = rate;
     utterance.pitch = 1;
     utterance.volume = 1;
-    
+
+    // Event handlers for loading state
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+
     // Lấy voice phù hợp
     const voices = window.speechSynthesis.getVoices();
     const langCode = lang.split('-')[0];
-    
+
     // Ưu tiên voice theo thứ tự
-    const preferredVoice = voices.find(v => 
+    const preferredVoice = voices.find(v =>
       v.lang.includes(lang) && (
-        v.name.includes('Google') || 
-        v.name.includes('Samantha') || 
+        v.name.includes('Google') ||
+        v.name.includes('Samantha') ||
         v.name.includes('Daniel') ||
         v.name.includes('Karen') ||
         v.name.includes('Moira')
       )
     ) || voices.find(v => v.lang.includes(lang))
       || voices.find(v => v.lang.includes(langCode));
-    
+
     if (preferredVoice) {
       utterance.voice = preferredVoice;
     }
-    
+
     window.speechSynthesis.speak(utterance);
   }, []);
+
+  // Speak function - ưu tiên speechSynthesis trên iOS
+  const speak = useCallback((text, lang = 'en-US') => {
+    if (!soundEnabled || !text) return;
+
+    // Dừng audio đang phát
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+
+    setIsSpeaking(true);
+
+    // Trên iOS - chỉ dùng speechSynthesis (Google TTS không hoạt động)
+    if (isIOS) {
+      useSpeechSynthesis(text, lang, 0.85);
+      return;
+    }
+
+    // Trên Desktop - thử Google TTS trước, fallback sang Web Speech API
+    const encodedText = encodeURIComponent(text);
+    const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=${lang.split('-')[0]}&client=tw-ob&q=${encodedText}`;
+
+    const audio = new Audio(url);
+    audioRef.current = audio;
+
+    // Event handlers
+    audio.onloadstart = () => setIsSpeaking(true);
+    audio.onended = () => setIsSpeaking(false);
+    audio.onerror = () => {
+      console.log('Google TTS failed, using Web Speech API fallback');
+      useSpeechSynthesis(text, lang, 0.85);
+    };
+
+    // Set timeout for slow network
+    const timeout = setTimeout(() => {
+      if (audio.readyState < 2) { // HAVE_CURRENT_DATA
+        console.log('Google TTS timeout, using fallback');
+        audio.pause();
+        useSpeechSynthesis(text, lang, 0.85);
+      }
+    }, 3000);
+
+    audio.play()
+      .then(() => clearTimeout(timeout))
+      .catch((error) => {
+        clearTimeout(timeout);
+        console.log('Google TTS play failed:', error);
+        useSpeechSynthesis(text, lang, 0.85);
+      });
+  }, [soundEnabled, isIOS, useSpeechSynthesis]); // FIX: Added useSpeechSynthesis to dependencies
+
+  // Speak slow - cho học từ vựng
+  const speakSlow = useCallback((text, lang = 'en-US') => {
+    if (!soundEnabled || !text) return;
+
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+
+    setIsSpeaking(true);
+
+    // Trên iOS - chỉ dùng speechSynthesis
+    if (isIOS) {
+      useSpeechSynthesis(text, lang, 0.6);
+      return;
+    }
+
+    // Trên Desktop - thử Google TTS trước
+    const encodedText = encodeURIComponent(text);
+    const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=${lang.split('-')[0]}&client=tw-ob&q=${encodedText}&ttsspeed=0.5`;
+
+    const audio = new Audio(url);
+    audioRef.current = audio;
+
+    audio.onloadstart = () => setIsSpeaking(true);
+    audio.onended = () => setIsSpeaking(false);
+    audio.onerror = () => {
+      console.log('Google TTS slow failed, using fallback');
+      useSpeechSynthesis(text, lang, 0.6);
+    };
+
+    const timeout = setTimeout(() => {
+      if (audio.readyState < 2) {
+        audio.pause();
+        useSpeechSynthesis(text, lang, 0.6);
+      }
+    }, 3000);
+
+    audio.play()
+      .then(() => clearTimeout(timeout))
+      .catch((error) => {
+        clearTimeout(timeout);
+        console.log('Google TTS slow play failed:', error);
+        useSpeechSynthesis(text, lang, 0.6);
+      });
+  }, [soundEnabled, isIOS, useSpeechSynthesis]); // FIX: Added useSpeechSynthesis to dependencies
 
   // Speak Vietnamese
   const speakVietnamese = useCallback((text) => {
     if (!soundEnabled || !text) return;
-    
+
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
-      
+
+      setIsSpeaking(true);
+
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'vi-VN';
       utterance.rate = 0.9;
-      
+
+      utterance.onend = () => setIsSpeaking(false);
+      utterance.onerror = () => setIsSpeaking(false);
+
       const voices = window.speechSynthesis.getVoices();
       const vnVoice = voices.find(v => v.lang.includes('vi'));
       if (vnVoice) utterance.voice = vnVoice;
-      
+
       window.speechSynthesis.speak(utterance);
     }
   }, [soundEnabled]);
@@ -245,6 +304,7 @@ export function AudioProvider({ children }) {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
     }
+    setIsSpeaking(false);
   }, []);
 
   const toggleSound = useCallback(() => {
@@ -255,10 +315,58 @@ export function AudioProvider({ children }) {
     setMusicEnabled(prev => !prev);
   }, []);
 
+  // Calculate similarity between two strings (Levenshtein distance based)
+  // FIX: Memoized with useCallback
+  const calculateSimilarity = useCallback((str1, str2) => {
+    if (str1 === str2) return 1;
+    if (!str1 || !str2) return 0;
+
+    const len1 = str1.length;
+    const len2 = str2.length;
+
+    // Create distance matrix
+    const matrix = Array(len2 + 1).fill(null).map(() => Array(len1 + 1).fill(null));
+
+    for (let i = 0; i <= len1; i++) matrix[0][i] = i;
+    for (let j = 0; j <= len2; j++) matrix[j][0] = j;
+
+    for (let j = 1; j <= len2; j++) {
+      for (let i = 1; i <= len1; i++) {
+        const cost = str1[i - 1] === str2[j - 1] ? 0 : 1;
+        matrix[j][i] = Math.min(
+          matrix[j][i - 1] + 1,
+          matrix[j - 1][i] + 1,
+          matrix[j - 1][i - 1] + cost
+        );
+      }
+    }
+
+    const distance = matrix[len2][len1];
+    const maxLen = Math.max(len1, len2);
+    return 1 - (distance / maxLen);
+  }, []);
+
   // Speech Recognition - for pronunciation practice
   const startListening = useCallback((targetWord, callback) => {
-    if (!speechSupported || !targetWord) {
-      callback?.({ error: 'not_supported' });
+    // FIX: Better error handling for iOS
+    if (isIOS) {
+      callback?.({
+        error: 'ios_not_supported',
+        message: 'iPhone/iPad không hỗ trợ nhận diện giọng nói. Vui lòng dùng máy tính hoặc điện thoại Android.'
+      });
+      return;
+    }
+
+    if (!SpeechRecognition) {
+      callback?.({
+        error: 'not_supported',
+        message: 'Trình duyệt không hỗ trợ nhận diện giọng nói. Vui lòng dùng Chrome hoặc Edge.'
+      });
+      return;
+    }
+
+    if (!targetWord) {
+      callback?.({ error: 'no_word' });
       return;
     }
 
@@ -287,11 +395,25 @@ export function AudioProvider({ children }) {
       recognition.onerror = (event) => {
         setIsListening(false);
         if (event.error === 'no-speech') {
-          callback?.({ error: 'no_speech' });
+          callback?.({
+            error: 'no_speech',
+            message: 'Không nghe thấy giọng nói. Hãy nói to và rõ hơn!'
+          });
         } else if (event.error === 'not-allowed') {
-          callback?.({ error: 'not_allowed' });
+          callback?.({
+            error: 'not_allowed',
+            message: 'Chưa cấp quyền microphone. Vui lòng cho phép truy cập microphone trong cài đặt trình duyệt.'
+          });
+        } else if (event.error === 'network') {
+          callback?.({
+            error: 'network',
+            message: 'Lỗi mạng. Vui lòng kiểm tra kết nối internet.'
+          });
         } else {
-          callback?.({ error: event.error });
+          callback?.({
+            error: event.error,
+            message: `Lỗi: ${event.error}`
+          });
         }
       };
 
@@ -329,9 +451,12 @@ export function AudioProvider({ children }) {
     } catch (error) {
       console.error('Speech recognition error:', error);
       setIsListening(false);
-      callback?.({ error: 'failed' });
+      callback?.({
+        error: 'failed',
+        message: 'Không thể khởi động nhận diện giọng nói. Vui lòng thử lại.'
+      });
     }
-  }, [speechSupported]);
+  }, [isIOS, calculateSimilarity]); // FIX: Added calculateSimilarity to dependencies
 
   // Stop speech recognition
   const stopListening = useCallback(() => {
@@ -340,36 +465,6 @@ export function AudioProvider({ children }) {
       setIsListening(false);
     }
   }, []);
-
-  // Calculate similarity between two strings (Levenshtein distance based)
-  const calculateSimilarity = (str1, str2) => {
-    if (str1 === str2) return 1;
-    if (!str1 || !str2) return 0;
-
-    const len1 = str1.length;
-    const len2 = str2.length;
-
-    // Create distance matrix
-    const matrix = Array(len2 + 1).fill(null).map(() => Array(len1 + 1).fill(null));
-
-    for (let i = 0; i <= len1; i++) matrix[0][i] = i;
-    for (let j = 0; j <= len2; j++) matrix[j][0] = j;
-
-    for (let j = 1; j <= len2; j++) {
-      for (let i = 1; i <= len1; i++) {
-        const cost = str1[i - 1] === str2[j - 1] ? 0 : 1;
-        matrix[j][i] = Math.min(
-          matrix[j][i - 1] + 1,
-          matrix[j - 1][i] + 1,
-          matrix[j - 1][i - 1] + cost
-        );
-      }
-    }
-
-    const distance = matrix[len2][len1];
-    const maxLen = Math.max(len1, len2);
-    return 1 - (distance / maxLen);
-  };
 
   return (
     <AudioContext.Provider value={{
@@ -383,6 +478,8 @@ export function AudioProvider({ children }) {
       toggleSound,
       toggleMusic,
       isIOS,
+      // TTS state
+      isSpeaking,
       // Speech Recognition
       speechSupported,
       isListening,

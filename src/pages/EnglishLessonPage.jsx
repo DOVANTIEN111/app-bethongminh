@@ -702,40 +702,45 @@ const SpellMode = ({ topic, progress, onComplete, onBack, onMarkLearned }) => {
 
 // SPEAK MODE - Luyện phát âm
 const SpeakMode = ({ topic, progress, onComplete, onBack, onMarkLearned }) => {
-  const { playSound, speak, startListening, isListening, speechSupported } = useAudio();
+  const { playSound, speak, startListening, isListening, speechSupported, isIOS } = useAudio();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [result, setResult] = useState(null);
   const [score, setScore] = useState(0);
   const [attempts, setAttempts] = useState(0);
-  
+
   const word = topic.words[currentIndex];
-  
+
   const handleListen = () => {
     speak(word.word);
     playSound('click');
   };
-  
+
   const handleSpeak = () => {
     if (!speechSupported) {
-      setResult({ error: 'not_supported' });
+      setResult({
+        error: 'not_supported',
+        message: isIOS
+          ? 'iPhone/iPad không hỗ trợ nhận diện giọng nói. Vui lòng dùng máy tính hoặc điện thoại Android.'
+          : 'Trình duyệt không hỗ trợ. Vui lòng dùng Chrome hoặc Edge.'
+      });
       return;
     }
-    
+
     setResult(null);
     startListening(word.word, (res) => {
       setResult(res);
       setAttempts(a => a + 1);
-      
+
       if (res.success && res.score >= 70) {
         playSound('correct');
         setScore(s => s + 1);
         onMarkLearned(word.word);
-      } else {
+      } else if (!res.error) {
         playSound('wrong');
       }
     });
   };
-  
+
   const handleNext = () => {
     if (currentIndex < topic.words.length - 1) {
       setCurrentIndex(i => i + 1);
@@ -745,15 +750,40 @@ const SpeakMode = ({ topic, progress, onComplete, onBack, onMarkLearned }) => {
       onComplete(finalScore);
     }
   };
-  
+
+  // Hiển thị thông báo đặc biệt cho iOS
   if (!speechSupported) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl p-6 text-center">
-          <p className="text-4xl mb-4">🎤</p>
-          <p className="text-gray-700 font-bold mb-2">Trình duyệt không hỗ trợ</p>
-          <p className="text-gray-500 mb-4">Vui lòng dùng Chrome hoặc Safari để luyện phát âm</p>
-          <button onClick={onBack} className="px-6 py-2 bg-gray-200 rounded-xl">Quay lại</button>
+      <div className="min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 flex items-center justify-center p-4">
+        <div className="bg-white rounded-3xl p-8 text-center max-w-sm shadow-xl">
+          <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-4xl">{isIOS ? '📱' : '🎤'}</span>
+          </div>
+          <h2 className="text-xl font-bold text-gray-800 mb-2">
+            {isIOS ? 'iPhone/iPad không hỗ trợ' : 'Trình duyệt không hỗ trợ'}
+          </h2>
+          <p className="text-gray-500 mb-6">
+            {isIOS
+              ? 'Tính năng nhận diện giọng nói chưa được hỗ trợ trên Safari iOS. Vui lòng sử dụng máy tính hoặc điện thoại Android để luyện phát âm.'
+              : 'Vui lòng sử dụng trình duyệt Chrome hoặc Edge để luyện phát âm.'}
+          </p>
+
+          {/* Gợi ý các chế độ khác */}
+          <div className="bg-blue-50 rounded-xl p-4 mb-4">
+            <p className="text-blue-700 text-sm font-medium mb-2">💡 Bạn vẫn có thể:</p>
+            <ul className="text-blue-600 text-sm text-left space-y-1">
+              <li>• Nghe phát âm chuẩn với chế độ Flashcard</li>
+              <li>• Luyện nghe với chế độ Nghe & Chọn</li>
+              <li>• Luyện viết với chế độ Điền từ</li>
+            </ul>
+          </div>
+
+          <button
+            onClick={onBack}
+            className="w-full py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl font-bold"
+          >
+            Chọn cách học khác
+          </button>
         </div>
       </div>
     );
@@ -827,7 +857,25 @@ const SpeakMode = ({ topic, progress, onComplete, onBack, onMarkLearned }) => {
                 <div className="bg-yellow-100 rounded-2xl p-4">
                   <p className="text-3xl mb-2">🤔</p>
                   <p className="text-yellow-700 font-bold">Không nghe thấy</p>
-                  <p className="text-yellow-600 text-sm">Nói to và rõ hơn nhé!</p>
+                  <p className="text-yellow-600 text-sm">{result.message || 'Nói to và rõ hơn nhé!'}</p>
+                </div>
+              ) : result.error === 'not_allowed' ? (
+                <div className="bg-red-100 rounded-2xl p-4">
+                  <p className="text-3xl mb-2">🎤</p>
+                  <p className="text-red-700 font-bold">Chưa cấp quyền Microphone</p>
+                  <p className="text-red-600 text-sm">{result.message || 'Vui lòng cho phép truy cập microphone trong cài đặt trình duyệt.'}</p>
+                </div>
+              ) : result.error === 'network' ? (
+                <div className="bg-blue-100 rounded-2xl p-4">
+                  <p className="text-3xl mb-2">📶</p>
+                  <p className="text-blue-700 font-bold">Lỗi kết nối</p>
+                  <p className="text-blue-600 text-sm">{result.message || 'Vui lòng kiểm tra kết nối internet.'}</p>
+                </div>
+              ) : result.error ? (
+                <div className="bg-gray-100 rounded-2xl p-4">
+                  <p className="text-3xl mb-2">⚠️</p>
+                  <p className="text-gray-700 font-bold">Có lỗi xảy ra</p>
+                  <p className="text-gray-600 text-sm">{result.message || 'Vui lòng thử lại.'}</p>
                 </div>
               ) : (
                 <div className="bg-orange-100 rounded-2xl p-4">
@@ -835,6 +883,9 @@ const SpeakMode = ({ topic, progress, onComplete, onBack, onMarkLearned }) => {
                   <p className="text-orange-700 font-bold">Thử lại nhé!</p>
                   {result.transcript && (
                     <p className="text-orange-600 text-sm">Bạn nói: "{result.transcript}"</p>
+                  )}
+                  {result.score > 0 && (
+                    <p className="text-orange-500 text-xs mt-1">Độ chính xác: {result.score}%</p>
                   )}
                 </div>
               )}
