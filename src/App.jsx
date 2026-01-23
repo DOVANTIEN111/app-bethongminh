@@ -1,15 +1,23 @@
 // src/App.jsx
-// APP CHÍNH - v3.5.0 với PWA + Onboarding + Leaderboard + Dark Mode
+// APP CHÍNH - v3.5.1 với PWA + RBAC + Onboarding + Leaderboard + Dark Mode
 import React, { Suspense, lazy } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
+import { useRBAC, ROLES } from './contexts/RBACContext';
 import SplashScreen from './components/SplashScreen';
+import { ProtectedRoute as RBACProtectedRoute, RoleBasedRedirect } from './components/ProtectedRoute';
 
 // Lazy load pages
 const AuthPage = lazy(() => import('./pages/AuthPage'));
+const LoginPage = lazy(() => import('./pages/LoginPage'));
 const SelectRolePage = lazy(() => import('./pages/SelectRolePage'));
 const ParentPage = lazy(() => import('./pages/ParentPage'));
 const HomePage = lazy(() => import('./pages/HomePage'));
+
+// RBAC Dashboards
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const TeacherDashboard = lazy(() => import('./pages/TeacherDashboard'));
+const ParentDashboard = lazy(() => import('./pages/ParentDashboard'));
 const SubjectPage = lazy(() => import('./pages/SubjectPage'));
 const LessonPage = lazy(() => import('./pages/LessonPage'));
 const MathLessonPage = lazy(() => import('./pages/MathLessonPage'));
@@ -57,14 +65,39 @@ function App() {
       <Routes>
         {/* Public routes */}
         <Route path="/auth" element={<AuthPage />} />
-        
+        <Route path="/login" element={<LoginPage />} />
+
+        {/* Role-based redirect after login */}
+        <Route path="/redirect" element={<RoleBasedRedirect />} />
+
+        {/* RBAC Protected Routes - Admin Dashboard */}
+        <Route path="/admin" element={
+          <RBACProtectedRoute allowedRoles={[ROLES.ADMIN]}>
+            <AdminDashboard />
+          </RBACProtectedRoute>
+        } />
+
+        {/* RBAC Protected Routes - Teacher Dashboard */}
+        <Route path="/teacher" element={
+          <RBACProtectedRoute allowedRoles={[ROLES.TEACHER]}>
+            <TeacherDashboard />
+          </RBACProtectedRoute>
+        } />
+
+        {/* RBAC Protected Routes - Parent Dashboard (new RBAC version) */}
+        <Route path="/parent-dashboard" element={
+          <RBACProtectedRoute allowedRoles={[ROLES.PARENT]}>
+            <ParentDashboard />
+          </RBACProtectedRoute>
+        } />
+
         {/* Protected routes - cần đăng nhập */}
         <Route path="/select-role" element={
           <ProtectedRoute>
             <SelectRolePage />
           </ProtectedRoute>
         } />
-        
+
         <Route path="/parent" element={
           <ProtectedRoute>
             <ParentPage />
@@ -100,7 +133,7 @@ function App() {
         {/* Legacy routes - redirect */}
         <Route path="/member-select" element={<Navigate to="/select-role" replace />} />
         <Route path="/dashboard" element={<Navigate to="/parent" replace />} />
-        
+
         {/* Catch all */}
         <Route path="*" element={<Navigate to="/auth" replace />} />
       </Routes>
