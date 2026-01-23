@@ -91,12 +91,42 @@ export function PaymentProvider({ children }) {
     if (!user) return null;
 
     try {
-      const { data, error } = await supabase
+      // Try RPC function first
+      const { data: rpcData, error: rpcError } = await supabase
         .rpc('get_user_subscription', { p_user_id: user.id });
 
-      if (error) throw error;
-      setCurrentSubscription(data);
-      return data;
+      if (!rpcError && rpcData) {
+        setCurrentSubscription(rpcData);
+        return rpcData;
+      }
+
+      // Fallback to direct query
+      const { data, error } = await supabase
+        .from('subscriptions')
+        .select('*')
+        .eq('account_id', user.id)
+        .eq('is_active', true)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (error && error.code !== 'PGRST116') throw error;
+
+      const subscription = data ? {
+        subscription_id: data.id,
+        plan: data.plan,
+        price: data.price,
+        is_active: data.is_active,
+        max_devices: data.max_devices,
+        max_children: data.max_children,
+        payment_method: data.payment_method,
+        started_at: data.started_at,
+        expires_at: data.expires_at,
+        days_remaining: data.expires_at ? Math.ceil((new Date(data.expires_at) - new Date()) / (1000 * 60 * 60 * 24)) : null
+      } : { plan: 'free', is_active: false };
+
+      setCurrentSubscription(subscription);
+      return subscription;
     } catch (err) {
       console.error('Load subscription error:', err);
       return null;
@@ -120,15 +150,15 @@ export function PaymentProvider({ children }) {
   }, [getLimit]);
 
   const isPremium = useCallback(() => {
-    return currentSubscription?.plan_slug?.includes('premium');
+    return currentSubscription?.plan?.includes('premium') || currentSubscription?.plan === 'premium';
   }, [currentSubscription]);
 
   const isBasic = useCallback(() => {
-    return currentSubscription?.plan_slug?.includes('basic');
+    return currentSubscription?.plan?.includes('basic') || currentSubscription?.plan === 'basic';
   }, [currentSubscription]);
 
   const isFree = useCallback(() => {
-    return !currentSubscription?.plan_slug || currentSubscription?.plan_slug?.includes('free');
+    return !currentSubscription?.plan || currentSubscription?.plan === 'free' || currentSubscription?.plan?.includes('free');
   }, [currentSubscription]);
 
   // =====================================================
@@ -173,7 +203,7 @@ export function PaymentProvider({ children }) {
 
       // Áp dụng mã giảm giá
       if (promoCode) {
-        const promoResult = await validatePromoCode(promoCode, planId, amount);
+        const promoResult = await validatePromoCode(promoCode, amount);
         if (promoResult.valid) {
           discountAmount = promoResult.discount;
           amount = promoResult.final_amount;
@@ -213,47 +243,55 @@ export function PaymentProvider({ children }) {
   // Xác nhận thanh toán thành công
   const confirmPayment = async (paymentId, transactionData = {}) => {
     try {
-      // Cập nhật payment
+      // Lấy thông tin payment
       const { data: payment, error: paymentError } = await supabase
         .from('payments')
         .update({
           status: 'success',
           paid_at: new Date().toISOString(),
-          payment_data: transactionData,
         })
         .eq('id', paymentId)
-        .select()
+        .select('*, plan:plans(*)')
         .single();
 
       if (paymentError) throw paymentError;
 
-      // Tạo/gia hạn subscription
-      const months = payment.amount >= payment.original_amount * 10 ? 12 : 1;
-      const { data: subResult, error: subError } = await supabase
-        .rpc('create_subscription', {
-          p_user_id: user.id,
-          p_plan_id: payment.plan_id,
-          p_months: months,
-        });
+      // Tính ngày hết hạn
+      const months = payment.amount >= (payment.plan?.price_monthly || 0) * 10 ? 12 : 1;
+      const expiresAt = new Date();
+      expiresAt.setMonth(expiresAt.getMonth() + months);
+
+      // Hủy subscription cũ
+      await supabase
+        .from('subscriptions')
+        .update({ is_active: false })
+        .eq('account_id', user.id)
+        .eq('is_active', true);
+
+      // Tạo subscription mới
+      const { data: subscription, error: subError } = await supabase
+        .from('subscriptions')
+        .insert({
+          account_id: user.id,
+          plan: payment.plan?.slug || 'basic',
+          price: payment.amount,
+          is_active: true,
+          max_devices: payment.plan?.limits?.max_devices || 3,
+          max_children: payment.plan?.limits?.max_children || 1,
+          payment_method: payment.method,
+          started_at: new Date().toISOString(),
+          expires_at: expiresAt.toISOString(),
+        })
+        .select()
+        .single();
 
       if (subError) throw subError;
-
-      // Cập nhật promo code usage
-      if (payment.promo_code_id) {
-        await supabase.from('promo_code_uses').insert({
-          promo_code_id: payment.promo_code_id,
-          user_id: user.id,
-          payment_id: paymentId,
-        });
-
-        await supabase.rpc('increment_promo_usage', { p_promo_id: payment.promo_code_id });
-      }
 
       // Reload subscription
       await loadCurrentSubscription();
       await loadPaymentHistory();
 
-      return { success: true, subscription: subResult };
+      return { success: true, subscription };
     } catch (err) {
       console.error('Confirm payment error:', err);
       return { success: false, error: err.message };
@@ -269,10 +307,7 @@ export function PaymentProvider({ children }) {
     try {
       const { error } = await supabase
         .from('subscriptions')
-        .update({
-          auto_renew: false,
-          cancelled_at: new Date().toISOString(),
-        })
+        .update({ is_active: false })
         .eq('id', currentSubscription.subscription_id);
 
       if (error) throw error;
@@ -288,12 +323,11 @@ export function PaymentProvider({ children }) {
   // PROMO CODES
   // =====================================================
 
-  const validatePromoCode = async (code, planId, amount) => {
+  const validatePromoCode = async (code, amount) => {
     try {
       const { data, error } = await supabase
         .rpc('validate_promo_code', {
           p_code: code.toUpperCase(),
-          p_plan_id: planId,
           p_amount: amount,
         });
 
@@ -375,14 +409,27 @@ export function PaymentProvider({ children }) {
         .from('payments')
         .select(`
           *,
-          user:rbac_users!user_id(name, email),
-          plan:plans(name)
+          plan:plans(name, slug)
         `)
         .eq('status', 'pending')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data || [];
+
+      // Fetch user info separately
+      const userIds = [...new Set(data?.map(p => p.user_id) || [])];
+      const { data: users } = await supabase
+        .from('rbac_users')
+        .select('id, name, email')
+        .in('id', userIds);
+
+      const userMap = {};
+      users?.forEach(u => userMap[u.id] = u);
+
+      return data?.map(p => ({
+        ...p,
+        user: userMap[p.user_id] || { name: 'Unknown', email: '' }
+      })) || [];
     } catch (err) {
       console.error('Get pending payments error:', err);
       return [];
