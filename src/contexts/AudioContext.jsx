@@ -2,6 +2,9 @@ import React, { createContext, useContext, useRef, useState, useEffect, useCallb
 
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
 
+// Vocabulary audio mapping (ElevenLabs - Rachel voice)
+import vocabMapping from '../data/vocabAudioMapping';
+
 // Preload common sounds
 const SOUNDS = {
   correct: { freq: [523.25, 659.25, 783.99], duration: 0.15 },
@@ -165,7 +168,37 @@ export function AudioProvider({ children }) {
     window.speechSynthesis.speak(utterance);
   }, []);
 
-  // Speak function - ưu tiên speechSynthesis trên iOS
+  // Helper: Get local MP3 file path for vocabulary word
+  const getVocabAudioPath = useCallback((text) => {
+    if (!text) return null;
+    const normalizedText = text.toLowerCase().trim();
+    const filename = vocabMapping[normalizedText];
+    if (filename) {
+      return `/audio/vocabulary/${filename}`;
+    }
+    return null;
+  }, []);
+
+  // Helper: Play local MP3 file
+  const playLocalAudio = useCallback((audioPath, onError) => {
+    const audio = new Audio(audioPath);
+    audioRef.current = audio;
+
+    audio.onloadstart = () => setIsSpeaking(true);
+    audio.onended = () => setIsSpeaking(false);
+    audio.onerror = () => {
+      console.log('Local MP3 failed, using fallback');
+      onError?.();
+    };
+
+    audio.play()
+      .catch((error) => {
+        console.log('Local MP3 play failed:', error);
+        onError?.();
+      });
+  }, []);
+
+  // Speak function - ưu tiên file MP3 local (ElevenLabs)
   const speak = useCallback((text, lang = 'en-US') => {
     if (!soundEnabled || !text) return;
 
@@ -181,20 +214,29 @@ export function AudioProvider({ children }) {
 
     setIsSpeaking(true);
 
-    // Trên iOS - chỉ dùng speechSynthesis (Google TTS không hoạt động)
+    // 1. Kiểm tra có file MP3 local không (ElevenLabs - chất lượng cao)
+    const localAudioPath = getVocabAudioPath(text);
+    if (localAudioPath) {
+      playLocalAudio(localAudioPath, () => {
+        // Fallback nếu file MP3 lỗi
+        useSpeechSynthesis(text, lang, 0.85);
+      });
+      return;
+    }
+
+    // 2. Trên iOS - dùng speechSynthesis (Google TTS không hoạt động)
     if (isIOS) {
       useSpeechSynthesis(text, lang, 0.85);
       return;
     }
 
-    // Trên Desktop - thử Google TTS trước, fallback sang Web Speech API
+    // 3. Trên Desktop - thử Google TTS, fallback sang Web Speech API
     const encodedText = encodeURIComponent(text);
     const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=${lang.split('-')[0]}&client=tw-ob&q=${encodedText}`;
 
     const audio = new Audio(url);
     audioRef.current = audio;
 
-    // Event handlers
     audio.onloadstart = () => setIsSpeaking(true);
     audio.onended = () => setIsSpeaking(false);
     audio.onerror = () => {
@@ -202,9 +244,8 @@ export function AudioProvider({ children }) {
       useSpeechSynthesis(text, lang, 0.85);
     };
 
-    // Set timeout for slow network
     const timeout = setTimeout(() => {
-      if (audio.readyState < 2) { // HAVE_CURRENT_DATA
+      if (audio.readyState < 2) {
         console.log('Google TTS timeout, using fallback');
         audio.pause();
         useSpeechSynthesis(text, lang, 0.85);
@@ -218,9 +259,9 @@ export function AudioProvider({ children }) {
         console.log('Google TTS play failed:', error);
         useSpeechSynthesis(text, lang, 0.85);
       });
-  }, [soundEnabled, isIOS, useSpeechSynthesis]); // FIX: Added useSpeechSynthesis to dependencies
+  }, [soundEnabled, isIOS, useSpeechSynthesis, getVocabAudioPath, playLocalAudio]);
 
-  // Speak slow - cho học từ vựng
+  // Speak slow - cho học từ vựng (dùng Web Speech API với tốc độ chậm)
   const speakSlow = useCallback((text, lang = 'en-US') => {
     if (!soundEnabled || !text) return;
 
@@ -235,41 +276,10 @@ export function AudioProvider({ children }) {
 
     setIsSpeaking(true);
 
-    // Trên iOS - chỉ dùng speechSynthesis
-    if (isIOS) {
-      useSpeechSynthesis(text, lang, 0.6);
-      return;
-    }
-
-    // Trên Desktop - thử Google TTS trước
-    const encodedText = encodeURIComponent(text);
-    const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=${lang.split('-')[0]}&client=tw-ob&q=${encodedText}&ttsspeed=0.5`;
-
-    const audio = new Audio(url);
-    audioRef.current = audio;
-
-    audio.onloadstart = () => setIsSpeaking(true);
-    audio.onended = () => setIsSpeaking(false);
-    audio.onerror = () => {
-      console.log('Google TTS slow failed, using fallback');
-      useSpeechSynthesis(text, lang, 0.6);
-    };
-
-    const timeout = setTimeout(() => {
-      if (audio.readyState < 2) {
-        audio.pause();
-        useSpeechSynthesis(text, lang, 0.6);
-      }
-    }, 3000);
-
-    audio.play()
-      .then(() => clearTimeout(timeout))
-      .catch((error) => {
-        clearTimeout(timeout);
-        console.log('Google TTS slow play failed:', error);
-        useSpeechSynthesis(text, lang, 0.6);
-      });
-  }, [soundEnabled, isIOS, useSpeechSynthesis]); // FIX: Added useSpeechSynthesis to dependencies
+    // Dùng Web Speech API với tốc độ chậm để học phát âm
+    // (không dùng file MP3 vì cần phát chậm hơn bình thường)
+    useSpeechSynthesis(text, lang, 0.6);
+  }, [soundEnabled, useSpeechSynthesis]);
 
   // Speak Vietnamese
   const speakVietnamese = useCallback((text) => {
