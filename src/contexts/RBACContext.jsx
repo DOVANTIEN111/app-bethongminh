@@ -67,7 +67,7 @@ export function RBACProvider({ children }) {
   const loadUserProfile = async (userId) => {
     try {
       const { data, error } = await supabase
-        .from('users')
+        .from('rbac_users')
         .select('*')
         .eq('id', userId)
         .single();
@@ -173,7 +173,7 @@ export function RBACProvider({ children }) {
   const getAllUsers = async (filters = {}) => {
     if (!isAdmin()) return [];
     try {
-      let query = supabase.from('users').select('*');
+      let query = supabase.from('rbac_users').select('*');
 
       if (filters.role) {
         query = query.eq('role', filters.role);
@@ -195,7 +195,7 @@ export function RBACProvider({ children }) {
     if (!isAdmin()) return { error: 'Không có quyền' };
     try {
       const { data, error } = await supabase
-        .from('users')
+        .from('rbac_users')
         .update({ role: newRole, updated_at: new Date().toISOString() })
         .eq('id', userId)
         .select()
@@ -212,7 +212,7 @@ export function RBACProvider({ children }) {
     try {
       // Soft delete - đánh dấu is_active = false
       const { error } = await supabase
-        .from('users')
+        .from('rbac_users')
         .update({ is_active: false })
         .eq('id', userId);
       if (error) throw error;
@@ -317,7 +317,7 @@ export function RBACProvider({ children }) {
         .from('class_students')
         .select(`
           *,
-          student:users!student_id(id, name, email, avatar)
+          student:rbac_users!student_id(id, name, email, avatar)
         `)
         .eq('class_id', classId);
       if (error) throw error;
@@ -372,7 +372,7 @@ export function RBACProvider({ children }) {
       const { data, error } = await supabase
         .from('class_students')
         .select(`
-          student:users!student_id(id, name, avatar),
+          student:rbac_users!student_id(id, name, avatar),
           student_progress:student_progress!student_id(*)
         `)
         .eq('class_id', classId);
@@ -395,7 +395,7 @@ export function RBACProvider({ children }) {
         .from('parent_student')
         .select(`
           *,
-          student:users!student_id(id, name, email, avatar)
+          student:rbac_users!student_id(id, name, email, avatar)
         `)
         .eq('parent_id', user.id);
       if (error) throw error;
@@ -411,7 +411,7 @@ export function RBACProvider({ children }) {
     try {
       // Tìm student theo email
       const { data: student, error: findError } = await supabase
-        .from('users')
+        .from('rbac_users')
         .select('id')
         .eq('email', childEmail)
         .eq('role', 'student')
