@@ -116,14 +116,14 @@ export default function TeacherClassesPage() {
       loadClasses();
     } catch (err) {
       console.error('Add student error:', err);
-      alert('Co loi xay ra: ' + err.message);
+      alert('Có lỗi xảy ra: ' + err.message);
     } finally {
       setAdding(false);
     }
   };
 
   const handleRemoveStudent = async (studentId) => {
-    if (!confirm('Ban co chac muon xoa hoc sinh khoi lop?')) return;
+    if (!confirm('Bạn có chắc muốn xóa học sinh khỏi lớp?')) return;
 
     try {
       const { error } = await supabase
@@ -137,7 +137,7 @@ export default function TeacherClassesPage() {
       loadClasses();
     } catch (err) {
       console.error('Remove student error:', err);
-      alert('Co loi xay ra: ' + err.message);
+      alert('Có lỗi xảy ra: ' + err.message);
     }
   };
 
@@ -168,7 +168,7 @@ export default function TeacherClassesPage() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Tim kiem lop hoc..."
+            placeholder="Tìm kiếm lớp học..."
             className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500"
           />
         </div>
@@ -179,7 +179,7 @@ export default function TeacherClassesPage() {
         {/* Classes List */}
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
           <div className="p-4 border-b border-gray-100">
-            <h3 className="font-semibold text-gray-900">Lop dang day ({filteredClasses.length})</h3>
+            <h3 className="font-semibold text-gray-900">Lớp đang dạy ({filteredClasses.length})</h3>
           </div>
           <div className="divide-y divide-gray-100 max-h-[500px] overflow-y-auto">
             {filteredClasses.map((cls) => (
@@ -197,10 +197,10 @@ export default function TeacherClassesPage() {
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-gray-900">{cls.name}</p>
                     <div className="flex items-center gap-3 mt-1">
-                      <span className="text-sm text-gray-500">Khoi {cls.grade}</span>
+                      <span className="text-sm text-gray-500">Khối {cls.grade}</span>
                       <span className="text-sm text-emerald-600 flex items-center gap-1">
                         <Users className="w-3 h-3" />
-                        {cls.student_count} hoc sinh
+                        {cls.student_count} học sinh
                       </span>
                     </div>
                   </div>
@@ -211,7 +211,7 @@ export default function TeacherClassesPage() {
             {filteredClasses.length === 0 && (
               <div className="p-8 text-center text-gray-500">
                 <BookOpen className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                <p>Ban chua duoc gan lop nao</p>
+                <p>Bạn chưa được gán lớp nào</p>
               </div>
             )}
           </div>
@@ -225,14 +225,14 @@ export default function TeacherClassesPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-semibold text-gray-900">{selectedClass.name}</h3>
-                    <p className="text-sm text-gray-600">Khoi {selectedClass.grade}</p>
+                    <p className="text-sm text-gray-600">Khối {selectedClass.grade}</p>
                   </div>
                   <button
                     onClick={handleOpenAddStudent}
                     className="flex items-center gap-2 px-3 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm"
                   >
                     <UserPlus className="w-4 h-4" />
-                    Them HS
+                    Thêm HS
                   </button>
                 </div>
               </div>
@@ -242,18 +242,18 @@ export default function TeacherClassesPage() {
                 <div className="bg-blue-50 rounded-xl p-3 text-center">
                   <Users className="w-6 h-6 text-blue-600 mx-auto mb-1" />
                   <p className="text-xl font-bold text-blue-600">{classStudents.length}</p>
-                  <p className="text-xs text-blue-700">Hoc sinh</p>
+                  <p className="text-xs text-blue-700">Học sinh</p>
                 </div>
                 <div className="bg-green-50 rounded-xl p-3 text-center">
                   <TrendingUp className="w-6 h-6 text-green-600 mx-auto mb-1" />
                   <p className="text-xl font-bold text-green-600">85%</p>
-                  <p className="text-xs text-green-700">Tien do TB</p>
+                  <p className="text-xs text-green-700">Tiến độ TB</p>
                 </div>
               </div>
 
               {/* Students List */}
               <div className="p-4">
-                <h4 className="font-medium text-gray-900 mb-3">Danh sach hoc sinh</h4>
+                <h4 className="font-medium text-gray-900 mb-3">Danh sách học sinh</h4>
                 {classStudents.length > 0 ? (
                   <div className="space-y-2 max-h-[300px] overflow-y-auto">
                     {classStudents.map((student) => (
@@ -272,7 +272,7 @@ export default function TeacherClassesPage() {
                         <button
                           onClick={() => handleRemoveStudent(student.id)}
                           className="p-1 hover:bg-red-100 rounded text-red-500"
-                          title="Xoa khoi lop"
+                          title="Xóa khỏi lớp"
                         >
                           <X className="w-4 h-4" />
                         </button>
@@ -280,14 +280,14 @@ export default function TeacherClassesPage() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-gray-500 text-center py-4">Chua co hoc sinh nao</p>
+                  <p className="text-gray-500 text-center py-4">Chưa có học sinh nào</p>
                 )}
               </div>
             </>
           ) : (
             <div className="p-8 text-center text-gray-500">
               <BookOpen className="w-12 h-12 mx-auto mb-2 opacity-50" />
-              <p>Chon lop de xem chi tiet</p>
+              <p>Chọn lớp để xem chi tiết</p>
             </div>
           )}
         </div>
@@ -298,7 +298,7 @@ export default function TeacherClassesPage() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-md p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold">Them hoc sinh vao lop</h3>
+              <h3 className="text-lg font-bold">Thêm học sinh vào lớp</h3>
               <button onClick={() => setShowAddStudentModal(false)} className="p-2 hover:bg-gray-100 rounded-full">
                 <X className="w-5 h-5" />
               </button>
@@ -311,7 +311,7 @@ export default function TeacherClassesPage() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Tim hoc sinh..."
+                  placeholder="Tìm học sinh..."
                   className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
@@ -341,7 +341,7 @@ export default function TeacherClassesPage() {
                 </div>
               ))}
               {filteredAvailable.length === 0 && (
-                <p className="text-gray-500 text-center py-4">Khong co hoc sinh nao chua co lop</p>
+                <p className="text-gray-500 text-center py-4">Không có học sinh nào chưa có lớp</p>
               )}
             </div>
 
@@ -349,7 +349,7 @@ export default function TeacherClassesPage() {
               onClick={() => setShowAddStudentModal(false)}
               className="w-full mt-4 px-4 py-2 bg-gray-100 rounded-xl hover:bg-gray-200"
             >
-              Dong
+              Đóng
             </button>
           </div>
         </div>

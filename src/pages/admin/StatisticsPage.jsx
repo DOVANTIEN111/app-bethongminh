@@ -19,10 +19,10 @@ const ROLE_COLORS = {
 const ROLE_LABELS = {
   super_admin: 'Super Admin',
   school_admin: 'School Admin',
-  department_head: 'To truong',
-  teacher: 'Giao vien',
-  parent: 'Phu huynh',
-  student: 'Hoc sinh',
+  department_head: 'Tổ trưởng',
+  teacher: 'Giáo viên',
+  parent: 'Phụ huynh',
+  student: 'Học sinh',
 };
 
 export default function StatisticsPage() {
@@ -129,7 +129,7 @@ export default function StatisticsPage() {
               <Users className="w-6 h-6 text-blue-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-500">Tong nguoi dung</p>
+              <p className="text-sm text-gray-500">Tổng người dùng</p>
               <p className="text-2xl font-bold text-gray-900">{totalStats.users.toLocaleString()}</p>
             </div>
           </div>
@@ -140,7 +140,7 @@ export default function StatisticsPage() {
               <School className="w-6 h-6 text-green-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-500">Tong truong hoc</p>
+              <p className="text-sm text-gray-500">Tổng trường học</p>
               <p className="text-2xl font-bold text-gray-900">{totalStats.schools.toLocaleString()}</p>
             </div>
           </div>
@@ -151,7 +151,7 @@ export default function StatisticsPage() {
               <TrendingUp className="w-6 h-6 text-purple-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-500">Nguoi dung hoat dong</p>
+              <p className="text-sm text-gray-500">Người dùng hoạt động</p>
               <p className="text-2xl font-bold text-gray-900">{totalStats.activeUsers.toLocaleString()}</p>
             </div>
           </div>
@@ -164,7 +164,7 @@ export default function StatisticsPage() {
         <div className="bg-white rounded-xl shadow-sm p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
             <Calendar className="w-5 h-5 text-blue-600" />
-            Nguoi dung theo thang
+            Người dùng theo tháng
           </h3>
           <div className="flex items-end gap-2 h-48">
             {usersByMonth.map((data, i) => (
@@ -184,7 +184,7 @@ export default function StatisticsPage() {
         <div className="bg-white rounded-xl shadow-sm p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
             <PieChart className="w-5 h-5 text-purple-600" />
-            Phan bo theo role
+            Phân bố theo role
           </h3>
           <div className="space-y-3">
             {usersByRole.map((role) => (
@@ -216,7 +216,7 @@ export default function StatisticsPage() {
       <div className="bg-white rounded-xl shadow-sm p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
           <BarChart3 className="w-5 h-5 text-green-600" />
-          Nguoi dung theo truong (Top 10)
+          Người dùng theo trường (Top 10)
         </h3>
         {usersBySchool.length > 0 ? (
           <div className="space-y-3">
@@ -226,7 +226,7 @@ export default function StatisticsPage() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-1">
                     <span className="font-medium text-gray-700 truncate">{school.name}</span>
-                    <span className="text-sm text-gray-500">{school.count} nguoi</span>
+                    <span className="text-sm text-gray-500">{school.count} người</span>
                   </div>
                   <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                     <div
@@ -241,7 +241,7 @@ export default function StatisticsPage() {
         ) : (
           <div className="text-center text-gray-500 py-8">
             <School className="w-12 h-12 mx-auto mb-2 opacity-50" />
-            <p>Chua co du lieu truong hoc</p>
+            <p>Chưa có dữ liệu trường học</p>
           </div>
         )}
       </div>

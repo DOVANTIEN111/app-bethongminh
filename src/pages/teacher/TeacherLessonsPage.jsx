@@ -34,12 +34,12 @@ export default function TeacherLessonsPage() {
     try {
       // Load system lessons (mock data for now)
       setSystemLessons([
-        { id: 's1', title: 'Phep cong trong pham vi 10', subject: 'Toan', grade: '1', type: 'system', duration: '15 phut' },
-        { id: 's2', title: 'Phep tru trong pham vi 10', subject: 'Toan', grade: '1', type: 'system', duration: '15 phut' },
-        { id: 's3', title: 'Hoc van: Chu cai A, B, C', subject: 'Tieng Viet', grade: '1', type: 'system', duration: '20 phut' },
-        { id: 's4', title: 'Phep nhan 2', subject: 'Toan', grade: '2', type: 'system', duration: '20 phut' },
-        { id: 's5', title: 'Phep chia 2', subject: 'Toan', grade: '2', type: 'system', duration: '20 phut' },
-        { id: 's6', title: 'Doc hieu: Truyen co tich', subject: 'Tieng Viet', grade: '2', type: 'system', duration: '25 phut' },
+        { id: 's1', title: 'Phép cộng trong phạm vi 10', subject: 'Toán', grade: '1', type: 'system', duration: '15 phút' },
+        { id: 's2', title: 'Phép trừ trong phạm vi 10', subject: 'Toán', grade: '1', type: 'system', duration: '15 phút' },
+        { id: 's3', title: 'Học vần: Chữ cái A, B, C', subject: 'Tiếng Việt', grade: '1', type: 'system', duration: '20 phút' },
+        { id: 's4', title: 'Phép nhân 2', subject: 'Toán', grade: '2', type: 'system', duration: '20 phút' },
+        { id: 's5', title: 'Phép chia 2', subject: 'Toán', grade: '2', type: 'system', duration: '20 phút' },
+        { id: 's6', title: 'Đọc hiểu: Truyện cổ tích', subject: 'Tiếng Việt', grade: '2', type: 'system', duration: '25 phút' },
       ]);
 
       // Load teacher's custom lessons
@@ -55,8 +55,8 @@ export default function TeacherLessonsPage() {
       } else {
         // Use mock data if table doesn't exist
         setMyLessons([
-          { id: 'm1', title: 'Bai tap bo sung: Phep cong', description: 'Bai tap them cho hoc sinh gioi', type: 'custom', created_at: new Date().toISOString() },
-          { id: 'm2', title: 'On tap cuoi tuan', description: 'Tong hop kien thuc tuan 1', type: 'custom', created_at: new Date().toISOString() },
+          { id: 'm1', title: 'Bài tập bổ sung: Phép cộng', description: 'Bài tập thêm cho học sinh giỏi', type: 'custom', created_at: new Date().toISOString() },
+          { id: 'm2', title: 'Ôn tập cuối tuần', description: 'Tổng hợp kiến thức tuần 1', type: 'custom', created_at: new Date().toISOString() },
         ]);
       }
     } catch (err) {
@@ -139,7 +139,7 @@ export default function TeacherLessonsPage() {
   };
 
   const handleDelete = async (lesson) => {
-    if (!confirm(`Ban co chac muon xoa bai giang "${lesson.title}"?`)) return;
+    if (!confirm(`Bạn có chắc muốn xóa bài giảng "${lesson.title}"?`)) return;
 
     try {
       const { error } = await supabase
@@ -182,7 +182,7 @@ export default function TeacherLessonsPage() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Tim kiem bai giang..."
+            placeholder="Tìm kiếm bài giảng..."
             className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500"
           />
         </div>
@@ -192,7 +192,7 @@ export default function TeacherLessonsPage() {
             className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700"
           >
             <Plus className="w-5 h-5" />
-            Tao bai giang
+            Tạo bài giảng
           </button>
         )}
       </div>
@@ -210,7 +210,7 @@ export default function TeacherLessonsPage() {
           >
             <div className="flex items-center justify-center gap-2">
               <BookOpen className="w-4 h-4" />
-              Bai giang he thong ({systemLessons.length})
+              Bài giảng hệ thống ({systemLessons.length})
             </div>
           </button>
           <button
@@ -223,7 +223,7 @@ export default function TeacherLessonsPage() {
           >
             <div className="flex items-center justify-center gap-2">
               <FileText className="w-4 h-4" />
-              Bai giang cua toi ({myLessons.length})
+              Bài giảng của tôi ({myLessons.length})
             </div>
           </button>
         </div>
@@ -240,27 +240,27 @@ export default function TeacherLessonsPage() {
                     </div>
                     <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-xs flex items-center gap-1">
                       <Lock className="w-3 h-3" />
-                      He thong
+                      Hệ thống
                     </span>
                   </div>
                   <h4 className="font-medium text-gray-900 mb-1">{lesson.title}</h4>
                   <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
                     <span>{lesson.subject}</span>
                     <span>•</span>
-                    <span>Lop {lesson.grade}</span>
+                    <span>Lớp {lesson.grade}</span>
                     <span>•</span>
                     <span>{lesson.duration}</span>
                   </div>
                   <button className="w-full px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm flex items-center justify-center gap-2">
                     <Eye className="w-4 h-4" />
-                    Xem bai giang
+                    Xem bài giảng
                   </button>
                 </div>
               ))}
               {filteredSystem.length === 0 && (
                 <div className="col-span-full text-center text-gray-500 py-8">
                   <BookOpen className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                  <p>Khong tim thay bai giang nao</p>
+                  <p>Không tìm thấy bài giảng nào</p>
                 </div>
               )}
             </div>
@@ -291,7 +291,7 @@ export default function TeacherLessonsPage() {
                     </div>
                   </div>
                   <h4 className="font-medium text-gray-900 mb-1">{lesson.title}</h4>
-                  <p className="text-sm text-gray-500 mb-3 line-clamp-2">{lesson.description || 'Chua co mo ta'}</p>
+                  <p className="text-sm text-gray-500 mb-3 line-clamp-2">{lesson.description || 'Chưa có mô tả'}</p>
                   <div className="flex items-center gap-2">
                     {lesson.video_url && (
                       <span className="px-2 py-1 bg-red-100 text-red-600 rounded text-xs flex items-center gap-1">
@@ -309,12 +309,12 @@ export default function TeacherLessonsPage() {
               {filteredMy.length === 0 && (
                 <div className="col-span-full text-center text-gray-500 py-8">
                   <FileText className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                  <p>Ban chua co bai giang nao</p>
+                  <p>Bạn chưa có bài giảng nào</p>
                   <button
                     onClick={() => handleOpenModal()}
                     className="mt-4 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700"
                   >
-                    Tao bai giang dau tien
+                    Tạo bài giảng đầu tiên
                   </button>
                 </div>
               )}
@@ -329,7 +329,7 @@ export default function TeacherLessonsPage() {
           <div className="bg-white rounded-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold">
-                {editingLesson ? 'Sua bai giang' : 'Tao bai giang moi'}
+                {editingLesson ? 'Sửa bài giảng' : 'Tạo bài giảng mới'}
               </h3>
               <button onClick={() => setShowModal(false)} className="p-2 hover:bg-gray-100 rounded-full">
                 <X className="w-5 h-5" />
@@ -339,38 +339,38 @@ export default function TeacherLessonsPage() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Tieu de *
+                  Tiêu đề *
                 </label>
                 <input
                   type="text"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="VD: Bai tap bo sung phep cong"
+                  placeholder="VD: Bài tập bổ sung phép cộng"
                   className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Mo ta
+                  Mô tả
                 </label>
                 <input
                   type="text"
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Mo ta ngan gon ve bai giang"
+                  placeholder="Mô tả ngắn gọn về bài giảng"
                   className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Noi dung
+                  Nội dung
                 </label>
                 <textarea
                   value={formData.content}
                   onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                  placeholder="Noi dung chi tiet cua bai giang..."
+                  placeholder="Nội dung chi tiết của bài giảng..."
                   rows={5}
                   className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500"
                 />
@@ -394,7 +394,7 @@ export default function TeacherLessonsPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Link file dinh kem
+                  Link file đính kèm
                 </label>
                 <div className="relative">
                   <File className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -413,14 +413,14 @@ export default function TeacherLessonsPage() {
                   onClick={() => setShowModal(false)}
                   className="flex-1 px-4 py-2 border border-gray-200 rounded-xl hover:bg-gray-50"
                 >
-                  Huy
+                  Hủy
                 </button>
                 <button
                   onClick={handleSave}
                   disabled={saving || !formData.title.trim()}
                   className="flex-1 px-4 py-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 disabled:opacity-50"
                 >
-                  {saving ? 'Dang luu...' : 'Luu'}
+                  {saving ? 'Đang lưu...' : 'Lưu'}
                 </button>
               </div>
             </div>

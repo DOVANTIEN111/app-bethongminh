@@ -138,14 +138,14 @@ export default function ClassesPage() {
       loadData();
     } catch (err) {
       console.error('Save class error:', err);
-      alert('Co loi xay ra: ' + err.message);
+      alert('Có lỗi xảy ra: ' + err.message);
     } finally {
       setSaving(false);
     }
   };
 
   const handleDelete = async (cls) => {
-    if (!confirm(`Ban co chac muon xoa lop "${cls.name}"?`)) return;
+    if (!confirm(`Bạn có chắc muốn xóa lớp "${cls.name}"?`)) return;
 
     try {
       const { error } = await supabase
@@ -160,7 +160,7 @@ export default function ClassesPage() {
       }
     } catch (err) {
       console.error('Delete class error:', err);
-      alert('Co loi xay ra: ' + err.message);
+      alert('Có lỗi xảy ra: ' + err.message);
     }
   };
 
@@ -186,7 +186,7 @@ export default function ClassesPage() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Tim kiem lop hoc..."
+            placeholder="Tìm kiếm lớp học..."
             className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -195,7 +195,7 @@ export default function ClassesPage() {
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
         >
           <Plus className="w-5 h-5" />
-          Them lop hoc
+          Thêm lớp học
         </button>
       </div>
 
@@ -204,7 +204,7 @@ export default function ClassesPage() {
         {/* Classes List */}
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
           <div className="p-4 border-b border-gray-100">
-            <h3 className="font-semibold text-gray-900">Danh sach lop hoc ({filteredClasses.length})</h3>
+            <h3 className="font-semibold text-gray-900">Danh sách lớp học ({filteredClasses.length})</h3>
           </div>
           <div className="divide-y divide-gray-100 max-h-[500px] overflow-y-auto">
             {filteredClasses.map((cls) => (
@@ -222,7 +222,7 @@ export default function ClassesPage() {
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-gray-900">{cls.name}</p>
                     <div className="flex flex-wrap gap-2 mt-1">
-                      <span className="text-xs text-gray-500">Khoi {cls.grade}</span>
+                      <span className="text-xs text-gray-500">Khối {cls.grade}</span>
                       {cls.teacher?.full_name && (
                         <span className="text-xs text-green-600">GV: {cls.teacher.full_name}</span>
                       )}
@@ -249,7 +249,7 @@ export default function ClassesPage() {
             {filteredClasses.length === 0 && (
               <div className="p-8 text-center text-gray-500">
                 <BookOpen className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                <p>Chua co lop hoc nao</p>
+                <p>Chưa có lớp học nào</p>
               </div>
             )}
           </div>
@@ -262,7 +262,7 @@ export default function ClassesPage() {
               <div className="p-4 border-b border-gray-100 bg-amber-50">
                 <h3 className="font-semibold text-gray-900">{selectedClass.name}</h3>
                 <div className="flex flex-wrap gap-2 mt-2 text-sm">
-                  <span className="px-2 py-1 bg-white rounded-full">Khoi {selectedClass.grade}</span>
+                  <span className="px-2 py-1 bg-white rounded-full">Khối {selectedClass.grade}</span>
                   {selectedClass.teacher?.full_name && (
                     <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full flex items-center gap-1">
                       <GraduationCap className="w-3 h-3" />
@@ -280,7 +280,7 @@ export default function ClassesPage() {
               <div className="p-4">
                 <h4 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
                   <Users className="w-5 h-5 text-purple-600" />
-                  Hoc sinh trong lop ({classStudents.length})
+                  Học sinh trong lớp ({classStudents.length})
                 </h4>
                 {classStudents.length > 0 ? (
                   <div className="space-y-2 max-h-[300px] overflow-y-auto">
@@ -301,14 +301,14 @@ export default function ClassesPage() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-gray-500 text-center py-4">Chua co hoc sinh nao</p>
+                  <p className="text-gray-500 text-center py-4">Chưa có học sinh nào</p>
                 )}
               </div>
             </>
           ) : (
             <div className="p-8 text-center text-gray-500">
               <BookOpen className="w-12 h-12 mx-auto mb-2 opacity-50" />
-              <p>Chon lop hoc de xem chi tiet</p>
+              <p>Chọn lớp học để xem chi tiết</p>
             </div>
           )}
         </div>
@@ -320,7 +320,7 @@ export default function ClassesPage() {
           <div className="bg-white rounded-2xl w-full max-w-md p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold">
-                {editingClass ? 'Sua lop hoc' : 'Them lop hoc moi'}
+                {editingClass ? 'Sửa lớp học' : 'Thêm lớp học mới'}
               </h3>
               <button onClick={() => setShowModal(false)} className="p-2 hover:bg-gray-100 rounded-full">
                 <X className="w-5 h-5" />
@@ -330,20 +330,20 @@ export default function ClassesPage() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Ten lop *
+                  Tên lớp *
                 </label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="VD: Lop 3A"
+                  placeholder="VD: Lớp 3A"
                   className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Khoi
+                  Khối
                 </label>
                 <select
                   value={formData.grade}
@@ -351,21 +351,21 @@ export default function ClassesPage() {
                   className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
                 >
                   {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((g) => (
-                    <option key={g} value={g}>Khoi {g}</option>
+                    <option key={g} value={g}>Khối {g}</option>
                   ))}
                 </select>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Giao vien phu trach
+                  Giáo viên phụ trách
                 </label>
                 <select
                   value={formData.teacher_id}
                   onChange={(e) => setFormData({ ...formData, teacher_id: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value="">-- Chon giao vien --</option>
+                  <option value="">-- Chọn giáo viên --</option>
                   {teachers.map((t) => (
                     <option key={t.id} value={t.id}>{t.full_name}</option>
                   ))}
@@ -374,14 +374,14 @@ export default function ClassesPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Bo phan
+                  Bộ phận
                 </label>
                 <select
                   value={formData.department_id}
                   onChange={(e) => setFormData({ ...formData, department_id: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value="">-- Chon bo phan --</option>
+                  <option value="">-- Chọn bộ phận --</option>
                   {departments.map((d) => (
                     <option key={d.id} value={d.id}>{d.name}</option>
                   ))}
@@ -393,14 +393,14 @@ export default function ClassesPage() {
                   onClick={() => setShowModal(false)}
                   className="flex-1 px-4 py-2 border border-gray-200 rounded-xl hover:bg-gray-50"
                 >
-                  Huy
+                  Hủy
                 </button>
                 <button
                   onClick={handleSave}
                   disabled={saving || !formData.name.trim()}
                   className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50"
                 >
-                  {saving ? 'Dang luu...' : 'Luu'}
+                  {saving ? 'Đang lưu...' : 'Lưu'}
                 </button>
               </div>
             </div>

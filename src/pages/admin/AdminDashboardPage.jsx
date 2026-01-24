@@ -55,10 +55,10 @@ export default function AdminDashboardPage() {
   };
 
   const statCards = [
-    { label: 'Truong hoc', value: stats.totalSchools, icon: School, color: 'bg-blue-500', bgLight: 'bg-blue-100' },
-    { label: 'Tong nguoi dung', value: stats.totalUsers, icon: Users, color: 'bg-green-500', bgLight: 'bg-green-100' },
-    { label: 'Giao vien', value: stats.totalTeachers, icon: GraduationCap, color: 'bg-purple-500', bgLight: 'bg-purple-100' },
-    { label: 'Hoc sinh', value: stats.totalStudents, icon: UserCheck, color: 'bg-amber-500', bgLight: 'bg-amber-100' },
+    { label: 'Trường học', value: stats.totalSchools, icon: School, color: 'bg-blue-500', bgLight: 'bg-blue-100' },
+    { label: 'Tổng người dùng', value: stats.totalUsers, icon: Users, color: 'bg-green-500', bgLight: 'bg-green-100' },
+    { label: 'Giáo viên', value: stats.totalTeachers, icon: GraduationCap, color: 'bg-purple-500', bgLight: 'bg-purple-100' },
+    { label: 'Học sinh', value: stats.totalStudents, icon: UserCheck, color: 'bg-amber-500', bgLight: 'bg-amber-100' },
   ];
 
   if (loading) {
@@ -96,7 +96,7 @@ export default function AdminDashboardPage() {
         <div className="bg-white rounded-xl shadow-sm p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-blue-600" />
-            Nguoi dung moi theo thang
+            Người dùng mới theo tháng
           </h3>
           <div className="flex items-end gap-2 h-48">
             {monthlyUsers.map((data, i) => (
@@ -115,7 +115,7 @@ export default function AdminDashboardPage() {
         <div className="bg-white rounded-xl shadow-sm p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-green-600" />
-            Doanh thu theo thang
+            Doanh thu theo tháng
           </h3>
           <div className="flex items-end gap-2 h-48">
             {monthlyUsers.map((data, i) => (
@@ -134,7 +134,7 @@ export default function AdminDashboardPage() {
       {/* Recent Schools */}
       <div className="bg-white rounded-xl shadow-sm overflow-hidden">
         <div className="p-4 border-b border-gray-100">
-          <h3 className="text-lg font-semibold text-gray-900">Truong hoc moi dang ky</h3>
+          <h3 className="text-lg font-semibold text-gray-900">Trường học mới đăng ký</h3>
         </div>
         <div className="divide-y divide-gray-100">
           {recentSchools.length > 0 ? (
@@ -146,7 +146,7 @@ export default function AdminDashboardPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-gray-900">{school.name}</p>
-                    <p className="text-sm text-gray-500">{school.email || school.address || 'Chua cap nhat thong tin'}</p>
+                    <p className="text-sm text-gray-500">{school.email || school.address || 'Chưa cập nhật thông tin'}</p>
                   </div>
                   <div className="text-sm text-gray-400">
                     {new Date(school.created_at).toLocaleDateString('vi-VN')}
@@ -157,7 +157,7 @@ export default function AdminDashboardPage() {
           ) : (
             <div className="p-8 text-center text-gray-500">
               <School className="w-12 h-12 mx-auto mb-2 opacity-50" />
-              <p>Chua co truong hoc nao</p>
+              <p>Chưa có trường học nào</p>
             </div>
           )}
         </div>

@@ -10,12 +10,12 @@ import {
 
 const MENU_ITEMS = [
   { path: '/teacher', icon: LayoutDashboard, label: 'Dashboard', exact: true },
-  { path: '/teacher/classes', icon: BookOpen, label: 'Lop hoc' },
-  { path: '/teacher/lessons', icon: FileText, label: 'Bai giang' },
-  { path: '/teacher/assignments', icon: ClipboardList, label: 'Giao bai' },
-  { path: '/teacher/students', icon: Users, label: 'Hoc sinh' },
-  { path: '/teacher/messages', icon: MessageSquare, label: 'Tin nhan' },
-  { path: '/teacher/settings', icon: Settings, label: 'Cai dat' },
+  { path: '/teacher/classes', icon: BookOpen, label: 'Lớp học' },
+  { path: '/teacher/lessons', icon: FileText, label: 'Bài giảng' },
+  { path: '/teacher/assignments', icon: ClipboardList, label: 'Giao bài' },
+  { path: '/teacher/students', icon: Users, label: 'Học sinh' },
+  { path: '/teacher/messages', icon: MessageSquare, label: 'Tin nhắn' },
+  { path: '/teacher/settings', icon: Settings, label: 'Cài đặt' },
 ];
 
 export default function TeacherLayout() {
@@ -48,8 +48,8 @@ export default function TeacherLayout() {
             <GraduationCap className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="font-bold text-lg">Giao Vien</h1>
-            <p className="text-xs text-emerald-200">Quan ly lop hoc</p>
+            <h1 className="font-bold text-lg">Giáo Viên</h1>
+            <p className="text-xs text-emerald-200">Quản lý lớp học</p>
           </div>
           <button
             onClick={() => setSidebarOpen(false)}
@@ -92,7 +92,7 @@ export default function TeacherLayout() {
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-medium text-sm truncate">{profile?.full_name || 'Giao vien'}</p>
+              <p className="font-medium text-sm truncate">{profile?.full_name || 'Giáo viên'}</p>
               <p className="text-xs text-emerald-200 truncate">{profile?.email}</p>
             </div>
           </div>
@@ -101,7 +101,7 @@ export default function TeacherLayout() {
             className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-xl transition-colors"
           >
             <LogOut className="w-4 h-4" />
-            <span>Dang xuat</span>
+            <span>Đăng xuất</span>
           </button>
         </div>
       </aside>
@@ -119,7 +119,7 @@ export default function TeacherLayout() {
             </button>
             <div className="flex-1">
               <h2 className="text-lg font-semibold text-gray-800">
-                Xin chao, {profile?.full_name || 'Giao vien'}!
+                Xin chào, {profile?.full_name || 'Giáo viên'}!
               </h2>
             </div>
             <div className="flex items-center gap-3">

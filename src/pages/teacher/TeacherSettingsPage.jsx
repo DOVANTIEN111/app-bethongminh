@@ -24,9 +24,9 @@ export default function TeacherSettingsPage() {
     setSaving(true);
     try {
       await updateProfile(formData);
-      alert('Da luu thay doi!');
+      alert('Đã lưu thay đổi!');
     } catch (err) {
-      alert('Co loi xay ra: ' + err.message);
+      alert('Có lỗi xảy ra: ' + err.message);
     } finally {
       setSaving(false);
     }
@@ -37,18 +37,18 @@ export default function TeacherSettingsPage() {
     try {
       // In real app, save to database
       await new Promise(resolve => setTimeout(resolve, 500));
-      alert('Da luu cai dat thong bao!');
+      alert('Đã lưu cài đặt thông báo!');
     } catch (err) {
-      alert('Co loi xay ra: ' + err.message);
+      alert('Có lỗi xảy ra: ' + err.message);
     } finally {
       setSaving(false);
     }
   };
 
   const tabs = [
-    { id: 'profile', label: 'Thong tin ca nhan', icon: User },
-    { id: 'security', label: 'Bao mat', icon: Lock },
-    { id: 'notifications', label: 'Thong bao', icon: Bell },
+    { id: 'profile', label: 'Thông tin cá nhân', icon: User },
+    { id: 'security', label: 'Bảo mật', icon: Lock },
+    { id: 'notifications', label: 'Thông báo', icon: Bell },
   ];
 
   return (
@@ -86,7 +86,7 @@ export default function TeacherSettingsPage() {
                 </div>
                 <div>
                   <h3 className="font-medium text-gray-900">{profile?.full_name}</h3>
-                  <p className="text-sm text-gray-500">Giao vien</p>
+                  <p className="text-sm text-gray-500">Giáo viên</p>
                 </div>
               </div>
 
@@ -104,7 +104,7 @@ export default function TeacherSettingsPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Ho va ten
+                  Họ và tên
                 </label>
                 <input
                   type="text"
@@ -116,7 +116,7 @@ export default function TeacherSettingsPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  So dien thoai
+                  Số điện thoại
                 </label>
                 <input
                   type="tel"
@@ -137,7 +137,7 @@ export default function TeacherSettingsPage() {
                 ) : (
                   <Save className="w-4 h-4" />
                 )}
-                Luu thay doi
+                Lưu thay đổi
               </button>
             </div>
           )}
@@ -146,25 +146,25 @@ export default function TeacherSettingsPage() {
           {activeTab === 'security' && (
             <div className="space-y-6 max-w-md">
               <div className="p-4 bg-yellow-50 rounded-xl">
-                <h3 className="font-medium text-yellow-800 mb-2">Doi mat khau</h3>
+                <h3 className="font-medium text-yellow-800 mb-2">Đổi mật khẩu</h3>
                 <p className="text-sm text-yellow-600 mb-4">
-                  De doi mat khau, vui long dang xuat va su dung chuc nang "Quen mat khau" tren trang dang nhap.
+                  Để đổi mật khẩu, vui lòng đăng xuất và sử dụng chức năng "Quên mật khẩu" trên trang đăng nhập.
                 </p>
                 <button
                   onClick={signOut}
                   className="px-4 py-2 bg-yellow-600 text-white rounded-xl hover:bg-yellow-700"
                 >
-                  Dang xuat
+                  Đăng xuất
                 </button>
               </div>
 
               <div className="p-4 bg-gray-50 rounded-xl">
-                <h3 className="font-medium text-gray-800 mb-2">Thong tin tai khoan</h3>
+                <h3 className="font-medium text-gray-800 mb-2">Thông tin tài khoản</h3>
                 <div className="space-y-2 text-sm">
                   <p><span className="text-gray-500">Role:</span> <strong className="text-emerald-600">{profile?.role}</strong></p>
-                  <p><span className="text-gray-500">School ID:</span> <strong>{profile?.school_id || 'Chua gan'}</strong></p>
-                  <p><span className="text-gray-500">Department ID:</span> <strong>{profile?.department_id || 'Chua gan'}</strong></p>
-                  <p><span className="text-gray-500">Trang thai:</span> <strong className="text-green-600">{profile?.is_active ? 'Hoat dong' : 'Khong hoat dong'}</strong></p>
+                  <p><span className="text-gray-500">School ID:</span> <strong>{profile?.school_id || 'Chưa gán'}</strong></p>
+                  <p><span className="text-gray-500">Department ID:</span> <strong>{profile?.department_id || 'Chưa gán'}</strong></p>
+                  <p><span className="text-gray-500">Trạng thái:</span> <strong className="text-green-600">{profile?.is_active ? 'Hoạt động' : 'Không hoạt động'}</strong></p>
                 </div>
               </div>
             </div>
@@ -173,13 +173,13 @@ export default function TeacherSettingsPage() {
           {/* Notifications Tab */}
           {activeTab === 'notifications' && (
             <div className="space-y-4 max-w-md">
-              <p className="text-gray-600 mb-4">Quan ly cai dat thong bao cua ban.</p>
+              <p className="text-gray-600 mb-4">Quản lý cài đặt thông báo của bạn.</p>
 
               <div className="space-y-4">
                 <label className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
                   <div>
-                    <p className="font-medium text-gray-700">Bai nop moi</p>
-                    <p className="text-sm text-gray-500">Thong bao khi hoc sinh nop bai</p>
+                    <p className="font-medium text-gray-700">Bài nộp mới</p>
+                    <p className="text-sm text-gray-500">Thông báo khi học sinh nộp bài</p>
                   </div>
                   <input
                     type="checkbox"
@@ -191,8 +191,8 @@ export default function TeacherSettingsPage() {
 
                 <label className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
                   <div>
-                    <p className="font-medium text-gray-700">Tin nhan phu huynh</p>
-                    <p className="text-sm text-gray-500">Thong bao khi nhan tin nhan moi</p>
+                    <p className="font-medium text-gray-700">Tin nhắn phụ huynh</p>
+                    <p className="text-sm text-gray-500">Thông báo khi nhận tin nhắn mới</p>
                   </div>
                   <input
                     type="checkbox"
@@ -204,8 +204,8 @@ export default function TeacherSettingsPage() {
 
                 <label className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
                   <div>
-                    <p className="font-medium text-gray-700">Cap nhat he thong</p>
-                    <p className="text-sm text-gray-500">Thong bao ve cac cap nhat moi</p>
+                    <p className="font-medium text-gray-700">Cập nhật hệ thống</p>
+                    <p className="text-sm text-gray-500">Thông báo về các cập nhật mới</p>
                   </div>
                   <input
                     type="checkbox"
@@ -217,8 +217,8 @@ export default function TeacherSettingsPage() {
 
                 <label className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
                   <div>
-                    <p className="font-medium text-gray-700">Tong hop hang ngay</p>
-                    <p className="text-sm text-gray-500">Nhan email tong hop hoat dong moi ngay</p>
+                    <p className="font-medium text-gray-700">Tổng hợp hàng ngày</p>
+                    <p className="text-sm text-gray-500">Nhận email tổng hợp hoạt động mỗi ngày</p>
                   </div>
                   <input
                     type="checkbox"
@@ -239,7 +239,7 @@ export default function TeacherSettingsPage() {
                 ) : (
                   <Save className="w-4 h-4" />
                 )}
-                Luu cai dat
+                Lưu cài đặt
               </button>
             </div>
           )}

@@ -85,7 +85,7 @@ export default function StudentsPage() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Tim kiem hoc sinh..."
+            placeholder="Tìm kiếm học sinh..."
             className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -94,7 +94,7 @@ export default function StudentsPage() {
           onChange={(e) => setFilterClass(e.target.value)}
           className="px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
         >
-          <option value="">Tat ca lop</option>
+          <option value="">Tất cả lớp</option>
           {classes.map((cls) => (
             <option key={cls.id} value={cls.id}>{cls.name}</option>
           ))}
@@ -104,7 +104,7 @@ export default function StudentsPage() {
           onChange={(e) => setFilterDepartment(e.target.value)}
           className="px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
         >
-          <option value="">Tat ca bo phan</option>
+          <option value="">Tất cả bộ phận</option>
           {departments.map((dept) => (
             <option key={dept.id} value={dept.id}>{dept.name}</option>
           ))}
@@ -114,7 +114,7 @@ export default function StudentsPage() {
       {/* Stats */}
       <div className="bg-white rounded-xl shadow-sm p-4">
         <p className="text-gray-600">
-          Tong cong: <strong className="text-blue-600">{filteredStudents.length}</strong> hoc sinh
+          Tổng cộng: <strong className="text-blue-600">{filteredStudents.length}</strong> học sinh
         </p>
       </div>
 
@@ -159,7 +159,7 @@ export default function StudentsPage() {
         {filteredStudents.length === 0 && (
           <div className="col-span-full bg-white rounded-xl shadow-sm p-12 text-center text-gray-500">
             <Users className="w-12 h-12 mx-auto mb-2 opacity-50" />
-            <p>Chua co hoc sinh nao</p>
+            <p>Chưa có học sinh nào</p>
           </div>
         )}
       </div>
@@ -182,19 +182,19 @@ export default function StudentsPage() {
 
             <div className="space-y-3">
               <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <span className="text-gray-600">So dien thoai</span>
+                <span className="text-gray-600">Số điện thoại</span>
                 <span className="font-medium">{selectedStudent.phone || '-'}</span>
               </div>
               <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <span className="text-gray-600">Lop</span>
+                <span className="text-gray-600">Lớp</span>
                 <span className="font-medium">{selectedStudent.class?.name || '-'}</span>
               </div>
               <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <span className="text-gray-600">Bo phan</span>
+                <span className="text-gray-600">Bộ phận</span>
                 <span className="font-medium">{selectedStudent.department?.name || '-'}</span>
               </div>
               <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <span className="text-gray-600">Ngay tao</span>
+                <span className="text-gray-600">Ngày tạo</span>
                 <span className="font-medium">
                   {new Date(selectedStudent.created_at).toLocaleDateString('vi-VN')}
                 </span>
@@ -205,7 +205,7 @@ export default function StudentsPage() {
               onClick={() => setSelectedStudent(null)}
               className="w-full mt-4 px-4 py-2 bg-gray-100 rounded-xl hover:bg-gray-200"
             >
-              Dong
+              Đóng
             </button>
           </div>
         </div>

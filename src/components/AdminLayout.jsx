@@ -10,11 +10,11 @@ import {
 
 const MENU_ITEMS = [
   { path: '/admin', icon: LayoutDashboard, label: 'Dashboard', exact: true },
-  { path: '/admin/schools', icon: School, label: 'Truong hoc' },
-  { path: '/admin/users', icon: Users, label: 'Nguoi dung' },
-  { path: '/admin/plans', icon: CreditCard, label: 'Goi cuoc' },
-  { path: '/admin/statistics', icon: BarChart3, label: 'Thong ke' },
-  { path: '/admin/settings', icon: Settings, label: 'Cai dat' },
+  { path: '/admin/schools', icon: School, label: 'Trường học' },
+  { path: '/admin/users', icon: Users, label: 'Người dùng' },
+  { path: '/admin/plans', icon: CreditCard, label: 'Gói cước' },
+  { path: '/admin/statistics', icon: BarChart3, label: 'Thống kê' },
+  { path: '/admin/settings', icon: Settings, label: 'Cài đặt' },
 ];
 
 export default function AdminLayout() {
@@ -48,7 +48,7 @@ export default function AdminLayout() {
           </div>
           <div>
             <h1 className="font-bold text-lg">Admin Panel</h1>
-            <p className="text-xs text-blue-300">Quan ly he thong</p>
+            <p className="text-xs text-blue-300">Quản lý hệ thống</p>
           </div>
           <button
             onClick={() => setSidebarOpen(false)}
@@ -100,7 +100,7 @@ export default function AdminLayout() {
             className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-800 hover:bg-blue-700 rounded-xl transition-colors"
           >
             <LogOut className="w-4 h-4" />
-            <span>Dang xuat</span>
+            <span>Đăng xuất</span>
           </button>
         </div>
       </aside>

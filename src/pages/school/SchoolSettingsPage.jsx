@@ -17,18 +17,18 @@ export default function SchoolSettingsPage() {
     setSaving(true);
     try {
       await updateProfile(formData);
-      alert('Da luu thay doi!');
+      alert('Đã lưu thay đổi!');
     } catch (err) {
-      alert('Co loi xay ra: ' + err.message);
+      alert('Có lỗi xảy ra: ' + err.message);
     } finally {
       setSaving(false);
     }
   };
 
   const tabs = [
-    { id: 'profile', label: 'Thong tin ca nhan', icon: User },
-    { id: 'security', label: 'Bao mat', icon: Lock },
-    { id: 'notifications', label: 'Thong bao', icon: Bell },
+    { id: 'profile', label: 'Thông tin cá nhân', icon: User },
+    { id: 'security', label: 'Bảo mật', icon: Lock },
+    { id: 'notifications', label: 'Thông báo', icon: Bell },
   ];
 
   return (
@@ -70,7 +70,7 @@ export default function SchoolSettingsPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Ho va ten
+                  Họ và tên
                 </label>
                 <input
                   type="text"
@@ -82,7 +82,7 @@ export default function SchoolSettingsPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  So dien thoai
+                  Số điện thoại
                 </label>
                 <input
                   type="tel"
@@ -103,7 +103,7 @@ export default function SchoolSettingsPage() {
                 ) : (
                   <Save className="w-4 h-4" />
                 )}
-                Luu thay doi
+                Lưu thay đổi
               </button>
             </div>
           )}
@@ -112,24 +112,24 @@ export default function SchoolSettingsPage() {
           {activeTab === 'security' && (
             <div className="space-y-6 max-w-md">
               <div className="p-4 bg-yellow-50 rounded-xl">
-                <h3 className="font-medium text-yellow-800 mb-2">Doi mat khau</h3>
+                <h3 className="font-medium text-yellow-800 mb-2">Đổi mật khẩu</h3>
                 <p className="text-sm text-yellow-600 mb-4">
-                  De doi mat khau, vui long dang xuat va su dung chuc nang "Quen mat khau" tren trang dang nhap.
+                  Để đổi mật khẩu, vui lòng đăng xuất và sử dụng chức năng "Quên mật khẩu" trên trang đăng nhập.
                 </p>
                 <button
                   onClick={signOut}
                   className="px-4 py-2 bg-yellow-600 text-white rounded-xl hover:bg-yellow-700"
                 >
-                  Dang xuat
+                  Đăng xuất
                 </button>
               </div>
 
               <div className="p-4 bg-gray-50 rounded-xl">
-                <h3 className="font-medium text-gray-800 mb-2">Thong tin tai khoan</h3>
+                <h3 className="font-medium text-gray-800 mb-2">Thông tin tài khoản</h3>
                 <div className="space-y-2 text-sm">
                   <p><span className="text-gray-500">Role:</span> <strong>{profile?.role}</strong></p>
-                  <p><span className="text-gray-500">School ID:</span> <strong>{profile?.school_id || 'Chua gan'}</strong></p>
-                  <p><span className="text-gray-500">Trang thai:</span> <strong className="text-green-600">{profile?.is_active ? 'Hoat dong' : 'Khong hoat dong'}</strong></p>
+                  <p><span className="text-gray-500">School ID:</span> <strong>{profile?.school_id || 'Chưa gán'}</strong></p>
+                  <p><span className="text-gray-500">Trạng thái:</span> <strong className="text-green-600">{profile?.is_active ? 'Hoạt động' : 'Không hoạt động'}</strong></p>
                 </div>
               </div>
             </div>
@@ -138,7 +138,7 @@ export default function SchoolSettingsPage() {
           {/* Notifications Tab */}
           {activeTab === 'notifications' && (
             <div className="space-y-4 max-w-md">
-              <p className="text-gray-500">Chuc nang thong bao dang duoc phat trien.</p>
+              <p className="text-gray-500">Chức năng thông báo đang được phát triển.</p>
             </div>
           )}
         </div>

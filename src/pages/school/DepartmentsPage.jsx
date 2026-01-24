@@ -111,14 +111,14 @@ export default function DepartmentsPage() {
       loadDepartments();
     } catch (err) {
       console.error('Save department error:', err);
-      alert('Co loi xay ra: ' + err.message);
+      alert('Có lỗi xảy ra: ' + err.message);
     } finally {
       setSaving(false);
     }
   };
 
   const handleDelete = async (department) => {
-    if (!confirm(`Ban co chac muon xoa bo phan "${department.name}"?`)) return;
+    if (!confirm(`Bạn có chắc muốn xóa bộ phận "${department.name}"?`)) return;
 
     try {
       const { error } = await supabase
@@ -133,7 +133,7 @@ export default function DepartmentsPage() {
       }
     } catch (err) {
       console.error('Delete department error:', err);
-      alert('Co loi xay ra: ' + err.message);
+      alert('Có lỗi xảy ra: ' + err.message);
     }
   };
 
@@ -159,7 +159,7 @@ export default function DepartmentsPage() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Tim kiem bo phan..."
+            placeholder="Tìm kiếm bộ phận..."
             className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -168,7 +168,7 @@ export default function DepartmentsPage() {
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
         >
           <Plus className="w-5 h-5" />
-          Them bo phan
+          Thêm bộ phận
         </button>
       </div>
 
@@ -177,7 +177,7 @@ export default function DepartmentsPage() {
         {/* Departments List */}
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
           <div className="p-4 border-b border-gray-100">
-            <h3 className="font-semibold text-gray-900">Danh sach bo phan ({filteredDepartments.length})</h3>
+            <h3 className="font-semibold text-gray-900">Danh sách bộ phận ({filteredDepartments.length})</h3>
           </div>
           <div className="divide-y divide-gray-100 max-h-[500px] overflow-y-auto">
             {filteredDepartments.map((dept) => (
@@ -219,7 +219,7 @@ export default function DepartmentsPage() {
             {filteredDepartments.length === 0 && (
               <div className="p-8 text-center text-gray-500">
                 <Building2 className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                <p>Chua co bo phan nao</p>
+                <p>Chưa có bộ phận nào</p>
               </div>
             )}
           </div>
@@ -238,7 +238,7 @@ export default function DepartmentsPage() {
               <div className="p-4">
                 <h4 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
                   <Users className="w-5 h-5 text-green-600" />
-                  Giao vien trong bo phan ({departmentTeachers.length})
+                  Giáo viên trong bộ phận ({departmentTeachers.length})
                 </h4>
                 {departmentTeachers.length > 0 ? (
                   <div className="space-y-2">
@@ -259,14 +259,14 @@ export default function DepartmentsPage() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-gray-500 text-center py-4">Chua co giao vien nao</p>
+                  <p className="text-gray-500 text-center py-4">Chưa có giáo viên nào</p>
                 )}
               </div>
             </>
           ) : (
             <div className="p-8 text-center text-gray-500">
               <Building2 className="w-12 h-12 mx-auto mb-2 opacity-50" />
-              <p>Chon bo phan de xem chi tiet</p>
+              <p>Chọn bộ phận để xem chi tiết</p>
             </div>
           )}
         </div>
@@ -278,7 +278,7 @@ export default function DepartmentsPage() {
           <div className="bg-white rounded-2xl w-full max-w-md p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold">
-                {editingDepartment ? 'Sua bo phan' : 'Them bo phan moi'}
+                {editingDepartment ? 'Sửa bộ phận' : 'Thêm bộ phận mới'}
               </h3>
               <button onClick={() => setShowModal(false)} className="p-2 hover:bg-gray-100 rounded-full">
                 <X className="w-5 h-5" />
@@ -288,25 +288,25 @@ export default function DepartmentsPage() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Ten bo phan *
+                  Tên bộ phận *
                 </label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="VD: To Toan"
+                  placeholder="VD: Tổ Toán"
                   className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Mo ta
+                  Mô tả
                 </label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Mo ta ve bo phan..."
+                  placeholder="Mô tả về bộ phận..."
                   rows={3}
                   className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
                 />
@@ -317,14 +317,14 @@ export default function DepartmentsPage() {
                   onClick={() => setShowModal(false)}
                   className="flex-1 px-4 py-2 border border-gray-200 rounded-xl hover:bg-gray-50"
                 >
-                  Huy
+                  Hủy
                 </button>
                 <button
                   onClick={handleSave}
                   disabled={saving || !formData.name.trim()}
                   className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50"
                 >
-                  {saving ? 'Dang luu...' : 'Luu'}
+                  {saving ? 'Đang lưu...' : 'Lưu'}
                 </button>
               </div>
             </div>

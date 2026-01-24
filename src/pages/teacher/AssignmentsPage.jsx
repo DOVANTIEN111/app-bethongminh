@@ -47,17 +47,17 @@ export default function AssignmentsPage() {
 
       // Mock lessons data
       setLessons([
-        { id: 'l1', title: 'Phep cong trong pham vi 10' },
-        { id: 'l2', title: 'Phep tru trong pham vi 10' },
-        { id: 'l3', title: 'Hoc van: Chu cai A, B, C' },
+        { id: 'l1', title: 'Phép cộng trong phạm vi 10' },
+        { id: 'l2', title: 'Phép trừ trong phạm vi 10' },
+        { id: 'l3', title: 'Học vần: Chữ cái A, B, C' },
       ]);
 
       // Mock assignments data
       setAssignments([
         {
           id: 'a1',
-          lesson: { title: 'Phep cong trong pham vi 10' },
-          class: { name: 'Lop 3A' },
+          lesson: { title: 'Phép cộng trong phạm vi 10' },
+          class: { name: 'Lớp 3A' },
           deadline: new Date(Date.now() + 86400000).toISOString(),
           total_students: 25,
           submitted: 20,
@@ -66,8 +66,8 @@ export default function AssignmentsPage() {
         },
         {
           id: 'a2',
-          lesson: { title: 'Phep tru trong pham vi 10' },
-          class: { name: 'Lop 3B' },
+          lesson: { title: 'Phép trừ trong phạm vi 10' },
+          class: { name: 'Lớp 3B' },
           deadline: new Date(Date.now() - 86400000).toISOString(),
           total_students: 28,
           submitted: 28,
@@ -76,8 +76,8 @@ export default function AssignmentsPage() {
         },
         {
           id: 'a3',
-          lesson: { title: 'Hoc van: Chu cai A, B, C' },
-          class: { name: 'Lop 3A' },
+          lesson: { title: 'Học vần: Chữ cái A, B, C' },
+          class: { name: 'Lớp 3A' },
           deadline: new Date(Date.now() + 172800000).toISOString(),
           total_students: 25,
           submitted: 10,
@@ -126,7 +126,7 @@ export default function AssignmentsPage() {
       setShowModal(false);
     } catch (err) {
       console.error('Save assignment error:', err);
-      alert('Co loi xay ra: ' + err.message);
+      alert('Có lỗi xảy ra: ' + err.message);
     } finally {
       setSaving(false);
     }
@@ -136,11 +136,11 @@ export default function AssignmentsPage() {
     setSelectedAssignment(assignment);
     // Mock submissions
     setSubmissions([
-      { id: 's1', student: 'Nguyen Van A', submitted_at: new Date().toISOString(), grade: 9, feedback: 'Lam tot!' },
-      { id: 's2', student: 'Tran Thi B', submitted_at: new Date().toISOString(), grade: 8, feedback: '' },
-      { id: 's3', student: 'Le Van C', submitted_at: new Date().toISOString(), grade: null, feedback: '' },
-      { id: 's4', student: 'Pham Thi D', submitted_at: null, grade: null, feedback: '' },
-      { id: 's5', student: 'Hoang Van E', submitted_at: null, grade: null, feedback: '' },
+      { id: 's1', student: 'Nguyễn Văn A', submitted_at: new Date().toISOString(), grade: 9, feedback: 'Làm tốt!' },
+      { id: 's2', student: 'Trần Thị B', submitted_at: new Date().toISOString(), grade: 8, feedback: '' },
+      { id: 's3', student: 'Lê Văn C', submitted_at: new Date().toISOString(), grade: null, feedback: '' },
+      { id: 's4', student: 'Phạm Thị D', submitted_at: null, grade: null, feedback: '' },
+      { id: 's5', student: 'Hoàng Văn E', submitted_at: null, grade: null, feedback: '' },
     ]);
     setShowGradeModal(true);
   };
@@ -162,9 +162,9 @@ export default function AssignmentsPage() {
   const getStatusText = (assignment) => {
     const deadline = new Date(assignment.deadline);
     const now = new Date();
-    if (deadline < now) return 'Het han';
-    if (assignment.submitted === assignment.total_students) return 'Hoan thanh';
-    return 'Dang mo';
+    if (deadline < now) return 'Hết hạn';
+    if (assignment.submitted === assignment.total_students) return 'Hoàn thành';
+    return 'Đang mở';
   };
 
   const filteredAssignments = assignments.filter(a => {
@@ -194,7 +194,7 @@ export default function AssignmentsPage() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Tim kiem bai tap..."
+              placeholder="Tìm kiếm bài tập..."
               className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500"
             />
           </div>
@@ -203,9 +203,9 @@ export default function AssignmentsPage() {
             onChange={(e) => setFilterStatus(e.target.value)}
             className="px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500"
           >
-            <option value="">Tat ca trang thai</option>
-            <option value="active">Dang mo</option>
-            <option value="expired">Het han</option>
+            <option value="">Tất cả trạng thái</option>
+            <option value="active">Đang mở</option>
+            <option value="expired">Hết hạn</option>
           </select>
         </div>
         <button
@@ -213,7 +213,7 @@ export default function AssignmentsPage() {
           className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700"
         >
           <Plus className="w-5 h-5" />
-          Giao bai moi
+          Giao bài mới
         </button>
       </div>
 
@@ -242,21 +242,21 @@ export default function AssignmentsPage() {
 
             <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
               <Calendar className="w-4 h-4" />
-              <span>Han: {new Date(assignment.deadline).toLocaleDateString('vi-VN')}</span>
+              <span>Hạn: {new Date(assignment.deadline).toLocaleDateString('vi-VN')}</span>
             </div>
 
             <div className="grid grid-cols-3 gap-2 pt-3 border-t border-gray-100">
               <div className="text-center">
                 <p className="text-lg font-bold text-blue-600">{assignment.total_students}</p>
-                <p className="text-xs text-gray-500">Tong</p>
+                <p className="text-xs text-gray-500">Tổng</p>
               </div>
               <div className="text-center">
                 <p className="text-lg font-bold text-amber-600">{assignment.submitted}</p>
-                <p className="text-xs text-gray-500">Da nop</p>
+                <p className="text-xs text-gray-500">Đã nộp</p>
               </div>
               <div className="text-center">
                 <p className="text-lg font-bold text-green-600">{assignment.graded}</p>
-                <p className="text-xs text-gray-500">Da cham</p>
+                <p className="text-xs text-gray-500">Đã chấm</p>
               </div>
             </div>
           </div>
@@ -264,7 +264,7 @@ export default function AssignmentsPage() {
         {filteredAssignments.length === 0 && (
           <div className="col-span-full bg-white rounded-xl shadow-sm p-12 text-center text-gray-500">
             <ClipboardList className="w-12 h-12 mx-auto mb-2 opacity-50" />
-            <p>Chua co bai tap nao</p>
+            <p>Chưa có bài tập nào</p>
           </div>
         )}
       </div>
@@ -274,7 +274,7 @@ export default function AssignmentsPage() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-md p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold">Giao bai moi</h3>
+              <h3 className="text-lg font-bold">Giao bài mới</h3>
               <button onClick={() => setShowModal(false)} className="p-2 hover:bg-gray-100 rounded-full">
                 <X className="w-5 h-5" />
               </button>
@@ -283,14 +283,14 @@ export default function AssignmentsPage() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Chon bai giang *
+                  Chọn bài giảng *
                 </label>
                 <select
                   value={formData.lesson_id}
                   onChange={(e) => setFormData({ ...formData, lesson_id: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500"
                 >
-                  <option value="">-- Chon bai giang --</option>
+                  <option value="">-- Chọn bài giảng --</option>
                   {lessons.map((lesson) => (
                     <option key={lesson.id} value={lesson.id}>{lesson.title}</option>
                   ))}
@@ -299,14 +299,14 @@ export default function AssignmentsPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Chon lop *
+                  Chọn lớp *
                 </label>
                 <select
                   value={formData.class_id}
                   onChange={(e) => setFormData({ ...formData, class_id: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500"
                 >
-                  <option value="">-- Chon lop --</option>
+                  <option value="">-- Chọn lớp --</option>
                   {classes.map((cls) => (
                     <option key={cls.id} value={cls.id}>{cls.name}</option>
                   ))}
@@ -315,7 +315,7 @@ export default function AssignmentsPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Han nop *
+                  Hạn nộp *
                 </label>
                 <input
                   type="datetime-local"
@@ -327,12 +327,12 @@ export default function AssignmentsPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Huong dan them
+                  Hướng dẫn thêm
                 </label>
                 <textarea
                   value={formData.instructions}
                   onChange={(e) => setFormData({ ...formData, instructions: e.target.value })}
-                  placeholder="Huong dan cho hoc sinh..."
+                  placeholder="Hướng dẫn cho học sinh..."
                   rows={3}
                   className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500"
                 />
@@ -343,14 +343,14 @@ export default function AssignmentsPage() {
                   onClick={() => setShowModal(false)}
                   className="flex-1 px-4 py-2 border border-gray-200 rounded-xl hover:bg-gray-50"
                 >
-                  Huy
+                  Hủy
                 </button>
                 <button
                   onClick={handleSave}
                   disabled={saving || !formData.lesson_id || !formData.class_id || !formData.deadline}
                   className="flex-1 px-4 py-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 disabled:opacity-50"
                 >
-                  {saving ? 'Dang luu...' : 'Giao bai'}
+                  {saving ? 'Đang lưu...' : 'Giao bài'}
                 </button>
               </div>
             </div>
@@ -383,12 +383,12 @@ export default function AssignmentsPage() {
                     {sub.submitted_at ? (
                       <p className="text-xs text-green-600 flex items-center gap-1">
                         <CheckCircle className="w-3 h-3" />
-                        Da nop
+                        Đã nộp
                       </p>
                     ) : (
                       <p className="text-xs text-red-600 flex items-center gap-1">
                         <AlertCircle className="w-3 h-3" />
-                        Chua nop
+                        Chưa nộp
                       </p>
                     )}
                   </div>
@@ -414,7 +414,7 @@ export default function AssignmentsPage() {
               onClick={() => setShowGradeModal(false)}
               className="w-full mt-4 px-4 py-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700"
             >
-              Luu diem
+              Lưu điểm
             </button>
           </div>
         </div>

@@ -25,9 +25,9 @@ export default function AdminSettingsPage() {
     setSaving(true);
     try {
       await updateProfile(formData);
-      alert('Da luu thay doi!');
+      alert('Đã lưu thay đổi!');
     } catch (err) {
-      alert('Co loi xay ra: ' + err.message);
+      alert('Có lỗi xảy ra: ' + err.message);
     } finally {
       setSaving(false);
     }
@@ -38,19 +38,19 @@ export default function AdminSettingsPage() {
     try {
       // In real app, save to database or settings table
       await new Promise(resolve => setTimeout(resolve, 500));
-      alert('Da luu cai dat he thong!');
+      alert('Đã lưu cài đặt hệ thống!');
     } catch (err) {
-      alert('Co loi xay ra: ' + err.message);
+      alert('Có lỗi xảy ra: ' + err.message);
     } finally {
       setSaving(false);
     }
   };
 
   const tabs = [
-    { id: 'profile', label: 'Thong tin ca nhan', icon: User },
-    { id: 'system', label: 'Cai dat he thong', icon: Settings },
-    { id: 'security', label: 'Bao mat', icon: Shield },
-    { id: 'notifications', label: 'Thong bao', icon: Bell },
+    { id: 'profile', label: 'Thông tin cá nhân', icon: User },
+    { id: 'system', label: 'Cài đặt hệ thống', icon: Settings },
+    { id: 'security', label: 'Bảo mật', icon: Shield },
+    { id: 'notifications', label: 'Thông báo', icon: Bell },
   ];
 
   return (
@@ -92,7 +92,7 @@ export default function AdminSettingsPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Ho va ten
+                  Họ và tên
                 </label>
                 <input
                   type="text"
@@ -104,7 +104,7 @@ export default function AdminSettingsPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  So dien thoai
+                  Số điện thoại
                 </label>
                 <input
                   type="tel"
@@ -125,7 +125,7 @@ export default function AdminSettingsPage() {
                 ) : (
                   <Save className="w-4 h-4" />
                 )}
-                Luu thay doi
+                Lưu thay đổi
               </button>
             </div>
           )}
@@ -136,18 +136,18 @@ export default function AdminSettingsPage() {
               <div className="p-4 bg-blue-50 rounded-xl">
                 <div className="flex items-center gap-2 mb-2">
                   <Database className="w-5 h-5 text-blue-600" />
-                  <h3 className="font-medium text-blue-800">Cai dat he thong</h3>
+                  <h3 className="font-medium text-blue-800">Cài đặt hệ thống</h3>
                 </div>
                 <p className="text-sm text-blue-600">
-                  Cac cai dat nay anh huong den toan bo he thong.
+                  Các cài đặt này ảnh hưởng đến toàn bộ hệ thống.
                 </p>
               </div>
 
               <div className="space-y-4">
                 <label className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
                   <div>
-                    <p className="font-medium text-gray-700">Che do bao tri</p>
-                    <p className="text-sm text-gray-500">Tat ca nguoi dung se khong the dang nhap</p>
+                    <p className="font-medium text-gray-700">Chế độ bảo trì</p>
+                    <p className="text-sm text-gray-500">Tất cả người dùng sẽ không thể đăng nhập</p>
                   </div>
                   <input
                     type="checkbox"
@@ -159,8 +159,8 @@ export default function AdminSettingsPage() {
 
                 <label className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
                   <div>
-                    <p className="font-medium text-gray-700">Cho phep dang ky</p>
-                    <p className="text-sm text-gray-500">Nguoi dung moi co the tu dang ky tai khoan</p>
+                    <p className="font-medium text-gray-700">Cho phép đăng ký</p>
+                    <p className="text-sm text-gray-500">Người dùng mới có thể tự đăng ký tài khoản</p>
                   </div>
                   <input
                     type="checkbox"
@@ -172,8 +172,8 @@ export default function AdminSettingsPage() {
 
                 <label className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
                   <div>
-                    <p className="font-medium text-gray-700">Xac thuc email</p>
-                    <p className="text-sm text-gray-500">Yeu cau xac thuc email truoc khi dang nhap</p>
+                    <p className="font-medium text-gray-700">Xác thực email</p>
+                    <p className="text-sm text-gray-500">Yêu cầu xác thực email trước khi đăng nhập</p>
                   </div>
                   <input
                     type="checkbox"
@@ -185,7 +185,7 @@ export default function AdminSettingsPage() {
 
                 <div className="p-4 bg-gray-50 rounded-xl">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    So hoc sinh toi da moi lop
+                    Số học sinh tối đa mỗi lớp
                   </label>
                   <input
                     type="number"
@@ -208,7 +208,7 @@ export default function AdminSettingsPage() {
                 ) : (
                   <Save className="w-4 h-4" />
                 )}
-                Luu cai dat
+                Lưu cài đặt
               </button>
             </div>
           )}
@@ -217,25 +217,25 @@ export default function AdminSettingsPage() {
           {activeTab === 'security' && (
             <div className="space-y-6 max-w-md">
               <div className="p-4 bg-yellow-50 rounded-xl">
-                <h3 className="font-medium text-yellow-800 mb-2">Doi mat khau</h3>
+                <h3 className="font-medium text-yellow-800 mb-2">Đổi mật khẩu</h3>
                 <p className="text-sm text-yellow-600 mb-4">
-                  De doi mat khau, vui long dang xuat va su dung chuc nang "Quen mat khau" tren trang dang nhap.
+                  Để đổi mật khẩu, vui lòng đăng xuất và sử dụng chức năng "Quên mật khẩu" trên trang đăng nhập.
                 </p>
                 <button
                   onClick={signOut}
                   className="px-4 py-2 bg-yellow-600 text-white rounded-xl hover:bg-yellow-700"
                 >
-                  Dang xuat
+                  Đăng xuất
                 </button>
               </div>
 
               <div className="p-4 bg-gray-50 rounded-xl">
-                <h3 className="font-medium text-gray-800 mb-2">Thong tin tai khoan</h3>
+                <h3 className="font-medium text-gray-800 mb-2">Thông tin tài khoản</h3>
                 <div className="space-y-2 text-sm">
                   <p><span className="text-gray-500">Role:</span> <strong className="text-red-600">{profile?.role}</strong></p>
                   <p><span className="text-gray-500">ID:</span> <strong>{profile?.id}</strong></p>
-                  <p><span className="text-gray-500">Trang thai:</span> <strong className="text-green-600">{profile?.is_active ? 'Hoat dong' : 'Khong hoat dong'}</strong></p>
-                  <p><span className="text-gray-500">Tao luc:</span> <strong>{new Date(profile?.created_at).toLocaleString('vi-VN')}</strong></p>
+                  <p><span className="text-gray-500">Trạng thái:</span> <strong className="text-green-600">{profile?.is_active ? 'Hoạt động' : 'Không hoạt động'}</strong></p>
+                  <p><span className="text-gray-500">Tạo lúc:</span> <strong>{new Date(profile?.created_at).toLocaleString('vi-VN')}</strong></p>
                 </div>
               </div>
             </div>
@@ -244,13 +244,13 @@ export default function AdminSettingsPage() {
           {/* Notifications Tab */}
           {activeTab === 'notifications' && (
             <div className="space-y-4 max-w-md">
-              <p className="text-gray-500">Chuc nang cai dat thong bao dang duoc phat trien.</p>
+              <p className="text-gray-500">Chức năng cài đặt thông báo đang được phát triển.</p>
 
               <div className="space-y-4">
                 <label className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
                   <div>
-                    <p className="font-medium text-gray-700">Thong bao email</p>
-                    <p className="text-sm text-gray-500">Nhan thong bao qua email</p>
+                    <p className="font-medium text-gray-700">Thông báo email</p>
+                    <p className="text-sm text-gray-500">Nhận thông báo qua email</p>
                   </div>
                   <input
                     type="checkbox"
@@ -261,8 +261,8 @@ export default function AdminSettingsPage() {
 
                 <label className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
                   <div>
-                    <p className="font-medium text-gray-700">Thong bao truong moi</p>
-                    <p className="text-sm text-gray-500">Khi co truong hoc moi dang ky</p>
+                    <p className="font-medium text-gray-700">Thông báo trường mới</p>
+                    <p className="text-sm text-gray-500">Khi có trường học mới đăng ký</p>
                   </div>
                   <input
                     type="checkbox"
@@ -273,8 +273,8 @@ export default function AdminSettingsPage() {
 
                 <label className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
                   <div>
-                    <p className="font-medium text-gray-700">Bao cao hang tuan</p>
-                    <p className="text-sm text-gray-500">Nhan bao cao thong ke moi tuan</p>
+                    <p className="font-medium text-gray-700">Báo cáo hàng tuần</p>
+                    <p className="text-sm text-gray-500">Nhận báo cáo thống kê mỗi tuần</p>
                   </div>
                   <input
                     type="checkbox"

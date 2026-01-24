@@ -73,17 +73,17 @@ export default function SchoolDashboardPage() {
     return (
       <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 text-center">
         <Building2 className="w-12 h-12 mx-auto mb-4 text-yellow-600" />
-        <h3 className="text-lg font-semibold text-yellow-800 mb-2">Chua duoc gan truong</h3>
-        <p className="text-yellow-600">Vui long lien he quan tri vien de duoc gan truong.</p>
+        <h3 className="text-lg font-semibold text-yellow-800 mb-2">Chưa được gán trường</h3>
+        <p className="text-yellow-600">Vui lòng liên hệ quản trị viên để được gán trường.</p>
       </div>
     );
   }
 
   const statCards = [
-    { label: 'Bo phan', value: stats?.departments || 0, icon: Building2, color: 'bg-blue-500' },
-    { label: 'Giao vien', value: stats?.teachers || 0, icon: GraduationCap, color: 'bg-green-500' },
-    { label: 'Hoc sinh', value: stats?.students || 0, icon: Users, color: 'bg-purple-500' },
-    { label: 'Lop hoc', value: stats?.classes || 0, icon: BookOpen, color: 'bg-amber-500' },
+    { label: 'Bộ phận', value: stats?.departments || 0, icon: Building2, color: 'bg-blue-500' },
+    { label: 'Giáo viên', value: stats?.teachers || 0, icon: GraduationCap, color: 'bg-green-500' },
+    { label: 'Học sinh', value: stats?.students || 0, icon: Users, color: 'bg-purple-500' },
+    { label: 'Lớp học', value: stats?.classes || 0, icon: BookOpen, color: 'bg-amber-500' },
   ];
 
   return (
@@ -111,7 +111,7 @@ export default function SchoolDashboardPage() {
         <div className="bg-white rounded-xl shadow-sm p-6">
           <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-blue-600" />
-            Thong ke
+            Thống kê
           </h3>
           <div className="h-48 flex items-center justify-center bg-gray-50 rounded-lg">
             <div className="text-center">
@@ -122,10 +122,10 @@ export default function SchoolDashboardPage() {
                 <div className="w-8 bg-amber-500 rounded-t" style={{ height: `${(stats?.classes || 0) * 8 + 20}px` }}></div>
               </div>
               <div className="flex justify-center gap-4 text-xs text-gray-500">
-                <span>Bo phan</span>
-                <span>Giao vien</span>
-                <span>Hoc sinh</span>
-                <span>Lop</span>
+                <span>Bộ phận</span>
+                <span>Giáo viên</span>
+                <span>Học sinh</span>
+                <span>Lớp</span>
               </div>
             </div>
           </div>
@@ -135,7 +135,7 @@ export default function SchoolDashboardPage() {
         <div className="bg-white rounded-xl shadow-sm p-6">
           <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
             <Clock className="w-5 h-5 text-blue-600" />
-            Hoat dong gan day
+            Hoạt động gần đây
           </h3>
           {recentActivity.length > 0 ? (
             <div className="space-y-3">
@@ -154,7 +154,7 @@ export default function SchoolDashboardPage() {
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-gray-900 truncate">{item.full_name}</p>
                     <p className="text-xs text-gray-500">
-                      {item.role === 'teacher' ? 'Giao vien' : 'Hoc sinh'} -
+                      {item.role === 'teacher' ? 'Giáo viên' : 'Học sinh'} -
                       {new Date(item.created_at).toLocaleDateString('vi-VN')}
                     </p>
                   </div>
@@ -164,7 +164,7 @@ export default function SchoolDashboardPage() {
           ) : (
             <div className="text-center py-8 text-gray-500">
               <Clock className="w-12 h-12 mx-auto mb-2 opacity-50" />
-              <p>Chua co hoat dong nao</p>
+              <p>Chưa có hoạt động nào</p>
             </div>
           )}
         </div>

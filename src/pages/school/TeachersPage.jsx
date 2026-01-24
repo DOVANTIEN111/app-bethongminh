@@ -150,14 +150,14 @@ export default function TeachersPage() {
       loadData();
     } catch (err) {
       console.error('Save teacher error:', err);
-      alert('Co loi xay ra: ' + err.message);
+      alert('Có lỗi xảy ra: ' + err.message);
     } finally {
       setSaving(false);
     }
   };
 
   const handleDelete = async (teacher) => {
-    if (!confirm(`Ban co chac muon xoa giao vien "${teacher.full_name}"?`)) return;
+    if (!confirm(`Bạn có chắc muốn xóa giáo viên "${teacher.full_name}"?`)) return;
 
     try {
       // Soft delete - set is_active = false
@@ -170,7 +170,7 @@ export default function TeachersPage() {
       loadData();
     } catch (err) {
       console.error('Delete teacher error:', err);
-      alert('Co loi xay ra: ' + err.message);
+      alert('Có lỗi xảy ra: ' + err.message);
     }
   };
 
@@ -200,7 +200,7 @@ export default function TeachersPage() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Tim kiem giao vien..."
+            placeholder="Tìm kiếm giáo viên..."
             className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -209,7 +209,7 @@ export default function TeachersPage() {
           onChange={(e) => setFilterDepartment(e.target.value)}
           className="px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
         >
-          <option value="">Tat ca bo phan</option>
+          <option value="">Tất cả bộ phận</option>
           {departments.map((dept) => (
             <option key={dept.id} value={dept.id}>{dept.name}</option>
           ))}
@@ -219,7 +219,7 @@ export default function TeachersPage() {
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
         >
           <Plus className="w-5 h-5" />
-          Them giao vien
+          Thêm giáo viên
         </button>
       </div>
 
@@ -229,11 +229,11 @@ export default function TeachersPage() {
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Giao vien</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Giáo viên</th>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Email</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">So dien thoai</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Bo phan</th>
-                <th className="px-4 py-3 text-right text-sm font-medium text-gray-600">Thao tac</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Số điện thoại</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Bộ phận</th>
+                <th className="px-4 py-3 text-right text-sm font-medium text-gray-600">Thao tác</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -282,7 +282,7 @@ export default function TeachersPage() {
                 <tr>
                   <td colSpan={5} className="px-4 py-12 text-center text-gray-500">
                     <GraduationCap className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                    <p>Chua co giao vien nao</p>
+                    <p>Chưa có giáo viên nào</p>
                   </td>
                 </tr>
               )}
@@ -297,7 +297,7 @@ export default function TeachersPage() {
           <div className="bg-white rounded-2xl w-full max-w-md p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold">
-                {editingTeacher ? 'Sua thong tin giao vien' : 'Them giao vien moi'}
+                {editingTeacher ? 'Sửa thông tin giáo viên' : 'Thêm giáo viên mới'}
               </h3>
               <button onClick={() => setShowModal(false)} className="p-2 hover:bg-gray-100 rounded-full">
                 <X className="w-5 h-5" />
@@ -324,20 +324,20 @@ export default function TeachersPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Ho va ten *
+                  Họ và tên *
                 </label>
                 <input
                   type="text"
                   value={formData.full_name}
                   onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                  placeholder="Nguyen Van A"
+                  placeholder="Nguyễn Văn A"
                   className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  So dien thoai
+                  Số điện thoại
                 </label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -353,7 +353,7 @@ export default function TeachersPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Bo phan
+                  Bộ phận
                 </label>
                 <div className="relative">
                   <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -362,7 +362,7 @@ export default function TeachersPage() {
                     onChange={(e) => setFormData({ ...formData, department_id: e.target.value })}
                     className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="">-- Chon bo phan --</option>
+                    <option value="">-- Chọn bộ phận --</option>
                     {departments.map((dept) => (
                       <option key={dept.id} value={dept.id}>{dept.name}</option>
                     ))}
@@ -372,7 +372,7 @@ export default function TeachersPage() {
 
               {!editingTeacher && (
                 <p className="text-sm text-gray-500 bg-yellow-50 p-3 rounded-lg">
-                  Mat khau mac dinh: <strong>Teacher@123</strong>
+                  Mật khẩu mặc định: <strong>Teacher@123</strong>
                 </p>
               )}
 
@@ -381,14 +381,14 @@ export default function TeachersPage() {
                   onClick={() => setShowModal(false)}
                   className="flex-1 px-4 py-2 border border-gray-200 rounded-xl hover:bg-gray-50"
                 >
-                  Huy
+                  Hủy
                 </button>
                 <button
                   onClick={handleSave}
                   disabled={saving || !formData.email.trim() || !formData.full_name.trim()}
                   className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50"
                 >
-                  {saving ? 'Dang luu...' : 'Luu'}
+                  {saving ? 'Đang lưu...' : 'Lưu'}
                 </button>
               </div>
             </div>

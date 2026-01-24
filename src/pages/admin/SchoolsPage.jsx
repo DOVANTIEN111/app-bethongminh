@@ -122,14 +122,14 @@ export default function SchoolsPage() {
       loadSchools();
     } catch (err) {
       console.error('Save school error:', err);
-      alert('Co loi xay ra: ' + err.message);
+      alert('Có lỗi xảy ra: ' + err.message);
     } finally {
       setSaving(false);
     }
   };
 
   const handleDelete = async (school) => {
-    if (!confirm(`Ban co chac muon xoa truong "${school.name}"? Tat ca du lieu lien quan se bi xoa!`)) return;
+    if (!confirm(`Bạn có chắc muốn xóa trường "${school.name}"? Tất cả dữ liệu liên quan sẽ bị xóa!`)) return;
 
     try {
       const { error } = await supabase
@@ -141,7 +141,7 @@ export default function SchoolsPage() {
       loadSchools();
     } catch (err) {
       console.error('Delete school error:', err);
-      alert('Co loi xay ra: ' + err.message);
+      alert('Có lỗi xảy ra: ' + err.message);
     }
   };
 
@@ -168,7 +168,7 @@ export default function SchoolsPage() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Tim kiem truong hoc..."
+            placeholder="Tìm kiếm trường học..."
             className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -177,14 +177,14 @@ export default function SchoolsPage() {
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
         >
           <Plus className="w-5 h-5" />
-          Them truong
+          Thêm trường
         </button>
       </div>
 
       {/* Stats */}
       <div className="bg-white rounded-xl shadow-sm p-4">
         <p className="text-gray-600">
-          Tong cong: <strong className="text-blue-600">{filteredSchools.length}</strong> truong hoc
+          Tổng cộng: <strong className="text-blue-600">{filteredSchools.length}</strong> trường học
         </p>
       </div>
 
@@ -221,21 +221,21 @@ export default function SchoolsPage() {
                 <button
                   onClick={() => handleViewDetail(school)}
                   className="p-2 hover:bg-gray-100 rounded-lg"
-                  title="Xem chi tiet"
+                  title="Xem chi tiết"
                 >
                   <Eye className="w-4 h-4 text-gray-500" />
                 </button>
                 <button
                   onClick={() => handleOpenModal(school)}
                   className="p-2 hover:bg-gray-100 rounded-lg"
-                  title="Sua"
+                  title="Sửa"
                 >
                   <Edit className="w-4 h-4 text-gray-500" />
                 </button>
                 <button
                   onClick={() => handleDelete(school)}
                   className="p-2 hover:bg-red-100 rounded-lg"
-                  title="Xoa"
+                  title="Xóa"
                 >
                   <Trash2 className="w-4 h-4 text-red-500" />
                 </button>
@@ -246,7 +246,7 @@ export default function SchoolsPage() {
         {filteredSchools.length === 0 && (
           <div className="col-span-full bg-white rounded-xl shadow-sm p-12 text-center text-gray-500">
             <School className="w-12 h-12 mx-auto mb-2 opacity-50" />
-            <p>Chua co truong hoc nao</p>
+            <p>Chưa có trường học nào</p>
           </div>
         )}
       </div>
@@ -257,7 +257,7 @@ export default function SchoolsPage() {
           <div className="bg-white rounded-2xl w-full max-w-md p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold">
-                {editingSchool ? 'Sua thong tin truong' : 'Them truong moi'}
+                {editingSchool ? 'Sửa thông tin trường' : 'Thêm trường mới'}
               </h3>
               <button onClick={() => setShowModal(false)} className="p-2 hover:bg-gray-100 rounded-full">
                 <X className="w-5 h-5" />
@@ -267,13 +267,13 @@ export default function SchoolsPage() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Ten truong *
+                  Tên trường *
                 </label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="VD: Truong Tieu hoc ABC"
+                  placeholder="VD: Trường Tiểu học ABC"
                   className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -296,7 +296,7 @@ export default function SchoolsPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Dia chi
+                  Địa chỉ
                 </label>
                 <div className="relative">
                   <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -304,7 +304,7 @@ export default function SchoolsPage() {
                     type="text"
                     value={formData.address}
                     onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                    placeholder="123 Duong ABC, Quan XYZ"
+                    placeholder="123 Đường ABC, Quận XYZ"
                     className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -312,7 +312,7 @@ export default function SchoolsPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  So dien thoai
+                  Số điện thoại
                 </label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -331,14 +331,14 @@ export default function SchoolsPage() {
                   onClick={() => setShowModal(false)}
                   className="flex-1 px-4 py-2 border border-gray-200 rounded-xl hover:bg-gray-50"
                 >
-                  Huy
+                  Hủy
                 </button>
                 <button
                   onClick={handleSave}
                   disabled={saving || !formData.name.trim()}
                   className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50"
                 >
-                  {saving ? 'Dang luu...' : 'Luu'}
+                  {saving ? 'Đang lưu...' : 'Lưu'}
                 </button>
               </div>
             </div>
@@ -351,7 +351,7 @@ export default function SchoolsPage() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-md p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold">Chi tiet truong hoc</h3>
+              <h3 className="text-lg font-bold">Chi tiết trường học</h3>
               <button onClick={() => setShowDetailModal(false)} className="p-2 hover:bg-gray-100 rounded-full">
                 <X className="w-5 h-5" />
               </button>
@@ -389,12 +389,12 @@ export default function SchoolsPage() {
               <div className="bg-green-50 rounded-xl p-4 text-center">
                 <GraduationCap className="w-8 h-8 text-green-600 mx-auto mb-2" />
                 <p className="text-2xl font-bold text-green-600">{schoolStats.teachers}</p>
-                <p className="text-sm text-green-700">Giao vien</p>
+                <p className="text-sm text-green-700">Giáo viên</p>
               </div>
               <div className="bg-purple-50 rounded-xl p-4 text-center">
                 <Users className="w-8 h-8 text-purple-600 mx-auto mb-2" />
                 <p className="text-2xl font-bold text-purple-600">{schoolStats.students}</p>
-                <p className="text-sm text-purple-700">Hoc sinh</p>
+                <p className="text-sm text-purple-700">Học sinh</p>
               </div>
             </div>
 
@@ -402,7 +402,7 @@ export default function SchoolsPage() {
               onClick={() => setShowDetailModal(false)}
               className="w-full mt-6 px-4 py-2 bg-gray-100 rounded-xl hover:bg-gray-200"
             >
-              Dong
+              Đóng
             </button>
           </div>
         </div>

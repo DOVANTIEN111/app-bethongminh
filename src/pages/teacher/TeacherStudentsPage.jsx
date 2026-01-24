@@ -95,7 +95,7 @@ export default function TeacherStudentsPage() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Tim kiem hoc sinh..."
+            placeholder="Tìm kiếm học sinh..."
             className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500"
           />
         </div>
@@ -104,7 +104,7 @@ export default function TeacherStudentsPage() {
           onChange={(e) => setFilterClass(e.target.value)}
           className="px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500"
         >
-          <option value="">Tat ca lop</option>
+          <option value="">Tất cả lớp</option>
           {classes.map((cls) => (
             <option key={cls.id} value={cls.id}>{cls.name}</option>
           ))}
@@ -114,7 +114,7 @@ export default function TeacherStudentsPage() {
       {/* Stats */}
       <div className="bg-white rounded-xl shadow-sm p-4">
         <p className="text-gray-600">
-          Tong cong: <strong className="text-emerald-600">{filteredStudents.length}</strong> hoc sinh
+          Tổng cộng: <strong className="text-emerald-600">{filteredStudents.length}</strong> học sinh
         </p>
       </div>
 
@@ -124,12 +124,12 @@ export default function TeacherStudentsPage() {
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Hoc sinh</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Lop</th>
-                <th className="px-4 py-3 text-center text-sm font-medium text-gray-600">Tien do</th>
-                <th className="px-4 py-3 text-center text-sm font-medium text-gray-600">Thoi gian hoc</th>
-                <th className="px-4 py-3 text-center text-sm font-medium text-gray-600">Diem TB</th>
-                <th className="px-4 py-3 text-right text-sm font-medium text-gray-600">Chi tiet</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Học sinh</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Lớp</th>
+                <th className="px-4 py-3 text-center text-sm font-medium text-gray-600">Tiến độ</th>
+                <th className="px-4 py-3 text-center text-sm font-medium text-gray-600">Thời gian học</th>
+                <th className="px-4 py-3 text-center text-sm font-medium text-gray-600">Điểm TB</th>
+                <th className="px-4 py-3 text-right text-sm font-medium text-gray-600">Chi tiết</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -195,7 +195,7 @@ export default function TeacherStudentsPage() {
                 <tr>
                   <td colSpan={6} className="px-4 py-12 text-center text-gray-500">
                     <Users className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                    <p>Khong co hoc sinh nao</p>
+                    <p>Không có học sinh nào</p>
                   </td>
                 </tr>
               )}
@@ -209,7 +209,7 @@ export default function TeacherStudentsPage() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-md p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold">Chi tiet hoc sinh</h3>
+              <h3 className="text-lg font-bold">Chi tiết học sinh</h3>
               <button onClick={() => setShowDetailModal(false)} className="p-2 hover:bg-gray-100 rounded-full">
                 <X className="w-5 h-5" />
               </button>
@@ -234,22 +234,22 @@ export default function TeacherStudentsPage() {
               <div className="bg-blue-50 rounded-xl p-4 text-center">
                 <TrendingUp className="w-8 h-8 text-blue-600 mx-auto mb-2" />
                 <p className="text-2xl font-bold text-blue-600">{selectedStudent.progress}%</p>
-                <p className="text-sm text-blue-700">Tien do</p>
+                <p className="text-sm text-blue-700">Tiến độ</p>
               </div>
               <div className="bg-amber-50 rounded-xl p-4 text-center">
                 <Star className="w-8 h-8 text-amber-600 mx-auto mb-2" />
                 <p className="text-2xl font-bold text-amber-600">{selectedStudent.avg_score}</p>
-                <p className="text-sm text-amber-700">Diem TB</p>
+                <p className="text-sm text-amber-700">Điểm TB</p>
               </div>
               <div className="bg-green-50 rounded-xl p-4 text-center">
                 <BookOpen className="w-8 h-8 text-green-600 mx-auto mb-2" />
                 <p className="text-2xl font-bold text-green-600">{selectedStudent.lessons_completed}</p>
-                <p className="text-sm text-green-700">Bai hoan thanh</p>
+                <p className="text-sm text-green-700">Bài hoàn thành</p>
               </div>
               <div className="bg-purple-50 rounded-xl p-4 text-center">
                 <Clock className="w-8 h-8 text-purple-600 mx-auto mb-2" />
                 <p className="text-2xl font-bold text-purple-600">{selectedStudent.total_time}h</p>
-                <p className="text-sm text-purple-700">Thoi gian hoc</p>
+                <p className="text-sm text-purple-700">Thời gian học</p>
               </div>
             </div>
 
@@ -257,7 +257,7 @@ export default function TeacherStudentsPage() {
               onClick={() => setShowDetailModal(false)}
               className="w-full px-4 py-2 bg-gray-100 rounded-xl hover:bg-gray-200"
             >
-              Dong
+              Đóng
             </button>
           </div>
         </div>

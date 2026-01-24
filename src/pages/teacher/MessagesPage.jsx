@@ -47,41 +47,41 @@ export default function MessagesPage() {
       setContacts([
         {
           id: 'c1',
-          name: 'Phu huynh - Nguyen Van A',
-          student: 'Nguyen Van A',
-          class: 'Lop 3A',
-          lastMessage: 'Cam on thay da thong bao',
+          name: 'Phụ huynh - Nguyễn Văn A',
+          student: 'Nguyễn Văn A',
+          class: 'Lớp 3A',
+          lastMessage: 'Cảm ơn thầy đã thông báo',
           time: '10:30',
           unread: 0,
           online: true,
         },
         {
           id: 'c2',
-          name: 'Phu huynh - Tran Thi B',
-          student: 'Tran Thi B',
-          class: 'Lop 3A',
-          lastMessage: 'Con toi hom nay co di hoc khong a?',
+          name: 'Phụ huynh - Trần Thị B',
+          student: 'Trần Thị B',
+          class: 'Lớp 3A',
+          lastMessage: 'Con tôi hôm nay có đi học không ạ?',
           time: '09:15',
           unread: 2,
           online: false,
         },
         {
           id: 'c3',
-          name: 'Phu huynh - Le Van C',
-          student: 'Le Van C',
-          class: 'Lop 3B',
-          lastMessage: 'Da nhan duoc thong bao',
-          time: 'Hom qua',
+          name: 'Phụ huynh - Lê Văn C',
+          student: 'Lê Văn C',
+          class: 'Lớp 3B',
+          lastMessage: 'Đã nhận được thông báo',
+          time: 'Hôm qua',
           unread: 0,
           online: true,
         },
         {
           id: 'c4',
-          name: 'Phu huynh - Pham Thi D',
-          student: 'Pham Thi D',
-          class: 'Lop 3B',
-          lastMessage: 'Xin cam on thay',
-          time: 'Hom qua',
+          name: 'Phụ huynh - Phạm Thị D',
+          student: 'Phạm Thị D',
+          class: 'Lớp 3B',
+          lastMessage: 'Xin cảm ơn thầy',
+          time: 'Hôm qua',
           unread: 0,
           online: false,
         },
@@ -97,11 +97,11 @@ export default function MessagesPage() {
     setSelectedContact(contact);
     // Mock messages
     setMessages([
-      { id: 'm1', from: 'parent', text: 'Xin chao thay a', time: '09:00', read: true },
-      { id: 'm2', from: 'teacher', text: 'Xin chao phu huynh', time: '09:05', read: true },
-      { id: 'm3', from: 'parent', text: 'Thay cho toi hoi ve tinh hinh hoc tap cua con', time: '09:10', read: true },
-      { id: 'm4', from: 'teacher', text: 'Con hoc tot, cham chi lam bai tap. Tuy nhien can cai thien phan doc hieu', time: '09:15', read: true },
-      { id: 'm5', from: 'parent', text: 'Cam on thay da thong bao', time: '09:20', read: true },
+      { id: 'm1', from: 'parent', text: 'Xin chào thầy ạ', time: '09:00', read: true },
+      { id: 'm2', from: 'teacher', text: 'Xin chào phụ huynh', time: '09:05', read: true },
+      { id: 'm3', from: 'parent', text: 'Thầy cho tôi hỏi về tình hình học tập của con', time: '09:10', read: true },
+      { id: 'm4', from: 'teacher', text: 'Con học tốt, chăm chỉ làm bài tập. Tuy nhiên cần cải thiện phần đọc hiểu', time: '09:15', read: true },
+      { id: 'm5', from: 'parent', text: 'Cảm ơn thầy đã thông báo', time: '09:20', read: true },
     ]);
     // Clear unread
     setContacts(prev => prev.map(c =>
@@ -123,7 +123,7 @@ export default function MessagesPage() {
     // Update last message in contacts
     setContacts(prev => prev.map(c =>
       c.id === selectedContact.id
-        ? { ...c, lastMessage: newMessage.trim(), time: 'Vua xong' }
+        ? { ...c, lastMessage: newMessage.trim(), time: 'Vừa xong' }
         : c
     ));
 
@@ -133,7 +133,7 @@ export default function MessagesPage() {
   const handleBroadcast = () => {
     if (!broadcastMessage.trim() || !broadcastClass) return;
 
-    alert(`Da gui thong bao den tat ca phu huynh lop ${classes.find(c => c.id === broadcastClass)?.name}`);
+    alert(`Đã gửi thông báo đến tất cả phụ huynh lớp ${classes.find(c => c.id === broadcastClass)?.name}`);
     setBroadcastMessage('');
     setBroadcastClass('');
     setShowBroadcastModal(false);
@@ -159,11 +159,11 @@ export default function MessagesPage() {
         <div className={`w-full md:w-80 border-r border-gray-100 flex flex-col ${selectedContact ? 'hidden md:flex' : 'flex'}`}>
           <div className="p-4 border-b border-gray-100">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold text-gray-900">Tin nhan</h3>
+              <h3 className="font-semibold text-gray-900">Tin nhắn</h3>
               <button
                 onClick={() => setShowBroadcastModal(true)}
                 className="p-2 bg-emerald-100 text-emerald-600 rounded-lg hover:bg-emerald-200"
-                title="Gui thong bao"
+                title="Gửi thông báo"
               >
                 <Bell className="w-5 h-5" />
               </button>
@@ -174,7 +174,7 @@ export default function MessagesPage() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Tim kiem..."
+                placeholder="Tìm kiếm..."
                 className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500"
               />
             </div>
@@ -217,7 +217,7 @@ export default function MessagesPage() {
             {filteredContacts.length === 0 && (
               <div className="p-8 text-center text-gray-500">
                 <MessageSquare className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                <p>Khong co lien he nao</p>
+                <p>Không có liên hệ nào</p>
               </div>
             )}
           </div>
@@ -246,7 +246,7 @@ export default function MessagesPage() {
                 <div>
                   <p className="font-medium text-gray-900">{selectedContact.name}</p>
                   <p className="text-xs text-gray-500">
-                    {selectedContact.online ? 'Dang hoat dong' : 'Offline'}
+                    {selectedContact.online ? 'Đang hoạt động' : 'Offline'}
                   </p>
                 </div>
               </div>
@@ -288,7 +288,7 @@ export default function MessagesPage() {
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                    placeholder="Nhap tin nhan..."
+                    placeholder="Nhập tin nhắn..."
                     className="flex-1 px-4 py-2 border border-gray-200 rounded-full focus:ring-2 focus:ring-emerald-500"
                   />
                   <button
@@ -305,7 +305,7 @@ export default function MessagesPage() {
             <div className="flex-1 flex items-center justify-center text-gray-500">
               <div className="text-center">
                 <MessageSquare className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                <p>Chon mot cuoc tro chuyen</p>
+                <p>Chọn một cuộc trò chuyện</p>
               </div>
             </div>
           )}
@@ -319,7 +319,7 @@ export default function MessagesPage() {
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold flex items-center gap-2">
                 <Bell className="w-5 h-5 text-emerald-600" />
-                Gui thong bao cho lop
+                Gửi thông báo cho lớp
               </h3>
               <button onClick={() => setShowBroadcastModal(false)} className="p-2 hover:bg-gray-100 rounded-full">
                 ✕
@@ -329,14 +329,14 @@ export default function MessagesPage() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Chon lop
+                  Chọn lớp
                 </label>
                 <select
                   value={broadcastClass}
                   onChange={(e) => setBroadcastClass(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500"
                 >
-                  <option value="">-- Chon lop --</option>
+                  <option value="">-- Chọn lớp --</option>
                   {classes.map((cls) => (
                     <option key={cls.id} value={cls.id}>{cls.name}</option>
                   ))}
@@ -345,12 +345,12 @@ export default function MessagesPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Noi dung thong bao
+                  Nội dung thông báo
                 </label>
                 <textarea
                   value={broadcastMessage}
                   onChange={(e) => setBroadcastMessage(e.target.value)}
-                  placeholder="Nhap noi dung thong bao..."
+                  placeholder="Nhập nội dung thông báo..."
                   rows={4}
                   className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500"
                 />
@@ -361,14 +361,14 @@ export default function MessagesPage() {
                   onClick={() => setShowBroadcastModal(false)}
                   className="flex-1 px-4 py-2 border border-gray-200 rounded-xl hover:bg-gray-50"
                 >
-                  Huy
+                  Hủy
                 </button>
                 <button
                   onClick={handleBroadcast}
                   disabled={!broadcastMessage.trim() || !broadcastClass}
                   className="flex-1 px-4 py-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 disabled:opacity-50"
                 >
-                  Gui thong bao
+                  Gửi thông báo
                 </button>
               </div>
             </div>

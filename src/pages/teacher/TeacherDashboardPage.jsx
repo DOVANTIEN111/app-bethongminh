@@ -62,25 +62,25 @@ export default function TeacherDashboardPage() {
 
       // Mock today's schedule
       setTodaySchedule([
-        { time: '07:30 - 08:15', class: 'Lop 3A', subject: 'Toan' },
-        { time: '08:20 - 09:05', class: 'Lop 3B', subject: 'Toan' },
-        { time: '09:20 - 10:05', class: 'Lop 4A', subject: 'Toan' },
-        { time: '10:10 - 10:55', class: 'Lop 4B', subject: 'Toan' },
+        { time: '07:30 - 08:15', class: 'Lớp 3A', subject: 'Toán' },
+        { time: '08:20 - 09:05', class: 'Lớp 3B', subject: 'Toán' },
+        { time: '09:20 - 10:05', class: 'Lớp 4A', subject: 'Toán' },
+        { time: '10:10 - 10:55', class: 'Lớp 4B', subject: 'Toán' },
       ]);
 
       // Mock recent activity
       setRecentActivity([
-        { student: 'Nguyen Van A', action: 'Da nop bai tap Toan', time: '10 phut truoc', type: 'submit' },
-        { student: 'Tran Thi B', action: 'Hoan thanh bai hoc', time: '30 phut truoc', type: 'complete' },
-        { student: 'Le Van C', action: 'Dat diem cao bai kiem tra', time: '1 gio truoc', type: 'achievement' },
-        { student: 'Pham Thi D', action: 'Dang nhap hoc', time: '2 gio truoc', type: 'login' },
+        { student: 'Nguyễn Văn A', action: 'Đã nộp bài tập Toán', time: '10 phút trước', type: 'submit' },
+        { student: 'Trần Thị B', action: 'Hoàn thành bài học', time: '30 phút trước', type: 'complete' },
+        { student: 'Lê Văn C', action: 'Đạt điểm cao bài kiểm tra', time: '1 giờ trước', type: 'achievement' },
+        { student: 'Phạm Thị D', action: 'Đăng nhập học', time: '2 giờ trước', type: 'login' },
       ]);
 
       // Mock notifications
       setNotifications([
-        { title: 'Bai tap moi can cham', message: '5 hoc sinh da nop bai tap', time: '5 phut truoc', unread: true },
-        { title: 'Hop to bo mon', message: 'Ngay mai luc 14:00', time: '1 gio truoc', unread: true },
-        { title: 'Cap nhat he thong', message: 'Phien ban moi da duoc cap nhat', time: '2 gio truoc', unread: false },
+        { title: 'Bài tập mới cần chấm', message: '5 học sinh đã nộp bài tập', time: '5 phút trước', unread: true },
+        { title: 'Họp tổ bộ môn', message: 'Ngày mai lúc 14:00', time: '1 giờ trước', unread: true },
+        { title: 'Cập nhật hệ thống', message: 'Phiên bản mới đã được cập nhật', time: '2 giờ trước', unread: false },
       ]);
 
     } catch (err) {
@@ -91,10 +91,10 @@ export default function TeacherDashboardPage() {
   };
 
   const statCards = [
-    { label: 'Lop day', value: stats.totalClasses, icon: BookOpen, color: 'bg-emerald-500', bgLight: 'bg-emerald-100' },
-    { label: 'Hoc sinh', value: stats.totalStudents, icon: Users, color: 'bg-blue-500', bgLight: 'bg-blue-100' },
-    { label: 'Bai da giao', value: stats.totalAssignments, icon: ClipboardList, color: 'bg-purple-500', bgLight: 'bg-purple-100' },
-    { label: 'Chua cham', value: stats.pendingGrading, icon: Clock, color: 'bg-amber-500', bgLight: 'bg-amber-100' },
+    { label: 'Lớp dạy', value: stats.totalClasses, icon: BookOpen, color: 'bg-emerald-500', bgLight: 'bg-emerald-100' },
+    { label: 'Học sinh', value: stats.totalStudents, icon: Users, color: 'bg-blue-500', bgLight: 'bg-blue-100' },
+    { label: 'Bài đã giao', value: stats.totalAssignments, icon: ClipboardList, color: 'bg-purple-500', bgLight: 'bg-purple-100' },
+    { label: 'Chưa chấm', value: stats.pendingGrading, icon: Clock, color: 'bg-amber-500', bgLight: 'bg-amber-100' },
   ];
 
   if (loading) {
@@ -129,7 +129,7 @@ export default function TeacherDashboardPage() {
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
           <div className="p-4 border-b border-gray-100 flex items-center gap-2">
             <Calendar className="w-5 h-5 text-emerald-600" />
-            <h3 className="font-semibold text-gray-900">Lich day hom nay</h3>
+            <h3 className="font-semibold text-gray-900">Lịch dạy hôm nay</h3>
           </div>
           <div className="divide-y divide-gray-100">
             {todaySchedule.map((item, i) => (
@@ -151,7 +151,7 @@ export default function TeacherDashboardPage() {
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
           <div className="p-4 border-b border-gray-100 flex items-center gap-2">
             <Clock className="w-5 h-5 text-blue-600" />
-            <h3 className="font-semibold text-gray-900">Hoat dong gan day</h3>
+            <h3 className="font-semibold text-gray-900">Hoạt động gần đây</h3>
           </div>
           <div className="divide-y divide-gray-100">
             {recentActivity.map((item, i) => (
@@ -183,7 +183,7 @@ export default function TeacherDashboardPage() {
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
           <div className="p-4 border-b border-gray-100 flex items-center gap-2">
             <Bell className="w-5 h-5 text-amber-600" />
-            <h3 className="font-semibold text-gray-900">Thong bao</h3>
+            <h3 className="font-semibold text-gray-900">Thông báo</h3>
           </div>
           <div className="divide-y divide-gray-100">
             {notifications.map((item, i) => (
