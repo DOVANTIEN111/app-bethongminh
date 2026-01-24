@@ -8,11 +8,19 @@ import SplashScreen from './components/SplashScreen';
 // Lazy load pages
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
-const SchoolDashboard = lazy(() => import('./pages/SchoolDashboard'));
 const DepartmentDashboard = lazy(() => import('./pages/DepartmentDashboard'));
 const TeacherDashboard = lazy(() => import('./pages/TeacherDashboard'));
 const ParentDashboard = lazy(() => import('./pages/ParentDashboard'));
 const StudentDashboard = lazy(() => import('./pages/StudentDashboard'));
+
+// School Admin pages
+const SchoolLayout = lazy(() => import('./components/SchoolLayout'));
+const SchoolDashboardPage = lazy(() => import('./pages/school/SchoolDashboardPage'));
+const DepartmentsPage = lazy(() => import('./pages/school/DepartmentsPage'));
+const TeachersPage = lazy(() => import('./pages/school/TeachersPage'));
+const StudentsPage = lazy(() => import('./pages/school/StudentsPage'));
+const ClassesPage = lazy(() => import('./pages/school/ClassesPage'));
+const SchoolSettingsPage = lazy(() => import('./pages/school/SchoolSettingsPage'));
 
 // Protected Route Component
 function ProtectedRoute({ children, allowedRoles }) {
@@ -79,12 +87,19 @@ function App() {
           </ProtectedRoute>
         } />
 
-        {/* School Admin routes */}
-        <Route path="/school/*" element={
+        {/* School Admin routes - Nested routes */}
+        <Route path="/school" element={
           <ProtectedRoute allowedRoles={[ROLES.SCHOOL_ADMIN]}>
-            <SchoolDashboard />
+            <SchoolLayout />
           </ProtectedRoute>
-        } />
+        }>
+          <Route index element={<SchoolDashboardPage />} />
+          <Route path="departments" element={<DepartmentsPage />} />
+          <Route path="teachers" element={<TeachersPage />} />
+          <Route path="students" element={<StudentsPage />} />
+          <Route path="classes" element={<ClassesPage />} />
+          <Route path="settings" element={<SchoolSettingsPage />} />
+        </Route>
 
         {/* Department Head routes */}
         <Route path="/department/*" element={
