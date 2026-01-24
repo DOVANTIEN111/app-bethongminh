@@ -53,95 +53,89 @@ export default function SchoolsPage() {
   const loadData = async () => {
     try {
       setLoading(true);
-      console.log('=== DEBUG: Loading schools data ===');
+      console.log('=== DEBUG: Loading schools ===');
 
-      // Query đơn giản - không join với plans để tránh lỗi 400
-      const schoolsRes = await supabase
+      // Query đơn giản nhất - chỉ lấy schools
+      const { data, error } = await supabase
         .from('schools')
-        .select('*')
+        .select('id, name, email, address, phone, created_at')
         .order('created_at', { ascending: false });
 
-      console.log('Schools response:', schoolsRes);
+      console.log('Schools result:', { data, error });
 
-      if (schoolsRes.error) {
-        console.error('Schools error:', schoolsRes.error);
-        throw schoolsRes.error;
+      if (error) {
+        console.error('Schools query error:', error);
+        // Vẫn set empty array để không bị stuck loading
+        setSchools([]);
+        return;
       }
 
-      const schoolsData = schoolsRes.data || [];
-      setSchools(schoolsData);
-      console.log('Loaded schools:', schoolsData.length);
+      setSchools(data || []);
+      console.log('Total schools loaded:', data?.length || 0);
 
-      // Load plans riêng (không ảnh hưởng nếu lỗi)
-      try {
-        const plansRes = await supabase
-          .from('plans')
-          .select('id, name, slug')
-          .eq('is_active', true);
+      // Load plans riêng - bỏ qua nếu lỗi
+      loadPlans();
 
-        if (!plansRes.error) {
-          setPlans(plansRes.data || []);
-          console.log('Loaded plans:', plansRes.data?.length || 0);
-
-          // Nếu có plans, thử load plan info cho từng school
-          if (plansRes.data?.length > 0 && schoolsData.length > 0) {
-            const plansMap = {};
-            plansRes.data.forEach(p => { plansMap[p.id] = p; });
-
-            // Gắn plan vào school nếu có plan_id
-            const schoolsWithPlan = schoolsData.map(s => ({
-              ...s,
-              plan: s.plan_id ? plansMap[s.plan_id] : null
-            }));
-            setSchools(schoolsWithPlan);
-          }
-        }
-      } catch (planErr) {
-        console.log('Plans not available:', planErr);
-      }
-
-      // Load stats for all schools
-      if (schoolsData.length > 0) {
-        await loadAllStats(schoolsData.map(s => s.id));
+      // Load stats riêng - bỏ qua nếu lỗi
+      if (data && data.length > 0) {
+        loadAllStats(data.map(s => s.id));
       }
     } catch (err) {
-      console.error('Load schools error:', err);
+      console.error('Load error:', err);
+      setSchools([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadPlans = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('plans')
+        .select('id, name, slug');
+
+      if (!error && data) {
+        setPlans(data);
+      }
+    } catch (err) {
+      console.log('Plans not available');
     }
   };
 
   const loadAllStats = async (schoolIds) => {
     if (!schoolIds || schoolIds.length === 0) return;
 
+    // Tạo stats mặc định cho tất cả schools
+    const defaultStats = {};
+    schoolIds.forEach(id => {
+      defaultStats[id] = { id, teachers: 0, students: 0, classes: 0 };
+    });
+    setSchoolStats(defaultStats);
+
+    // Thử load stats thực tế - không block nếu lỗi
     try {
-      const statsPromises = schoolIds.map(async (id) => {
+      for (const id of schoolIds) {
         try {
-          const [teachersRes, studentsRes, classesRes] = await Promise.all([
+          const [t, s, c] = await Promise.all([
             supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('school_id', id).eq('role', 'teacher'),
             supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('school_id', id).eq('role', 'student'),
             supabase.from('classes').select('id', { count: 'exact', head: true }).eq('school_id', id),
           ]);
-          return {
-            id,
-            teachers: teachersRes.count || 0,
-            students: studentsRes.count || 0,
-            classes: classesRes.count || 0,
-          };
+          setSchoolStats(prev => ({
+            ...prev,
+            [id]: {
+              id,
+              teachers: t.count || 0,
+              students: s.count || 0,
+              classes: c.count || 0,
+            }
+          }));
         } catch {
-          return { id, teachers: 0, students: 0, classes: 0 };
+          // Giữ stats mặc định
         }
-      });
-
-      const allStats = await Promise.all(statsPromises);
-      const statsMap = {};
-      allStats.forEach(s => {
-        statsMap[s.id] = s;
-      });
-      setSchoolStats(statsMap);
-    } catch (err) {
-      console.error('Load stats error:', err);
-      // Không throw error - vẫn hiển thị trường học dù không có stats
+      }
+    } catch {
+      // Giữ stats mặc định
     }
   };
 
@@ -214,27 +208,16 @@ export default function SchoolsPage() {
 
     setSaving(true);
     try {
-      // Dữ liệu cơ bản (các cột chắc chắn tồn tại)
-      const baseData = {
+      // Chỉ dùng dữ liệu cơ bản để tránh lỗi
+      const saveData = {
         name: formData.name.trim(),
         email: formData.email.trim(),
         address: formData.address.trim() || null,
         phone: formData.phone.trim() || null,
       };
 
-      // Dữ liệu mở rộng (các cột mới từ migration)
-      const extendedData = {
-        ...baseData,
-        plan_id: formData.plan_id || null,
-        notes: formData.notes.trim() || null,
-        logo_url: formData.logo_url || null,
-        is_active: formData.is_active,
-        updated_at: new Date().toISOString(),
-      };
-
       console.log('=== DEBUG: Saving school ===');
-      console.log('Form data:', formData);
-      console.log('Extended data to save:', extendedData);
+      console.log('Data to save:', saveData);
 
       let result;
 
@@ -242,45 +225,21 @@ export default function SchoolsPage() {
         console.log('Updating school ID:', editingSchool.id);
         result = await supabase
           .from('schools')
-          .update(extendedData)
+          .update(saveData)
           .eq('id', editingSchool.id)
           .select();
-
-        // Nếu lỗi do cột không tồn tại, thử với dữ liệu cơ bản
-        if (result.error && result.error.message.includes('column')) {
-          console.log('Retrying with base data only...');
-          result = await supabase
-            .from('schools')
-            .update(baseData)
-            .eq('id', editingSchool.id)
-            .select();
-        }
       } else {
         console.log('Inserting new school');
         result = await supabase
           .from('schools')
-          .insert(extendedData)
+          .insert(saveData)
           .select();
-
-        // Nếu lỗi do cột không tồn tại, thử với dữ liệu cơ bản
-        if (result.error && result.error.message.includes('column')) {
-          console.log('Retrying with base data only...');
-          result = await supabase
-            .from('schools')
-            .insert(baseData)
-            .select();
-        }
       }
 
       console.log('Supabase result:', result);
 
       if (result.error) {
-        console.error('Supabase error details:', {
-          message: result.error.message,
-          details: result.error.details,
-          hint: result.error.hint,
-          code: result.error.code,
-        });
+        console.error('Supabase error:', result.error);
         throw result.error;
       }
 
@@ -309,38 +268,22 @@ export default function SchoolsPage() {
   };
 
   const handleToggleStatus = async (school) => {
-    try {
-      const { error } = await supabase
-        .from('schools')
-        .update({ is_active: !school.is_active, updated_at: new Date().toISOString() })
-        .eq('id', school.id);
-      if (error) throw error;
-      loadData();
-    } catch (err) {
-      console.error('Toggle status error:', err);
-    }
+    // Tạm thời bỏ qua nếu cột is_active chưa có
+    console.log('Toggle status for:', school.id);
+    alert('Chức năng này cần chạy migration SQL trước');
   };
 
-  // Filter and sort schools
+  // Filter and sort schools - chỉ dùng các trường cơ bản
   const filteredSchools = schools
     .filter(s => {
-      // Search filter
-      const matchSearch = !searchQuery ||
-        s.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        s.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        s.address?.toLowerCase().includes(searchQuery.toLowerCase());
-
-      // Status filter
-      const matchStatus = statusFilter === 'all' ||
-        (statusFilter === 'active' && s.is_active !== false) ||
-        (statusFilter === 'inactive' && s.is_active === false);
-
-      // Plan filter
-      const matchPlan = planFilter === 'all' ||
-        (planFilter === 'free' && !s.plan_id) ||
-        (s.plan?.slug?.includes(planFilter));
-
-      return matchSearch && matchStatus && matchPlan;
+      // Search filter - chỉ dùng name, email, address
+      if (!searchQuery) return true;
+      const query = searchQuery.toLowerCase();
+      return (
+        s.name?.toLowerCase().includes(query) ||
+        s.email?.toLowerCase().includes(query) ||
+        s.address?.toLowerCase().includes(query)
+      );
     })
     .sort((a, b) => {
       const statsA = schoolStats[a.id] || {};
@@ -413,8 +356,8 @@ export default function SchoolsPage() {
               <CheckCircle className="w-5 h-5 text-green-600" />
             </div>
             <div>
-              <p className="text-xs text-gray-500">Đang hoạt động</p>
-              <p className="text-xl font-bold">{schools.filter(s => s.is_active !== false).length}</p>
+              <p className="text-xs text-gray-500">Hiển thị</p>
+              <p className="text-xl font-bold">{filteredSchools.length}</p>
             </div>
           </div>
         </div>
@@ -425,7 +368,7 @@ export default function SchoolsPage() {
             </div>
             <div>
               <p className="text-xs text-gray-500">Tổng giáo viên</p>
-              <p className="text-xl font-bold">{Object.values(schoolStats).reduce((sum, s) => sum + (s.teachers || 0), 0)}</p>
+              <p className="text-xl font-bold">{Object.values(schoolStats).reduce((sum, s) => sum + (s?.teachers || 0), 0)}</p>
             </div>
           </div>
         </div>
@@ -436,17 +379,17 @@ export default function SchoolsPage() {
             </div>
             <div>
               <p className="text-xs text-gray-500">Tổng học sinh</p>
-              <p className="text-xl font-bold">{Object.values(schoolStats).reduce((sum, s) => sum + (s.students || 0), 0)}</p>
+              <p className="text-xl font-bold">{Object.values(schoolStats).reduce((sum, s) => sum + (s?.students || 0), 0)}</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Filters */}
+      {/* Filters - Đơn giản hóa */}
       <div className="bg-white rounded-xl shadow-sm p-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="flex flex-col sm:flex-row gap-4">
           {/* Search */}
-          <div className="relative lg:col-span-2">
+          <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             <input
               type="text"
@@ -456,30 +399,6 @@ export default function SchoolsPage() {
               className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
-
-          {/* Status Filter */}
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="all">Tất cả trạng thái</option>
-            <option value="active">Đang hoạt động</option>
-            <option value="inactive">Tạm ngưng</option>
-          </select>
-
-          {/* Plan Filter */}
-          <select
-            value={planFilter}
-            onChange={(e) => setPlanFilter(e.target.value)}
-            className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="all">Tất cả gói cước</option>
-            <option value="free">Miễn phí</option>
-            <option value="basic">Cơ bản</option>
-            <option value="pro">Pro</option>
-            <option value="premium">Premium</option>
-          </select>
 
           {/* Sort */}
           <select
@@ -512,48 +431,24 @@ export default function SchoolsPage() {
       {/* Schools Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredSchools.map((school) => {
-          const stats = schoolStats[school.id] || {};
-          const planBadge = getPlanBadge(school);
-          const PlanIcon = planBadge.icon;
+          const stats = schoolStats[school.id] || { teachers: 0, students: 0, classes: 0 };
 
           return (
             <div
               key={school.id}
-              className={`bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow ${
-                school.is_active === false ? 'opacity-75' : ''
-              }`}
+              className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow"
             >
               {/* Card Header */}
               <div className="p-4">
                 <div className="flex items-start gap-4">
                   {/* Logo */}
                   <div className="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
-                    {school.logo_url ? (
-                      <img
-                        src={school.logo_url}
-                        alt={school.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <School className="w-7 h-7 text-white" />
-                    )}
+                    <School className="w-7 h-7 text-white" />
                   </div>
 
                   {/* Info */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-2">
-                      <h3 className="font-semibold text-gray-900 truncate">{school.name}</h3>
-                      {/* Status Badge */}
-                      {school.is_active === false ? (
-                        <span className="flex-shrink-0 px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">
-                          Tạm ngưng
-                        </span>
-                      ) : (
-                        <span className="flex-shrink-0 px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">
-                          Hoạt động
-                        </span>
-                      )}
-                    </div>
+                    <h3 className="font-semibold text-gray-900 truncate">{school.name}</h3>
 
                     {school.email && (
                       <p className="text-sm text-gray-500 truncate flex items-center gap-1 mt-1">
@@ -565,30 +460,27 @@ export default function SchoolsPage() {
                         <MapPin className="w-3 h-3 flex-shrink-0" /> {school.address}
                       </p>
                     )}
+                    {school.phone && (
+                      <p className="text-sm text-gray-500 truncate flex items-center gap-1 mt-0.5">
+                        <Phone className="w-3 h-3 flex-shrink-0" /> {school.phone}
+                      </p>
+                    )}
                   </div>
-                </div>
-
-                {/* Plan Badge */}
-                <div className="mt-3 flex items-center gap-2">
-                  <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${planBadge.color}`}>
-                    {PlanIcon && <PlanIcon className="w-3 h-3" />}
-                    {school.plan?.name || planBadge.label}
-                  </span>
                 </div>
               </div>
 
               {/* Stats */}
               <div className="px-4 py-3 bg-gray-50 border-t grid grid-cols-3 gap-2 text-center">
                 <div>
-                  <p className="text-lg font-bold text-blue-600">{stats.teachers || 0}</p>
+                  <p className="text-lg font-bold text-blue-600">{stats.teachers}</p>
                   <p className="text-xs text-gray-500">Giáo viên</p>
                 </div>
                 <div>
-                  <p className="text-lg font-bold text-purple-600">{stats.students || 0}</p>
+                  <p className="text-lg font-bold text-purple-600">{stats.students}</p>
                   <p className="text-xs text-gray-500">Học sinh</p>
                 </div>
                 <div>
-                  <p className="text-lg font-bold text-orange-600">{stats.classes || 0}</p>
+                  <p className="text-lg font-bold text-orange-600">{stats.classes}</p>
                   <p className="text-xs text-gray-500">Lớp học</p>
                 </div>
               </div>
@@ -597,37 +489,15 @@ export default function SchoolsPage() {
               <div className="px-4 py-3 border-t flex items-center justify-between">
                 <div className="flex items-center gap-1 text-xs text-gray-400">
                   <Calendar className="w-3 h-3" />
-                  {new Date(school.created_at).toLocaleDateString('vi-VN')}
+                  {school.created_at ? new Date(school.created_at).toLocaleDateString('vi-VN') : 'N/A'}
                 </div>
                 <div className="flex items-center gap-1">
-                  <button
-                    onClick={() => navigate(`/admin/schools/${school.id}`)}
-                    className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
-                    title="Xem chi tiết"
-                  >
-                    <Eye className="w-4 h-4 text-blue-500" />
-                  </button>
                   <button
                     onClick={() => handleOpenModal(school)}
                     className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                     title="Sửa"
                   >
                     <Edit2 className="w-4 h-4 text-gray-500" />
-                  </button>
-                  <button
-                    onClick={() => handleToggleStatus(school)}
-                    className={`p-2 rounded-lg transition-colors ${
-                      school.is_active === false
-                        ? 'hover:bg-green-50'
-                        : 'hover:bg-yellow-50'
-                    }`}
-                    title={school.is_active === false ? 'Kích hoạt' : 'Tạm ngưng'}
-                  >
-                    {school.is_active === false ? (
-                      <CheckCircle className="w-4 h-4 text-green-500" />
-                    ) : (
-                      <XCircle className="w-4 h-4 text-yellow-500" />
-                    )}
                   </button>
                   <button
                     onClick={() => handleDelete(school)}
@@ -665,49 +535,6 @@ export default function SchoolsPage() {
             </div>
 
             <div className="p-4 space-y-4">
-              {/* Logo Upload */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Logo trường
-                </label>
-                <div className="flex items-center gap-4">
-                  <div className="w-20 h-20 rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center flex-shrink-0">
-                    {formData.logo_url ? (
-                      <img src={formData.logo_url} alt="" className="w-full h-full object-cover" />
-                    ) : (
-                      <School className="w-8 h-8 text-gray-400" />
-                    )}
-                  </div>
-                  <div className="flex-1">
-                    <label className="cursor-pointer">
-                      <span className="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 transition-colors">
-                        {uploading ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <Upload className="w-4 h-4" />
-                        )}
-                        {uploading ? 'Đang tải...' : 'Tải logo lên'}
-                      </span>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleUploadLogo}
-                        className="hidden"
-                        disabled={uploading}
-                      />
-                    </label>
-                    {formData.logo_url && (
-                      <button
-                        onClick={() => setFormData({ ...formData, logo_url: '' })}
-                        className="ml-2 text-sm text-red-600 hover:text-red-700"
-                      >
-                        Xóa
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-
               {/* Name */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -773,49 +600,9 @@ export default function SchoolsPage() {
                 </div>
               </div>
 
-              {/* Plan */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Gói cước
-                </label>
-                <select
-                  value={formData.plan_id}
-                  onChange={(e) => setFormData({ ...formData, plan_id: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">Miễn phí (Mặc định)</option>
-                  {plans.map(plan => (
-                    <option key={plan.id} value={plan.id}>{plan.name}</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Notes */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Ghi chú
-                </label>
-                <textarea
-                  value={formData.notes}
-                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                  placeholder="Ghi chú thêm về trường..."
-                  rows={3}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              {/* Status */}
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  id="is_active"
-                  checked={formData.is_active}
-                  onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                  className="w-4 h-4 rounded text-blue-600"
-                />
-                <label htmlFor="is_active" className="text-sm text-gray-700">
-                  Đang hoạt động
-                </label>
+              {/* Placeholder for future features */}
+              <div className="p-3 bg-gray-50 rounded-lg text-sm text-gray-500">
+                <p>Các tính năng nâng cao (logo, gói cước, trạng thái) sẽ được kích hoạt sau khi chạy SQL migration.</p>
               </div>
 
               {/* Actions */}
