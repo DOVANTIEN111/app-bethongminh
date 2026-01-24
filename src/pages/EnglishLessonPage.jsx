@@ -28,18 +28,18 @@ const StarRating = ({ score }) => {
 };
 
 // Component chọn chế độ học
-const ModeSelector = ({ topic, onSelect, progress }) => {
+const ModeSelector = ({ topic, onSelect, progress, onBack }) => {
   const navigate = useNavigate();
   const learnedCount = progress?.learned?.length || 0;
   const totalWords = topic.words.length;
   const percent = Math.round((learnedCount / totalWords) * 100);
-  
+
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       {/* Header */}
       <div className={`bg-gradient-to-r ${topic.color} text-white px-4 py-6`}>
         <div className="flex items-center gap-3 mb-4">
-          <button onClick={() => navigate('/subject/english')} className="p-2 rounded-full hover:bg-white/20">
+          <button onClick={onBack} className="p-2 rounded-full hover:bg-white/20">
             <ArrowLeft className="w-6 h-6" />
           </button>
           <span className="text-5xl">{topic.icon}</span>
@@ -1097,13 +1097,13 @@ const MatchMode = ({ topic, progress, onComplete, onBack, onMarkLearned }) => {
 };
 
 // COMPLETION SCREEN
-const CompletionScreen = ({ score, topic, onRestart, onBack }) => {
+const CompletionScreen = ({ score, topic, onRestart, onBack, onNavigateBack }) => {
   const { playSound } = useAudio();
-  
+
   useEffect(() => {
     playSound('achievement');
   }, []);
-  
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-indigo-500 to-purple-600 flex items-center justify-center p-4">
       <motion.div
@@ -1118,19 +1118,19 @@ const CompletionScreen = ({ score, topic, onRestart, onBack }) => {
         >
           🏆
         </motion.div>
-        
+
         <h2 className="text-2xl font-bold text-gray-800 mb-2">Hoàn thành!</h2>
         <p className="text-gray-500 mb-4">{topic.name}</p>
-        
+
         <div className="flex justify-center mb-4">
           <StarRating score={score} />
         </div>
-        
+
         <div className="bg-indigo-100 rounded-2xl p-4 mb-6">
           <p className="text-4xl font-bold text-indigo-600">{score}%</p>
           <p className="text-indigo-500">Điểm của bạn</p>
         </div>
-        
+
         <div className="space-y-3">
           <button
             onClick={onRestart}
@@ -1143,6 +1143,12 @@ const CompletionScreen = ({ score, topic, onRestart, onBack }) => {
             className="w-full py-3 bg-gray-100 text-gray-700 rounded-xl font-medium"
           >
             Chọn cách học khác
+          </button>
+          <button
+            onClick={onNavigateBack}
+            className="w-full py-3 bg-blue-100 text-blue-700 rounded-xl font-medium"
+          >
+            Quay về danh sách bài học
           </button>
         </div>
       </motion.div>
@@ -1179,17 +1185,40 @@ const LESSON_TO_TOPIC = {
 
 // MAIN COMPONENT
 export default function EnglishLessonPage() {
-  const { lessonId } = useParams();
+  const { topicId: urlTopicId, lessonId } = useParams();
   const navigate = useNavigate();
-  const { currentChild, updateChild } = useAuth();
+  const { currentChild, updateChild, profile } = useAuth();
   const { playSound } = useAudio();
 
-  // Map lessonId to topicId
-  const topicId = LESSON_TO_TOPIC[lessonId] || 'animals';
-  const topic = getTopic(topicId);
+  // Support both formats:
+  // - New: /english/:topicId (e.g., /english/animals)
+  // - Old: /english/:lessonId (e.g., /english/e1 -> maps to 'food')
+  const paramId = urlTopicId || lessonId;
+
+  // First try direct topic ID, then try mapping from lessonId
+  let topicId = paramId;
+  let topic = getTopic(topicId);
+
+  if (!topic) {
+    // Try mapping from old lessonId format (e1, e2, etc.)
+    topicId = LESSON_TO_TOPIC[paramId] || 'animals';
+    topic = getTopic(topicId);
+  }
   const [mode, setMode] = useState(null); // null = selector, or mode id
   const [completed, setCompleted] = useState(false);
   const [finalScore, setFinalScore] = useState(0);
+
+  // Check if user is a student (vs parent viewing for child)
+  const isStudent = profile?.role === 'student';
+
+  // Navigate back handler - different for student vs parent
+  const handleNavigateBack = () => {
+    if (isStudent) {
+      navigate('/learn/lessons');
+    } else {
+      navigate('/subject/english');
+    }
+  };
 
   if (!topic) {
     return (
@@ -1199,43 +1228,69 @@ export default function EnglishLessonPage() {
     );
   }
 
-  const progress = currentChild?.englishProgress?.[topicId] || { learned: [] };
-  
-  const handleMarkLearned = (word) => {
-    const member = { ...currentChild };
-    if (!member.englishProgress) member.englishProgress = {};
-    if (!member.englishProgress[topicId]) {
-      member.englishProgress[topicId] = { learned: [] };
+  // Get progress - for students use localStorage, for parents use currentChild
+  const getProgress = () => {
+    if (isStudent) {
+      const stored = localStorage.getItem('english_progress');
+      const allProgress = stored ? JSON.parse(stored) : {};
+      return allProgress[topicId] || { learned: [] };
     }
-    if (!member.englishProgress[topicId].learned.includes(word)) {
-      member.englishProgress[topicId].learned.push(word);
-      member.xp = (member.xp || 0) + 5;
-      
-      // Cộng XP cho pet nếu có
-      if (member.pet) {
-        member.pet.xp = (member.pet.xp || 0) + 2;
-        member.pet.lastFed = Date.now();
+    return currentChild?.englishProgress?.[topicId] || { learned: [] };
+  };
+
+  const progress = getProgress();
+
+  const handleMarkLearned = (word) => {
+    if (isStudent) {
+      // Save to localStorage for students
+      const stored = localStorage.getItem('english_progress');
+      const allProgress = stored ? JSON.parse(stored) : {};
+      if (!allProgress[topicId]) {
+        allProgress[topicId] = { learned: [] };
       }
-      
-      updateChild(member);
+      if (!allProgress[topicId].learned.includes(word)) {
+        allProgress[topicId].learned.push(word);
+        localStorage.setItem('english_progress', JSON.stringify(allProgress));
+      }
+    } else if (currentChild && updateChild) {
+      // For parent viewing child
+      const member = { ...currentChild };
+      if (!member.englishProgress) member.englishProgress = {};
+      if (!member.englishProgress[topicId]) {
+        member.englishProgress[topicId] = { learned: [] };
+      }
+      if (!member.englishProgress[topicId].learned.includes(word)) {
+        member.englishProgress[topicId].learned.push(word);
+        member.xp = (member.xp || 0) + 5;
+
+        // Cộng XP cho pet nếu có
+        if (member.pet) {
+          member.pet.xp = (member.pet.xp || 0) + 2;
+          member.pet.lastFed = Date.now();
+        }
+
+        updateChild(member);
+      }
     }
   };
-  
+
   const handleComplete = (score) => {
     setFinalScore(score);
     setCompleted(true);
-    
-    // Bonus XP
-    const member = { ...currentChild };
-    member.xp = (member.xp || 0) + Math.round(score / 5);
-    updateChild(member);
+
+    if (!isStudent && currentChild && updateChild) {
+      // Bonus XP for parent's child
+      const member = { ...currentChild };
+      member.xp = (member.xp || 0) + Math.round(score / 5);
+      updateChild(member);
+    }
   };
-  
+
   const handleRestart = () => {
     setCompleted(false);
     setFinalScore(0);
   };
-  
+
   const handleBack = () => {
     setMode(null);
     setCompleted(false);
@@ -1249,6 +1304,7 @@ export default function EnglishLessonPage() {
         topic={topic}
         onRestart={handleRestart}
         onBack={handleBack}
+        onNavigateBack={handleNavigateBack}
       />
     );
   }
@@ -1260,10 +1316,11 @@ export default function EnglishLessonPage() {
         topic={topic}
         progress={progress}
         onSelect={(m) => { playSound('click'); setMode(m); }}
+        onBack={handleNavigateBack}
       />
     );
   }
-  
+
   // Render selected mode
   const modeProps = {
     topic,
@@ -1272,7 +1329,7 @@ export default function EnglishLessonPage() {
     onBack: handleBack,
     onMarkLearned: handleMarkLearned,
   };
-  
+
   switch (mode) {
     case 'flashcard':
       return <FlashcardMode {...modeProps} />;
@@ -1285,6 +1342,6 @@ export default function EnglishLessonPage() {
     case 'match':
       return <MatchMode {...modeProps} />;
     default:
-      return <ModeSelector topic={topic} progress={progress} onSelect={setMode} />;
+      return <ModeSelector topic={topic} progress={progress} onSelect={setMode} onBack={handleNavigateBack} />;
   }
 }

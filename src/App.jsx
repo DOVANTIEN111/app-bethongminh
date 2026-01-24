@@ -47,6 +47,9 @@ const LearnAssignmentsPage = lazy(() => import('./pages/learn/LearnAssignmentsPa
 const LearnAchievementsPage = lazy(() => import('./pages/learn/LearnAchievementsPage'));
 const LearnProfilePage = lazy(() => import('./pages/learn/LearnProfilePage'));
 
+// English Lesson page
+const EnglishLessonPage = lazy(() => import('./pages/EnglishLessonPage'));
+
 // Parent pages
 const ParentLayout = lazy(() => import('./components/ParentLayout'));
 const ParentHomePage = lazy(() => import('./pages/parent/ParentHomePage'));
@@ -188,6 +191,13 @@ function App() {
           <Route path="achievements" element={<LearnAchievementsPage />} />
           <Route path="profile" element={<LearnProfilePage />} />
         </Route>
+
+        {/* English Lesson route - for students */}
+        <Route path="/english/:topicId" element={
+          <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+            <EnglishLessonPage />
+          </ProtectedRoute>
+        } />
 
         {/* Catch all - redirect to login */}
         <Route path="*" element={<Navigate to="/login" replace />} />
