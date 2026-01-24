@@ -1,12 +1,12 @@
 // src/pages/admin/SchoolsPage.jsx
-// Trang quản lý trường học - Tự động tạo tài khoản Hiệu trưởng
+// Trang quản lý trường học - Form đơn giản hóa
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import {
   School, Plus, Edit2, Trash2, Search, RefreshCw,
   Loader2, X, MapPin, Phone, Mail, Users, GraduationCap,
-  Calendar, CheckCircle, UserCog, Eye
+  Calendar, UserCog, Eye
 } from 'lucide-react';
 
 const DEFAULT_PASSWORD = 'School@123';
@@ -16,7 +16,6 @@ export default function SchoolsPage() {
   const [schools, setSchools] = useState([]);
   const [schoolStats, setSchoolStats] = useState({});
   const [schoolPrincipals, setSchoolPrincipals] = useState({});
-  const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingSchool, setEditingSchool] = useState(null);
@@ -26,17 +25,12 @@ export default function SchoolsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('newest');
 
-  // Form data
+  // Form data - chỉ 4 trường
   const [formData, setFormData] = useState({
-    // Thông tin trường
     name: '',
     email: '',
-    address: '',
     phone: '',
-    // Thông tin hiệu trưởng
-    principal_name: '',
-    principal_email: '',
-    principal_phone: '',
+    address: '',
   });
 
   useEffect(() => {
@@ -61,9 +55,6 @@ export default function SchoolsPage() {
 
       setSchools(schoolsData || []);
 
-      // Load plans
-      loadPlans();
-
       // Load principals và stats cho từng trường
       if (schoolsData && schoolsData.length > 0) {
         loadPrincipals(schoolsData.map(s => s.id));
@@ -74,17 +65,6 @@ export default function SchoolsPage() {
       setSchools([]);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const loadPlans = async () => {
-    try {
-      const { data } = await supabase
-        .from('plans')
-        .select('id, name, slug');
-      if (data) setPlans(data);
-    } catch {
-      // Ignore
     }
   };
 
@@ -136,35 +116,30 @@ export default function SchoolsPage() {
     }
   };
 
-  const handleOpenModal = async (school = null) => {
+  const handleOpenModal = (school = null) => {
     if (school) {
       setEditingSchool(school);
-
-      // Load thông tin hiệu trưởng hiện tại
-      const principal = schoolPrincipals[school.id];
-
       setFormData({
         name: school.name || '',
         email: school.email || '',
-        address: school.address || '',
         phone: school.phone || '',
-        principal_name: principal?.full_name || '',
-        principal_email: principal?.email || '',
-        principal_phone: principal?.phone || '',
+        address: school.address || '',
       });
     } else {
       setEditingSchool(null);
       setFormData({
         name: '',
         email: '',
-        address: '',
         phone: '',
-        principal_name: '',
-        principal_email: '',
-        principal_phone: '',
+        address: '',
       });
     }
     setShowModal(true);
+  };
+
+  // Validate email format
+  const isValidEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
   const handleSave = async () => {
@@ -174,27 +149,20 @@ export default function SchoolsPage() {
       return;
     }
     if (!formData.email.trim()) {
-      alert('Vui lòng nhập email trường');
+      alert('Vui lòng nhập email');
       return;
     }
-
-    // Validate hiệu trưởng khi tạo mới
-    if (!editingSchool) {
-      if (!formData.principal_name.trim()) {
-        alert('Vui lòng nhập họ tên Hiệu trưởng');
-        return;
-      }
-      if (!formData.principal_email.trim()) {
-        alert('Vui lòng nhập email Hiệu trưởng');
-        return;
-      }
+    if (!isValidEmail(formData.email.trim())) {
+      alert('Email không hợp lệ');
+      return;
     }
 
     setSaving(true);
     try {
+      const email = formData.email.trim().toLowerCase();
       const schoolData = {
         name: formData.name.trim(),
-        email: formData.email.trim(),
+        email: email,
         address: formData.address.trim() || null,
         phone: formData.phone.trim() || null,
       };
@@ -208,33 +176,58 @@ export default function SchoolsPage() {
 
         if (updateError) throw updateError;
 
-        // Cập nhật thông tin hiệu trưởng nếu có
-        const existingPrincipal = schoolPrincipals[editingSchool.id];
-        if (existingPrincipal && formData.principal_name) {
-          await supabase
-            .from('profiles')
-            .update({
-              full_name: formData.principal_name.trim(),
-              phone: formData.principal_phone.trim() || null,
-            })
-            .eq('id', existingPrincipal.id);
-        }
-
         alert('Đã cập nhật thông tin trường thành công!');
       } else {
         // === TẠO TRƯỜNG MỚI ===
 
-        // 1. Kiểm tra email hiệu trưởng đã tồn tại chưa
-        const { data: existingUser } = await supabase
+        // 1. Kiểm tra email đã tồn tại trong profiles chưa
+        const { data: existingProfile } = await supabase
           .from('profiles')
-          .select('id')
-          .eq('email', formData.principal_email.trim())
+          .select('id, role')
+          .eq('email', email)
           .single();
 
-        if (existingUser) {
-          alert('Email Hiệu trưởng đã tồn tại trong hệ thống!\nVui lòng sử dụng email khác.');
-          setSaving(false);
-          return;
+        let userId = null;
+        let isNewAccount = false;
+
+        if (existingProfile) {
+          // Email đã tồn tại - chỉ cần cập nhật role
+          userId = existingProfile.id;
+        } else {
+          // Email chưa tồn tại - tạo tài khoản mới
+          const { data: authData, error: authError } = await supabase.auth.signUp({
+            email: email,
+            password: DEFAULT_PASSWORD,
+            options: {
+              data: {
+                full_name: formData.name.trim(),
+                role: 'school_admin',
+              }
+            }
+          });
+
+          if (authError) {
+            if (authError.message.includes('already registered')) {
+              // Email có trong auth nhưng chưa có profile - lấy user id từ auth
+              alert('Email đã được đăng ký trong hệ thống.\nVui lòng sử dụng email khác hoặc liên hệ Admin.');
+              setSaving(false);
+              return;
+            }
+            throw authError;
+          }
+
+          userId = authData.user?.id;
+          isNewAccount = true;
+
+          // Tạo profile mới
+          if (userId) {
+            await supabase.from('profiles').insert({
+              id: userId,
+              email: email,
+              full_name: formData.name.trim(),
+              role: 'school_admin',
+            });
+          }
         }
 
         // 2. Tạo trường mới
@@ -244,59 +237,40 @@ export default function SchoolsPage() {
           .select()
           .single();
 
-        if (schoolError) throw schoolError;
-
-        // 3. Tạo tài khoản auth cho hiệu trưởng
-        const { data: authData, error: authError } = await supabase.auth.signUp({
-          email: formData.principal_email.trim(),
-          password: DEFAULT_PASSWORD,
-          options: {
-            data: {
-              full_name: formData.principal_name.trim(),
-              role: 'school_admin',
-            }
+        if (schoolError) {
+          // Rollback nếu đã tạo auth account
+          if (isNewAccount && userId) {
+            console.error('Rollback: School creation failed after auth created');
           }
-        });
-
-        if (authError) {
-          // Rollback - xóa trường vừa tạo
-          await supabase.from('schools').delete().eq('id', newSchool.id);
-
-          if (authError.message.includes('already registered')) {
-            alert('Email Hiệu trưởng đã được đăng ký!\nVui lòng sử dụng email khác.');
-          } else {
-            throw authError;
-          }
-          setSaving(false);
-          return;
+          throw schoolError;
         }
 
-        // 4. Tạo profile cho hiệu trưởng
-        if (authData.user) {
-          const { error: profileError } = await supabase
+        // 3. Cập nhật profile với school_id và role
+        if (userId) {
+          await supabase
             .from('profiles')
-            .insert({
-              id: authData.user.id,
-              email: formData.principal_email.trim(),
-              full_name: formData.principal_name.trim(),
-              phone: formData.principal_phone.trim() || null,
-              role: 'school_admin',
+            .update({
               school_id: newSchool.id,
-            });
-
-          if (profileError) {
-            console.error('Profile error:', profileError);
-            // Không rollback vì auth đã tạo, chỉ log lỗi
-          }
+              role: 'school_admin',
+            })
+            .eq('id', userId);
         }
 
-        alert(
-          `Đã tạo trường và tài khoản Hiệu trưởng thành công!\n\n` +
-          `Thông tin đăng nhập:\n` +
-          `- Email: ${formData.principal_email}\n` +
-          `- Mật khẩu mặc định: ${DEFAULT_PASSWORD}\n\n` +
-          `Vui lòng thông báo cho Hiệu trưởng đổi mật khẩu sau khi đăng nhập.`
-        );
+        // 4. Thông báo thành công
+        if (isNewAccount) {
+          alert(
+            `Tạo trường thành công!\n\n` +
+            `Tài khoản quản lý: ${email}\n` +
+            `Mật khẩu mặc định: ${DEFAULT_PASSWORD}\n\n` +
+            `Vui lòng đổi mật khẩu sau khi đăng nhập.`
+          );
+        } else {
+          alert(
+            `Tạo trường thành công!\n\n` +
+            `Tài khoản quản lý: ${email}\n` +
+            `(Đã cập nhật quyền school_admin cho tài khoản hiện có)`
+          );
+        }
       }
 
       setShowModal(false);
@@ -310,7 +284,7 @@ export default function SchoolsPage() {
   };
 
   const handleDelete = async (school) => {
-    if (!confirm(`Bạn có chắc muốn xóa trường "${school.name}"?\n\nLưu ý: Tất cả dữ liệu liên quan (giáo viên, học sinh, hiệu trưởng) sẽ bị xóa!`)) {
+    if (!confirm(`Bạn có chắc muốn xóa trường "${school.name}"?\n\nLưu ý: Tất cả dữ liệu liên quan sẽ bị xóa!`)) {
       return;
     }
 
@@ -369,7 +343,7 @@ export default function SchoolsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">Quản lý Trường học</h1>
-          <p className="text-gray-600">Quản lý thông tin trường và tài khoản Hiệu trưởng</p>
+          <p className="text-gray-600">Thêm và quản lý thông tin trường học</p>
         </div>
         <button
           onClick={() => handleOpenModal()}
@@ -399,7 +373,7 @@ export default function SchoolsPage() {
               <UserCog className="w-5 h-5 text-green-600" />
             </div>
             <div>
-              <p className="text-xs text-gray-500">Hiệu trưởng</p>
+              <p className="text-xs text-gray-500">Quản lý</p>
               <p className="text-xl font-bold">{Object.keys(schoolPrincipals).length}</p>
             </div>
           </div>
@@ -437,7 +411,7 @@ export default function SchoolsPage() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Tìm tên trường, email, hiệu trưởng..."
+              placeholder="Tìm tên trường, email..."
               className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -490,6 +464,11 @@ export default function SchoolsPage() {
                         <Mail className="w-3 h-3" /> {school.email}
                       </p>
                     )}
+                    {school.phone && (
+                      <p className="text-sm text-gray-500 truncate flex items-center gap-1">
+                        <Phone className="w-3 h-3" /> {school.phone}
+                      </p>
+                    )}
                     {school.address && (
                       <p className="text-sm text-gray-500 truncate flex items-center gap-1">
                         <MapPin className="w-3 h-3" /> {school.address}
@@ -498,16 +477,16 @@ export default function SchoolsPage() {
                   </div>
                 </div>
 
-                {/* Hiệu trưởng */}
+                {/* Quản lý */}
                 {principal ? (
                   <div className="mt-3 p-2 bg-green-50 rounded-lg">
-                    <p className="text-xs text-green-600 font-medium">Hiệu trưởng</p>
-                    <p className="text-sm font-medium text-gray-800">{principal.full_name}</p>
+                    <p className="text-xs text-green-600 font-medium">Quản lý trường</p>
+                    <p className="text-sm font-medium text-gray-800">{principal.full_name || principal.email}</p>
                     <p className="text-xs text-gray-500">{principal.email}</p>
                   </div>
                 ) : (
                   <div className="mt-3 p-2 bg-yellow-50 rounded-lg">
-                    <p className="text-xs text-yellow-600">Chưa có Hiệu trưởng</p>
+                    <p className="text-xs text-yellow-600">Chưa có quản lý</p>
                   </div>
                 )}
               </div>
@@ -571,11 +550,11 @@ export default function SchoolsPage() {
         )}
       </div>
 
-      {/* Modal Thêm/Sửa */}
+      {/* Modal Thêm/Sửa - Đơn giản hóa */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white flex items-center justify-between p-4 border-b z-10">
+          <div className="bg-white rounded-2xl w-full max-w-md">
+            <div className="flex items-center justify-between p-4 border-b">
               <h3 className="text-lg font-bold">
                 {editingSchool ? 'Sửa thông tin trường' : 'Thêm trường mới'}
               </h3>
@@ -584,148 +563,86 @@ export default function SchoolsPage() {
               </button>
             </div>
 
-            <div className="p-4 space-y-6">
-              {/* THÔNG TIN TRƯỜNG */}
+            <div className="p-4 space-y-4">
+              {/* Tên trường */}
               <div>
-                <h4 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                  <School className="w-5 h-5 text-blue-600" />
-                  Thông tin Trường học
-                </h4>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Tên trường <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      placeholder="VD: Trường Tiểu học ABC"
-                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Email trường <span className="text-red-500">*</span>
-                    </label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                      <input
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        placeholder="truong@email.com"
-                        className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Số điện thoại
-                    </label>
-                    <div className="relative">
-                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                      <input
-                        type="tel"
-                        value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        placeholder="0912345678"
-                        className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Địa chỉ
-                    </label>
-                    <div className="relative">
-                      <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                      <input
-                        type="text"
-                        value={formData.address}
-                        onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                        placeholder="123 Đường ABC, Quận XYZ"
-                        className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-                  </div>
-                </div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Tên trường <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="VD: Trường Tiểu học ABC"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
               </div>
 
-              {/* THÔNG TIN HIỆU TRƯỞNG */}
+              {/* Email */}
               <div>
-                <h4 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                  <UserCog className="w-5 h-5 text-green-600" />
-                  Thông tin Hiệu trưởng
-                  {!editingSchool && <span className="text-red-500 text-sm font-normal">(Bắt buộc)</span>}
-                </h4>
-
-                {editingSchool && schoolPrincipals[editingSchool.id] && (
-                  <div className="mb-3 p-3 bg-blue-50 rounded-lg text-sm">
-                    <p className="text-blue-700">
-                      Hiệu trưởng hiện tại: <strong>{schoolPrincipals[editingSchool.id].full_name}</strong>
-                    </p>
-                    <p className="text-blue-600 text-xs">{schoolPrincipals[editingSchool.id].email}</p>
-                  </div>
-                )}
-
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Họ tên Hiệu trưởng {!editingSchool && <span className="text-red-500">*</span>}
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.principal_name}
-                      onChange={(e) => setFormData({ ...formData, principal_name: e.target.value })}
-                      placeholder="Nguyễn Văn A"
-                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Email Hiệu trưởng {!editingSchool && <span className="text-red-500">*</span>}
-                    </label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                      <input
-                        type="email"
-                        value={formData.principal_email}
-                        onChange={(e) => setFormData({ ...formData, principal_email: e.target.value })}
-                        placeholder="hieutruong@email.com"
-                        disabled={editingSchool && schoolPrincipals[editingSchool.id]}
-                        className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
-                      />
-                    </div>
-                    {editingSchool && schoolPrincipals[editingSchool.id] && (
-                      <p className="text-xs text-gray-500 mt-1">Email không thể thay đổi. Dùng chức năng "Đổi Hiệu trưởng" trong trang chi tiết.</p>
-                    )}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Số điện thoại Hiệu trưởng
-                    </label>
-                    <div className="relative">
-                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                      <input
-                        type="tel"
-                        value={formData.principal_phone}
-                        onChange={(e) => setFormData({ ...formData, principal_phone: e.target.value })}
-                        placeholder="0987654321"
-                        className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-                  </div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder="truong@email.com"
+                    disabled={editingSchool}
+                    className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+                  />
                 </div>
-
                 {!editingSchool && (
-                  <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                    <p className="text-sm text-yellow-800">
-                      <strong>Lưu ý:</strong> Tài khoản Hiệu trưởng sẽ được tạo tự động với mật khẩu mặc định: <code className="bg-yellow-100 px-1 rounded">{DEFAULT_PASSWORD}</code>
-                    </p>
-                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Email này sẽ dùng làm tài khoản quản lý trường
+                  </p>
                 )}
               </div>
+
+              {/* Số điện thoại */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Số điện thoại
+                </label>
+                <div className="relative">
+                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <input
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    placeholder="0912345678"
+                    className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+
+              {/* Địa chỉ */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Địa chỉ
+                </label>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <input
+                    type="text"
+                    value={formData.address}
+                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                    placeholder="123 Đường ABC, Quận XYZ"
+                    className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+
+              {/* Ghi chú mật khẩu khi tạo mới */}
+              {!editingSchool && (
+                <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <p className="text-sm text-blue-800">
+                    <strong>Lưu ý:</strong> Tài khoản quản lý sẽ được tạo tự động với mật khẩu: <code className="bg-blue-100 px-1 rounded font-mono">{DEFAULT_PASSWORD}</code>
+                  </p>
+                </div>
+              )}
 
               {/* Actions */}
               <div className="flex gap-3 pt-4 border-t">
@@ -737,7 +654,7 @@ export default function SchoolsPage() {
                 </button>
                 <button
                   onClick={handleSave}
-                  disabled={saving || !formData.name.trim() || !formData.email.trim() || (!editingSchool && (!formData.principal_name.trim() || !formData.principal_email.trim()))}
+                  disabled={saving || !formData.name.trim() || !formData.email.trim()}
                   className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
                 >
                   {saving && <Loader2 className="w-4 h-4 animate-spin" />}
