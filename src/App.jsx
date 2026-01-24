@@ -7,11 +7,19 @@ import SplashScreen from './components/SplashScreen';
 
 // Lazy load pages
 const LoginPage = lazy(() => import('./pages/LoginPage'));
-const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const DepartmentDashboard = lazy(() => import('./pages/DepartmentDashboard'));
 const TeacherDashboard = lazy(() => import('./pages/TeacherDashboard'));
 const ParentDashboard = lazy(() => import('./pages/ParentDashboard'));
 const StudentDashboard = lazy(() => import('./pages/StudentDashboard'));
+
+// Super Admin pages
+const AdminLayout = lazy(() => import('./components/AdminLayout'));
+const AdminDashboardPage = lazy(() => import('./pages/admin/AdminDashboardPage'));
+const SchoolsPage = lazy(() => import('./pages/admin/SchoolsPage'));
+const UsersPage = lazy(() => import('./pages/admin/UsersPage'));
+const PlansPage = lazy(() => import('./pages/admin/PlansPage'));
+const StatisticsPage = lazy(() => import('./pages/admin/StatisticsPage'));
+const AdminSettingsPage = lazy(() => import('./pages/admin/AdminSettingsPage'));
 
 // School Admin pages
 const SchoolLayout = lazy(() => import('./components/SchoolLayout'));
@@ -80,12 +88,19 @@ function App() {
         <Route path="/" element={<RoleBasedRedirect />} />
         <Route path="/redirect" element={<RoleBasedRedirect />} />
 
-        {/* Super Admin routes */}
-        <Route path="/admin/*" element={
+        {/* Super Admin routes - Nested routes */}
+        <Route path="/admin" element={
           <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN]}>
-            <AdminDashboard />
+            <AdminLayout />
           </ProtectedRoute>
-        } />
+        }>
+          <Route index element={<AdminDashboardPage />} />
+          <Route path="schools" element={<SchoolsPage />} />
+          <Route path="users" element={<UsersPage />} />
+          <Route path="plans" element={<PlansPage />} />
+          <Route path="statistics" element={<StatisticsPage />} />
+          <Route path="settings" element={<AdminSettingsPage />} />
+        </Route>
 
         {/* School Admin routes - Nested routes */}
         <Route path="/school" element={
