@@ -16,6 +16,7 @@ const StudentDashboard = lazy(() => import('./pages/StudentDashboard'));
 const AdminLayout = lazy(() => import('./components/AdminLayout'));
 const AdminDashboardPage = lazy(() => import('./pages/admin/AdminDashboardPage'));
 const SchoolsPage = lazy(() => import('./pages/admin/SchoolsPage'));
+const SchoolDetailPage = lazy(() => import('./pages/admin/SchoolDetailPage'));
 const UsersPage = lazy(() => import('./pages/admin/UsersPage'));
 const PlansPage = lazy(() => import('./pages/admin/PlansPage'));
 const StatisticsPage = lazy(() => import('./pages/admin/StatisticsPage'));
@@ -140,6 +141,7 @@ function App() {
         }>
           <Route index element={<AdminDashboardPage />} />
           <Route path="schools" element={<SchoolsPage />} />
+          <Route path="schools/:id" element={<SchoolDetailPage />} />
           <Route path="users" element={<UsersPage />} />
           <Route path="plans" element={<PlansPage />} />
           <Route path="statistics" element={<StatisticsPage />} />
