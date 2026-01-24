@@ -1,36 +1,35 @@
 // src/pages/admin/SchoolDetailPage.jsx
-// Trang chi tiết trường học
+// Trang chi tiết trường học - Quản lý Hiệu trưởng
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import {
   School, ArrowLeft, Edit2, Mail, Phone, MapPin, Calendar,
   Users, GraduationCap, Building2, BookOpen, CreditCard,
-  CheckCircle, XCircle, Loader2, RefreshCw, Crown, Sparkles, Star
+  CheckCircle, XCircle, Loader2, RefreshCw, UserCog, Key, UserPlus
 } from 'lucide-react';
-import { formatCurrency } from '../../services/financeManagement';
 
-const PLAN_BADGES = {
-  free: { label: 'Miễn phí', color: 'bg-gray-100 text-gray-700', icon: null },
-  basic: { label: 'Cơ bản', color: 'bg-blue-100 text-blue-700', icon: Star },
-  pro: { label: 'Pro', color: 'bg-purple-100 text-purple-700', icon: Sparkles },
-  premium: { label: 'Premium', color: 'bg-amber-100 text-amber-700', icon: Crown },
-};
+const DEFAULT_PASSWORD = 'School@123';
 
 export default function SchoolDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [school, setSchool] = useState(null);
+  const [principal, setPrincipal] = useState(null);
   const [stats, setStats] = useState({});
   const [departments, setDepartments] = useState([]);
   const [teachers, setTeachers] = useState([]);
   const [classes, setClasses] = useState([]);
-  const [transactions, setTransactions] = useState([]);
-  const [plans, setPlans] = useState([]);
-  const [showPlanModal, setShowPlanModal] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState('');
   const [updating, setUpdating] = useState(false);
+
+  // Modals
+  const [showChangePrincipalModal, setShowChangePrincipalModal] = useState(false);
+  const [newPrincipalData, setNewPrincipalData] = useState({
+    full_name: '',
+    email: '',
+    phone: '',
+  });
 
   useEffect(() => {
     if (id) {
@@ -42,62 +41,70 @@ export default function SchoolDetailPage() {
     try {
       setLoading(true);
 
-      // Load school info
+      // Load school info - query đơn giản
       const { data: schoolData, error: schoolError } = await supabase
         .from('schools')
-        .select(`
-          *,
-          plan:plans(id, name, slug, price_monthly)
-        `)
+        .select('id, name, email, address, phone, created_at')
         .eq('id', id)
         .single();
 
       if (schoolError) throw schoolError;
       setSchool(schoolData);
-      setSelectedPlan(schoolData.plan_id || '');
 
-      // Load all related data in parallel
-      const [
-        statsRes,
-        deptRes,
-        teachersRes,
-        classesRes,
-        transRes,
-        plansRes
-      ] = await Promise.all([
-        // Stats
-        Promise.all([
-          supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('school_id', id).eq('role', 'teacher'),
-          supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('school_id', id).eq('role', 'student'),
-          supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('school_id', id).eq('role', 'parent'),
-          supabase.from('departments').select('id', { count: 'exact', head: true }).eq('school_id', id),
-          supabase.from('classes').select('id', { count: 'exact', head: true }).eq('school_id', id),
-        ]),
-        // Departments
-        supabase.from('departments').select('*').eq('school_id', id).order('name'),
-        // Teachers (top 5)
-        supabase.from('profiles').select('id, full_name, email, avatar_url').eq('school_id', id).eq('role', 'teacher').order('created_at', { ascending: false }).limit(5),
-        // Classes (top 5)
-        supabase.from('classes').select('*').eq('school_id', id).order('name').limit(5),
-        // Transactions
-        supabase.from('transactions').select('*').eq('school_id', id).order('created_at', { ascending: false }).limit(10),
-        // Plans
-        supabase.from('plans').select('id, name, slug, price_monthly').eq('is_active', true),
+      // Load principal
+      const { data: principalData } = await supabase
+        .from('profiles')
+        .select('id, full_name, email, phone, created_at')
+        .eq('school_id', id)
+        .eq('role', 'school_admin')
+        .single();
+
+      setPrincipal(principalData);
+
+      // Load stats
+      const [t, s, p, d, c] = await Promise.all([
+        supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('school_id', id).eq('role', 'teacher'),
+        supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('school_id', id).eq('role', 'student'),
+        supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('school_id', id).eq('role', 'parent'),
+        supabase.from('departments').select('id', { count: 'exact', head: true }).eq('school_id', id),
+        supabase.from('classes').select('id', { count: 'exact', head: true }).eq('school_id', id),
       ]);
 
       setStats({
-        teachers: statsRes[0].count || 0,
-        students: statsRes[1].count || 0,
-        parents: statsRes[2].count || 0,
-        departments: statsRes[3].count || 0,
-        classes: statsRes[4].count || 0,
+        teachers: t.count || 0,
+        students: s.count || 0,
+        parents: p.count || 0,
+        departments: d.count || 0,
+        classes: c.count || 0,
       });
 
-      setDepartments(deptRes.data || []);
-      setTeachers(teachersRes.data || []);
-      setClasses(classesRes.data || []);
-      setTransactions(transRes.data || []);
-      setPlans(plansRes.data || []);
+      // Load departments
+      const { data: deptData } = await supabase
+        .from('departments')
+        .select('*')
+        .eq('school_id', id)
+        .order('name')
+        .limit(5);
+      setDepartments(deptData || []);
+
+      // Load teachers
+      const { data: teachersData } = await supabase
+        .from('profiles')
+        .select('id, full_name, email, avatar_url')
+        .eq('school_id', id)
+        .eq('role', 'teacher')
+        .order('created_at', { ascending: false })
+        .limit(5);
+      setTeachers(teachersData || []);
+
+      // Load classes
+      const { data: classesData } = await supabase
+        .from('classes')
+        .select('*')
+        .eq('school_id', id)
+        .order('name')
+        .limit(5);
+      setClasses(classesData || []);
 
     } catch (error) {
       console.error('Error loading school:', error);
@@ -107,58 +114,129 @@ export default function SchoolDetailPage() {
     }
   };
 
-  const handleToggleStatus = async () => {
-    if (!school) return;
-    const newStatus = !school.is_active;
-    const action = newStatus ? 'kích hoạt' : 'tạm ngưng';
+  const handleResetPrincipalPassword = async () => {
+    if (!principal) {
+      alert('Chưa có Hiệu trưởng để reset mật khẩu');
+      return;
+    }
 
-    if (!confirm(`Bạn có chắc muốn ${action} trường này?`)) return;
+    if (!confirm(`Bạn có chắc muốn reset mật khẩu cho Hiệu trưởng "${principal.full_name}"?\n\nMật khẩu mới sẽ là: ${DEFAULT_PASSWORD}`)) {
+      return;
+    }
 
     try {
       setUpdating(true);
-      const { error } = await supabase
-        .from('schools')
-        .update({ is_active: newStatus, updated_at: new Date().toISOString() })
-        .eq('id', id);
 
-      if (error) throw error;
-      setSchool({ ...school, is_active: newStatus });
+      // Sử dụng admin API để reset password
+      // Note: Trong thực tế cần sử dụng server-side function
+      const { error } = await supabase.auth.admin.updateUserById(
+        principal.id,
+        { password: DEFAULT_PASSWORD }
+      );
+
+      if (error) {
+        // Fallback: gửi email reset password
+        const { error: resetError } = await supabase.auth.resetPasswordForEmail(principal.email);
+        if (resetError) throw resetError;
+
+        alert(`Đã gửi email reset mật khẩu đến: ${principal.email}\n\nVui lòng thông báo cho Hiệu trưởng kiểm tra email.`);
+      } else {
+        alert(`Đã reset mật khẩu thành công!\n\nMật khẩu mới: ${DEFAULT_PASSWORD}\n\nVui lòng thông báo cho Hiệu trưởng.`);
+      }
     } catch (error) {
-      console.error('Error updating status:', error);
-      alert('Lỗi: ' + error.message);
+      console.error('Reset password error:', error);
+      // Try sending reset email as fallback
+      try {
+        await supabase.auth.resetPasswordForEmail(principal.email);
+        alert(`Đã gửi email reset mật khẩu đến: ${principal.email}`);
+      } catch {
+        alert('Không thể reset mật khẩu. Vui lòng thử lại sau.');
+      }
     } finally {
       setUpdating(false);
     }
   };
 
-  const handleChangePlan = async () => {
+  const handleChangePrincipal = async () => {
+    if (!newPrincipalData.full_name.trim() || !newPrincipalData.email.trim()) {
+      alert('Vui lòng nhập đầy đủ họ tên và email Hiệu trưởng mới');
+      return;
+    }
+
     try {
       setUpdating(true);
-      const { error } = await supabase
-        .from('schools')
-        .update({ plan_id: selectedPlan || null, updated_at: new Date().toISOString() })
-        .eq('id', id);
 
-      if (error) throw error;
+      // Kiểm tra email đã tồn tại
+      const { data: existingUser } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('email', newPrincipalData.email.trim())
+        .single();
 
-      setShowPlanModal(false);
+      if (existingUser) {
+        alert('Email này đã tồn tại trong hệ thống!');
+        setUpdating(false);
+        return;
+      }
+
+      // Xóa role school_admin của hiệu trưởng cũ (nếu có)
+      if (principal) {
+        await supabase
+          .from('profiles')
+          .update({ role: 'teacher', school_id: null })
+          .eq('id', principal.id);
+      }
+
+      // Tạo tài khoản mới cho hiệu trưởng
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: newPrincipalData.email.trim(),
+        password: DEFAULT_PASSWORD,
+        options: {
+          data: {
+            full_name: newPrincipalData.full_name.trim(),
+            role: 'school_admin',
+          }
+        }
+      });
+
+      if (authError) {
+        if (authError.message.includes('already registered')) {
+          alert('Email đã được đăng ký! Vui lòng sử dụng email khác.');
+        } else {
+          throw authError;
+        }
+        setUpdating(false);
+        return;
+      }
+
+      // Tạo profile cho hiệu trưởng mới
+      if (authData.user) {
+        await supabase.from('profiles').insert({
+          id: authData.user.id,
+          email: newPrincipalData.email.trim(),
+          full_name: newPrincipalData.full_name.trim(),
+          phone: newPrincipalData.phone.trim() || null,
+          role: 'school_admin',
+          school_id: id,
+        });
+      }
+
+      alert(
+        `Đã đổi Hiệu trưởng thành công!\n\n` +
+        `Hiệu trưởng mới: ${newPrincipalData.full_name}\n` +
+        `Email: ${newPrincipalData.email}\n` +
+        `Mật khẩu: ${DEFAULT_PASSWORD}`
+      );
+
+      setShowChangePrincipalModal(false);
+      setNewPrincipalData({ full_name: '', email: '', phone: '' });
       loadSchoolData();
     } catch (error) {
-      console.error('Error updating plan:', error);
-      alert('Lỗi: ' + error.message);
+      console.error('Change principal error:', error);
+      alert('Có lỗi xảy ra: ' + error.message);
     } finally {
       setUpdating(false);
     }
-  };
-
-  const getPlanBadge = () => {
-    if (!school?.plan_id || !school?.plan) {
-      return PLAN_BADGES.free;
-    }
-    const slug = school.plan.slug || '';
-    if (slug.includes('premium')) return PLAN_BADGES.premium;
-    if (slug.includes('pro') || slug.includes('basic')) return PLAN_BADGES.pro;
-    return PLAN_BADGES.basic;
   };
 
   if (loading) {
@@ -183,9 +261,6 @@ export default function SchoolDetailPage() {
       </div>
     );
   }
-
-  const planBadge = getPlanBadge();
-  const PlanIcon = planBadge.icon;
 
   return (
     <div className="space-y-6">
@@ -216,77 +291,22 @@ export default function SchoolDetailPage() {
           <div className="flex items-start gap-6">
             {/* Logo */}
             <div className="w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
-              {school.logo_url ? (
-                <img src={school.logo_url} alt={school.name} className="w-full h-full object-cover" />
-              ) : (
-                <School className="w-12 h-12 text-white" />
-              )}
+              <School className="w-12 h-12 text-white" />
             </div>
 
             {/* Info */}
             <div className="flex-1">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <div className="flex items-center gap-3">
-                    <h2 className="text-2xl font-bold text-gray-900">{school.name}</h2>
-                    {school.is_active !== false ? (
-                      <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
-                        Đang hoạt động
-                      </span>
-                    ) : (
-                      <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">
-                        Tạm ngưng
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Plan Badge */}
-                  <div className="mt-2">
-                    <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium ${planBadge.color}`}>
-                      {PlanIcon && <PlanIcon className="w-4 h-4" />}
-                      {school.plan?.name || planBadge.label}
-                    </span>
-                  </div>
+                  <h2 className="text-2xl font-bold text-gray-900">{school.name}</h2>
                 </div>
-
-                {/* Actions */}
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setShowPlanModal(true)}
-                    className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    <CreditCard className="w-4 h-4" />
-                    Đổi gói cước
-                  </button>
-                  <button
-                    onClick={handleToggleStatus}
-                    disabled={updating}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                      school.is_active !== false
-                        ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
-                        : 'bg-green-100 text-green-700 hover:bg-green-200'
-                    }`}
-                  >
-                    {school.is_active !== false ? (
-                      <>
-                        <XCircle className="w-4 h-4" />
-                        Tạm ngưng
-                      </>
-                    ) : (
-                      <>
-                        <CheckCircle className="w-4 h-4" />
-                        Kích hoạt
-                      </>
-                    )}
-                  </button>
-                  <button
-                    onClick={() => navigate('/admin/schools', { state: { editSchool: school } })}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                  >
-                    <Edit2 className="w-4 h-4" />
-                    Sửa thông tin
-                  </button>
-                </div>
+                <button
+                  onClick={() => navigate('/admin/schools')}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  <Edit2 className="w-4 h-4" />
+                  Sửa thông tin
+                </button>
               </div>
 
               {/* Contact Info */}
@@ -314,12 +334,6 @@ export default function SchoolDetailPage() {
                   <span>Tham gia: {new Date(school.created_at).toLocaleDateString('vi-VN')}</span>
                 </div>
               </div>
-
-              {school.notes && (
-                <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                  <p className="text-sm text-gray-600">{school.notes}</p>
-                </div>
-              )}
             </div>
           </div>
         </div>
@@ -364,13 +378,80 @@ export default function SchoolDetailPage() {
         </div>
       </div>
 
+      {/* Principal Card */}
+      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div className="p-4 border-b flex items-center justify-between">
+          <h3 className="font-semibold text-gray-800 flex items-center gap-2">
+            <UserCog className="w-5 h-5 text-green-600" />
+            Thông tin Hiệu trưởng
+          </h3>
+          <div className="flex items-center gap-2">
+            {principal && (
+              <button
+                onClick={handleResetPrincipalPassword}
+                disabled={updating}
+                className="flex items-center gap-2 px-3 py-1.5 text-sm border border-orange-300 text-orange-700 rounded-lg hover:bg-orange-50 transition-colors disabled:opacity-50"
+              >
+                <Key className="w-4 h-4" />
+                Reset mật khẩu
+              </button>
+            )}
+            <button
+              onClick={() => setShowChangePrincipalModal(true)}
+              className="flex items-center gap-2 px-3 py-1.5 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+            >
+              <UserPlus className="w-4 h-4" />
+              {principal ? 'Đổi Hiệu trưởng' : 'Thêm Hiệu trưởng'}
+            </button>
+          </div>
+        </div>
+
+        <div className="p-6">
+          {principal ? (
+            <div className="flex items-center gap-6">
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center">
+                <UserCog className="w-10 h-10 text-white" />
+              </div>
+              <div className="flex-1">
+                <h4 className="text-xl font-semibold text-gray-900">{principal.full_name}</h4>
+                <div className="mt-2 space-y-1">
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <Mail className="w-4 h-4 text-gray-400" />
+                    <span>{principal.email}</span>
+                  </div>
+                  {principal.phone && (
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <Phone className="w-4 h-4 text-gray-400" />
+                      <span>{principal.phone}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2 text-gray-500 text-sm">
+                    <Calendar className="w-4 h-4 text-gray-400" />
+                    <span>Ngày tạo: {new Date(principal.created_at).toLocaleDateString('vi-VN')}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+                Hiệu trưởng
+              </div>
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <UserCog className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+              <p className="text-gray-500">Chưa có Hiệu trưởng</p>
+              <p className="text-gray-400 text-sm mt-1">Nhấn "Thêm Hiệu trưởng" để tạo tài khoản</p>
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Departments */}
         <div className="bg-white rounded-xl shadow-sm">
           <div className="p-4 border-b flex items-center justify-between">
             <h3 className="font-semibold text-gray-800">Danh sách Bộ phận</h3>
-            <span className="text-sm text-gray-500">{departments.length} bộ phận</span>
+            <span className="text-sm text-gray-500">{stats.departments} bộ phận</span>
           </div>
           <div className="p-4">
             {departments.length > 0 ? (
@@ -427,14 +508,14 @@ export default function SchoolDetailPage() {
         </div>
 
         {/* Classes */}
-        <div className="bg-white rounded-xl shadow-sm">
+        <div className="bg-white rounded-xl shadow-sm lg:col-span-2">
           <div className="p-4 border-b flex items-center justify-between">
             <h3 className="font-semibold text-gray-800">Lớp học</h3>
             <span className="text-sm text-gray-500">{stats.classes} lớp</span>
           </div>
           <div className="p-4">
             {classes.length > 0 ? (
-              <div className="space-y-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {classes.map((cls) => (
                   <div key={cls.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                     <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
@@ -454,119 +535,88 @@ export default function SchoolDetailPage() {
             )}
           </div>
         </div>
-
-        {/* Payment History */}
-        <div className="bg-white rounded-xl shadow-sm">
-          <div className="p-4 border-b flex items-center justify-between">
-            <h3 className="font-semibold text-gray-800">Lịch sử Thanh toán</h3>
-            <span className="text-sm text-gray-500">{transactions.length} giao dịch</span>
-          </div>
-          <div className="p-4">
-            {transactions.length > 0 ? (
-              <div className="space-y-3">
-                {transactions.map((trans) => (
-                  <div key={trans.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                        trans.status === 'completed' ? 'bg-green-100' : 'bg-yellow-100'
-                      }`}>
-                        <CreditCard className={`w-5 h-5 ${
-                          trans.status === 'completed' ? 'text-green-600' : 'text-yellow-600'
-                        }`} />
-                      </div>
-                      <div>
-                        <p className="font-medium text-gray-800">
-                          {formatCurrency(trans.amount)}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {new Date(trans.created_at).toLocaleDateString('vi-VN')}
-                        </p>
-                      </div>
-                    </div>
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      trans.status === 'completed'
-                        ? 'bg-green-100 text-green-700'
-                        : trans.status === 'pending'
-                        ? 'bg-yellow-100 text-yellow-700'
-                        : 'bg-red-100 text-red-700'
-                    }`}>
-                      {trans.status === 'completed' ? 'Thành công' :
-                       trans.status === 'pending' ? 'Chờ xử lý' : 'Thất bại'}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-center text-gray-500 py-8">Chưa có giao dịch nào</p>
-            )}
-          </div>
-        </div>
       </div>
 
-      {/* Change Plan Modal */}
-      {showPlanModal && (
+      {/* Change Principal Modal */}
+      {showChangePrincipalModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-md">
             <div className="p-4 border-b">
-              <h3 className="text-lg font-bold">Đổi gói cước</h3>
+              <h3 className="text-lg font-bold">
+                {principal ? 'Đổi Hiệu trưởng' : 'Thêm Hiệu trưởng mới'}
+              </h3>
             </div>
             <div className="p-4 space-y-4">
-              <p className="text-sm text-gray-600">
-                Chọn gói cước mới cho trường <strong>{school.name}</strong>
-              </p>
+              {principal && (
+                <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <p className="text-sm text-yellow-800">
+                    <strong>Lưu ý:</strong> Hiệu trưởng hiện tại ({principal.full_name}) sẽ bị gỡ quyền quản lý.
+                  </p>
+                </div>
+              )}
 
-              <div className="space-y-2">
-                <label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
-                  <input
-                    type="radio"
-                    name="plan"
-                    value=""
-                    checked={selectedPlan === ''}
-                    onChange={() => setSelectedPlan('')}
-                    className="w-4 h-4 text-blue-600"
-                  />
-                  <div>
-                    <p className="font-medium">Miễn phí</p>
-                    <p className="text-sm text-gray-500">Gói cơ bản, không mất phí</p>
-                  </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Họ tên Hiệu trưởng mới <span className="text-red-500">*</span>
                 </label>
+                <input
+                  type="text"
+                  value={newPrincipalData.full_name}
+                  onChange={(e) => setNewPrincipalData({ ...newPrincipalData, full_name: e.target.value })}
+                  placeholder="Nguyễn Văn A"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
 
-                {plans.map((plan) => (
-                  <label
-                    key={plan.id}
-                    className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50"
-                  >
-                    <input
-                      type="radio"
-                      name="plan"
-                      value={plan.id}
-                      checked={selectedPlan === plan.id}
-                      onChange={() => setSelectedPlan(plan.id)}
-                      className="w-4 h-4 text-blue-600"
-                    />
-                    <div className="flex-1">
-                      <p className="font-medium">{plan.name}</p>
-                      <p className="text-sm text-gray-500">
-                        {plan.price_monthly > 0 ? formatCurrency(plan.price_monthly) + '/tháng' : 'Miễn phí'}
-                      </p>
-                    </div>
-                  </label>
-                ))}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="email"
+                  value={newPrincipalData.email}
+                  onChange={(e) => setNewPrincipalData({ ...newPrincipalData, email: e.target.value })}
+                  placeholder="email@example.com"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Số điện thoại
+                </label>
+                <input
+                  type="tel"
+                  value={newPrincipalData.phone}
+                  onChange={(e) => setNewPrincipalData({ ...newPrincipalData, phone: e.target.value })}
+                  placeholder="0912345678"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="p-3 bg-blue-50 rounded-lg">
+                <p className="text-sm text-blue-800">
+                  Tài khoản sẽ được tạo với mật khẩu mặc định: <code className="bg-blue-100 px-1 rounded">{DEFAULT_PASSWORD}</code>
+                </p>
               </div>
 
               <div className="flex gap-3 pt-4">
                 <button
-                  onClick={() => setShowPlanModal(false)}
+                  onClick={() => {
+                    setShowChangePrincipalModal(false);
+                    setNewPrincipalData({ full_name: '', email: '', phone: '' });
+                  }}
                   className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
                 >
                   Hủy
                 </button>
                 <button
-                  onClick={handleChangePlan}
-                  disabled={updating}
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                  onClick={handleChangePrincipal}
+                  disabled={updating || !newPrincipalData.full_name.trim() || !newPrincipalData.email.trim()}
+                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center justify-center gap-2"
                 >
-                  {updating ? 'Đang lưu...' : 'Xác nhận'}
+                  {updating && <Loader2 className="w-4 h-4 animate-spin" />}
+                  {updating ? 'Đang xử lý...' : 'Xác nhận'}
                 </button>
               </div>
             </div>
