@@ -1,11 +1,12 @@
 // src/components/AdminLayout.jsx
 // Admin Layout with Sidebar Navigation
 import React, { useState } from 'react';
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import {
   LayoutDashboard, School, Users, CreditCard, BarChart3,
-  Settings, LogOut, Menu, X, Shield
+  Settings, LogOut, Menu, X, Shield, ChevronDown, ChevronRight,
+  BookOpen, FileText, Languages, HelpCircle, FolderOpen
 } from 'lucide-react';
 
 const MENU_ITEMS = [
@@ -14,18 +15,33 @@ const MENU_ITEMS = [
   { path: '/admin/users', icon: Users, label: 'Người dùng' },
   { path: '/admin/plans', icon: CreditCard, label: 'Gói cước' },
   { path: '/admin/statistics', icon: BarChart3, label: 'Thống kê' },
-  { path: '/admin/settings', icon: Settings, label: 'Cài đặt' },
+];
+
+const CONTENT_MENU_ITEMS = [
+  { path: '/admin/subjects', icon: BookOpen, label: 'Môn học' },
+  { path: '/admin/lessons', icon: FileText, label: 'Bài học' },
+  { path: '/admin/vocabulary', icon: Languages, label: 'Từ vựng' },
+  { path: '/admin/questions', icon: HelpCircle, label: 'Câu hỏi Quiz' },
+  { path: '/admin/media', icon: FolderOpen, label: 'Thư viện Media' },
 ];
 
 export default function AdminLayout() {
   const { profile, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [contentMenuOpen, setContentMenuOpen] = useState(
+    CONTENT_MENU_ITEMS.some(item => location.pathname.startsWith(item.path))
+  );
 
   const handleSignOut = async () => {
     await signOut();
     navigate('/login');
   };
+
+  const isContentActive = CONTENT_MENU_ITEMS.some(item =>
+    location.pathname.startsWith(item.path)
+  );
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -59,7 +75,8 @@ export default function AdminLayout() {
         </div>
 
         {/* Menu */}
-        <nav className="p-4 space-y-1">
+        <nav className="p-4 space-y-1 max-h-[calc(100vh-220px)] overflow-y-auto">
+          {/* Main menu items */}
           {MENU_ITEMS.map((item) => (
             <NavLink
               key={item.path}
@@ -78,10 +95,69 @@ export default function AdminLayout() {
               <span className="font-medium">{item.label}</span>
             </NavLink>
           ))}
+
+          {/* Content Management Section */}
+          <div className="pt-2">
+            <button
+              onClick={() => setContentMenuOpen(!contentMenuOpen)}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
+                isContentActive
+                  ? 'bg-blue-700 text-white'
+                  : 'text-blue-200 hover:bg-blue-800 hover:text-white'
+              }`}
+            >
+              <BookOpen className="w-5 h-5" />
+              <span className="font-medium flex-1 text-left">Nội dung</span>
+              {contentMenuOpen ? (
+                <ChevronDown className="w-4 h-4" />
+              ) : (
+                <ChevronRight className="w-4 h-4" />
+              )}
+            </button>
+
+            {/* Submenu */}
+            {contentMenuOpen && (
+              <div className="mt-1 ml-4 space-y-1">
+                {CONTENT_MENU_ITEMS.map((item) => (
+                  <NavLink
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setSidebarOpen(false)}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 px-4 py-2.5 rounded-xl transition-colors ${
+                        isActive
+                          ? 'bg-blue-700/50 text-white'
+                          : 'text-blue-300 hover:bg-blue-800/50 hover:text-white'
+                      }`
+                    }
+                  >
+                    <item.icon className="w-4 h-4" />
+                    <span className="text-sm">{item.label}</span>
+                  </NavLink>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Settings */}
+          <NavLink
+            to="/admin/settings"
+            onClick={() => setSidebarOpen(false)}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
+                isActive
+                  ? 'bg-blue-700 text-white'
+                  : 'text-blue-200 hover:bg-blue-800 hover:text-white'
+              }`
+            }
+          >
+            <Settings className="w-5 h-5" />
+            <span className="font-medium">Cài đặt</span>
+          </NavLink>
         </nav>
 
         {/* User info */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-blue-800">
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-blue-800 bg-blue-900">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-blue-700 rounded-full flex items-center justify-center">
               {profile?.avatar_url ? (

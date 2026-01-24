@@ -21,6 +21,13 @@ const PlansPage = lazy(() => import('./pages/admin/PlansPage'));
 const StatisticsPage = lazy(() => import('./pages/admin/StatisticsPage'));
 const AdminSettingsPage = lazy(() => import('./pages/admin/AdminSettingsPage'));
 
+// Admin Content Management pages
+const ContentSubjectsPage = lazy(() => import('./pages/admin/ContentSubjectsPage'));
+const ContentLessonsPage = lazy(() => import('./pages/admin/ContentLessonsPage'));
+const ContentVocabularyPage = lazy(() => import('./pages/admin/ContentVocabularyPage'));
+const ContentQuestionsPage = lazy(() => import('./pages/admin/ContentQuestionsPage'));
+const ContentMediaPage = lazy(() => import('./pages/admin/ContentMediaPage'));
+
 // School Admin pages
 const SchoolLayout = lazy(() => import('./components/SchoolLayout'));
 const SchoolDashboardPage = lazy(() => import('./pages/school/SchoolDashboardPage'));
@@ -130,6 +137,12 @@ function App() {
           <Route path="plans" element={<PlansPage />} />
           <Route path="statistics" element={<StatisticsPage />} />
           <Route path="settings" element={<AdminSettingsPage />} />
+          {/* Content Management Routes */}
+          <Route path="subjects" element={<ContentSubjectsPage />} />
+          <Route path="lessons" element={<ContentLessonsPage />} />
+          <Route path="vocabulary" element={<ContentVocabularyPage />} />
+          <Route path="questions" element={<ContentQuestionsPage />} />
+          <Route path="media" element={<ContentMediaPage />} />
         </Route>
 
         {/* School Admin routes - Nested routes */}
