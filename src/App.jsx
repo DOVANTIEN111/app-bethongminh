@@ -3,6 +3,7 @@
 import React, { Suspense, lazy } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth, ROLES } from './contexts/AuthContext';
+import { AudioProvider } from './contexts/AudioContext';
 import SplashScreen from './components/SplashScreen';
 
 // Lazy load pages
@@ -107,8 +108,9 @@ function RoleBasedRedirect() {
 
 function App() {
   return (
-    <Suspense fallback={<SplashScreen />}>
-      <Routes>
+    <AudioProvider>
+      <Suspense fallback={<SplashScreen />}>
+        <Routes>
         {/* Public routes */}
         <Route path="/login" element={<LoginPage />} />
 
@@ -201,8 +203,9 @@ function App() {
 
         {/* Catch all - redirect to login */}
         <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
-    </Suspense>
+        </Routes>
+      </Suspense>
+    </AudioProvider>
   );
 }
 
