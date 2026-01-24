@@ -1,19 +1,30 @@
 // src/pages/learn/LearnLessonsPage.jsx
-// Student Lessons Page - Connected to English learning system
+// Student Lessons Page - With Permission System
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { getAllTopics } from '../../data/englishVocab';
+import { MATH_LESSONS } from '../../data/mathLessons';
+import { VIETNAMESE_LESSONS } from '../../data/vietnameseLessons';
+import { SCIENCE_LESSONS } from '../../data/scienceLessons';
 import {
   getStudentProgress,
   getEnglishTopicsWithProgress
 } from '../../services/studentProgress';
 import {
+  checkLessonAccess,
+  isLessonUnlocked,
+  FREE_LESSONS_LIMIT
+} from '../../services/lessonPermissions';
+import UpgradePopup from '../../components/UpgradePopup';
+import {
   BookOpen, Star, Lock, CheckCircle, Play, ChevronRight,
-  ChevronLeft, Sparkles, Clock, Target, Loader2, Trophy
+  ChevronLeft, Sparkles, Clock, Target, Loader2, Trophy,
+  Crown, Shield
 } from 'lucide-react';
 
-// Thứ tự học tập theo cấp độ
+// Thứ tự học tập theo cấp độ - Tiếng Anh
 const TOPIC_ORDER = [
   // Level 1: Cơ bản (Bé 3-4 tuổi)
   { id: 'greetings', level: 1, levelName: 'Cơ bản' },
@@ -60,16 +71,7 @@ const SUBJECTS = [
     color: 'from-green-400 to-green-500',
     bgColor: 'bg-green-100',
     description: 'Học đếm số, phép tính cơ bản',
-    available: false, // Coming soon
-  },
-  {
-    id: 'science',
-    name: 'Khoa học',
-    icon: '🔬',
-    color: 'from-purple-400 to-purple-500',
-    bgColor: 'bg-purple-100',
-    description: 'Khám phá thế giới xung quanh',
-    available: false,
+    available: true,
   },
   {
     id: 'vietnamese',
@@ -78,9 +80,53 @@ const SUBJECTS = [
     color: 'from-orange-400 to-orange-500',
     bgColor: 'bg-orange-100',
     description: 'Học đọc, viết tiếng Việt',
-    available: false,
-  }
+    available: true,
+  },
+  {
+    id: 'science',
+    name: 'Khoa học',
+    icon: '🔬',
+    color: 'from-purple-400 to-purple-500',
+    bgColor: 'bg-purple-100',
+    description: 'Khám phá thế giới xung quanh',
+    available: true,
+  },
 ];
+
+// Lấy danh sách bài học theo môn
+function getLessonsBySubject(subjectId) {
+  switch (subjectId) {
+    case 'math':
+      return Object.values(MATH_LESSONS).map((lesson, idx) => ({
+        id: lesson.id,
+        title: lesson.title,
+        description: lesson.description || '',
+        icon: lesson.icon || '📐',
+        level: lesson.level || 1,
+        index: idx,
+      }));
+    case 'vietnamese':
+      return Object.values(VIETNAMESE_LESSONS).map((lesson, idx) => ({
+        id: lesson.id,
+        title: lesson.title,
+        description: lesson.description || '',
+        icon: lesson.icon || '📝',
+        level: lesson.level || 1,
+        index: idx,
+      }));
+    case 'science':
+      return Object.values(SCIENCE_LESSONS).map((lesson, idx) => ({
+        id: lesson.id,
+        title: lesson.title,
+        description: lesson.description || '',
+        icon: lesson.icon || '🔬',
+        level: lesson.level || 1,
+        index: idx,
+      }));
+    default:
+      return [];
+  }
+}
 
 export default function LearnLessonsPage() {
   const navigate = useNavigate();
@@ -90,9 +136,27 @@ export default function LearnLessonsPage() {
   const [loading, setLoading] = useState(true);
   const [englishTopics, setEnglishTopics] = useState([]);
 
+  // Permission states
+  const [accessInfo, setAccessInfo] = useState({
+    hasFullAccess: false,
+    isPremium: false,
+    isAdmin: false,
+  });
+
+  // Upgrade popup
+  const [showUpgradePopup, setShowUpgradePopup] = useState(false);
+  const [lockedLessonTitle, setLockedLessonTitle] = useState('');
+
   useEffect(() => {
     loadProgress();
+    loadAccessInfo();
   }, [profile?.id]);
+
+  const loadAccessInfo = async () => {
+    if (!profile) return;
+    const access = await checkLessonAccess(profile);
+    setAccessInfo(access);
+  };
 
   const loadProgress = async () => {
     setLoading(true);
@@ -117,12 +181,30 @@ export default function LearnLessonsPage() {
     }
   };
 
-  const handleLessonClick = (topic) => {
-    // Navigate to English lesson page
-    navigate(`/english/${topic.id}`);
+  const handleLessonClick = (topic, lessonIndex = 0) => {
+    // Check if lesson is unlocked
+    const unlocked = isLessonUnlocked(lessonIndex, accessInfo.hasFullAccess);
+
+    if (!unlocked) {
+      setLockedLessonTitle(topic.nameVn || topic.title || topic.name);
+      setShowUpgradePopup(true);
+      return;
+    }
+
+    // Navigate to lesson page based on subject
+    if (selectedSubject === 'english') {
+      navigate(`/english/${topic.id}`);
+    } else {
+      // TODO: Create lesson pages for math, vietnamese, science
+      alert(`Bài học "${topic.title}" sẽ sớm mở!`);
+    }
   };
 
-  const getStatusIcon = (status, score) => {
+  const getStatusIcon = (status, score, isLocked) => {
+    if (isLocked) {
+      return <Lock className="w-6 h-6 text-gray-400" />;
+    }
+
     switch (status) {
       case 'completed':
         return (
@@ -140,6 +222,218 @@ export default function LearnLessonsPage() {
     }
   };
 
+  // Render role badge
+  const renderRoleBadge = () => {
+    if (!accessInfo.isAdmin) return null;
+
+    return (
+      <div className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-3 py-1.5 rounded-full flex items-center gap-1.5 text-sm font-medium shadow-lg">
+        <Shield className="w-4 h-4" />
+        <span>
+          {profile?.role === 'super_admin' && 'Super Admin'}
+          {profile?.role === 'school_admin' && 'Quản lý trường'}
+          {profile?.role === 'teacher' && 'Giáo viên'}
+          {profile?.role === 'department_head' && 'Trưởng khoa'}
+        </span>
+      </div>
+    );
+  };
+
+  // Render premium badge
+  const renderPremiumBadge = () => {
+    if (accessInfo.isAdmin) return null; // Admin already has full access
+    if (!accessInfo.isPremium) return null;
+
+    return (
+      <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1.5 rounded-full flex items-center gap-1.5 text-sm font-medium shadow-lg">
+        <Crown className="w-4 h-4" />
+        <span>Premium</span>
+      </div>
+    );
+  };
+
+  // Show lessons for Math, Vietnamese, Science
+  if (selectedSubject && selectedSubject !== 'english') {
+    const lessons = getLessonsBySubject(selectedSubject);
+    const subject = SUBJECTS.find(s => s.id === selectedSubject);
+
+    // Group by level
+    const level1 = lessons.filter(l => l.level === 1);
+    const level2 = lessons.filter(l => l.level === 2);
+    const level3 = lessons.filter(l => l.level === 3);
+
+    const renderLessonCard = (lesson, globalIndex) => {
+      const isLocked = !isLessonUnlocked(globalIndex, accessInfo.hasFullAccess);
+      const progressData = progress[lesson.id];
+      const status = progressData?.status || 'not_started';
+      const score = progressData?.score || 0;
+
+      return (
+        <button
+          key={lesson.id}
+          onClick={() => handleLessonClick(lesson, globalIndex)}
+          className={`w-full bg-white rounded-2xl p-4 shadow-md flex items-center gap-3 transition-all ${
+            isLocked ? 'opacity-60' : 'hover:shadow-lg active:scale-[0.98]'
+          } ${status === 'completed' ? 'ring-2 ring-green-200' : ''}`}
+        >
+          {/* Lesson Number */}
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0 ${
+            isLocked
+              ? 'bg-gray-100 text-gray-400'
+              : status === 'completed'
+                ? 'bg-green-100 text-green-600'
+                : 'bg-blue-100 text-blue-600'
+          }`}>
+            {isLocked ? <Lock className="w-5 h-5" /> : globalIndex + 1}
+          </div>
+
+          {/* Lesson Icon */}
+          <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 ${
+            isLocked ? 'bg-gray-50 grayscale' : status === 'completed' ? 'bg-green-50' : 'bg-blue-50'
+          }`}>
+            {lesson.icon}
+          </div>
+
+          {/* Lesson Info */}
+          <div className="flex-1 text-left min-w-0">
+            <h3 className={`font-bold truncate ${isLocked ? 'text-gray-400' : 'text-gray-800'}`}>
+              {lesson.title}
+            </h3>
+            {lesson.description && (
+              <p className={`text-sm truncate ${isLocked ? 'text-gray-300' : 'text-gray-500'}`}>
+                {lesson.description}
+              </p>
+            )}
+            {isLocked && (
+              <span className="text-xs text-orange-500 flex items-center gap-1 mt-1">
+                <Crown className="w-3 h-3" /> Premium
+              </span>
+            )}
+            {!isLocked && status === 'completed' && (
+              <span className="text-xs text-green-500 flex items-center gap-1 mt-1">
+                <Star className="w-3 h-3 fill-green-500" /> {score}đ
+              </span>
+            )}
+          </div>
+
+          {/* Status */}
+          <div className="flex-shrink-0">
+            {getStatusIcon(status, score, isLocked)}
+          </div>
+        </button>
+      );
+    };
+
+    return (
+      <div className="p-4 space-y-4 pb-24">
+        {/* Upgrade Popup */}
+        <UpgradePopup
+          isOpen={showUpgradePopup}
+          onClose={() => setShowUpgradePopup(false)}
+          lessonTitle={lockedLessonTitle}
+        />
+
+        {/* Back Button */}
+        <div className="flex items-center justify-between">
+          <button
+            onClick={() => setSelectedSubject(null)}
+            className="flex items-center gap-2 text-gray-600 font-medium"
+          >
+            <ChevronLeft className="w-5 h-5" />
+            Quay lại
+          </button>
+          {renderRoleBadge()}
+          {renderPremiumBadge()}
+        </div>
+
+        {/* Subject Header */}
+        <div className={`bg-gradient-to-r ${subject.color} rounded-3xl p-5 text-white shadow-xl`}>
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-4xl">
+              {subject.icon}
+            </div>
+            <div className="flex-1">
+              <h1 className="text-2xl font-bold">{subject.name}</h1>
+              <p className="text-white/80">{lessons.length} bài học</p>
+            </div>
+          </div>
+
+          {/* Free vs Premium info */}
+          {!accessInfo.hasFullAccess && (
+            <div className="bg-white/20 rounded-xl p-3 flex items-center gap-2">
+              <Lock className="w-5 h-5" />
+              <span className="text-sm">
+                Miễn phí: {FREE_LESSONS_LIMIT} bài đầu • Nâng cấp Premium để mở tất cả
+              </span>
+            </div>
+          )}
+        </div>
+
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+          </div>
+        ) : (
+          <>
+            {/* Level 1 */}
+            {level1.length > 0 && (
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                    <span className="text-green-600 font-bold">1</span>
+                  </div>
+                  <h2 className="font-bold text-gray-800">Cơ bản</h2>
+                  <span className="text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-full">
+                    {level1.length} bài
+                  </span>
+                </div>
+                <div className="space-y-2">
+                  {level1.map((lesson, idx) => renderLessonCard(lesson, idx))}
+                </div>
+              </div>
+            )}
+
+            {/* Level 2 */}
+            {level2.length > 0 && (
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                    <span className="text-blue-600 font-bold">2</span>
+                  </div>
+                  <h2 className="font-bold text-gray-800">Mở rộng</h2>
+                  <span className="text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full">
+                    {level2.length} bài
+                  </span>
+                </div>
+                <div className="space-y-2">
+                  {level2.map((lesson, idx) => renderLessonCard(lesson, level1.length + idx))}
+                </div>
+              </div>
+            )}
+
+            {/* Level 3 */}
+            {level3.length > 0 && (
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                    <span className="text-purple-600 font-bold">3</span>
+                  </div>
+                  <h2 className="font-bold text-gray-800">Nâng cao</h2>
+                  <span className="text-xs bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full">
+                    {level3.length} bài
+                  </span>
+                </div>
+                <div className="space-y-2">
+                  {level3.map((lesson, idx) => renderLessonCard(lesson, level1.length + level2.length + idx))}
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    );
+  }
+
   // Show English lessons when subject is selected
   if (selectedSubject === 'english') {
     const completedCount = englishTopics.filter(t => t.status === 'completed').length;
@@ -150,61 +444,90 @@ export default function LearnLessonsPage() {
     const level2Topics = englishTopics.filter(t => t.level === 2);
     const level3Topics = englishTopics.filter(t => t.level === 3);
 
-    const renderTopicCard = (topic, index, globalIndex) => (
-      <button
-        key={topic.id}
-        onClick={() => handleLessonClick(topic)}
-        className={`w-full bg-white rounded-2xl p-4 shadow-md flex items-center gap-3 transition-all hover:shadow-lg active:scale-[0.98] ${
-          topic.status === 'completed' ? 'ring-2 ring-green-200' : ''
-        }`}
-      >
-        {/* Lesson Number */}
-        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0 ${
-          topic.status === 'completed'
-            ? 'bg-green-100 text-green-600'
-            : 'bg-blue-100 text-blue-600'
-        }`}>
-          {globalIndex}
-        </div>
+    const renderTopicCard = (topic, index, globalIndex) => {
+      const isLocked = !isLessonUnlocked(globalIndex, accessInfo.hasFullAccess);
 
-        {/* Topic Icon */}
-        <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 ${
-          topic.status === 'completed' ? 'bg-green-50' : 'bg-blue-50'
-        }`}>
-          {topic.icon}
-        </div>
-
-        {/* Topic Info */}
-        <div className="flex-1 text-left min-w-0">
-          <h3 className="font-bold text-gray-800 truncate">{topic.nameVn}</h3>
-          <p className="text-sm text-gray-500">{topic.name}</p>
-          <div className="flex items-center gap-2 mt-1 flex-wrap">
-            <span className="text-xs text-gray-400">📝 {topic.words?.length || 0} từ</span>
-            {topic.status === 'completed' && (
-              <span className="text-xs text-green-500 flex items-center gap-1">
-                <Star className="w-3 h-3 fill-green-500" /> {topic.score}đ
-              </span>
-            )}
+      return (
+        <button
+          key={topic.id}
+          onClick={() => handleLessonClick(topic, globalIndex)}
+          className={`w-full bg-white rounded-2xl p-4 shadow-md flex items-center gap-3 transition-all ${
+            isLocked ? 'opacity-60' : 'hover:shadow-lg active:scale-[0.98]'
+          } ${topic.status === 'completed' ? 'ring-2 ring-green-200' : ''}`}
+        >
+          {/* Lesson Number */}
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0 ${
+            isLocked
+              ? 'bg-gray-100 text-gray-400'
+              : topic.status === 'completed'
+                ? 'bg-green-100 text-green-600'
+                : 'bg-blue-100 text-blue-600'
+          }`}>
+            {isLocked ? <Lock className="w-5 h-5" /> : globalIndex + 1}
           </div>
-        </div>
 
-        {/* Status */}
-        <div className="flex-shrink-0">
-          {getStatusIcon(topic.status, topic.score)}
-        </div>
-      </button>
-    );
+          {/* Topic Icon */}
+          <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 ${
+            isLocked ? 'bg-gray-50 grayscale' : topic.status === 'completed' ? 'bg-green-50' : 'bg-blue-50'
+          }`}>
+            {topic.icon}
+          </div>
+
+          {/* Topic Info */}
+          <div className="flex-1 text-left min-w-0">
+            <h3 className={`font-bold truncate ${isLocked ? 'text-gray-400' : 'text-gray-800'}`}>
+              {topic.nameVn}
+            </h3>
+            <p className={`text-sm ${isLocked ? 'text-gray-300' : 'text-gray-500'}`}>
+              {topic.name}
+            </p>
+            <div className="flex items-center gap-2 mt-1 flex-wrap">
+              {isLocked ? (
+                <span className="text-xs text-orange-500 flex items-center gap-1">
+                  <Crown className="w-3 h-3" /> Premium
+                </span>
+              ) : (
+                <>
+                  <span className="text-xs text-gray-400">📝 {topic.words?.length || 0} từ</span>
+                  {topic.status === 'completed' && (
+                    <span className="text-xs text-green-500 flex items-center gap-1">
+                      <Star className="w-3 h-3 fill-green-500" /> {topic.score}đ
+                    </span>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* Status */}
+          <div className="flex-shrink-0">
+            {getStatusIcon(topic.status, topic.score, isLocked)}
+          </div>
+        </button>
+      );
+    };
 
     return (
       <div className="p-4 space-y-4 pb-24">
+        {/* Upgrade Popup */}
+        <UpgradePopup
+          isOpen={showUpgradePopup}
+          onClose={() => setShowUpgradePopup(false)}
+          lessonTitle={lockedLessonTitle}
+        />
+
         {/* Back Button */}
-        <button
-          onClick={() => setSelectedSubject(null)}
-          className="flex items-center gap-2 text-gray-600 font-medium"
-        >
-          <ChevronLeft className="w-5 h-5" />
-          Quay lại
-        </button>
+        <div className="flex items-center justify-between">
+          <button
+            onClick={() => setSelectedSubject(null)}
+            className="flex items-center gap-2 text-gray-600 font-medium"
+          >
+            <ChevronLeft className="w-5 h-5" />
+            Quay lại
+          </button>
+          {renderRoleBadge()}
+          {renderPremiumBadge()}
+        </div>
 
         {/* Subject Header */}
         <div className="bg-gradient-to-r from-blue-400 to-blue-600 rounded-3xl p-5 text-white shadow-xl">
@@ -233,6 +556,16 @@ export default function LearnLessonsPage() {
               <p className="text-xs text-white/80">Tổng điểm</p>
             </div>
           </div>
+
+          {/* Free vs Premium info */}
+          {!accessInfo.hasFullAccess && (
+            <div className="mt-4 bg-white/20 rounded-xl p-3 flex items-center gap-2">
+              <Lock className="w-5 h-5" />
+              <span className="text-sm">
+                Miễn phí: {FREE_LESSONS_LIMIT} bài đầu • Nâng cấp Premium để mở tất cả
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Learning Modes */}
@@ -283,7 +616,7 @@ export default function LearnLessonsPage() {
                 </span>
               </div>
               <div className="space-y-2">
-                {level1Topics.map((topic, idx) => renderTopicCard(topic, idx, idx + 1))}
+                {level1Topics.map((topic, idx) => renderTopicCard(topic, idx, idx))}
               </div>
             </div>
 
@@ -299,7 +632,7 @@ export default function LearnLessonsPage() {
                 </span>
               </div>
               <div className="space-y-2">
-                {level2Topics.map((topic, idx) => renderTopicCard(topic, idx, level1Topics.length + idx + 1))}
+                {level2Topics.map((topic, idx) => renderTopicCard(topic, idx, level1Topics.length + idx))}
               </div>
             </div>
 
@@ -315,7 +648,7 @@ export default function LearnLessonsPage() {
                 </span>
               </div>
               <div className="space-y-2">
-                {level3Topics.map((topic, idx) => renderTopicCard(topic, idx, level1Topics.length + level2Topics.length + idx + 1))}
+                {level3Topics.map((topic, idx) => renderTopicCard(topic, idx, level1Topics.length + level2Topics.length + idx))}
               </div>
             </div>
           </>
@@ -327,14 +660,45 @@ export default function LearnLessonsPage() {
   // Subject selection view
   return (
     <div className="p-4 space-y-6">
+      {/* Upgrade Popup */}
+      <UpgradePopup
+        isOpen={showUpgradePopup}
+        onClose={() => setShowUpgradePopup(false)}
+        lessonTitle={lockedLessonTitle}
+      />
+
       {/* Header */}
       <div className="text-center">
+        <div className="flex items-center justify-center gap-2 mb-2">
+          {renderRoleBadge()}
+          {renderPremiumBadge()}
+        </div>
         <h1 className="text-2xl font-bold text-gray-800 flex items-center justify-center gap-2">
           <BookOpen className="w-7 h-7 text-blue-500" />
           Bài học của bạn
         </h1>
         <p className="text-gray-500 mt-1">Chọn môn học để bắt đầu nhé!</p>
       </div>
+
+      {/* Premium Banner for free users */}
+      {!accessInfo.hasFullAccess && (
+        <button
+          onClick={() => setShowUpgradePopup(true)}
+          className="w-full bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-2xl p-4 text-white shadow-lg flex items-center gap-3 hover:opacity-90 transition-opacity"
+        >
+          <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+            <Crown className="w-6 h-6" />
+          </div>
+          <div className="flex-1 text-left">
+            <p className="font-bold">Nâng cấp Premium</p>
+            <p className="text-sm text-white/80">Mở khóa tất cả {SUBJECTS.reduce((sum, s) => {
+              if (s.id === 'english') return sum + 20;
+              return sum + getLessonsBySubject(s.id).length;
+            }, 0)} bài học!</p>
+          </div>
+          <ChevronRight className="w-6 h-6" />
+        </button>
+      )}
 
       {loading ? (
         <div className="flex items-center justify-center py-12">
@@ -351,9 +715,14 @@ export default function LearnLessonsPage() {
               if (subject.id === 'english') {
                 completedCount = englishTopics.filter(t => t.status === 'completed').length;
                 totalCount = englishTopics.length;
+              } else {
+                const lessons = getLessonsBySubject(subject.id);
+                totalCount = lessons.length;
+                // TODO: Get completed count from progress
               }
 
               const progressPercent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+              const freeCount = Math.min(FREE_LESSONS_LIMIT, totalCount);
 
               return (
                 <button
@@ -392,7 +761,11 @@ export default function LearnLessonsPage() {
                       {subject.available && totalCount > 0 && (
                         <>
                           <p className="text-sm text-gray-500 mt-1">
-                            {completedCount}/{totalCount} bài học hoàn thành
+                            {accessInfo.hasFullAccess ? (
+                              <>{completedCount}/{totalCount} bài học</>
+                            ) : (
+                              <>{freeCount} miễn phí • {totalCount - freeCount} Premium</>
+                            )}
                           </p>
                           {/* Progress Bar */}
                           <div className="mt-2">
