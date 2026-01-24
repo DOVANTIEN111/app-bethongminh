@@ -55,19 +55,13 @@ export default function SchoolsPage() {
       setLoading(true);
       console.log('=== DEBUG: Loading schools data ===');
 
-      const [schoolsRes, plansRes] = await Promise.all([
-        supabase
-          .from('schools')
-          .select(`
-            *,
-            plan:plans(id, name, slug)
-          `)
-          .order('created_at', { ascending: false }),
-        supabase.from('plans').select('id, name, slug').eq('is_active', true),
-      ]);
+      // Query đơn giản - không join với plans để tránh lỗi 400
+      const schoolsRes = await supabase
+        .from('schools')
+        .select('*')
+        .order('created_at', { ascending: false });
 
       console.log('Schools response:', schoolsRes);
-      console.log('Plans response:', plansRes);
 
       if (schoolsRes.error) {
         console.error('Schools error:', schoolsRes.error);
@@ -76,12 +70,40 @@ export default function SchoolsPage() {
 
       const schoolsData = schoolsRes.data || [];
       setSchools(schoolsData);
-      setPlans(plansRes.data || []);
       console.log('Loaded schools:', schoolsData.length);
-      console.log('Loaded plans:', plansRes.data?.length || 0);
+
+      // Load plans riêng (không ảnh hưởng nếu lỗi)
+      try {
+        const plansRes = await supabase
+          .from('plans')
+          .select('id, name, slug')
+          .eq('is_active', true);
+
+        if (!plansRes.error) {
+          setPlans(plansRes.data || []);
+          console.log('Loaded plans:', plansRes.data?.length || 0);
+
+          // Nếu có plans, thử load plan info cho từng school
+          if (plansRes.data?.length > 0 && schoolsData.length > 0) {
+            const plansMap = {};
+            plansRes.data.forEach(p => { plansMap[p.id] = p; });
+
+            // Gắn plan vào school nếu có plan_id
+            const schoolsWithPlan = schoolsData.map(s => ({
+              ...s,
+              plan: s.plan_id ? plansMap[s.plan_id] : null
+            }));
+            setSchools(schoolsWithPlan);
+          }
+        }
+      } catch (planErr) {
+        console.log('Plans not available:', planErr);
+      }
 
       // Load stats for all schools
-      await loadAllStats(schoolsData.map(s => s.id));
+      if (schoolsData.length > 0) {
+        await loadAllStats(schoolsData.map(s => s.id));
+      }
     } catch (err) {
       console.error('Load schools error:', err);
     } finally {
@@ -90,19 +112,25 @@ export default function SchoolsPage() {
   };
 
   const loadAllStats = async (schoolIds) => {
+    if (!schoolIds || schoolIds.length === 0) return;
+
     try {
       const statsPromises = schoolIds.map(async (id) => {
-        const [teachersRes, studentsRes, classesRes] = await Promise.all([
-          supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('school_id', id).eq('role', 'teacher'),
-          supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('school_id', id).eq('role', 'student'),
-          supabase.from('classes').select('id', { count: 'exact', head: true }).eq('school_id', id),
-        ]);
-        return {
-          id,
-          teachers: teachersRes.count || 0,
-          students: studentsRes.count || 0,
-          classes: classesRes.count || 0,
-        };
+        try {
+          const [teachersRes, studentsRes, classesRes] = await Promise.all([
+            supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('school_id', id).eq('role', 'teacher'),
+            supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('school_id', id).eq('role', 'student'),
+            supabase.from('classes').select('id', { count: 'exact', head: true }).eq('school_id', id),
+          ]);
+          return {
+            id,
+            teachers: teachersRes.count || 0,
+            students: studentsRes.count || 0,
+            classes: classesRes.count || 0,
+          };
+        } catch {
+          return { id, teachers: 0, students: 0, classes: 0 };
+        }
       });
 
       const allStats = await Promise.all(statsPromises);
@@ -113,6 +141,7 @@ export default function SchoolsPage() {
       setSchoolStats(statsMap);
     } catch (err) {
       console.error('Load stats error:', err);
+      // Không throw error - vẫn hiển thị trường học dù không có stats
     }
   };
 
