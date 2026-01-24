@@ -47,6 +47,14 @@ const LearnAssignmentsPage = lazy(() => import('./pages/learn/LearnAssignmentsPa
 const LearnAchievementsPage = lazy(() => import('./pages/learn/LearnAchievementsPage'));
 const LearnProfilePage = lazy(() => import('./pages/learn/LearnProfilePage'));
 
+// Parent pages
+const ParentLayout = lazy(() => import('./components/ParentLayout'));
+const ParentHomePage = lazy(() => import('./pages/parent/ParentHomePage'));
+const ParentChildrenPage = lazy(() => import('./pages/parent/ParentChildrenPage'));
+const ParentMessagesPage = lazy(() => import('./pages/parent/ParentMessagesPage'));
+const ParentReportsPage = lazy(() => import('./pages/parent/ParentReportsPage'));
+const ParentSettingsPage = lazy(() => import('./pages/parent/ParentSettingsPage'));
+
 // Protected Route Component
 function ProtectedRoute({ children, allowedRoles }) {
   const { isAuthenticated, loading, profile } = useAuth();
@@ -155,12 +163,18 @@ function App() {
           <Route path="settings" element={<TeacherSettingsPage />} />
         </Route>
 
-        {/* Parent routes */}
-        <Route path="/parent/*" element={
+        {/* Parent routes - Nested routes */}
+        <Route path="/parent" element={
           <ProtectedRoute allowedRoles={[ROLES.PARENT]}>
-            <ParentDashboard />
+            <ParentLayout />
           </ProtectedRoute>
-        } />
+        }>
+          <Route index element={<ParentHomePage />} />
+          <Route path="children" element={<ParentChildrenPage />} />
+          <Route path="messages" element={<ParentMessagesPage />} />
+          <Route path="reports" element={<ParentReportsPage />} />
+          <Route path="settings" element={<ParentSettingsPage />} />
+        </Route>
 
         {/* Student Learn routes - Nested routes */}
         <Route path="/learn" element={
