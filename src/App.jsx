@@ -28,6 +28,13 @@ const ContentVocabularyPage = lazy(() => import('./pages/admin/ContentVocabulary
 const ContentQuestionsPage = lazy(() => import('./pages/admin/ContentQuestionsPage'));
 const ContentMediaPage = lazy(() => import('./pages/admin/ContentMediaPage'));
 
+// Admin Finance & Notifications pages
+const FinancePage = lazy(() => import('./pages/admin/FinancePage'));
+const TransactionsPage = lazy(() => import('./pages/admin/TransactionsPage'));
+const PromotionsPage = lazy(() => import('./pages/admin/PromotionsPage'));
+const NotificationsPage = lazy(() => import('./pages/admin/NotificationsPage'));
+const AnalyticsPage = lazy(() => import('./pages/admin/AnalyticsPage'));
+
 // School Admin pages
 const SchoolLayout = lazy(() => import('./components/SchoolLayout'));
 const SchoolDashboardPage = lazy(() => import('./pages/school/SchoolDashboardPage'));
@@ -143,6 +150,12 @@ function App() {
           <Route path="vocabulary" element={<ContentVocabularyPage />} />
           <Route path="questions" element={<ContentQuestionsPage />} />
           <Route path="media" element={<ContentMediaPage />} />
+          {/* Finance & Notifications Routes */}
+          <Route path="finance" element={<FinancePage />} />
+          <Route path="transactions" element={<TransactionsPage />} />
+          <Route path="promotions" element={<PromotionsPage />} />
+          <Route path="notifications" element={<NotificationsPage />} />
+          <Route path="analytics" element={<AnalyticsPage />} />
         </Route>
 
         {/* School Admin routes - Nested routes */}

@@ -6,7 +6,8 @@ import { useAuth } from '../contexts/AuthContext';
 import {
   LayoutDashboard, School, Users, CreditCard, BarChart3,
   Settings, LogOut, Menu, X, Shield, ChevronDown, ChevronRight,
-  BookOpen, FileText, Languages, HelpCircle, FolderOpen
+  BookOpen, FileText, Languages, HelpCircle, FolderOpen,
+  DollarSign, Receipt, Gift, Bell, TrendingUp
 } from 'lucide-react';
 
 const MENU_ITEMS = [
@@ -25,6 +26,12 @@ const CONTENT_MENU_ITEMS = [
   { path: '/admin/media', icon: FolderOpen, label: 'Thư viện Media' },
 ];
 
+const FINANCE_MENU_ITEMS = [
+  { path: '/admin/finance', icon: DollarSign, label: 'Tổng quan' },
+  { path: '/admin/transactions', icon: Receipt, label: 'Giao dịch' },
+  { path: '/admin/promotions', icon: Gift, label: 'Khuyến mãi' },
+];
+
 export default function AdminLayout() {
   const { profile, signOut } = useAuth();
   const navigate = useNavigate();
@@ -33,6 +40,9 @@ export default function AdminLayout() {
   const [contentMenuOpen, setContentMenuOpen] = useState(
     CONTENT_MENU_ITEMS.some(item => location.pathname.startsWith(item.path))
   );
+  const [financeMenuOpen, setFinanceMenuOpen] = useState(
+    FINANCE_MENU_ITEMS.some(item => location.pathname.startsWith(item.path))
+  );
 
   const handleSignOut = async () => {
     await signOut();
@@ -40,6 +50,10 @@ export default function AdminLayout() {
   };
 
   const isContentActive = CONTENT_MENU_ITEMS.some(item =>
+    location.pathname.startsWith(item.path)
+  );
+
+  const isFinanceActive = FINANCE_MENU_ITEMS.some(item =>
     location.pathname.startsWith(item.path)
   );
 
@@ -138,6 +152,81 @@ export default function AdminLayout() {
               </div>
             )}
           </div>
+
+          {/* Finance Management Section */}
+          <div className="pt-2">
+            <button
+              onClick={() => setFinanceMenuOpen(!financeMenuOpen)}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
+                isFinanceActive
+                  ? 'bg-blue-700 text-white'
+                  : 'text-blue-200 hover:bg-blue-800 hover:text-white'
+              }`}
+            >
+              <DollarSign className="w-5 h-5" />
+              <span className="font-medium flex-1 text-left">Tài chính</span>
+              {financeMenuOpen ? (
+                <ChevronDown className="w-4 h-4" />
+              ) : (
+                <ChevronRight className="w-4 h-4" />
+              )}
+            </button>
+
+            {/* Finance Submenu */}
+            {financeMenuOpen && (
+              <div className="mt-1 ml-4 space-y-1">
+                {FINANCE_MENU_ITEMS.map((item) => (
+                  <NavLink
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setSidebarOpen(false)}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 px-4 py-2.5 rounded-xl transition-colors ${
+                        isActive
+                          ? 'bg-blue-700/50 text-white'
+                          : 'text-blue-300 hover:bg-blue-800/50 hover:text-white'
+                      }`
+                    }
+                  >
+                    <item.icon className="w-4 h-4" />
+                    <span className="text-sm">{item.label}</span>
+                  </NavLink>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Notifications */}
+          <NavLink
+            to="/admin/notifications"
+            onClick={() => setSidebarOpen(false)}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
+                isActive
+                  ? 'bg-blue-700 text-white'
+                  : 'text-blue-200 hover:bg-blue-800 hover:text-white'
+              }`
+            }
+          >
+            <Bell className="w-5 h-5" />
+            <span className="font-medium">Thông báo</span>
+          </NavLink>
+
+          {/* Analytics */}
+          <NavLink
+            to="/admin/analytics"
+            onClick={() => setSidebarOpen(false)}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
+                isActive
+                  ? 'bg-blue-700 text-white'
+                  : 'text-blue-200 hover:bg-blue-800 hover:text-white'
+              }`
+            }
+          >
+            <TrendingUp className="w-5 h-5" />
+            <span className="font-medium">Phân tích</span>
+          </NavLink>
 
           {/* Settings */}
           <NavLink
