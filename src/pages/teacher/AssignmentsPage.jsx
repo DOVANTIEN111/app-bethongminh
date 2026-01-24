@@ -76,21 +76,12 @@ export default function AssignmentsPage() {
       // Load available lessons (system + teacher's own)
       const { data: sysLessons } = await supabase
         .from('lessons')
-        .select('id, title, subject_id, lesson_type, vocab_count, question_count')
-        .or(`lesson_type.eq.system,teacher_id.eq.${profile.id}`)
-        .eq('status', 'published')
+        .select('id, title, subject_id, lesson_type')
+        .or(`lesson_type.eq.system,teacher_id.eq.${profile.id},teacher_id.is.null`)
+        .eq('is_active', true)
         .order('created_at', { ascending: false });
 
-      if (sysLessons && sysLessons.length > 0) {
-        setLessons(sysLessons);
-      } else {
-        // Mock data
-        setLessons([
-          { id: 's1', title: 'Animals - Động vật', lesson_type: 'system', vocab_count: 15, question_count: 10 },
-          { id: 's2', title: 'Colors - Màu sắc', lesson_type: 'system', vocab_count: 12, question_count: 8 },
-          { id: 's3', title: 'Phép cộng trong phạm vi 10', lesson_type: 'system', vocab_count: 0, question_count: 20 },
-        ]);
-      }
+      setLessons(sysLessons || []);
 
       // Load assignments
       const { data: assignData } = await supabase

@@ -11,12 +11,17 @@ import {
   Image, Volume2, CheckCircle, XCircle, Filter
 } from 'lucide-react';
 
-const SUBJECTS = [
-  { id: 'english', name: 'Tiếng Anh', color: 'blue' },
-  { id: 'math', name: 'Toán', color: 'green' },
-  { id: 'science', name: 'Khoa học', color: 'purple' },
-  { id: 'vietnamese', name: 'Tiếng Việt', color: 'orange' },
-];
+// Màu mặc định cho subjects theo tên
+const SUBJECT_COLORS = {
+  'Tiếng Anh': 'blue',
+  'English': 'blue',
+  'Toán': 'green',
+  'Math': 'green',
+  'Khoa học': 'purple',
+  'Science': 'purple',
+  'Tiếng Việt': 'orange',
+  'Vietnamese': 'orange',
+};
 
 const QUESTION_TYPES = [
   { id: 'multiple_choice', name: 'Trắc nghiệm', icon: CheckCircle },
@@ -30,6 +35,7 @@ export default function TeacherLessonsPage() {
   const [activeTab, setActiveTab] = useState('system');
   const [systemLessons, setSystemLessons] = useState([]);
   const [myLessons, setMyLessons] = useState([]);
+  const [subjects, setSubjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingLesson, setEditingLesson] = useState(null);
@@ -40,7 +46,7 @@ export default function TeacherLessonsPage() {
   // Form state
   const [formData, setFormData] = useState({
     title: '',
-    subject_id: 'english',
+    subject_id: '', // UUID từ subjects table
     description: '',
     video_url: '',
     status: 'draft',
@@ -77,34 +83,32 @@ export default function TeacherLessonsPage() {
     try {
       setLoading(true);
 
-      // Load system lessons (từ Admin, lesson_type = 'system')
+      // Load subjects từ database
+      const { data: subjectsData } = await supabase
+        .from('subjects')
+        .select('id, name, icon')
+        .eq('is_active', true)
+        .order('sort_order');
+
+      setSubjects(subjectsData || []);
+
+      // Load system lessons (lesson_type = 'system' hoặc teacher_id = null)
       const { data: sysData } = await supabase
         .from('lessons')
         .select('*, subject:subjects(id, name, icon)')
-        .eq('lesson_type', 'system')
-        .eq('status', 'published')
+        .or('lesson_type.eq.system,and(teacher_id.is.null,lesson_type.is.null)')
+        .eq('is_active', true)
+        .neq('status', 'draft') // Không lấy bài nháp
         .order('created_at', { ascending: false });
 
-      if (sysData && sysData.length > 0) {
-        setSystemLessons(sysData);
-      } else {
-        // Mock data nếu chưa có
-        setSystemLessons([
-          { id: 's1', title: 'Animals - Động vật', subject_id: 'english', description: 'Học từ vựng về động vật', vocab_count: 15, question_count: 10, lesson_type: 'system' },
-          { id: 's2', title: 'Colors - Màu sắc', subject_id: 'english', description: 'Học từ vựng về màu sắc', vocab_count: 12, question_count: 8, lesson_type: 'system' },
-          { id: 's3', title: 'Numbers 1-20', subject_id: 'english', description: 'Học số từ 1 đến 20', vocab_count: 20, question_count: 15, lesson_type: 'system' },
-          { id: 's4', title: 'Phép cộng trong phạm vi 10', subject_id: 'math', description: 'Bài học phép cộng cơ bản', vocab_count: 0, question_count: 20, lesson_type: 'system' },
-          { id: 's5', title: 'Học vần: Chữ cái A-E', subject_id: 'vietnamese', description: 'Học các chữ cái đầu tiên', vocab_count: 5, question_count: 10, lesson_type: 'system' },
-        ]);
-      }
+      setSystemLessons(sysData || []);
 
       // Load my lessons (GV tự tạo)
       if (profile?.id) {
         const { data: myData } = await supabase
           .from('lessons')
-          .select('*')
+          .select('*, subject:subjects(id, name, icon)')
           .eq('teacher_id', profile.id)
-          .eq('lesson_type', 'teacher')
           .order('created_at', { ascending: false });
 
         setMyLessons(myData || []);
@@ -121,7 +125,7 @@ export default function TeacherLessonsPage() {
       setEditingLesson(lesson);
       setFormData({
         title: lesson.title || '',
-        subject_id: lesson.subject_id || 'english',
+        subject_id: lesson.subject_id || '',
         description: lesson.description || '',
         video_url: lesson.video_url || '',
         status: lesson.status || 'draft',
@@ -132,21 +136,28 @@ export default function TeacherLessonsPage() {
         .from('vocabulary')
         .select('*')
         .eq('lesson_id', lesson.id)
-        .order('order_index');
+        .order('sort_order');
       setVocabularies(vocabData || []);
 
-      // Load questions
+      // Load questions - map content to question for UI
       const { data: questData } = await supabase
         .from('questions')
         .select('*')
         .eq('lesson_id', lesson.id)
-        .order('order_index');
-      setQuestions(questData || []);
+        .order('sort_order');
+      // Map content -> question cho UI
+      const mappedQuestions = (questData || []).map(q => ({
+        ...q,
+        question: q.content, // Map content to question for form
+      }));
+      setQuestions(mappedQuestions);
     } else {
       setEditingLesson(null);
+      // Lấy subject đầu tiên làm mặc định
+      const defaultSubjectId = subjects.length > 0 ? subjects[0].id : '';
       setFormData({
         title: '',
-        subject_id: 'english',
+        subject_id: defaultSubjectId,
         description: '',
         video_url: '',
         status: 'draft',
@@ -163,7 +174,7 @@ export default function TeacherLessonsPage() {
     setVocabularies([...vocabularies, {
       id: 'temp_' + Date.now(),
       ...vocabForm,
-      order_index: vocabularies.length,
+      sort_order: vocabularies.length,
     }]);
     setVocabForm({ word: '', meaning: '', image_url: '', audio_url: '' });
     setShowVocabForm(false);
@@ -179,7 +190,7 @@ export default function TeacherLessonsPage() {
     setQuestions([...questions, {
       id: 'temp_' + Date.now(),
       ...questionForm,
-      order_index: questions.length,
+      sort_order: questions.length,
     }]);
     setQuestionForm({
       type: 'multiple_choice',
@@ -205,15 +216,13 @@ export default function TeacherLessonsPage() {
     try {
       const lessonData = {
         title: formData.title.trim(),
-        subject_id: formData.subject_id,
+        subject_id: formData.subject_id || null,
         description: formData.description.trim(),
         video_url: formData.video_url.trim() || null,
         status: saveStatus,
         lesson_type: 'teacher',
         teacher_id: profile.id,
         school_id: profile.school_id,
-        vocab_count: vocabularies.length,
-        question_count: questions.length,
       };
 
       let lessonId = editingLesson?.id;
@@ -250,7 +259,7 @@ export default function TeacherLessonsPage() {
             meaning: v.meaning,
             image_url: v.image_url || null,
             audio_url: v.audio_url || null,
-            order_index: i,
+            sort_order: i,
           }));
           await supabase.from('vocabulary').insert(vocabToInsert);
         }
@@ -262,11 +271,11 @@ export default function TeacherLessonsPage() {
           const questToInsert = questions.map((q, i) => ({
             lesson_id: lessonId,
             type: q.type,
-            question: q.question,
+            content: q.question, // Map question -> content cho DB
             options: q.options,
             correct_answer: q.correct_answer,
             audio_url: q.audio_url || null,
-            order_index: i,
+            sort_order: i,
           }));
           await supabase.from('questions').insert(questToInsert);
         }
@@ -305,7 +314,12 @@ export default function TeacherLessonsPage() {
   };
 
   const getSubjectInfo = (subjectId) => {
-    return SUBJECTS.find(s => s.id === subjectId) || { name: subjectId, color: 'gray' };
+    const subject = subjects.find(s => s.id === subjectId);
+    if (subject) {
+      const color = SUBJECT_COLORS[subject.name] || 'gray';
+      return { ...subject, color };
+    }
+    return { name: 'Chưa chọn', color: 'gray' };
   };
 
   // Filter lessons
@@ -369,7 +383,7 @@ export default function TeacherLessonsPage() {
             className="px-4 py-2 border rounded-xl focus:ring-2 focus:ring-emerald-500"
           >
             <option value="">Tất cả môn học</option>
-            {SUBJECTS.map(s => (
+            {subjects.map(s => (
               <option key={s.id} value={s.id}>{s.name}</option>
             ))}
           </select>
@@ -599,7 +613,8 @@ export default function TeacherLessonsPage() {
                     onChange={(e) => setFormData({ ...formData, subject_id: e.target.value })}
                     className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-emerald-500"
                   >
-                    {SUBJECTS.map(s => (
+                    <option value="">-- Chọn môn học --</option>
+                    {subjects.map(s => (
                       <option key={s.id} value={s.id}>{s.name}</option>
                     ))}
                   </select>
