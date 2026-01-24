@@ -7,7 +7,7 @@ import {
   Users, Search, Loader2, X, BookOpen, Plus,
   TrendingUp, Clock, Star, Eye, UserPlus, Edit2,
   Trash2, Upload, Download, RefreshCw, Mail, Phone,
-  AlertCircle, Check, FileSpreadsheet
+  AlertCircle, Check, FileSpreadsheet, User, Copy, Key
 } from 'lucide-react';
 
 export default function TeacherStudentsPage() {
@@ -25,7 +25,6 @@ export default function TeacherStudentsPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showTransferModal, setShowTransferModal] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
-  const [showLinkParentModal, setShowLinkParentModal] = useState(false);
 
   // Form states
   const [formData, setFormData] = useState({
@@ -34,9 +33,13 @@ export default function TeacherStudentsPage() {
     phone: '',
     class_id: '',
     note: '',
+    parent_name: '',
+    parent_phone: '',
   });
   const [saving, setSaving] = useState(false);
-  const [parentEmail, setParentEmail] = useState('');
+  const [generatedPin, setGeneratedPin] = useState('');
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [createdStudentInfo, setCreatedStudentInfo] = useState(null);
 
   // Import states
   const [importData, setImportData] = useState([]);
@@ -63,10 +66,10 @@ export default function TeacherStudentsPage() {
 
       setClasses(classesData || []);
 
-      // Load tất cả học sinh trong trường của GV
+      // Load tất cả học sinh trong trường của GV (bao gồm thông tin phụ huynh)
       const { data: studentsData } = await supabase
         .from('profiles')
-        .select('*, class:classes(id, name)')
+        .select('*, class:classes(id, name), parent_name, parent_phone')
         .eq('school_id', profile.school_id)
         .eq('role', 'student')
         .eq('is_active', true)
@@ -90,14 +93,23 @@ export default function TeacherStudentsPage() {
   };
 
   // ==================== TẠO HỌC SINH MỚI ====================
+  // Tạo PIN ngẫu nhiên 4 số
+  const generateRandomPin = () => {
+    return String(Math.floor(1000 + Math.random() * 9000));
+  };
+
   const handleOpenCreateModal = () => {
+    const newPin = generateRandomPin();
     setFormData({
       full_name: '',
       email: '',
       phone: '',
       class_id: classes.length > 0 ? classes[0].id : '',
       note: '',
+      parent_name: '',
+      parent_phone: '',
     });
+    setGeneratedPin(newPin);
     setShowCreateModal(true);
   };
 
@@ -155,7 +167,10 @@ export default function TeacherStudentsPage() {
 
       if (authError) throw authError;
 
-      // Tạo profile
+      // Hash PIN đơn giản (client-side, trong production nên hash ở server)
+      const hashedPin = btoa(generatedPin + '_bethongminh_salt');
+
+      // Tạo profile với thông tin phụ huynh
       if (authData.user) {
         const { error: profileError } = await supabase.from('profiles').upsert({
           id: authData.user.id,
@@ -166,13 +181,25 @@ export default function TeacherStudentsPage() {
           school_id: profile.school_id,
           class_id: formData.class_id || null,
           is_active: true,
+          // Thông tin phụ huynh
+          parent_name: formData.parent_name.trim() || null,
+          parent_phone: formData.parent_phone.trim() || null,
+          parent_pin: hashedPin,
         });
 
         if (profileError) throw profileError;
       }
 
-      alert(`Đã tạo học sinh thành công!\n\nEmail: ${formData.email.trim()}\nMật khẩu: Student@123`);
+      // Hiển thị modal thành công với thông tin
+      setCreatedStudentInfo({
+        full_name: formData.full_name.trim(),
+        email: formData.email.trim(),
+        parent_name: formData.parent_name.trim(),
+        parent_phone: formData.parent_phone.trim(),
+        pin: generatedPin,
+      });
       setShowCreateModal(false);
+      setShowSuccessModal(true);
       loadData();
     } catch (err) {
       console.error('Create student error:', err);
@@ -245,52 +272,86 @@ export default function TeacherStudentsPage() {
     }
   };
 
-  // ==================== LIÊN KẾT PHỤ HUYNH ====================
-  const handleOpenLinkParent = (student) => {
+  // ==================== XEM/CẬP NHẬT THÔNG TIN PHỤ HUYNH ====================
+  const [showParentInfoModal, setShowParentInfoModal] = useState(false);
+  const [parentFormData, setParentFormData] = useState({
+    parent_name: '',
+    parent_phone: '',
+  });
+
+  const handleOpenParentInfo = (student) => {
     setSelectedStudent(student);
-    setParentEmail('');
-    setShowLinkParentModal(true);
+    setParentFormData({
+      parent_name: student.parent_name || '',
+      parent_phone: student.parent_phone || '',
+    });
+    setShowParentInfoModal(true);
   };
 
-  const handleLinkParent = async () => {
-    if (!parentEmail.trim()) {
-      alert('Vui lòng nhập email phụ huynh');
-      return;
-    }
+  const handleUpdateParentInfo = async () => {
+    if (!selectedStudent) return;
 
     setSaving(true);
     try {
-      // Tìm phụ huynh theo email
-      const { data: parentData } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('email', parentEmail.trim().toLowerCase())
-        .eq('role', 'parent')
-        .single();
-
-      if (!parentData) {
-        alert('Không tìm thấy phụ huynh với email này. Phụ huynh cần tạo tài khoản trước.');
-        setSaving(false);
-        return;
-      }
-
-      // Cập nhật parent_id cho học sinh
       const { error } = await supabase
         .from('profiles')
-        .update({ parent_id: parentData.id })
+        .update({
+          parent_name: parentFormData.parent_name.trim() || null,
+          parent_phone: parentFormData.parent_phone.trim() || null,
+          updated_at: new Date().toISOString(),
+        })
         .eq('id', selectedStudent.id);
 
       if (error) throw error;
 
-      alert('Đã liên kết phụ huynh thành công!');
-      setShowLinkParentModal(false);
+      alert('Đã cập nhật thông tin phụ huynh!');
+      setShowParentInfoModal(false);
       loadData();
     } catch (err) {
-      console.error('Link parent error:', err);
+      console.error('Update parent info error:', err);
       alert('Có lỗi xảy ra: ' + err.message);
     } finally {
       setSaving(false);
     }
+  };
+
+  // Reset PIN cho phụ huynh
+  const handleResetPin = async (student) => {
+    if (!confirm(`Bạn có chắc muốn đặt lại PIN phụ huynh cho "${student.full_name}"?`)) return;
+
+    try {
+      const newPin = generateRandomPin();
+      const hashedPin = btoa(newPin + '_bethongminh_salt');
+
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          parent_pin: hashedPin,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', student.id);
+
+      if (error) throw error;
+
+      setCreatedStudentInfo({
+        full_name: student.full_name,
+        email: student.email,
+        parent_name: student.parent_name,
+        parent_phone: student.parent_phone,
+        pin: newPin,
+        isReset: true,
+      });
+      setShowSuccessModal(true);
+    } catch (err) {
+      console.error('Reset PIN error:', err);
+      alert('Có lỗi xảy ra: ' + err.message);
+    }
+  };
+
+  // Copy to clipboard
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
+    alert('Đã sao chép!');
   };
 
   // ==================== IMPORT TỪ EXCEL ====================
@@ -659,22 +720,6 @@ export default function TeacherStudentsPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Số điện thoại phụ huynh
-                </label>
-                <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <input
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    placeholder="0901234567"
-                    className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Lớp học
                 </label>
                 <select
@@ -689,17 +734,64 @@ export default function TeacherStudentsPage() {
                 </select>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Ghi chú
-                </label>
-                <textarea
-                  value={formData.note}
-                  onChange={(e) => setFormData({ ...formData, note: e.target.value })}
-                  placeholder="Ghi chú về học sinh..."
-                  rows={2}
-                  className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500"
-                />
+              {/* Thông tin phụ huynh */}
+              <div className="border-t pt-4 mt-2">
+                <p className="text-sm font-medium text-indigo-700 mb-3 flex items-center gap-2">
+                  <User className="w-4 h-4" />
+                  Thông tin phụ huynh (tùy chọn)
+                </p>
+
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Tên phụ huynh
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.parent_name}
+                      onChange={(e) => setFormData({ ...formData, parent_name: e.target.value })}
+                      placeholder="Nguyễn Văn B"
+                      className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Số điện thoại phụ huynh
+                    </label>
+                    <div className="relative">
+                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <input
+                        type="tel"
+                        value={formData.parent_phone}
+                        onChange={(e) => setFormData({ ...formData, parent_phone: e.target.value })}
+                        placeholder="0901234567"
+                        className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* PIN phụ huynh */}
+              <div className="bg-indigo-50 p-3 rounded-lg">
+                <p className="text-sm text-indigo-700 mb-1">
+                  <Key className="w-4 h-4 inline mr-1" />
+                  PIN chế độ phụ huynh:
+                </p>
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl font-bold text-indigo-800 tracking-widest">{generatedPin}</span>
+                  <button
+                    type="button"
+                    onClick={() => setGeneratedPin(generateRandomPin())}
+                    className="p-1 hover:bg-indigo-100 rounded"
+                    title="Tạo PIN mới"
+                  >
+                    <RefreshCw className="w-4 h-4 text-indigo-600" />
+                  </button>
+                </div>
+                <p className="text-xs text-indigo-600 mt-1">
+                  Gửi PIN này cho phụ huynh để truy cập chế độ Phụ huynh
+                </p>
               </div>
 
               <div className="bg-yellow-50 p-3 rounded-lg">
@@ -783,6 +875,25 @@ export default function TeacherStudentsPage() {
               </div>
             </div>
 
+            {/* Thông tin phụ huynh */}
+            {(selectedStudent.parent_name || selectedStudent.parent_phone) && (
+              <div className="bg-indigo-50 rounded-xl p-4 mb-4">
+                <p className="text-sm font-medium text-indigo-700 mb-2">Thông tin phụ huynh</p>
+                {selectedStudent.parent_name && (
+                  <p className="text-sm text-indigo-600">
+                    <User className="w-4 h-4 inline mr-1" />
+                    {selectedStudent.parent_name}
+                  </p>
+                )}
+                {selectedStudent.parent_phone && (
+                  <p className="text-sm text-indigo-600 mt-1">
+                    <Phone className="w-4 h-4 inline mr-1" />
+                    {selectedStudent.parent_phone}
+                  </p>
+                )}
+              </div>
+            )}
+
             {/* Action Buttons */}
             <div className="grid grid-cols-2 gap-3 mb-4">
               <button
@@ -793,13 +904,22 @@ export default function TeacherStudentsPage() {
                 Chuyển lớp
               </button>
               <button
-                onClick={() => handleOpenLinkParent(selectedStudent)}
+                onClick={() => handleOpenParentInfo(selectedStudent)}
                 className="flex items-center justify-center gap-2 px-4 py-2 bg-purple-50 text-purple-600 rounded-xl hover:bg-purple-100"
               >
-                <UserPlus className="w-4 h-4" />
-                Liên kết PH
+                <User className="w-4 h-4" />
+                Thông tin PH
               </button>
             </div>
+
+            {/* Reset PIN Button */}
+            <button
+              onClick={() => handleResetPin(selectedStudent)}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-amber-50 text-amber-600 rounded-xl hover:bg-amber-100 mb-4"
+            >
+              <Key className="w-4 h-4" />
+              Đặt lại PIN phụ huynh
+            </button>
 
             <button
               onClick={() => setShowDetailModal(false)}
@@ -856,55 +976,152 @@ export default function TeacherStudentsPage() {
         </div>
       )}
 
-      {/* ==================== MODAL LIÊN KẾT PHỤ HUYNH ==================== */}
-      {showLinkParentModal && selectedStudent && (
+      {/* ==================== MODAL THÔNG TIN PHỤ HUYNH ==================== */}
+      {showParentInfoModal && selectedStudent && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-sm p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold">Liên kết phụ huynh</h3>
-              <button onClick={() => setShowLinkParentModal(false)} className="p-2 hover:bg-gray-100 rounded-full">
+              <h3 className="text-lg font-bold">Thông tin phụ huynh</h3>
+              <button onClick={() => setShowParentInfoModal(false)} className="p-2 hover:bg-gray-100 rounded-full">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <p className="text-gray-600 mb-4">
-              Liên kết phụ huynh cho <strong>{selectedStudent.full_name}</strong>
+              Cập nhật thông tin phụ huynh của <strong>{selectedStudent.full_name}</strong>
             </p>
 
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email phụ huynh
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Tên phụ huynh
+                </label>
                 <input
-                  type="email"
-                  value={parentEmail}
-                  onChange={(e) => setParentEmail(e.target.value)}
-                  placeholder="phuhuynh@email.com"
-                  className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500"
+                  type="text"
+                  value={parentFormData.parent_name}
+                  onChange={(e) => setParentFormData({ ...parentFormData, parent_name: e.target.value })}
+                  placeholder="Nguyễn Văn B"
+                  className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
-              <p className="text-xs text-gray-500 mt-1">
-                Phụ huynh cần có tài khoản với vai trò "Phụ huynh"
-              </p>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Số điện thoại phụ huynh
+                </label>
+                <div className="relative">
+                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <input
+                    type="tel"
+                    value={parentFormData.parent_phone}
+                    onChange={(e) => setParentFormData({ ...parentFormData, parent_phone: e.target.value })}
+                    placeholder="0901234567"
+                    className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
+              </div>
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex gap-3 mt-4">
               <button
-                onClick={() => setShowLinkParentModal(false)}
+                onClick={() => setShowParentInfoModal(false)}
                 className="flex-1 px-4 py-2 border border-gray-200 rounded-xl hover:bg-gray-50"
               >
                 Hủy
               </button>
               <button
-                onClick={handleLinkParent}
-                disabled={saving || !parentEmail.trim()}
+                onClick={handleUpdateParentInfo}
+                disabled={saving}
                 className="flex-1 px-4 py-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 disabled:opacity-50"
               >
-                {saving ? 'Đang liên kết...' : 'Liên kết'}
+                {saving ? 'Đang lưu...' : 'Lưu'}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ==================== MODAL THÀNH CÔNG ==================== */}
+      {showSuccessModal && createdStudentInfo && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl w-full max-w-md p-6">
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Check className="w-8 h-8 text-green-600" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900">
+                {createdStudentInfo.isReset ? 'Đã đặt lại PIN!' : 'Tạo học sinh thành công!'}
+              </h3>
+            </div>
+
+            <div className="bg-gray-50 rounded-xl p-4 space-y-3 mb-6">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Họ tên:</span>
+                <span className="font-medium">{createdStudentInfo.full_name}</span>
+              </div>
+              {!createdStudentInfo.isReset && (
+                <>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Email:</span>
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">{createdStudentInfo.email}</span>
+                      <button
+                        onClick={() => copyToClipboard(createdStudentInfo.email)}
+                        className="p-1 hover:bg-gray-200 rounded"
+                      >
+                        <Copy className="w-4 h-4 text-gray-500" />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Mật khẩu:</span>
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">Student@123</span>
+                      <button
+                        onClick={() => copyToClipboard('Student@123')}
+                        className="p-1 hover:bg-gray-200 rounded"
+                      >
+                        <Copy className="w-4 h-4 text-gray-500" />
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
+              {createdStudentInfo.parent_name && (
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">Phụ huynh:</span>
+                  <span className="font-medium">{createdStudentInfo.parent_name}</span>
+                </div>
+              )}
+            </div>
+
+            {/* PIN nổi bật */}
+            <div className="bg-indigo-50 rounded-xl p-4 mb-6">
+              <p className="text-sm text-indigo-700 text-center mb-2">
+                <Key className="w-4 h-4 inline mr-1" />
+                PIN chế độ Phụ huynh
+              </p>
+              <div className="flex items-center justify-center gap-3">
+                <span className="text-4xl font-bold text-indigo-800 tracking-[0.3em]">
+                  {createdStudentInfo.pin}
+                </span>
+                <button
+                  onClick={() => copyToClipboard(createdStudentInfo.pin)}
+                  className="p-2 hover:bg-indigo-100 rounded-lg"
+                >
+                  <Copy className="w-5 h-5 text-indigo-600" />
+                </button>
+              </div>
+              <p className="text-xs text-indigo-600 text-center mt-2">
+                Gửi mã PIN này cho phụ huynh để truy cập chế độ Phụ huynh
+              </p>
+            </div>
+
+            <button
+              onClick={() => setShowSuccessModal(false)}
+              className="w-full px-4 py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 font-medium"
+            >
+              Đóng
+            </button>
           </div>
         </div>
       )}

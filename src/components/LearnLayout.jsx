@@ -1,9 +1,10 @@
 // src/components/LearnLayout.jsx
 // Layout for Student Learning Pages - Kid-friendly design
-import React from 'react';
+import React, { useState } from 'react';
 import { Outlet, NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Home, BookOpen, ClipboardList, Trophy, User, Star, Flame } from 'lucide-react';
+import { Home, BookOpen, ClipboardList, Trophy, User, Star, Flame, Users } from 'lucide-react';
+import ParentPinModal from './ParentPinModal';
 
 const MENU_ITEMS = [
   { path: '/learn', icon: Home, label: 'Trang chủ', exact: true },
@@ -16,13 +17,14 @@ const MENU_ITEMS = [
 export default function LearnLayout() {
   const { profile } = useAuth();
   const location = useLocation();
+  const [showParentModal, setShowParentModal] = useState(false);
 
   // Get first name for display
   const firstName = profile?.full_name?.split(' ').pop() || 'Bé';
 
   // Mock data - in real app, fetch from database
-  const totalPoints = 1250;
-  const streak = 7;
+  const totalPoints = profile?.xp_points || 0;
+  const streak = profile?.streak_days || 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 via-orange-50 to-yellow-50">
@@ -45,19 +47,28 @@ export default function LearnLayout() {
               </div>
             </div>
 
-            {/* Stats */}
-            <div className="flex items-center gap-3">
+            {/* Stats & Parent Button */}
+            <div className="flex items-center gap-2">
               {/* Streak */}
-              <div className="flex items-center gap-1 bg-white/20 backdrop-blur rounded-full px-3 py-1.5">
-                <Flame className="w-5 h-5 text-orange-200" />
+              <div className="flex items-center gap-1 bg-white/20 backdrop-blur rounded-full px-2.5 py-1.5">
+                <Flame className="w-4 h-4 text-orange-200" />
                 <span className="font-bold text-sm">{streak}</span>
               </div>
 
               {/* Points */}
-              <div className="flex items-center gap-1 bg-white/20 backdrop-blur rounded-full px-3 py-1.5">
-                <Star className="w-5 h-5 text-yellow-200" />
+              <div className="flex items-center gap-1 bg-white/20 backdrop-blur rounded-full px-2.5 py-1.5">
+                <Star className="w-4 h-4 text-yellow-200" />
                 <span className="font-bold text-sm">{totalPoints}</span>
               </div>
+
+              {/* Parent Mode Button */}
+              <button
+                onClick={() => setShowParentModal(true)}
+                className="flex items-center gap-1 bg-white/20 backdrop-blur rounded-full px-2.5 py-1.5 hover:bg-white/30 transition-colors"
+                title="Chế độ Phụ huynh"
+              >
+                <Users className="w-4 h-4" />
+              </button>
             </div>
           </div>
         </div>
@@ -103,6 +114,12 @@ export default function LearnLayout() {
           })}
         </div>
       </nav>
+
+      {/* Parent PIN Modal */}
+      <ParentPinModal
+        isOpen={showParentModal}
+        onClose={() => setShowParentModal(false)}
+      />
     </div>
   );
 }

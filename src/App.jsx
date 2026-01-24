@@ -63,6 +63,13 @@ const LearnAssignmentsPage = lazy(() => import('./pages/learn/LearnAssignmentsPa
 const LearnAchievementsPage = lazy(() => import('./pages/learn/LearnAchievementsPage'));
 const LearnProfilePage = lazy(() => import('./pages/learn/LearnProfilePage'));
 
+// Parent Mode pages (within student account)
+const ParentModeLayout = lazy(() => import('./components/ParentModeLayout'));
+const ParentModeDashboard = lazy(() => import('./pages/learn/parent/ParentDashboard'));
+const ParentModeProgress = lazy(() => import('./pages/learn/parent/ParentProgress'));
+const ParentModeMessages = lazy(() => import('./pages/learn/parent/ParentMessages'));
+const ParentModeSettings = lazy(() => import('./pages/learn/parent/ParentSettings'));
+
 // English Lesson page
 const EnglishLessonPage = lazy(() => import('./pages/EnglishLessonPage'));
 
@@ -220,6 +227,18 @@ function App() {
           <Route path="assignments" element={<LearnAssignmentsPage />} />
           <Route path="achievements" element={<LearnAchievementsPage />} />
           <Route path="profile" element={<LearnProfilePage />} />
+        </Route>
+
+        {/* Parent Mode routes - within student account */}
+        <Route path="/learn/parent" element={
+          <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+            <ParentModeLayout />
+          </ProtectedRoute>
+        }>
+          <Route index element={<ParentModeDashboard />} />
+          <Route path="progress" element={<ParentModeProgress />} />
+          <Route path="messages" element={<ParentModeMessages />} />
+          <Route path="settings" element={<ParentModeSettings />} />
         </Route>
 
         {/* English Lesson route - for students */}
