@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import { useAudio } from '../contexts/AudioContext';
 import { getTopic, getRandomWords } from '../data/englishVocab';
+import { saveLessonProgress } from '../services/studentProgress';
 import { ArrowLeft, Volume2, Check, ChevronLeft, ChevronRight, Play, Mic, Star, Zap, Trophy, RotateCcw, Eye, EyeOff, Sparkles } from 'lucide-react';
 
 // Chế độ học
@@ -1274,11 +1275,24 @@ export default function EnglishLessonPage() {
     }
   };
 
-  const handleComplete = (score) => {
+  const handleComplete = async (score) => {
     setFinalScore(score);
     setCompleted(true);
 
-    if (!isStudent && currentChild && updateChild) {
+    // Save progress for students
+    if (isStudent && profile?.id) {
+      try {
+        const lessonId = `english_${topicId}`;
+        await saveLessonProgress(profile.id, lessonId, {
+          score: score,
+          status: 'completed',
+          timeSpent: 300, // 5 minutes estimated
+        });
+        console.log('Progress saved for lesson:', lessonId);
+      } catch (err) {
+        console.error('Error saving progress:', err);
+      }
+    } else if (!isStudent && currentChild && updateChild) {
       // Bonus XP for parent's child
       const member = { ...currentChild };
       member.xp = (member.xp || 0) + Math.round(score / 5);
