@@ -39,6 +39,14 @@ const TeacherStudentsPage = lazy(() => import('./pages/teacher/TeacherStudentsPa
 const MessagesPage = lazy(() => import('./pages/teacher/MessagesPage'));
 const TeacherSettingsPage = lazy(() => import('./pages/teacher/TeacherSettingsPage'));
 
+// Student Learn pages
+const LearnLayout = lazy(() => import('./components/LearnLayout'));
+const LearnHomePage = lazy(() => import('./pages/learn/LearnHomePage'));
+const LearnLessonsPage = lazy(() => import('./pages/learn/LearnLessonsPage'));
+const LearnAssignmentsPage = lazy(() => import('./pages/learn/LearnAssignmentsPage'));
+const LearnAchievementsPage = lazy(() => import('./pages/learn/LearnAchievementsPage'));
+const LearnProfilePage = lazy(() => import('./pages/learn/LearnProfilePage'));
+
 // Protected Route Component
 function ProtectedRoute({ children, allowedRoles }) {
   const { isAuthenticated, loading, profile } = useAuth();
@@ -154,12 +162,18 @@ function App() {
           </ProtectedRoute>
         } />
 
-        {/* Student routes */}
-        <Route path="/learn/*" element={
+        {/* Student Learn routes - Nested routes */}
+        <Route path="/learn" element={
           <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
-            <StudentDashboard />
+            <LearnLayout />
           </ProtectedRoute>
-        } />
+        }>
+          <Route index element={<LearnHomePage />} />
+          <Route path="lessons" element={<LearnLessonsPage />} />
+          <Route path="assignments" element={<LearnAssignmentsPage />} />
+          <Route path="achievements" element={<LearnAchievementsPage />} />
+          <Route path="profile" element={<LearnProfilePage />} />
+        </Route>
 
         {/* Catch all - redirect to login */}
         <Route path="*" element={<Navigate to="/login" replace />} />
