@@ -92,10 +92,14 @@ export default function TeachersPage() {
         if (error) throw error;
       } else {
         // Create new teacher
-        // First create auth user
+        // === LƯU SESSION HIỆN TẠI TRƯỚC KHI TẠO USER MỚI ===
+        const { data: currentSession } = await supabase.auth.getSession();
+        const savedSession = currentSession?.session;
+
+        // First try admin API
         const { data: authData, error: authError } = await supabase.auth.admin.createUser({
           email: formData.email.trim(),
-          password: 'Teacher@123', // Default password
+          password: 'Teacher@123',
           email_confirm: true,
           user_metadata: {
             full_name: formData.full_name.trim(),
@@ -104,7 +108,7 @@ export default function TeachersPage() {
         });
 
         if (authError) {
-          // Try using signUp instead
+          // Admin API không khả dụng, dùng signUp
           const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
             email: formData.email.trim(),
             password: 'Teacher@123',
@@ -116,25 +120,20 @@ export default function TeachersPage() {
             },
           });
 
+          // === KHÔI PHỤC SESSION CŨ NGAY SAU KHI TẠO USER ===
+          if (savedSession) {
+            await supabase.auth.setSession({
+              access_token: savedSession.access_token,
+              refresh_token: savedSession.refresh_token,
+            });
+          }
+
           if (signUpError) throw signUpError;
 
           // Update profile with school_id and department_id
           if (signUpData.user) {
-            await supabase
-              .from('profiles')
-              .update({
-                school_id: profile.school_id,
-                department_id: formData.department_id || null,
-                phone: formData.phone.trim() || null,
-              })
-              .eq('id', signUpData.user.id);
-          }
-        } else if (authData.user) {
-          // Create profile
-          await supabase
-            .from('profiles')
-            .upsert({
-              id: authData.user.id,
+            await supabase.from('profiles').upsert({
+              id: signUpData.user.id,
               email: formData.email.trim(),
               full_name: formData.full_name.trim(),
               role: 'teacher',
@@ -143,6 +142,23 @@ export default function TeachersPage() {
               phone: formData.phone.trim() || null,
               is_active: true,
             });
+          }
+
+          alert(`Đã tạo giáo viên thành công!\n\nEmail: ${formData.email.trim()}\nMật khẩu: Teacher@123`);
+        } else if (authData.user) {
+          // Create profile with admin API success
+          await supabase.from('profiles').upsert({
+            id: authData.user.id,
+            email: formData.email.trim(),
+            full_name: formData.full_name.trim(),
+            role: 'teacher',
+            school_id: profile.school_id,
+            department_id: formData.department_id || null,
+            phone: formData.phone.trim() || null,
+            is_active: true,
+          });
+
+          alert(`Đã tạo giáo viên thành công!\n\nEmail: ${formData.email.trim()}\nMật khẩu: Teacher@123`);
         }
       }
 

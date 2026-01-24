@@ -187,6 +187,10 @@ export default function SchoolDetailPage() {
           .eq('id', principal.id);
       }
 
+      // === LƯU SESSION HIỆN TẠI TRƯỚC KHI TẠO USER MỚI ===
+      const { data: currentSession } = await supabase.auth.getSession();
+      const savedSession = currentSession?.session;
+
       // Tạo tài khoản mới cho hiệu trưởng
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: newPrincipalData.email.trim(),
@@ -198,6 +202,14 @@ export default function SchoolDetailPage() {
           }
         }
       });
+
+      // === KHÔI PHỤC SESSION CŨ NGAY SAU KHI TẠO USER ===
+      if (savedSession) {
+        await supabase.auth.setSession({
+          access_token: savedSession.access_token,
+          refresh_token: savedSession.refresh_token,
+        });
+      }
 
       if (authError) {
         if (authError.message.includes('already registered')) {

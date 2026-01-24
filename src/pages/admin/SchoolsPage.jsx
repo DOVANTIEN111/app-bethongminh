@@ -194,6 +194,10 @@ export default function SchoolsPage() {
           // Email đã tồn tại - chỉ cần cập nhật role
           userId = existingProfile.id;
         } else {
+          // === LƯU SESSION HIỆN TẠI TRƯỚC KHI TẠO USER MỚI ===
+          const { data: currentSession } = await supabase.auth.getSession();
+          const savedSession = currentSession?.session;
+
           // Email chưa tồn tại - tạo tài khoản mới
           const { data: authData, error: authError } = await supabase.auth.signUp({
             email: email,
@@ -205,6 +209,14 @@ export default function SchoolsPage() {
               }
             }
           });
+
+          // === KHÔI PHỤC SESSION CŨ NGAY SAU KHI TẠO USER ===
+          if (savedSession) {
+            await supabase.auth.setSession({
+              access_token: savedSession.access_token,
+              refresh_token: savedSession.refresh_token,
+            });
+          }
 
           if (authError) {
             if (authError.message.includes('already registered')) {
