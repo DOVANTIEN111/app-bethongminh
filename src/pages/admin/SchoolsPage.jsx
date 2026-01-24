@@ -53,6 +53,8 @@ export default function SchoolsPage() {
   const loadData = async () => {
     try {
       setLoading(true);
+      console.log('=== DEBUG: Loading schools data ===');
+
       const [schoolsRes, plansRes] = await Promise.all([
         supabase
           .from('schools')
@@ -64,11 +66,19 @@ export default function SchoolsPage() {
         supabase.from('plans').select('id, name, slug').eq('is_active', true),
       ]);
 
-      if (schoolsRes.error) throw schoolsRes.error;
+      console.log('Schools response:', schoolsRes);
+      console.log('Plans response:', plansRes);
+
+      if (schoolsRes.error) {
+        console.error('Schools error:', schoolsRes.error);
+        throw schoolsRes.error;
+      }
 
       const schoolsData = schoolsRes.data || [];
       setSchools(schoolsData);
       setPlans(plansRes.data || []);
+      console.log('Loaded schools:', schoolsData.length);
+      console.log('Loaded plans:', plansRes.data?.length || 0);
 
       // Load stats for all schools
       await loadAllStats(schoolsData.map(s => s.id));
@@ -175,11 +185,17 @@ export default function SchoolsPage() {
 
     setSaving(true);
     try {
-      const saveData = {
+      // Dữ liệu cơ bản (các cột chắc chắn tồn tại)
+      const baseData = {
         name: formData.name.trim(),
         email: formData.email.trim(),
         address: formData.address.trim() || null,
         phone: formData.phone.trim() || null,
+      };
+
+      // Dữ liệu mở rộng (các cột mới từ migration)
+      const extendedData = {
+        ...baseData,
         plan_id: formData.plan_id || null,
         notes: formData.notes.trim() || null,
         logo_url: formData.logo_url || null,
@@ -187,24 +203,64 @@ export default function SchoolsPage() {
         updated_at: new Date().toISOString(),
       };
 
+      console.log('=== DEBUG: Saving school ===');
+      console.log('Form data:', formData);
+      console.log('Extended data to save:', extendedData);
+
+      let result;
+
       if (editingSchool) {
-        const { error } = await supabase
+        console.log('Updating school ID:', editingSchool.id);
+        result = await supabase
           .from('schools')
-          .update(saveData)
-          .eq('id', editingSchool.id);
-        if (error) throw error;
+          .update(extendedData)
+          .eq('id', editingSchool.id)
+          .select();
+
+        // Nếu lỗi do cột không tồn tại, thử với dữ liệu cơ bản
+        if (result.error && result.error.message.includes('column')) {
+          console.log('Retrying with base data only...');
+          result = await supabase
+            .from('schools')
+            .update(baseData)
+            .eq('id', editingSchool.id)
+            .select();
+        }
       } else {
-        const { error } = await supabase
+        console.log('Inserting new school');
+        result = await supabase
           .from('schools')
-          .insert(saveData);
-        if (error) throw error;
+          .insert(extendedData)
+          .select();
+
+        // Nếu lỗi do cột không tồn tại, thử với dữ liệu cơ bản
+        if (result.error && result.error.message.includes('column')) {
+          console.log('Retrying with base data only...');
+          result = await supabase
+            .from('schools')
+            .insert(baseData)
+            .select();
+        }
       }
 
+      console.log('Supabase result:', result);
+
+      if (result.error) {
+        console.error('Supabase error details:', {
+          message: result.error.message,
+          details: result.error.details,
+          hint: result.error.hint,
+          code: result.error.code,
+        });
+        throw result.error;
+      }
+
+      console.log('School saved successfully:', result.data);
       setShowModal(false);
       loadData();
     } catch (err) {
       console.error('Save school error:', err);
-      alert('Có lỗi xảy ra: ' + err.message);
+      alert('Có lỗi xảy ra: ' + (err.message || JSON.stringify(err)));
     } finally {
       setSaving(false);
     }
