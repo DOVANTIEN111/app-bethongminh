@@ -8,7 +8,6 @@ import SplashScreen from './components/SplashScreen';
 // Lazy load pages
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const DepartmentDashboard = lazy(() => import('./pages/DepartmentDashboard'));
-const TeacherDashboard = lazy(() => import('./pages/TeacherDashboard'));
 const ParentDashboard = lazy(() => import('./pages/ParentDashboard'));
 const StudentDashboard = lazy(() => import('./pages/StudentDashboard'));
 
@@ -29,6 +28,16 @@ const TeachersPage = lazy(() => import('./pages/school/TeachersPage'));
 const StudentsPage = lazy(() => import('./pages/school/StudentsPage'));
 const ClassesPage = lazy(() => import('./pages/school/ClassesPage'));
 const SchoolSettingsPage = lazy(() => import('./pages/school/SchoolSettingsPage'));
+
+// Teacher pages
+const TeacherLayout = lazy(() => import('./components/TeacherLayout'));
+const TeacherDashboardPage = lazy(() => import('./pages/teacher/TeacherDashboardPage'));
+const TeacherClassesPage = lazy(() => import('./pages/teacher/TeacherClassesPage'));
+const TeacherLessonsPage = lazy(() => import('./pages/teacher/TeacherLessonsPage'));
+const AssignmentsPage = lazy(() => import('./pages/teacher/AssignmentsPage'));
+const TeacherStudentsPage = lazy(() => import('./pages/teacher/TeacherStudentsPage'));
+const MessagesPage = lazy(() => import('./pages/teacher/MessagesPage'));
+const TeacherSettingsPage = lazy(() => import('./pages/teacher/TeacherSettingsPage'));
 
 // Protected Route Component
 function ProtectedRoute({ children, allowedRoles }) {
@@ -123,12 +132,20 @@ function App() {
           </ProtectedRoute>
         } />
 
-        {/* Teacher routes */}
-        <Route path="/teacher/*" element={
+        {/* Teacher routes - Nested routes */}
+        <Route path="/teacher" element={
           <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
-            <TeacherDashboard />
+            <TeacherLayout />
           </ProtectedRoute>
-        } />
+        }>
+          <Route index element={<TeacherDashboardPage />} />
+          <Route path="classes" element={<TeacherClassesPage />} />
+          <Route path="lessons" element={<TeacherLessonsPage />} />
+          <Route path="assignments" element={<AssignmentsPage />} />
+          <Route path="students" element={<TeacherStudentsPage />} />
+          <Route path="messages" element={<MessagesPage />} />
+          <Route path="settings" element={<TeacherSettingsPage />} />
+        </Route>
 
         {/* Parent routes */}
         <Route path="/parent/*" element={
