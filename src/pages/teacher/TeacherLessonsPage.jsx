@@ -11,17 +11,19 @@ import {
   Image, Volume2, CheckCircle, XCircle, Filter
 } from 'lucide-react';
 
-// Màu mặc định cho subjects theo tên
+// Màu cho subjects - dùng full class name để Tailwind không purge
 const SUBJECT_COLORS = {
-  'Tiếng Anh': 'blue',
-  'English': 'blue',
-  'Toán': 'green',
-  'Math': 'green',
-  'Khoa học': 'purple',
-  'Science': 'purple',
-  'Tiếng Việt': 'orange',
-  'Vietnamese': 'orange',
+  'Tiếng Anh': { bg: 'bg-blue-100', text: 'text-blue-600', badge: 'bg-blue-100 text-blue-700' },
+  'English': { bg: 'bg-blue-100', text: 'text-blue-600', badge: 'bg-blue-100 text-blue-700' },
+  'Toán': { bg: 'bg-green-100', text: 'text-green-600', badge: 'bg-green-100 text-green-700' },
+  'Math': { bg: 'bg-green-100', text: 'text-green-600', badge: 'bg-green-100 text-green-700' },
+  'Khoa học': { bg: 'bg-purple-100', text: 'text-purple-600', badge: 'bg-purple-100 text-purple-700' },
+  'Science': { bg: 'bg-purple-100', text: 'text-purple-600', badge: 'bg-purple-100 text-purple-700' },
+  'Tiếng Việt': { bg: 'bg-orange-100', text: 'text-orange-600', badge: 'bg-orange-100 text-orange-700' },
+  'Vietnamese': { bg: 'bg-orange-100', text: 'text-orange-600', badge: 'bg-orange-100 text-orange-700' },
 };
+
+const DEFAULT_COLORS = { bg: 'bg-gray-100', text: 'text-gray-600', badge: 'bg-gray-100 text-gray-700' };
 
 const QUESTION_TYPES = [
   { id: 'multiple_choice', name: 'Trắc nghiệm', icon: CheckCircle },
@@ -84,32 +86,45 @@ export default function TeacherLessonsPage() {
       setLoading(true);
 
       // Load subjects từ database
-      const { data: subjectsData } = await supabase
+      const { data: subjectsData, error: subjectsError } = await supabase
         .from('subjects')
         .select('id, name, icon')
         .eq('is_active', true)
         .order('sort_order');
 
+      if (subjectsError) {
+        console.error('Load subjects error:', subjectsError);
+      }
+
       setSubjects(subjectsData || []);
 
       // Load system lessons (lesson_type = 'system' hoặc teacher_id = null)
-      const { data: sysData } = await supabase
+      const { data: sysData, error: sysError } = await supabase
         .from('lessons')
         .select('*, subject:subjects(id, name, icon)')
-        .or('lesson_type.eq.system,and(teacher_id.is.null,lesson_type.is.null)')
+        .or('lesson_type.eq.system,teacher_id.is.null')
         .eq('is_active', true)
-        .neq('status', 'draft') // Không lấy bài nháp
         .order('created_at', { ascending: false });
 
-      setSystemLessons(sysData || []);
+      if (sysError) {
+        console.error('Load system lessons error:', sysError);
+      }
+
+      // Filter ra bài nháp ở client side (vì status có thể null)
+      const filteredSysData = (sysData || []).filter(l => l.status !== 'draft');
+      setSystemLessons(filteredSysData);
 
       // Load my lessons (GV tự tạo)
       if (profile?.id) {
-        const { data: myData } = await supabase
+        const { data: myData, error: myError } = await supabase
           .from('lessons')
           .select('*, subject:subjects(id, name, icon)')
           .eq('teacher_id', profile.id)
           .order('created_at', { ascending: false });
+
+        if (myError) {
+          console.error('Load my lessons error:', myError);
+        }
 
         setMyLessons(myData || []);
       }
@@ -316,10 +331,10 @@ export default function TeacherLessonsPage() {
   const getSubjectInfo = (subjectId) => {
     const subject = subjects.find(s => s.id === subjectId);
     if (subject) {
-      const color = SUBJECT_COLORS[subject.name] || 'gray';
-      return { ...subject, color };
+      const colors = SUBJECT_COLORS[subject.name] || DEFAULT_COLORS;
+      return { ...subject, colors };
     }
-    return { name: 'Chưa chọn', color: 'gray' };
+    return { name: 'Chưa chọn', colors: DEFAULT_COLORS };
   };
 
   // Filter lessons
@@ -430,8 +445,8 @@ export default function TeacherLessonsPage() {
                 return (
                   <div key={lesson.id} className="border rounded-xl p-4 hover:shadow-md transition-shadow">
                     <div className="flex items-start justify-between mb-3">
-                      <div className={`w-10 h-10 bg-${subject.color}-100 rounded-lg flex items-center justify-center`}>
-                        <BookOpen className={`w-5 h-5 text-${subject.color}-600`} />
+                      <div className={`w-10 h-10 ${subject.colors.bg} rounded-lg flex items-center justify-center`}>
+                        <BookOpen className={`w-5 h-5 ${subject.colors.text}`} />
                       </div>
                       <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-xs flex items-center gap-1">
                         <Lock className="w-3 h-3" />
@@ -441,7 +456,7 @@ export default function TeacherLessonsPage() {
                     <h4 className="font-semibold text-gray-900 mb-1">{lesson.title}</h4>
                     <p className="text-sm text-gray-500 mb-3 line-clamp-2">{lesson.description}</p>
                     <div className="flex items-center gap-3 text-xs text-gray-500 mb-3">
-                      <span className={`px-2 py-1 bg-${subject.color}-100 text-${subject.color}-700 rounded`}>
+                      <span className={`px-2 py-1 ${subject.colors.badge} rounded`}>
                         {subject.name}
                       </span>
                       {lesson.vocab_count > 0 && (
@@ -490,8 +505,8 @@ export default function TeacherLessonsPage() {
                 return (
                   <div key={lesson.id} className="border rounded-xl p-4 hover:shadow-md transition-shadow">
                     <div className="flex items-start justify-between mb-3">
-                      <div className={`w-10 h-10 bg-${subject.color}-100 rounded-lg flex items-center justify-center`}>
-                        <FileText className={`w-5 h-5 text-${subject.color}-600`} />
+                      <div className={`w-10 h-10 ${subject.colors.bg} rounded-lg flex items-center justify-center`}>
+                        <FileText className={`w-5 h-5 ${subject.colors.text}`} />
                       </div>
                       <div className="flex items-center gap-2">
                         {lesson.status === 'draft' ? (
@@ -508,7 +523,7 @@ export default function TeacherLessonsPage() {
                     <h4 className="font-semibold text-gray-900 mb-1">{lesson.title}</h4>
                     <p className="text-sm text-gray-500 mb-3 line-clamp-2">{lesson.description || 'Chưa có mô tả'}</p>
                     <div className="flex items-center gap-3 text-xs text-gray-500 mb-3">
-                      <span className={`px-2 py-1 bg-${subject.color}-100 text-${subject.color}-700 rounded`}>
+                      <span className={`px-2 py-1 ${subject.colors.badge} rounded`}>
                         {subject.name}
                       </span>
                       {lesson.vocab_count > 0 && (
