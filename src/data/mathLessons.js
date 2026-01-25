@@ -3594,6 +3594,16 @@ export const getMathLessonsByLevel = (level) => {
 
 export const getAllMathLessons = () => Object.values(MATH_LESSONS);
 
+// Lấy bài học tiếp theo
+export const getNextMathLesson = (currentLessonId) => {
+  const allLessons = Object.keys(MATH_LESSONS);
+  const currentIndex = allLessons.indexOf(currentLessonId);
+  if (currentIndex === -1 || currentIndex >= allLessons.length - 1) {
+    return null; // Không có bài tiếp theo
+  }
+  return MATH_LESSONS[allLessons[currentIndex + 1]];
+};
+
 export const getMathLevels = () => {
   return [
     { id: 1, name: 'Làm quen số', description: 'Học số 1-10', icon: '🔢', color: 'from-blue-400 to-cyan-500' },

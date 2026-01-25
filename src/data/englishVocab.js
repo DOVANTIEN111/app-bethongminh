@@ -543,6 +543,17 @@ export const ENGLISH_TOPICS = {
 // Helper functions
 export const getTopic = (id) => ENGLISH_TOPICS[id];
 export const getAllTopics = () => Object.values(ENGLISH_TOPICS);
+
+// Lấy topic tiếp theo
+export const getNextTopic = (currentTopicId) => {
+  const allTopics = Object.keys(ENGLISH_TOPICS);
+  const currentIndex = allTopics.indexOf(currentTopicId);
+  if (currentIndex === -1 || currentIndex >= allTopics.length - 1) {
+    return null;
+  }
+  return ENGLISH_TOPICS[allTopics[currentIndex + 1]];
+};
+
 export const getAllWords = () => {
   const words = [];
   Object.values(ENGLISH_TOPICS).forEach(topic => {

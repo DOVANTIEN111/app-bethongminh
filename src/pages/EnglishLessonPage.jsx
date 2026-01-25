@@ -3,9 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import { useAudio } from '../contexts/AudioContext';
-import { getTopic, getRandomWords } from '../data/englishVocab';
+import { getTopic, getRandomWords, getNextTopic } from '../data/englishVocab';
 import { saveLessonProgress } from '../services/studentProgress';
-import { ArrowLeft, Volume2, Check, ChevronLeft, ChevronRight, Play, Mic, Star, Zap, Trophy, RotateCcw, Eye, EyeOff, Sparkles } from 'lucide-react';
+import { ArrowLeft, Volume2, Check, ChevronLeft, ChevronRight, Play, Mic, Star, Zap, Trophy, RotateCcw, Eye, EyeOff, Sparkles, List } from 'lucide-react';
 
 // Chế độ học
 const LEARN_MODES = [
@@ -1098,58 +1098,79 @@ const MatchMode = ({ topic, progress, onComplete, onBack, onMarkLearned }) => {
 };
 
 // COMPLETION SCREEN
-const CompletionScreen = ({ score, topic, onRestart, onBack, onNavigateBack }) => {
+const CompletionScreen = ({ score, topic, topicId, onRestart, onBack, onNavigateBack, onNextLesson, nextTopic }) => {
   const { playSound } = useAudio();
+  const passed = score >= 60;
 
   useEffect(() => {
     playSound('achievement');
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-indigo-500 to-purple-600 flex items-center justify-center p-4">
+    <div className={`min-h-screen flex items-center justify-center p-4 ${passed ? 'bg-gradient-to-b from-green-400 to-emerald-500' : 'bg-gradient-to-b from-indigo-500 to-purple-600'}`}>
       <motion.div
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="bg-white rounded-3xl p-8 text-center w-full max-w-sm"
+        className="bg-white rounded-3xl p-8 text-center w-full max-w-sm shadow-2xl"
       >
         <motion.div
           animate={{ rotate: [0, 10, -10, 0], scale: [1, 1.2, 1] }}
           transition={{ duration: 0.5 }}
           className="text-7xl mb-4"
         >
-          🏆
+          {passed ? '🎉' : '💪'}
         </motion.div>
 
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Hoàn thành!</h2>
-        <p className="text-gray-500 mb-4">{topic.name}</p>
+        <h2 className="text-2xl font-bold text-gray-800 mb-1">
+          {passed ? 'Tuyệt vời!' : 'Cố gắng thêm nhé!'}
+        </h2>
+        <p className="text-gray-500 mb-2">Bạn đã hoàn thành</p>
+        <p className="text-lg font-bold text-indigo-600 mb-4">{topic.name}</p>
 
         <div className="flex justify-center mb-4">
           <StarRating score={score} />
         </div>
 
-        <div className="bg-indigo-100 rounded-2xl p-4 mb-6">
-          <p className="text-4xl font-bold text-indigo-600">{score}%</p>
-          <p className="text-indigo-500">Điểm của bạn</p>
+        <div className="bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl p-4 mb-6 text-white">
+          <p className="text-4xl font-bold">{score}%</p>
+          <p className="text-white/80">Điểm của bạn</p>
+          {passed && <p className="mt-2 text-amber-300 font-medium">+15 XP</p>}
         </div>
 
         <div className="space-y-3">
-          <button
-            onClick={onRestart}
-            className="w-full py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl font-bold flex items-center justify-center gap-2"
-          >
-            <RotateCcw className="w-5 h-5" /> Học lại
-          </button>
-          <button
-            onClick={onBack}
-            className="w-full py-3 bg-gray-100 text-gray-700 rounded-xl font-medium"
-          >
-            Chọn cách học khác
-          </button>
+          {/* Nút học bài tiếp theo */}
+          {nextTopic && passed && (
+            <motion.button
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              onClick={onNextLesson}
+              className="w-full py-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all"
+            >
+              <ChevronRight className="w-5 h-5" /> Học bài tiếp theo
+            </motion.button>
+          )}
+
+          <div className="flex gap-3">
+            <button
+              onClick={onRestart}
+              className="flex-1 py-3 bg-gray-100 text-gray-700 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-gray-200 transition-colors"
+            >
+              <RotateCcw className="w-5 h-5" /> Học lại
+            </button>
+            <button
+              onClick={onBack}
+              className="flex-1 py-3 bg-indigo-100 text-indigo-700 rounded-xl font-bold hover:bg-indigo-200 transition-colors"
+            >
+              Cách khác
+            </button>
+          </div>
+
           <button
             onClick={onNavigateBack}
-            className="w-full py-3 bg-blue-100 text-blue-700 rounded-xl font-medium"
+            className="w-full py-3 bg-blue-100 text-blue-700 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-blue-200 transition-colors"
           >
-            Quay về danh sách bài học
+            <List className="w-5 h-5" /> Quay về danh sách
           </button>
         </div>
       </motion.div>
@@ -1309,16 +1330,28 @@ export default function EnglishLessonPage() {
     setMode(null);
     setCompleted(false);
   };
-  
+
+  // Get next topic for navigation
+  const nextTopic = getNextTopic(topicId);
+
+  const handleNextLesson = () => {
+    if (nextTopic) {
+      navigate(`/english/${nextTopic.id}`);
+    }
+  };
+
   // Show completion screen
   if (completed) {
     return (
       <CompletionScreen
         score={finalScore}
         topic={topic}
+        topicId={topicId}
         onRestart={handleRestart}
         onBack={handleBack}
         onNavigateBack={handleNavigateBack}
+        onNextLesson={handleNextLesson}
+        nextTopic={nextTopic}
       />
     );
   }

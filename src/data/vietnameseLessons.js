@@ -2222,6 +2222,16 @@ export const getVietnameseLessonsByLevel = (level) => {
 
 export const getAllVietnameseLessons = () => Object.values(VIETNAMESE_LESSONS);
 
+// Lấy bài học tiếp theo
+export const getNextVietnameseLesson = (currentLessonId) => {
+  const allLessons = Object.keys(VIETNAMESE_LESSONS);
+  const currentIndex = allLessons.indexOf(currentLessonId);
+  if (currentIndex === -1 || currentIndex >= allLessons.length - 1) {
+    return null;
+  }
+  return VIETNAMESE_LESSONS[allLessons[currentIndex + 1]];
+};
+
 export const getVietnameseLevels = () => {
   return [
     { id: 1, name: 'Chữ cái', description: 'Học 29 chữ cái', icon: '🔤', color: 'from-green-400 to-emerald-500' },

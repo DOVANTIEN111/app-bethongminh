@@ -1069,4 +1069,14 @@ export const getAllScienceLessons = () => Object.values(SCIENCE_LESSONS);
 export const getScienceLessonsByLevel = (level) =>
   Object.values(SCIENCE_LESSONS).filter((lesson) => lesson.level === level);
 
+// Lấy bài học tiếp theo
+export const getNextScienceLesson = (currentLessonId) => {
+  const allLessons = Object.keys(SCIENCE_LESSONS);
+  const currentIndex = allLessons.indexOf(currentLessonId);
+  if (currentIndex === -1 || currentIndex >= allLessons.length - 1) {
+    return null;
+  }
+  return SCIENCE_LESSONS[allLessons[currentIndex + 1]];
+};
+
 export default SCIENCE_LESSONS;

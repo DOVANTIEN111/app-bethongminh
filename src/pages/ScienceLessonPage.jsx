@@ -5,8 +5,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import { useAudio } from '../contexts/AudioContext';
-import { getScienceLesson } from '../data/scienceLessons';
-import { ArrowLeft, Home, Star, Heart, CheckCircle, XCircle, Sparkles, RotateCcw, Lightbulb, ChevronRight } from 'lucide-react';
+import { getScienceLesson, getNextScienceLesson } from '../data/scienceLessons';
+import { ArrowLeft, Home, Star, Heart, CheckCircle, XCircle, Sparkles, RotateCcw, Lightbulb, ChevronRight, List } from 'lucide-react';
 
 // Confetti animation
 const Confetti = ({ show }) => {
@@ -178,6 +178,7 @@ export default function ScienceLessonPage() {
     const percentage = Math.round((score / questions.length) * 100);
     const stars = percentage >= 90 ? 3 : percentage >= 70 ? 2 : percentage >= 50 ? 1 : 0;
     const passed = percentage >= 60;
+    const nextLesson = getNextScienceLesson(lessonId);
 
     return (
       <div className={`min-h-screen flex flex-col items-center justify-center p-4 ${passed ? 'bg-gradient-to-b from-green-400 to-emerald-500' : 'bg-gradient-to-b from-orange-400 to-red-500'}`}>
@@ -191,7 +192,8 @@ export default function ScienceLessonPage() {
           <h2 className="text-2xl font-bold text-gray-800 mb-1">
             {passed ? 'Tuyệt vời!' : 'Cố gắng thêm nhé!'}
           </h2>
-          <p className="text-gray-500 mb-4">{lesson.title}</p>
+          <p className="text-gray-500 mb-2">Bạn đã hoàn thành</p>
+          <p className="text-lg font-bold text-purple-600 mb-4">{lesson.title}</p>
 
           {/* Stars */}
           <div className="flex justify-center gap-2 mb-4">
@@ -215,13 +217,28 @@ export default function ScienceLessonPage() {
           </div>
 
           {/* Buttons */}
-          <div className="flex gap-3">
-            <button onClick={restart} className="flex-1 py-4 bg-gray-100 rounded-xl font-bold flex items-center justify-center gap-2">
-              <RotateCcw className="w-5 h-5" /> Học lại
-            </button>
-            <button onClick={() => navigate('/learn/lessons')} className={`flex-1 py-4 rounded-xl font-bold text-white flex items-center justify-center gap-2 ${passed ? 'bg-green-500' : 'bg-purple-500'}`}>
-              <Home className="w-5 h-5" /> Tiếp tục
-            </button>
+          <div className="space-y-3">
+            {/* Nút học bài tiếp theo */}
+            {nextLesson && passed && (
+              <motion.button
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                onClick={() => navigate(`/science/${nextLesson.id}`)}
+                className="w-full py-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-bold text-white flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all"
+              >
+                <ChevronRight className="w-5 h-5" /> Học bài tiếp theo
+              </motion.button>
+            )}
+
+            <div className="flex gap-3">
+              <button onClick={restart} className="flex-1 py-4 bg-gray-100 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-gray-200 transition-colors">
+                <RotateCcw className="w-5 h-5" /> Học lại
+              </button>
+              <button onClick={() => navigate('/learn/lessons')} className="flex-1 py-4 bg-purple-100 text-purple-700 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-purple-200 transition-colors">
+                <List className="w-5 h-5" /> Danh sách
+              </button>
+            </div>
           </div>
         </motion.div>
       </div>

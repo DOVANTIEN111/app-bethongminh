@@ -5,8 +5,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import { useAudio } from '../contexts/AudioContext';
-import { getVietnameseLesson } from '../data/vietnameseLessons';
-import { ArrowLeft, Home, Star, Heart, CheckCircle, XCircle, Sparkles, Trophy, ChevronRight, RotateCcw, Lightbulb } from 'lucide-react';
+import { getVietnameseLesson, getNextVietnameseLesson } from '../data/vietnameseLessons';
+import { ArrowLeft, Home, Star, Heart, CheckCircle, XCircle, Sparkles, Trophy, ChevronRight, RotateCcw, Lightbulb, List } from 'lucide-react';
 
 // Confetti animation
 const Confetti = ({ show }) => {
@@ -233,21 +233,23 @@ export default function VietnameseLessonPage() {
     const percentage = Math.round((score / questions.length) * 100);
     const stars = percentage >= 90 ? 3 : percentage >= 70 ? 2 : percentage >= 50 ? 1 : 0;
     const passed = percentage >= 60;
-    
+    const nextLesson = getNextVietnameseLesson(lessonId);
+
     return (
       <div className={`min-h-screen flex flex-col items-center justify-center p-4 ${passed ? 'bg-gradient-to-b from-green-400 to-emerald-500' : 'bg-gradient-to-b from-orange-400 to-red-500'}`}>
         <Confetti show={showConfetti} />
-        
+
         <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl">
           <motion.div initial={{ y: -20 }} animate={{ y: 0 }} transition={{ type: 'spring', bounce: 0.5 }} className="text-7xl mb-4">
             {passed ? '🎉' : '💪'}
           </motion.div>
-          
+
           <h2 className="text-2xl font-bold text-gray-800 mb-1">
             {passed ? 'Tuyệt vời!' : 'Cố gắng thêm nhé!'}
           </h2>
-          <p className="text-gray-500 mb-4">{lesson.title}</p>
-          
+          <p className="text-gray-500 mb-2">Bạn đã hoàn thành</p>
+          <p className="text-lg font-bold text-green-600 mb-4">{lesson.title}</p>
+
           {/* Stars */}
           <div className="flex justify-center gap-2 mb-4">
             {[1, 2, 3].map(i => (
@@ -261,30 +263,45 @@ export default function VietnameseLessonPage() {
               </motion.div>
             ))}
           </div>
-          
+
           {/* Score */}
-          <div className="bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl p-4 mb-6 text-white">
+          <div className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl p-4 mb-6 text-white">
             <p className="text-5xl font-bold">{score}/{questions.length}</p>
             <p className="text-white/80">Câu trả lời đúng</p>
             {passed && lesson.reward && (
               <p className="mt-2 text-amber-300 font-medium">+{lesson.reward.xp} XP</p>
             )}
           </div>
-          
+
           {/* Buttons */}
-          <div className="flex gap-3">
-            <button onClick={restart} className="flex-1 py-4 bg-gray-100 rounded-xl font-bold flex items-center justify-center gap-2">
-              <RotateCcw className="w-5 h-5" /> Học lại
-            </button>
-            <button onClick={() => navigate('/learn/lessons')} className={`flex-1 py-4 rounded-xl font-bold text-white flex items-center justify-center gap-2 ${passed ? 'bg-green-500' : 'bg-indigo-500'}`}>
-              <Home className="w-5 h-5" /> Tiếp tục
-            </button>
+          <div className="space-y-3">
+            {/* Nút học bài tiếp theo */}
+            {nextLesson && passed && (
+              <motion.button
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                onClick={() => navigate(`/vietnamese/${nextLesson.id}`)}
+                className="w-full py-4 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl font-bold text-white flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all"
+              >
+                <ChevronRight className="w-5 h-5" /> Học bài tiếp theo
+              </motion.button>
+            )}
+
+            <div className="flex gap-3">
+              <button onClick={restart} className="flex-1 py-4 bg-gray-100 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-gray-200 transition-colors">
+                <RotateCcw className="w-5 h-5" /> Học lại
+              </button>
+              <button onClick={() => navigate('/learn/lessons')} className="flex-1 py-4 bg-green-100 text-green-700 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-green-200 transition-colors">
+                <List className="w-5 h-5" /> Danh sách
+              </button>
+            </div>
           </div>
         </motion.div>
       </div>
     );
   }
-  
+
   // ==================== LEARNING SCREEN ====================
   // Check if question exists
   if (!question) {
