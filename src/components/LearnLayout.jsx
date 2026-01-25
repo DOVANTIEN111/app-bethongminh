@@ -117,62 +117,62 @@ export default function LearnLayout() {
         </div>
       )}
 
-      {/* Header */}
-      <header className="bg-gradient-to-r from-orange-400 via-yellow-400 to-blue-400 text-white shadow-lg sticky top-0 z-40">
-        <div className="px-4 py-3">
+      {/* Header - Mobile Optimized */}
+      <header className="bg-gradient-to-r from-orange-400 via-yellow-400 to-blue-400 text-white shadow-lg sticky top-0 z-40 pt-safe">
+        <div className="px-3 sm:px-4 py-2 sm:py-3">
           <div className="flex items-center justify-between">
             {/* Avatar & Name */}
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-md border-2 border-white">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full flex items-center justify-center shadow-md border-2 border-white">
                 {profile?.avatar_url ? (
-                  <img src={profile.avatar_url} alt="" className="w-12 h-12 rounded-full" />
+                  <img src={profile.avatar_url} alt="" className="w-10 h-10 sm:w-12 sm:h-12 rounded-full" />
                 ) : (
-                  <span className="text-2xl">🧒</span>
+                  <span className="text-xl sm:text-2xl">🧒</span>
                 )}
               </div>
               <div>
-                <p className="font-bold text-lg drop-shadow">Chào {firstName}! 👋</p>
-                <p className="text-xs text-white/90">Học vui mỗi ngày!</p>
+                <p className="font-bold text-base sm:text-lg drop-shadow">Chào {firstName}! 👋</p>
+                <p className="text-[10px] sm:text-xs text-white/90 hidden sm:block">Học vui mỗi ngày!</p>
               </div>
             </div>
 
             {/* Stats & Parent Button */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2">
               {/* Trial Days Remaining */}
               {isTrial && daysRemaining !== null && daysRemaining > 0 && (
                 <Link
                   to="/pricing"
-                  className={`flex items-center gap-1 backdrop-blur rounded-full px-2.5 py-1.5 ${
+                  className={`flex items-center gap-1 backdrop-blur rounded-full px-2 py-1 sm:px-2.5 sm:py-1.5 ${
                     daysRemaining <= 7
-                      ? 'bg-red-500/80 hover:bg-red-600/80'
-                      : 'bg-white/20 hover:bg-white/30'
+                      ? 'bg-red-500/80 active:bg-red-600/80'
+                      : 'bg-white/20 active:bg-white/30'
                   }`}
                   title="Nâng cấp tài khoản"
                 >
-                  <Clock className="w-4 h-4" />
-                  <span className="font-bold text-sm">{daysRemaining} ngày</span>
+                  <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  <span className="font-bold text-xs sm:text-sm">{daysRemaining}</span>
                 </Link>
               )}
 
               {/* Streak */}
-              <div className="flex items-center gap-1 bg-white/20 backdrop-blur rounded-full px-2.5 py-1.5">
-                <Flame className="w-4 h-4 text-orange-200" />
-                <span className="font-bold text-sm">{streak}</span>
+              <div className="flex items-center gap-0.5 sm:gap-1 bg-white/20 backdrop-blur rounded-full px-2 py-1 sm:px-2.5 sm:py-1.5">
+                <Flame className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-orange-200" />
+                <span className="font-bold text-xs sm:text-sm">{streak}</span>
               </div>
 
               {/* Points */}
-              <div className="flex items-center gap-1 bg-white/20 backdrop-blur rounded-full px-2.5 py-1.5">
-                <Star className="w-4 h-4 text-yellow-200" />
-                <span className="font-bold text-sm">{totalPoints}</span>
+              <div className="flex items-center gap-0.5 sm:gap-1 bg-white/20 backdrop-blur rounded-full px-2 py-1 sm:px-2.5 sm:py-1.5">
+                <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-yellow-200" />
+                <span className="font-bold text-xs sm:text-sm">{totalPoints}</span>
               </div>
 
               {/* Parent Mode Button */}
               <button
                 onClick={() => setShowParentModal(true)}
-                className="flex items-center gap-1 bg-white/20 backdrop-blur rounded-full px-2.5 py-1.5 hover:bg-white/30 transition-colors"
+                className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 bg-white/20 backdrop-blur rounded-full active:bg-white/30 transition-colors"
                 title="Chế độ Phụ huynh"
               >
-                <Users className="w-4 h-4" />
+                <Users className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             </div>
           </div>
@@ -206,13 +206,13 @@ export default function LearnLayout() {
       </header>
 
       {/* Main Content */}
-      <main className="pb-24 min-h-[calc(100vh-140px)]">
+      <main className="pb-20 sm:pb-24 min-h-[calc(100vh-120px)]">
         <Outlet context={{ subscription, daysRemaining, isExpired }} />
       </main>
 
-      {/* Bottom Navigation - Mobile Friendly */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-orange-100 shadow-lg z-50">
-        <div className="flex justify-around items-center py-2">
+      {/* Bottom Navigation - Mobile Optimized */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-orange-100 shadow-lg z-50 pb-safe">
+        <div className="flex justify-around items-center h-14 sm:h-16">
           {MENU_ITEMS.map((item) => {
             const isActive = item.exact
               ? location.pathname === item.path
@@ -222,20 +222,20 @@ export default function LearnLayout() {
               <NavLink
                 key={item.path}
                 to={item.path}
-                className={`flex flex-col items-center py-2 px-4 rounded-xl transition-all duration-200 ${
+                className={`flex flex-col items-center justify-center py-1 px-2 sm:px-3 rounded-lg transition-all min-w-[56px] ${
                   isActive
-                    ? 'bg-gradient-to-t from-orange-100 to-yellow-50 scale-110 -translate-y-1'
-                    : 'text-gray-400 hover:text-gray-600'
+                    ? 'text-orange-500'
+                    : 'text-gray-400 active:text-gray-600'
                 }`}
               >
-                <div className={`p-2 rounded-full ${
+                <div className={`p-1.5 sm:p-2 rounded-full ${
                   isActive
-                    ? 'bg-gradient-to-r from-orange-400 to-yellow-400 text-white shadow-lg'
+                    ? 'bg-gradient-to-r from-orange-400 to-yellow-400 text-white shadow-md'
                     : ''
                 }`}>
-                  <item.icon className={`w-6 h-6 ${isActive ? '' : ''}`} />
+                  <item.icon className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
-                <span className={`text-xs mt-1 font-medium ${
+                <span className={`text-[10px] sm:text-xs mt-0.5 font-medium truncate ${
                   isActive ? 'text-orange-600' : 'text-gray-400'
                 }`}>
                   {item.label}
@@ -252,7 +252,7 @@ export default function LearnLayout() {
         onClose={() => setShowParentModal(false)}
       />
 
-      {/* CSS Animation */}
+      {/* CSS Animation & Safe Area */}
       <style>{`
         @keyframes scale-up {
           from {
@@ -266,6 +266,13 @@ export default function LearnLayout() {
         }
         .animate-scale-up {
           animation: scale-up 0.2s ease-out;
+        }
+        /* Safe area for iPhone X+ */
+        .pt-safe {
+          padding-top: env(safe-area-inset-top);
+        }
+        .pb-safe {
+          padding-bottom: env(safe-area-inset-bottom);
         }
       `}</style>
     </div>

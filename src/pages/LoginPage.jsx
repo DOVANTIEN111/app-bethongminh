@@ -83,41 +83,41 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center p-3 sm:p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
-        <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-full shadow-lg mb-4">
-            <span className="text-4xl">🎓</span>
+        <div className="text-center mb-4 sm:mb-6">
+          <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-full shadow-lg mb-3 sm:mb-4">
+            <span className="text-3xl sm:text-4xl">🎓</span>
           </div>
-          <h1 className="text-2xl font-bold text-white">SchoolHub</h1>
-          <p className="text-white/80 text-sm">Nền tảng học tập thông minh</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-white">Bé Thông Minh</h1>
+          <p className="text-white/80 text-xs sm:text-sm">Học tập vui nhộn cho bé</p>
         </div>
 
         {/* Trial Banner */}
         <Link
           to="/register"
-          className="block bg-gradient-to-r from-yellow-400 to-orange-400 rounded-2xl p-4 mb-4 text-center shadow-lg hover:shadow-xl transition-all hover:scale-[1.02]"
+          className="block bg-gradient-to-r from-yellow-400 to-orange-400 rounded-xl sm:rounded-2xl p-3 sm:p-4 mb-3 sm:mb-4 text-center shadow-lg active:scale-[0.98] transition-transform"
         >
-          <div className="flex items-center justify-center gap-2 mb-1">
-            <Gift className="w-5 h-5 text-white" />
-            <span className="font-bold text-white">DÙNG THỬ MIỄN PHÍ 30 NGÀY!</span>
+          <div className="flex items-center justify-center gap-1.5 sm:gap-2 mb-0.5 sm:mb-1">
+            <Gift className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+            <span className="font-bold text-white text-sm sm:text-base">DÙNG THỬ MIỄN PHÍ 30 NGÀY!</span>
           </div>
-          <div className="flex items-center justify-center gap-3 text-white/90 text-sm">
+          <div className="flex items-center justify-center gap-2 sm:gap-3 text-white/90 text-xs sm:text-sm">
             <span className="flex items-center gap-1">
-              <Star className="w-4 h-4" /> Tất cả bài học
+              <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Tất cả bài học
             </span>
             <span className="flex items-center gap-1">
-              <Clock className="w-4 h-4" /> Không cần thẻ
+              <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Không cần thẻ
             </span>
           </div>
         </Link>
 
         {/* Login Card */}
-        <div className="bg-white rounded-2xl shadow-xl p-6">
-          <h2 className="text-xl font-bold text-center mb-6">Đăng nhập</h2>
+        <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-6">
+          <h2 className="text-lg sm:text-xl font-bold text-center mb-4 sm:mb-6">Đăng nhập</h2>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
             {/* Email */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -130,7 +130,7 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="email@example.com"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-base min-h-[48px]"
                   disabled={loading}
                 />
               </div>
@@ -148,13 +148,13 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-10 pr-12 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full pl-10 pr-12 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-base min-h-[48px]"
                   disabled={loading}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center"
                 >
                   {showPassword ? (
                     <EyeOff className="w-5 h-5 text-gray-400" />
@@ -167,7 +167,7 @@ export default function LoginPage() {
 
             {/* Error */}
             {error && (
-              <div className="flex items-center gap-2 p-3 bg-red-50 text-red-600 rounded-xl text-sm">
+              <div className="flex items-center gap-2 p-2.5 sm:p-3 bg-red-50 text-red-600 rounded-xl text-sm">
                 <AlertCircle className="w-5 h-5 flex-shrink-0" />
                 <span>{error}</span>
               </div>
@@ -177,7 +177,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading || authLoading}
-              className="w-full py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-500 to-purple-500 hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-500 to-purple-500 active:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2 min-h-[48px] text-base"
             >
               {loading || authLoading ? (
                 <>
@@ -191,10 +191,10 @@ export default function LoginPage() {
           </form>
 
           {/* Register Link */}
-          <div className="mt-4 text-center">
-            <p className="text-gray-600 text-sm">
+          <div className="mt-3 sm:mt-4 text-center">
+            <p className="text-gray-600 text-xs sm:text-sm">
               Chưa có tài khoản?{' '}
-              <Link to="/register" className="text-indigo-600 font-medium hover:underline">
+              <Link to="/register" className="text-indigo-600 font-medium active:underline">
                 Đăng ký dùng thử miễn phí
               </Link>
             </p>
@@ -202,8 +202,8 @@ export default function LoginPage() {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-white/60 text-sm mt-6">
-          © 2024 SchoolHub
+        <p className="text-center text-white/60 text-xs sm:text-sm mt-4 sm:mt-6">
+          © 2024 Bé Thông Minh
         </p>
       </div>
     </div>

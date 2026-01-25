@@ -97,23 +97,23 @@ const AnswerButton = ({ option, index, selected, showResult, isCorrect, onSelect
 
   return (
     <motion.button
-      whileHover={{ scale: 1.03 }}
+      whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.95 }}
       onClick={() => onSelect(option, index)}
       disabled={showResult}
-      className={`${bgClass} ${textClass} ${large ? 'py-6 sm:py-8 text-3xl sm:text-4xl' : 'py-5 sm:py-6 text-2xl sm:text-3xl'}
-        rounded-2xl sm:rounded-3xl font-bold shadow-lg transition-all border-4 min-h-[70px] sm:min-h-[90px]
+      className={`${bgClass} ${textClass} ${large ? 'py-4 sm:py-6 text-2xl sm:text-3xl' : 'py-3 sm:py-4 text-xl sm:text-2xl'}
+        rounded-xl sm:rounded-2xl font-bold shadow-lg transition-all border-3 sm:border-4 min-h-[48px] sm:min-h-[64px]
         active:shadow-inner disabled:cursor-not-allowed`}
     >
-      <div className="flex items-center justify-center gap-2 px-2">
+      <div className="flex items-center justify-center gap-1.5 sm:gap-2 px-2">
         {showResult && isCorrect && (
           <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>
-            <CheckCircle className="w-7 h-7 sm:w-8 sm:h-8" />
+            <CheckCircle className="w-5 h-5 sm:w-7 sm:h-7" />
           </motion.div>
         )}
         {showResult && isSelected && !isCorrect && (
           <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>
-            <XCircle className="w-7 h-7 sm:w-8 sm:h-8" />
+            <XCircle className="w-5 h-5 sm:w-7 sm:h-7" />
           </motion.div>
         )}
         <span className="leading-tight">{option}</span>
@@ -155,8 +155,8 @@ const SelectImageButton = ({ opt, index, selected, showResult, isCorrect, onSele
           key={i}
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
-          transition={{ delay: i * 0.03 }}
-          className="text-3xl sm:text-4xl md:text-5xl inline-block"
+          transition={{ delay: i * 0.02 }}
+          className="text-2xl sm:text-3xl inline-block"
         >
           {emoji}
         </motion.span>
@@ -168,15 +168,15 @@ const SelectImageButton = ({ opt, index, selected, showResult, isCorrect, onSele
   return (
     <motion.button
       whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
+      whileTap={{ scale: 0.95 }}
       onClick={() => onSelect(opt, index)}
       disabled={showResult}
-      className={`${bgClass} p-3 sm:p-4 rounded-2xl sm:rounded-3xl border-4 shadow-lg transition-all
-        min-h-[100px] sm:min-h-[120px] w-full relative
+      className={`${bgClass} p-2 sm:p-3 rounded-xl sm:rounded-2xl border-3 sm:border-4 shadow-md transition-all
+        min-h-[70px] sm:min-h-[90px] w-full relative
         active:shadow-inner disabled:cursor-not-allowed`}
     >
       {/* Hiển thị các emoji theo grid */}
-      <div className="flex flex-wrap justify-center items-center gap-1 sm:gap-2" style={{ maxWidth: '180px', margin: '0 auto' }}>
+      <div className="flex flex-wrap justify-center items-center gap-0.5 sm:gap-1" style={{ maxWidth: '140px', margin: '0 auto' }}>
         {renderEmojis()}
       </div>
 
@@ -185,18 +185,18 @@ const SelectImageButton = ({ opt, index, selected, showResult, isCorrect, onSele
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
-          className="absolute -top-2 -right-2 bg-green-500 rounded-full p-1 shadow-lg"
+          className="absolute -top-1.5 -right-1.5 sm:-top-2 sm:-right-2 bg-green-500 rounded-full p-0.5 sm:p-1 shadow-lg"
         >
-          <CheckCircle className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+          <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
         </motion.div>
       )}
       {showResult && isSelected && !isCorrect && (
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
-          className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1 shadow-lg"
+          className="absolute -top-1.5 -right-1.5 sm:-top-2 sm:-right-2 bg-red-500 rounded-full p-0.5 sm:p-1 shadow-lg"
         >
-          <XCircle className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+          <XCircle className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
         </motion.div>
       )}
     </motion.button>
