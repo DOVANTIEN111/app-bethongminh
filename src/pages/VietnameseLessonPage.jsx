@@ -29,22 +29,31 @@ const Confetti = ({ show }) => {
   );
 };
 
-// Image display with animation
+// Image display with animation - CẢI TIẾN cho trẻ em
 const ImageDisplay = ({ emoji, count = 1, size = 'large' }) => {
   // Đảm bảo count là số hợp lệ
   const validCount = Math.max(1, Math.min(count || 1, 20));
-  const sizeClass = { small: 'text-2xl', medium: 'text-4xl', large: 'text-5xl', xlarge: 'text-6xl' }[size];
-  const gridClass = validCount <= 3 ? 'flex gap-2 justify-center' : validCount <= 6 ? 'grid grid-cols-3 gap-2' : 'grid grid-cols-5 gap-1';
-  
+
+  // Kích thước lớn hơn, responsive
+  const sizeClass = {
+    small: 'text-4xl sm:text-5xl',
+    medium: 'text-5xl sm:text-6xl md:text-7xl',
+    large: 'text-6xl sm:text-7xl md:text-8xl',
+    xlarge: 'text-7xl sm:text-8xl md:text-9xl',
+    hero: 'text-8xl sm:text-9xl md:text-[120px]' // Siêu to cho câu hỏi chính
+  }[size] || 'text-6xl';
+
+  const gridClass = validCount <= 3 ? 'flex gap-3 justify-center' : validCount <= 6 ? 'grid grid-cols-3 gap-3' : 'grid grid-cols-5 gap-2';
+
   return (
     <div className={gridClass}>
       {Array(validCount).fill(null).map((_, i) => (
         <motion.span
           key={i}
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: i * 0.08, type: 'spring' }}
-          className={`${sizeClass} inline-block`}
+          initial={{ scale: 0, rotate: -10 }}
+          animate={{ scale: 1, rotate: 0 }}
+          transition={{ delay: i * 0.08, type: 'spring', bounce: 0.5 }}
+          className={`${sizeClass} inline-block drop-shadow-lg`}
         >
           {emoji}
         </motion.span>
@@ -53,29 +62,53 @@ const ImageDisplay = ({ emoji, count = 1, size = 'large' }) => {
   );
 };
 
-// Answer button component
+// Answer button component - CẢI TIẾN cho trẻ em
 const AnswerButton = ({ option, index, selected, showResult, isCorrect, onSelect, large }) => {
   const isSelected = selected === index;
-  let bgClass = 'bg-white hover:bg-gray-50';
-  
+
+  // Màu pastel tươi sáng cho từng nút
+  const pastelColors = [
+    'bg-gradient-to-br from-pink-100 to-pink-200 hover:from-pink-200 hover:to-pink-300 border-pink-300',
+    'bg-gradient-to-br from-blue-100 to-blue-200 hover:from-blue-200 hover:to-blue-300 border-blue-300',
+    'bg-gradient-to-br from-yellow-100 to-amber-200 hover:from-yellow-200 hover:to-amber-300 border-amber-300',
+    'bg-gradient-to-br from-green-100 to-emerald-200 hover:from-green-200 hover:to-emerald-300 border-emerald-300',
+  ];
+
+  let bgClass = pastelColors[index % 4];
+  let textClass = 'text-gray-800';
+
   if (showResult) {
-    if (isCorrect) bgClass = 'bg-green-500 text-white';
-    else if (isSelected) bgClass = 'bg-red-500 text-white';
+    if (isCorrect) {
+      bgClass = 'bg-gradient-to-br from-green-400 to-emerald-500 border-green-400';
+      textClass = 'text-white';
+    } else if (isSelected) {
+      bgClass = 'bg-gradient-to-br from-red-300 to-red-400 border-red-400';
+      textClass = 'text-white';
+    }
   }
-  
+
   return (
     <motion.button
+      whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.95 }}
       onClick={() => onSelect(option, index)}
       disabled={showResult}
-      className={`${bgClass} ${large ? 'py-6 text-3xl' : 'py-4 text-2xl'} rounded-2xl font-bold shadow-lg transition-all border-4 ${
-        showResult && isCorrect ? 'border-green-300' : showResult && isSelected ? 'border-red-300' : 'border-transparent'
-      }`}
+      className={`${bgClass} ${textClass} ${large ? 'py-6 sm:py-8 text-2xl sm:text-3xl' : 'py-5 sm:py-6 text-xl sm:text-2xl'}
+        rounded-2xl sm:rounded-3xl font-bold shadow-lg transition-all border-4 min-h-[60px] sm:min-h-[80px]
+        active:shadow-inner disabled:cursor-not-allowed`}
     >
-      <div className="flex items-center justify-center gap-2">
-        {showResult && isCorrect && <CheckCircle className="w-6 h-6" />}
-        {showResult && isSelected && !isCorrect && <XCircle className="w-6 h-6" />}
-        {option}
+      <div className="flex items-center justify-center gap-2 px-2">
+        {showResult && isCorrect && (
+          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>
+            <CheckCircle className="w-6 h-6 sm:w-8 sm:h-8" />
+          </motion.div>
+        )}
+        {showResult && isSelected && !isCorrect && (
+          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>
+            <XCircle className="w-6 h-6 sm:w-8 sm:h-8" />
+          </motion.div>
+        )}
+        <span className="leading-tight">{option}</span>
       </div>
     </motion.button>
   );
@@ -350,145 +383,194 @@ export default function VietnameseLessonPage() {
     );
   }
 
+  // Lấy hình ảnh minh họa cho câu hỏi (emoji hoặc từ options)
+  const getQuestionImage = () => {
+    // Nếu câu hỏi có image
+    if (question.image) return question.image;
+    // Nếu là câu hỏi về chữ cái, lấy chữ từ options
+    if (question.options && question.options.length > 0) {
+      const firstOpt = question.options[0];
+      // Tìm emoji trong option
+      const emojiMatch = String(firstOpt).match(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]/u);
+      if (emojiMatch) return emojiMatch[0];
+    }
+    // Mặc định cho từng loại câu hỏi
+    if (question.question?.includes('chữ') || question.question?.includes('Chữ')) return '🔤';
+    if (question.question?.includes('từ') || question.question?.includes('Từ')) return '📖';
+    if (question.question?.includes('đọc') || question.question?.includes('Đọc')) return '🗣️';
+    return lesson.icon || '📚';
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-indigo-50 to-purple-50">
-      {/* Header */}
-      <div className={`bg-gradient-to-r ${lesson.color} p-4`}>
-        <div className="flex items-center justify-between mb-3">
-          <button onClick={() => navigate(-1)} className="p-2 bg-white/20 rounded-full">
-            <ArrowLeft className="w-5 h-5 text-white" />
+    <div className="min-h-screen bg-gradient-to-b from-sky-100 via-blue-50 to-indigo-100">
+      {/* Header - Compact & Colorful */}
+      <div className={`bg-gradient-to-r ${lesson.color || 'from-indigo-500 to-purple-600'} px-4 py-3 shadow-lg`}>
+        <div className="flex items-center justify-between">
+          <button onClick={() => navigate(-1)} className="p-2.5 bg-white/20 rounded-full hover:bg-white/30 transition-colors">
+            <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
           </button>
-          <span className="text-white font-bold">{lesson.title}</span>
-          <div className="flex gap-1">
+
+          <div className="flex-1 mx-4">
+            {/* Progress Bar */}
+            <div className="bg-white/20 rounded-full h-3 sm:h-4 overflow-hidden">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${((currentQ + 1) / questions.length) * 100}%` }}
+                className="bg-gradient-to-r from-yellow-300 to-amber-400 h-full rounded-full"
+              />
+            </div>
+            <p className="text-center text-white/90 text-xs sm:text-sm mt-1 font-medium">
+              Câu {currentQ + 1} / {questions.length}
+            </p>
+          </div>
+
+          {/* Lives */}
+          <div className="flex gap-0.5 sm:gap-1">
             {[...Array(3)].map((_, i) => (
-              <Heart key={i} className={`w-6 h-6 ${i < lives ? 'text-red-400 fill-red-400' : 'text-white/30'}`} />
+              <motion.div
+                key={i}
+                animate={i < lives ? { scale: [1, 1.2, 1] } : {}}
+                transition={{ duration: 0.3 }}
+              >
+                <Heart className={`w-6 h-6 sm:w-7 sm:h-7 ${i < lives ? 'text-red-400 fill-red-400 drop-shadow-md' : 'text-white/30'}`} />
+              </motion.div>
             ))}
           </div>
         </div>
-        
-        {/* Progress */}
-        <div className="bg-white/20 rounded-full h-3">
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: `${((currentQ + 1) / questions.length) * 100}%` }}
-            className="bg-white rounded-full h-3"
-          />
-        </div>
-        <p className="text-center text-white/80 text-sm mt-1">Câu {currentQ + 1}/{questions.length}</p>
       </div>
-      
-      {/* Question */}
-      <div className="p-4">
+
+      {/* Main Content */}
+      <div className="p-3 sm:p-4 md:p-6 max-w-2xl mx-auto">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentQ}
             initial={{ x: 50, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -50, opacity: 0 }}
+            className="space-y-4 sm:space-y-6"
           >
-            {/* Question card */}
-            <div className="bg-white rounded-3xl p-6 shadow-xl mb-6">
-              <p className="text-xl font-bold text-gray-800 text-center mb-6">{question.question}</p>
-              
-              {/* Visual based on question type */}
-              {question.type === 'count' && question.image && (
-                <div className="flex justify-center py-4">
-                  <ImageDisplay emoji={question.image} count={question.imageCount || 1} size={(question.imageCount || 1) > 6 ? 'medium' : 'large'} />
+            {/* Question Card - HÌNH ẢNH LỚN */}
+            <div className="bg-white rounded-3xl sm:rounded-[2rem] p-4 sm:p-6 md:p-8 shadow-xl border-4 border-white/50">
+
+              {/* HÌNH ẢNH MINH HỌA LỚN - 200-300px */}
+              <motion.div
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ type: 'spring', bounce: 0.4 }}
+                className="flex justify-center py-4 sm:py-6"
+              >
+                <div className="bg-gradient-to-br from-yellow-100 via-amber-50 to-orange-100 rounded-3xl p-6 sm:p-8 shadow-inner">
+                  {/* Visual based on question type */}
+                  {question.type === 'count' && question.image ? (
+                    <ImageDisplay emoji={question.image} count={question.imageCount || 1} size={(question.imageCount || 1) > 6 ? 'medium' : 'hero'} />
+                  ) : question.type === 'compare' ? null : (
+                    <ImageDisplay emoji={getQuestionImage()} count={1} size="hero" />
+                  )}
                 </div>
-              )}
-              
-              {/* Tiếng Việt: identify, spell, read, match_word, sound - hiển thị visual nếu có */}
+              </motion.div>
+
+              {/* CÂU HỎI - Font lớn, rõ ràng */}
+              <motion.p
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 text-center leading-relaxed px-2"
+              >
+                {question.question}
+              </motion.p>
+
+              {/* Visual options nếu có */}
               {(question.type === 'identify' || question.type === 'spell' || question.type === 'read' || question.type === 'match_word' || question.type === 'sound' || question.type === 'sequence') && question.visual && (
-                <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 mb-4">
-                  <div className="flex flex-wrap justify-center gap-2">
+                <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl p-4 mt-4 border-2 border-emerald-200">
+                  <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
                     {question.visual.options?.map((opt, i) => (
-                      <span key={i} className="text-lg bg-white px-3 py-1 rounded-lg shadow-sm">{opt}</span>
+                      <motion.span
+                        key={i}
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ delay: i * 0.1 }}
+                        className="text-lg sm:text-xl bg-white px-4 py-2 rounded-xl shadow-sm font-medium"
+                      >
+                        {opt}
+                      </motion.span>
                     ))}
                   </div>
                 </div>
               )}
-              
-              {question.type === 'addition' && question.visual && (
-                <div className="flex items-center justify-center gap-3 flex-wrap py-4">
-                  <div className="bg-blue-50 rounded-xl p-3">
-                    <ImageDisplay emoji={question.visual.left} count={question.visual.leftCount} size="medium" />
-                  </div>
-                  <span className="text-4xl font-bold text-indigo-500">+</span>
-                  <div className="bg-green-50 rounded-xl p-3">
-                    <ImageDisplay emoji={question.visual.right} count={question.visual.rightCount} size="medium" />
-                  </div>
-                </div>
-              )}
-              
-              {question.type === 'subtraction' && question.visual && (
-                <div className="flex items-center justify-center gap-3 flex-wrap py-4">
-                  <div className="bg-blue-50 rounded-xl p-3 relative">
-                    <ImageDisplay emoji={question.visual.emoji} count={question.visual.startCount} size={question.visual.startCount > 6 ? 'small' : 'medium'} />
-                  </div>
-                  <span className="text-4xl font-bold text-red-500">−</span>
-                  <div className="bg-red-50 rounded-xl p-3 opacity-50">
-                    <ImageDisplay emoji={question.visual.emoji} count={question.visual.removeCount} size={question.visual.removeCount > 6 ? 'small' : 'medium'} />
-                  </div>
-                </div>
-              )}
-              
-              {question.type === 'word_problem' && (
-                <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 text-center">
-                  <p className="text-lg text-gray-700 leading-relaxed">{question.question}</p>
-                </div>
-              )}
-              
+
+              {/* Compare type */}
               {question.type === 'compare' && (
-                <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="grid grid-cols-2 gap-4 mt-4">
                   <motion.button
                     whileTap={{ scale: 0.95 }}
                     onClick={() => handleAnswer('A', 0)}
                     disabled={showResult}
-                    className={`p-4 rounded-2xl border-4 ${
-                      showResult && question.answer === 'A' ? 'border-green-500 bg-green-50' :
-                      showResult && selected === 0 ? 'border-red-500 bg-red-50' :
-                      'border-blue-200 bg-blue-50'
+                    className={`p-4 sm:p-6 rounded-2xl border-4 transition-all ${
+                      showResult && question.answer === 'A' ? 'border-green-500 bg-green-100 scale-105' :
+                      showResult && selected === 0 ? 'border-red-400 bg-red-100' :
+                      'border-blue-300 bg-gradient-to-br from-blue-50 to-blue-100 hover:border-blue-400'
                     }`}
                   >
                     <p className="text-sm font-bold text-gray-500 mb-2">A</p>
-                    <ImageDisplay emoji={question.optionA.image} count={question.optionA.count} size="medium" />
+                    <ImageDisplay emoji={question.optionA?.image} count={question.optionA?.count || 1} size="large" />
                   </motion.button>
                   <motion.button
                     whileTap={{ scale: 0.95 }}
                     onClick={() => handleAnswer('B', 1)}
                     disabled={showResult}
-                    className={`p-4 rounded-2xl border-4 ${
-                      showResult && question.answer === 'B' ? 'border-green-500 bg-green-50' :
-                      showResult && selected === 1 ? 'border-red-500 bg-red-50' :
-                      'border-orange-200 bg-orange-50'
+                    className={`p-4 sm:p-6 rounded-2xl border-4 transition-all ${
+                      showResult && question.answer === 'B' ? 'border-green-500 bg-green-100 scale-105' :
+                      showResult && selected === 1 ? 'border-red-400 bg-red-100' :
+                      'border-orange-300 bg-gradient-to-br from-orange-50 to-orange-100 hover:border-orange-400'
                     }`}
                   >
                     <p className="text-sm font-bold text-gray-500 mb-2">B</p>
-                    <ImageDisplay emoji={question.optionB.image} count={question.optionB.count} size="medium" />
+                    <ImageDisplay emoji={question.optionB?.image} count={question.optionB?.count || 1} size="large" />
                   </motion.button>
                 </div>
               )}
-              
-              {/* Hiển thị hint hoặc explanation khi trả lời sai */}
+
+              {/* Hiển thị hint/explanation khi trả lời sai */}
               {showResult && selected !== null && !checkCorrectAnswer(question.options?.[selected], selected) && (
-                <p className="text-center text-amber-600 text-sm mt-2">
-                  💡 {question.hint || question.explanation || 'Hãy thử lại nhé!'}
-                </p>
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-4 bg-gradient-to-r from-amber-50 to-yellow-50 rounded-xl p-4 border-2 border-amber-200"
+                >
+                  <p className="text-center text-amber-700 font-medium flex items-center justify-center gap-2">
+                    <Lightbulb className="w-5 h-5" />
+                    {question.hint || question.explanation || 'Hãy thử lại nhé!'}
+                  </p>
+                </motion.div>
+              )}
+
+              {/* Hiển thị khi trả lời đúng */}
+              {showResult && selected !== null && checkCorrectAnswer(question.options?.[selected], selected) && (
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="mt-4 text-center"
+                >
+                  <span className="text-4xl">🎉</span>
+                  <p className="text-green-600 font-bold text-lg mt-1">Giỏi lắm!</p>
+                </motion.div>
               )}
             </div>
-            
-            {/* Answer options (for non-compare types) */}
-            {question.type !== 'compare' && question.options && question.options.length > 0 && (
-              <div className={`grid gap-3 ${
-                question.options.length === 2 ? 'grid-cols-2' :
-                question.options.length === 3 ? 'grid-cols-3' :
-                'grid-cols-2'  /* 4 options = 2x2 grid */
-              }`}>
-                {question.options.map((opt, i) => {
-                  // Sử dụng checkCorrectAnswer để kiểm tra đáp án
-                  const correct = checkCorrectAnswer(opt, i);
 
-                  // Hiển thị option text
+            {/* ĐÁP ÁN - Nút lớn, màu pastel */}
+            {question.type !== 'compare' && question.options && question.options.length > 0 && (
+              <motion.div
+                initial={{ y: 30, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className={`grid gap-3 sm:gap-4 ${
+                  question.options.length === 2 ? 'grid-cols-2' :
+                  question.options.length === 3 ? 'grid-cols-3' :
+                  'grid-cols-2'
+                }`}
+              >
+                {question.options.map((opt, i) => {
+                  const correct = checkCorrectAnswer(opt, i);
                   const displayText = typeof opt === 'object' ? (opt.text || opt.count || JSON.stringify(opt)) : opt;
 
                   return (
@@ -504,18 +586,22 @@ export default function VietnameseLessonPage() {
                     />
                   );
                 })}
-              </div>
+              </motion.div>
             )}
+
+            {/* Score display - Floating */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex justify-center pt-2"
+            >
+              <div className="bg-gradient-to-r from-amber-100 to-yellow-100 rounded-full px-6 py-3 shadow-lg border-2 border-amber-200 flex items-center gap-3">
+                <Star className="w-6 h-6 sm:w-7 sm:h-7 text-amber-500 fill-amber-400" />
+                <span className="font-bold text-lg sm:text-xl text-amber-700">{score} điểm</span>
+              </div>
+            </motion.div>
           </motion.div>
         </AnimatePresence>
-        
-        {/* Score display */}
-        <div className="mt-6 flex justify-center">
-          <div className="bg-white rounded-full px-6 py-2 shadow flex items-center gap-2">
-            <Star className="w-5 h-5 text-amber-500" />
-            <span className="font-bold text-gray-700">{score} điểm</span>
-          </div>
-        </div>
       </div>
     </div>
   );
