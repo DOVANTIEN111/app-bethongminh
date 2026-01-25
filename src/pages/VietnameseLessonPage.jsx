@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import { useAudio } from '../contexts/AudioContext';
 import { getVietnameseLesson, getNextVietnameseLesson } from '../data/vietnameseLessons';
+import { getTiengVietLop1Lesson, getNextLessonInCategory } from '../data/tiengviet/lop1';
 import { ArrowLeft, Home, Star, Heart, CheckCircle, XCircle, Sparkles, Trophy, ChevronRight, RotateCcw, Lightbulb, List } from 'lucide-react';
 
 // Confetti animation
@@ -85,8 +86,12 @@ export default function VietnameseLessonPage() {
   const navigate = useNavigate();
   const { completeLesson } = useAuth();
   const { playSound } = useAudio();
-  
-  const lesson = getVietnameseLesson(lessonId);
+
+  // Thử lấy bài học từ dữ liệu lớp 1 mới trước, nếu không có thì lấy từ dữ liệu cũ
+  const lop1Lesson = getTiengVietLop1Lesson(lessonId);
+  const oldLesson = getVietnameseLesson(lessonId);
+  const lesson = lop1Lesson || oldLesson;
+  const isLop1 = !!lop1Lesson;
   
   const [stage, setStage] = useState('intro'); // intro, learning, finished
   const [currentQ, setCurrentQ] = useState(0);
@@ -108,24 +113,35 @@ export default function VietnameseLessonPage() {
       </div>
     );
   }
-  
-  const questions = lesson.questions || [];
+
+  // Lấy câu hỏi từ cấu trúc phù hợp (lớp 1 mới hoặc cũ)
+  const questions = isLop1 ? (lesson.content?.quiz || []) : (lesson.questions || []);
   const question = questions[currentQ];
-  
+
+  // Hàm kiểm tra đáp án đúng
+  const checkCorrectAnswer = (option, index) => {
+    if (isLop1) {
+      // Lớp 1: sử dụng correctAnswer (là index)
+      return index === question.correctAnswer;
+    } else {
+      // Cấu trúc cũ
+      if (question.type === 'compare') {
+        return (index === 0 && question.answer === 'A') || (index === 1 && question.answer === 'B');
+      } else if (question.type === 'select') {
+        return index === question.answer;
+      } else {
+        return option === question.answer;
+      }
+    }
+  };
+
   const handleAnswer = (option, index) => {
     if (showResult) return;
     setSelected(index);
-    
+
     // Check answer
-    let correct = false;
-    if (question.type === 'compare') {
-      correct = (index === 0 && question.answer === 'A') || (index === 1 && question.answer === 'B');
-    } else if (question.type === 'select') {
-      correct = index === question.answer;
-    } else {
-      correct = option === question.answer;
-    }
-    
+    const correct = checkCorrectAnswer(option, index);
+
     setShowResult(true);
     
     if (correct) {
@@ -233,7 +249,7 @@ export default function VietnameseLessonPage() {
     const percentage = Math.round((score / questions.length) * 100);
     const stars = percentage >= 90 ? 3 : percentage >= 70 ? 2 : percentage >= 50 ? 1 : 0;
     const passed = percentage >= 60;
-    const nextLesson = getNextVietnameseLesson(lessonId);
+    const nextLesson = isLop1 ? getNextLessonInCategory(lessonId) : getNextVietnameseLesson(lessonId);
 
     return (
       <div className={`min-h-screen flex flex-col items-center justify-center p-4 ${passed ? 'bg-gradient-to-b from-green-400 to-emerald-500' : 'bg-gradient-to-b from-orange-400 to-red-500'}`}>

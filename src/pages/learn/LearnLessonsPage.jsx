@@ -8,6 +8,7 @@ import { getAllTopics } from '../../data/englishVocab';
 import { MATH_LESSONS } from '../../data/mathLessons';
 import { VIETNAMESE_LESSONS } from '../../data/vietnameseLessons';
 import { SCIENCE_LESSONS } from '../../data/scienceLessons';
+import { TIENG_VIET_LOP_1_CATEGORIES, getLessonsByCategory } from '../../data/tiengviet/lop1';
 import {
   getStudentProgress,
   getEnglishTopicsWithProgress
@@ -132,6 +133,7 @@ export default function LearnLessonsPage() {
   const navigate = useNavigate();
   const { profile } = useAuth();
   const [selectedSubject, setSelectedSubject] = useState(null);
+  const [selectedVietnameseCategory, setSelectedVietnameseCategory] = useState(null);
   const [progress, setProgress] = useState({});
   const [loading, setLoading] = useState(true);
   const [englishTopics, setEnglishTopics] = useState([]);
@@ -258,8 +260,201 @@ export default function LearnLessonsPage() {
     );
   };
 
-  // Show lessons for Math, Vietnamese, Science
-  if (selectedSubject && selectedSubject !== 'english') {
+  // Show Vietnamese categories (Lớp 1)
+  if (selectedSubject === 'vietnamese' && !selectedVietnameseCategory) {
+    const subject = SUBJECTS.find(s => s.id === 'vietnamese');
+
+    return (
+      <div className="p-4 space-y-4 pb-24">
+        {/* Back Button */}
+        <div className="flex items-center justify-between">
+          <button
+            onClick={() => setSelectedSubject(null)}
+            className="flex items-center gap-2 text-gray-600 font-medium"
+          >
+            <ChevronLeft className="w-5 h-5" />
+            Quay lại
+          </button>
+          {renderRoleBadge()}
+          {renderPremiumBadge()}
+        </div>
+
+        {/* Subject Header */}
+        <div className={`bg-gradient-to-r ${subject.color} rounded-3xl p-5 text-white shadow-xl`}>
+          <div className="flex items-center gap-4 mb-2">
+            <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-4xl">
+              {subject.icon}
+            </div>
+            <div className="flex-1">
+              <h1 className="text-2xl font-bold">{subject.name} - Lớp 1</h1>
+              <p className="text-white/80">75 bài học • Dành cho bé 6-7 tuổi</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Categories Grid */}
+        <div className="grid grid-cols-2 gap-3">
+          {TIENG_VIET_LOP_1_CATEGORIES.map((category) => (
+            <button
+              key={category.id}
+              onClick={() => setSelectedVietnameseCategory(category.id)}
+              className={`bg-gradient-to-br ${category.color} rounded-2xl p-4 text-white text-left shadow-lg hover:shadow-xl transition-all active:scale-[0.98]`}
+            >
+              <div className="text-4xl mb-2">{category.icon}</div>
+              <h3 className="font-bold text-lg">{category.title}</h3>
+              <p className="text-white/80 text-sm">{category.lessonCount} bài</p>
+              <p className="text-white/60 text-xs mt-1 line-clamp-2">{category.description}</p>
+            </button>
+          ))}
+        </div>
+
+        {/* Summary */}
+        <div className="bg-white rounded-2xl p-4 shadow-md">
+          <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
+            <BookOpen className="w-5 h-5 text-orange-500" />
+            Nội dung học
+          </h3>
+          <div className="space-y-2 text-sm text-gray-600">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">🔤</span>
+              <span><strong>Học vần:</strong> 29 chữ cái + ghép vần</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-lg">📖</span>
+              <span><strong>Tập đọc:</strong> Từ đơn, câu ngắn, đoạn văn</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-lg">✏️</span>
+              <span><strong>Tập viết:</strong> Nét cơ bản, chữ cái</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-lg">📝</span>
+              <span><strong>Chính tả:</strong> Nghe viết, quy tắc</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show Vietnamese lessons by category
+  if (selectedSubject === 'vietnamese' && selectedVietnameseCategory) {
+    const categoryInfo = TIENG_VIET_LOP_1_CATEGORIES.find(c => c.id === selectedVietnameseCategory);
+    const lessons = getLessonsByCategory(selectedVietnameseCategory).map((lesson, idx) => ({
+      id: lesson.id,
+      title: lesson.title,
+      description: lesson.objectives?.[0] || '',
+      icon: lesson.icon || '📖',
+      level: 1,
+      index: idx,
+    }));
+
+    const renderLessonCard = (lesson, globalIndex) => {
+      const isLocked = !isLessonUnlocked(globalIndex, accessInfo.hasFullAccess);
+      const progressData = progress[lesson.id];
+      const status = progressData?.status || 'not_started';
+      const score = progressData?.score || 0;
+
+      return (
+        <button
+          key={lesson.id}
+          onClick={() => handleLessonClick(lesson, globalIndex)}
+          className={`w-full bg-white rounded-2xl p-4 shadow-md flex items-center gap-3 transition-all ${
+            isLocked ? 'opacity-60' : 'hover:shadow-lg active:scale-[0.98]'
+          } ${status === 'completed' ? 'ring-2 ring-green-200' : ''}`}
+        >
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0 ${
+            isLocked ? 'bg-gray-100 text-gray-400' : status === 'completed' ? 'bg-green-100 text-green-600' : 'bg-orange-100 text-orange-600'
+          }`}>
+            {isLocked ? <Lock className="w-5 h-5" /> : globalIndex + 1}
+          </div>
+          <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 ${
+            isLocked ? 'bg-gray-50 grayscale' : status === 'completed' ? 'bg-green-50' : 'bg-orange-50'
+          }`}>
+            {lesson.icon}
+          </div>
+          <div className="flex-1 text-left min-w-0">
+            <h3 className={`font-bold truncate ${isLocked ? 'text-gray-400' : 'text-gray-800'}`}>
+              {lesson.title}
+            </h3>
+            {lesson.description && (
+              <p className={`text-sm truncate ${isLocked ? 'text-gray-300' : 'text-gray-500'}`}>
+                {lesson.description}
+              </p>
+            )}
+            {isLocked && (
+              <span className="text-xs text-orange-500 flex items-center gap-1 mt-1">
+                <Crown className="w-3 h-3" /> Premium
+              </span>
+            )}
+            {!isLocked && status === 'completed' && (
+              <span className="text-xs text-green-500 flex items-center gap-1 mt-1">
+                <Star className="w-3 h-3 fill-green-500" /> {score}đ
+              </span>
+            )}
+          </div>
+          <div className="flex-shrink-0">
+            {getStatusIcon(status, score, isLocked)}
+          </div>
+        </button>
+      );
+    };
+
+    return (
+      <div className="p-4 space-y-4 pb-24">
+        <UpgradePopup
+          isOpen={showUpgradePopup}
+          onClose={() => setShowUpgradePopup(false)}
+          lessonTitle={lockedLessonTitle}
+        />
+
+        <div className="flex items-center justify-between">
+          <button
+            onClick={() => setSelectedVietnameseCategory(null)}
+            className="flex items-center gap-2 text-gray-600 font-medium"
+          >
+            <ChevronLeft className="w-5 h-5" />
+            Chọn chủ đề khác
+          </button>
+          {renderRoleBadge()}
+          {renderPremiumBadge()}
+        </div>
+
+        <div className={`bg-gradient-to-r ${categoryInfo.color} rounded-3xl p-5 text-white shadow-xl`}>
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-4xl">
+              {categoryInfo.icon}
+            </div>
+            <div className="flex-1">
+              <h1 className="text-2xl font-bold">{categoryInfo.title}</h1>
+              <p className="text-white/80">{lessons.length} bài học</p>
+            </div>
+          </div>
+          {!accessInfo.hasFullAccess && (
+            <div className="bg-white/20 rounded-xl p-3 flex items-center gap-2">
+              <Lock className="w-5 h-5" />
+              <span className="text-sm">
+                Miễn phí: {FREE_LESSONS_LIMIT} bài đầu • Nâng cấp Premium để mở tất cả
+              </span>
+            </div>
+          )}
+        </div>
+
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {lessons.map((lesson, idx) => renderLessonCard(lesson, idx))}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Show lessons for Math, Science (not Vietnamese - handled above)
+  if (selectedSubject && selectedSubject !== 'english' && selectedSubject !== 'vietnamese') {
     const lessons = getLessonsBySubject(selectedSubject);
     const subject = SUBJECTS.find(s => s.id === selectedSubject);
 
