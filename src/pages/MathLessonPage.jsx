@@ -122,6 +122,87 @@ const AnswerButton = ({ option, index, selected, showResult, isCorrect, onSelect
   );
 };
 
+// Select type button - Hiển thị hình ảnh thay vì số
+const SelectImageButton = ({ opt, index, selected, showResult, isCorrect, onSelect }) => {
+  const isSelected = selected === index;
+
+  const pastelColors = [
+    'bg-gradient-to-br from-pink-100 to-pink-200 hover:from-pink-200 hover:to-pink-300 border-pink-300',
+    'bg-gradient-to-br from-sky-100 to-sky-200 hover:from-sky-200 hover:to-sky-300 border-sky-300',
+    'bg-gradient-to-br from-amber-100 to-amber-200 hover:from-amber-200 hover:to-amber-300 border-amber-300',
+    'bg-gradient-to-br from-lime-100 to-lime-200 hover:from-lime-200 hover:to-lime-300 border-lime-300',
+  ];
+
+  let bgClass = pastelColors[index % 4];
+
+  if (showResult) {
+    if (isCorrect) {
+      bgClass = 'bg-gradient-to-br from-green-300 to-emerald-400 border-green-500';
+    } else if (isSelected) {
+      bgClass = 'bg-gradient-to-br from-red-200 to-red-300 border-red-400';
+    }
+  }
+
+  // Hiển thị emoji theo grid, max 5 mỗi hàng, emoji 40-50px
+  const renderEmojis = () => {
+    const count = opt.count || 1;
+    const emoji = opt.image || '⭐';
+    const emojis = [];
+
+    for (let i = 0; i < count; i++) {
+      emojis.push(
+        <motion.span
+          key={i}
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ delay: i * 0.03 }}
+          className="text-3xl sm:text-4xl md:text-5xl inline-block"
+        >
+          {emoji}
+        </motion.span>
+      );
+    }
+    return emojis;
+  };
+
+  return (
+    <motion.button
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      onClick={() => onSelect(opt, index)}
+      disabled={showResult}
+      className={`${bgClass} p-3 sm:p-4 rounded-2xl sm:rounded-3xl border-4 shadow-lg transition-all
+        min-h-[100px] sm:min-h-[120px] w-full relative
+        active:shadow-inner disabled:cursor-not-allowed`}
+    >
+      {/* Hiển thị các emoji theo grid */}
+      <div className="flex flex-wrap justify-center items-center gap-1 sm:gap-2" style={{ maxWidth: '180px', margin: '0 auto' }}>
+        {renderEmojis()}
+      </div>
+
+      {/* Icon đúng/sai */}
+      {showResult && isCorrect && (
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          className="absolute -top-2 -right-2 bg-green-500 rounded-full p-1 shadow-lg"
+        >
+          <CheckCircle className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+        </motion.div>
+      )}
+      {showResult && isSelected && !isCorrect && (
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1 shadow-lg"
+        >
+          <XCircle className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+        </motion.div>
+      )}
+    </motion.button>
+  );
+};
+
 export default function MathLessonPage() {
   const { lessonId } = useParams();
   const navigate = useNavigate();
@@ -564,6 +645,7 @@ export default function MathLessonPage() {
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.3 }}
                 className={`grid gap-3 sm:gap-4 ${
+                  question.type === 'select' ? 'grid-cols-2' :
                   question.options.length === 2 ? 'grid-cols-2' :
                   question.options.length === 3 ? 'grid-cols-3' :
                   'grid-cols-2'
@@ -571,12 +653,27 @@ export default function MathLessonPage() {
               >
                 {question.options.map((opt, i) => {
                   const correct = checkCorrect(opt, i);
-                  const displayText = question.type === 'select' ? `${opt.count}` : opt;
 
+                  // Nếu là select type -> hiển thị hình ảnh
+                  if (question.type === 'select') {
+                    return (
+                      <SelectImageButton
+                        key={i}
+                        opt={opt}
+                        index={i}
+                        selected={selected}
+                        showResult={showResult}
+                        isCorrect={correct}
+                        onSelect={handleAnswer}
+                      />
+                    );
+                  }
+
+                  // Các loại khác -> hiển thị text
                   return (
                     <AnswerButton
                       key={i}
-                      option={displayText}
+                      option={opt}
                       index={i}
                       selected={selected}
                       showResult={showResult}
