@@ -194,8 +194,10 @@ export default function LearnLessonsPage() {
     // Navigate to lesson page based on subject
     if (selectedSubject === 'english') {
       navigate(`/english/${topic.id}`);
+    } else if (selectedSubject === 'math') {
+      navigate(`/math/${topic.id}`);
     } else {
-      // TODO: Create lesson pages for math, vietnamese, science
+      // TODO: Create lesson pages for vietnamese, science
       alert(`Bài học "${topic.title}" sẽ sớm mở!`);
     }
   };

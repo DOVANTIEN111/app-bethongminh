@@ -75,6 +75,9 @@ const ParentModeSettings = lazy(() => import('./pages/learn/parent/ParentSetting
 // English Lesson page
 const EnglishLessonPage = lazy(() => import('./pages/EnglishLessonPage'));
 
+// Math Lesson page
+const MathLessonPage = lazy(() => import('./pages/MathLessonPage'));
+
 // Parent pages
 const ParentLayout = lazy(() => import('./components/ParentLayout'));
 const ParentHomePage = lazy(() => import('./pages/parent/ParentHomePage'));
@@ -249,6 +252,13 @@ function App() {
         <Route path="/english/:topicId" element={
           <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
             <EnglishLessonPage />
+          </ProtectedRoute>
+        } />
+
+        {/* Math Lesson route - for students */}
+        <Route path="/math/:lessonId" element={
+          <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+            <MathLessonPage />
           </ProtectedRoute>
         } />
 

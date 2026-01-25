@@ -276,7 +276,7 @@ export default function MathLessonPage() {
             <button onClick={restart} className="flex-1 py-4 bg-gray-100 rounded-xl font-bold flex items-center justify-center gap-2">
               <RotateCcw className="w-5 h-5" /> Học lại
             </button>
-            <button onClick={() => navigate('/subject/math')} className={`flex-1 py-4 rounded-xl font-bold text-white flex items-center justify-center gap-2 ${passed ? 'bg-green-500' : 'bg-indigo-500'}`}>
+            <button onClick={() => navigate('/learn/lessons')} className={`flex-1 py-4 rounded-xl font-bold text-white flex items-center justify-center gap-2 ${passed ? 'bg-green-500' : 'bg-indigo-500'}`}>
               <Home className="w-5 h-5" /> Tiếp tục
             </button>
           </div>
