@@ -136,7 +136,7 @@ export default function SelectRolePage() {
         <div className="w-20 h-20 mx-auto bg-white rounded-full flex items-center justify-center text-4xl shadow-xl mb-4">
           🎓
         </div>
-        <h1 className="text-2xl font-bold text-white">Gia Đình Thông Minh</h1>
+        <h1 className="text-2xl font-bold text-white">SchoolHub</h1>
         <p className="text-white/70 mt-1">Xin chào, {account?.parent_name}!</p>
       </div>
 

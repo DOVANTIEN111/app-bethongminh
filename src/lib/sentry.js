@@ -24,7 +24,7 @@ export const initSentry = () => {
     environment: import.meta.env.MODE,
 
     // Version của app
-    release: `gia-dinh-thong-minh@${import.meta.env.VITE_APP_VERSION || '3.5.0'}`,
+    release: `schoolhub@${import.meta.env.VITE_APP_VERSION || '3.5.0'}`,
 
     // Sample rate cho performance monitoring
     tracesSampleRate: 0.1, // 10% transactions

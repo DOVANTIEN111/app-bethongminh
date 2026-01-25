@@ -17,7 +17,7 @@ export default function StudentDashboard() {
               <BookOpen className="w-6 h-6 text-amber-600" />
             </div>
             <div>
-              <h1 className="font-bold text-gray-900">Trang Hoc Tap</h1>
+              <h1 className="font-bold text-gray-900">SchoolHub</h1>
               <p className="text-sm text-gray-500">{profile?.full_name || 'Student'}</p>
             </div>
           </div>
@@ -34,7 +34,7 @@ export default function StudentDashboard() {
       {/* Content */}
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="bg-white rounded-xl shadow-sm p-6">
-          <h2 className="text-lg font-semibold mb-4">Chao mung den trang hoc tap!</h2>
+          <h2 className="text-lg font-semibold mb-4">Chào mừng đến SchoolHub!</h2>
           <div className="space-y-2 text-gray-600">
             <p><strong>Ho ten:</strong> {profile?.full_name}</p>
             <p><strong>Email:</strong> {profile?.email}</p>

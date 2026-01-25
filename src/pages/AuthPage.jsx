@@ -151,7 +151,7 @@ export default function AuthPage() {
           <div className="w-24 h-24 mx-auto bg-white rounded-3xl flex items-center justify-center text-5xl shadow-2xl mb-4 rotate-3">
             🎓
           </div>
-          <h1 className="text-3xl font-bold text-white">Gia Đình Thông Minh</h1>
+          <h1 className="text-3xl font-bold text-white">SchoolHub</h1>
           <p className="text-white/80 mt-2">Học vui mỗi ngày cùng bé 🌟</p>
         </motion.div>
 

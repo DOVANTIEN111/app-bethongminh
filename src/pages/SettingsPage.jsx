@@ -149,7 +149,7 @@ export default function SettingsPage() {
           iconColor: 'text-green-500',
           label: 'Liên hệ hỗ trợ',
           description: 'Gửi phản hồi',
-          onClick: () => window.open('mailto:support@gdtm.app'),
+          onClick: () => window.open('mailto:support@schoolhub.app'),
         },
         {
           icon: Star,
@@ -357,10 +357,10 @@ export default function SettingsPage() {
           <span className="text-sm">Made with love for kids</span>
         </div>
         <p className="text-sm text-gray-400">
-          Gia Đình Thông Minh v3.5.0
+          SchoolHub v3.6.0
         </p>
         <p className="text-xs text-gray-300 mt-1">
-          © 2024 GDTM. All rights reserved.
+          © 2024 SchoolHub. All rights reserved.
         </p>
       </motion.div>
 

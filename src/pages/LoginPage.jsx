@@ -60,8 +60,8 @@ export default function LoginPage() {
           <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-full shadow-lg mb-4">
             <span className="text-4xl">📚</span>
           </div>
-          <h1 className="text-2xl font-bold text-white">Gia Dinh Thong Minh</h1>
-          <p className="text-white/80 text-sm">He thong quan ly giao duc</p>
+          <h1 className="text-2xl font-bold text-white">SchoolHub</h1>
+          <p className="text-white/80 text-sm">Nền tảng học tập thông minh</p>
         </div>
 
         {/* Login Card */}
@@ -144,7 +144,7 @@ export default function LoginPage() {
 
         {/* Footer */}
         <p className="text-center text-white/60 text-sm mt-6">
-          © 2024 Gia Dinh Thong Minh
+          © 2024 SchoolHub
         </p>
       </div>
     </div>

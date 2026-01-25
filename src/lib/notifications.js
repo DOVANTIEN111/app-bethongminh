@@ -209,7 +209,7 @@ export const scheduleDailyReminder = (time = '18:00') => {
 
   scheduledTimers.dailyReminder = setTimeout(() => {
     showLocalNotification('Đến giờ học rồi! 📚', {
-      body: 'Hãy dành 10 phút học tập cùng Gia Đình Thông Minh nhé!',
+      body: 'Hãy dành 10 phút học tập cùng SchoolHub nhé!',
       tag: 'daily-reminder',
       data: { type: NOTIFICATION_TYPES.DAILY_REMINDER },
     });

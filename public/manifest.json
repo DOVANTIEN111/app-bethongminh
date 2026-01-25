@@ -1,7 +1,7 @@
 {
-  "name": "Gia Đình Thông Minh",
-  "short_name": "GĐTM",
-  "description": "Ứng dụng học tập cho trẻ em - Toán, Tiếng Việt, Tiếng Anh, Khoa học và nhiều hơn nữa!",
+  "name": "SchoolHub - Nền tảng học tập thông minh",
+  "short_name": "SchoolHub",
+  "description": "Hệ thống quản lý học tập cho trường học, giáo viên, học sinh và phụ huynh",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#6366F1",

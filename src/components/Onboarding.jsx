@@ -8,7 +8,7 @@ const SLIDES = [
   {
     icon: '👋',
     title: 'Chào mừng bé!',
-    subtitle: 'Gia Đình Thông Minh',
+    subtitle: 'SchoolHub',
     description: 'Ứng dụng học tập vui nhộn dành cho bé từ 3-10 tuổi',
     bg: 'from-indigo-500 to-purple-600',
     features: ['Học mà chơi', 'Chơi mà học', 'Tiến bộ mỗi ngày'],

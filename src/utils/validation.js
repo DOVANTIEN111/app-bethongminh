@@ -1,5 +1,5 @@
 // src/utils/validation.js
-// Input Validation Utilities cho Gia Đình Thông Minh
+// Input Validation Utilities cho SchoolHub
 
 // =====================================================
 // EMAIL VALIDATION

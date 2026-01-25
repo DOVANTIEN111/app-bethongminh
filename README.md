@@ -1,8 +1,8 @@
-# 🎓 Gia Đình Thông Minh v3.0
+# 🎓 SchoolHub v3.6
 
-Ứng dụng học tập vui vẻ cho trẻ em Việt Nam 3-10 tuổi.
+Nền tảng học tập thông minh cho trường học, giáo viên, học sinh và phụ huynh.
 
-![Version](https://img.shields.io/badge/version-3.0.0-blue)
+![Version](https://img.shields.io/badge/version-3.6.0-blue)
 ![React](https://img.shields.io/badge/React-18-61dafb)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
@@ -10,13 +10,13 @@
 
 | Tính năng | Mô tả |
 |-----------|-------|
+| 🏫 **Quản lý trường học** | Super Admin quản lý nhiều trường |
+| 👨‍🏫 **Giáo viên** | Quản lý lớp, bài giảng, giao bài |
+| 👨‍🎓 **Học sinh** | Học bài, làm bài tập, xem thành tích |
+| 👪 **Phụ huynh** | Theo dõi tiến độ học tập của con |
 | 📚 **5 môn học** | Toán, Tiếng Việt, Tiếng Anh, Khoa học, Kỹ năng sống |
 | 🌍 **English Zone** | 10 chủ đề, 126 từ vựng, 5 games |
-| 🎤 **Speech Recognition** | Luyện phát âm tiếng Anh |
 | 🎮 **13 trò chơi** | Games giáo dục thú vị |
-| 🎯 **Daily Challenge** | 3 thử thách mỗi ngày |
-| 🏆 **XP & Level** | 11 cấp độ, 9 huy hiệu |
-| 👨‍👩‍👧‍👦 **Multi-member** | Nhiều thành viên gia đình |
 | 📱 **PWA** | Cài đặt như app, offline |
 
 ---
@@ -25,8 +25,8 @@
 
 ```bash
 # Clone repository
-git clone https://github.com/YOUR_USERNAME/gia-dinh-thong-minh.git
-cd gia-dinh-thong-minh
+git clone https://github.com/YOUR_USERNAME/schoolhub.git
+cd schoolhub
 
 # Cài dependencies
 npm install
@@ -48,7 +48,7 @@ npm run dev
 
 ### Quick Deploy
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/YOUR_USERNAME/gia-dinh-thong-minh)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/YOUR_USERNAME/schoolhub)
 
 ---
 
@@ -71,7 +71,7 @@ VITE_SUPABASE_ANON_KEY=eyJhbGci...
 ## 📁 Cấu trúc Project
 
 ```
-gia-dinh-thong-minh/
+schoolhub/
 ├── public/
 │   ├── manifest.json    # PWA config
 │   ├── sw.js            # Service Worker
@@ -79,7 +79,7 @@ gia-dinh-thong-minh/
 ├── src/
 │   ├── components/      # UI components
 │   ├── contexts/        # React contexts
-│   │   ├── MemberContext.jsx
+│   │   ├── AuthContext.jsx
 │   │   ├── AudioContext.jsx
 │   │   └── AppContext.jsx
 │   ├── data/            # Static data
@@ -90,7 +90,12 @@ gia-dinh-thong-minh/
 │   │   └── achievements.js
 │   ├── lib/
 │   │   └── supabase.js  # Supabase client
-│   ├── pages/           # 12 pages
+│   ├── pages/           # Pages theo role
+│   │   ├── admin/       # Super Admin pages
+│   │   ├── school/      # School Admin pages
+│   │   ├── teacher/     # Teacher pages
+│   │   ├── learn/       # Student pages
+│   │   └── parent/      # Parent pages
 │   └── main.jsx
 ├── .env.example
 ├── DEPLOY_GUIDE.md
@@ -114,19 +119,29 @@ gia-dinh-thong-minh/
 
 ---
 
-## 📱 Screenshots
+## 👥 Các vai trò trong hệ thống
 
-### Trang chủ
-- Daily Challenge
-- Từ vựng hôm nay
-- Quick access buttons
+### Super Admin
+- Quản lý tất cả trường học
+- Quản lý nội dung (môn học, bài học, từ vựng)
+- Quản lý tài chính, gói cước
+- Thống kê toàn hệ thống
 
-### English Zone
-- 10 chủ đề từ vựng
-- 5 games: Flashcard, Listen & Pick, Speak & Check, Spelling Bee, Word Rain
+### School Admin
+- Quản lý giáo viên, học sinh
+- Quản lý lớp học, bộ phận
+- Cài đặt trường học
 
-### Khu vui chơi
-- 8 games: Memory, Math Race, Whack Mole, Color Match, Simon Says, Word Match, Quick Math, Balloon Pop
+### Giáo viên
+- Quản lý lớp được phân công
+- Tạo bài giảng, giao bài tập
+- Theo dõi tiến độ học sinh
+- Liên lạc với phụ huynh
+
+### Học sinh
+- Học bài, làm bài tập
+- Xem thành tích, điểm số
+- Chế độ phụ huynh (với PIN)
 
 ---
 
@@ -161,8 +176,8 @@ MIT License - xem file [LICENSE](./LICENSE)
 
 ## 👨‍💻 Author
 
-Made with ❤️ for Vietnamese kids
+Made with ❤️ for Vietnamese education
 
 ---
 
-**[🌐 Live Demo](https://gia-dinh-thong-minh.vercel.app)** | **[🐛 Report Bug](https://github.com/YOUR_USERNAME/gia-dinh-thong-minh/issues)** | **[💡 Request Feature](https://github.com/YOUR_USERNAME/gia-dinh-thong-minh/issues)**
+**[🌐 Live Demo](https://schoolhub.vercel.app)** | **[🐛 Report Bug](https://github.com/YOUR_USERNAME/schoolhub/issues)** | **[💡 Request Feature](https://github.com/YOUR_USERNAME/schoolhub/issues)**

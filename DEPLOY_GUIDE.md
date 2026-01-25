@@ -1,4 +1,4 @@
-# 🚀 HƯỚNG DẪN DEPLOY GIA ĐÌNH THÔNG MINH
+# 🚀 HƯỚNG DẪN DEPLOY SCHOOLHUB
 
 ## Mục lục
 1. [Chuẩn bị](#1-chuẩn-bị)
@@ -39,8 +39,8 @@ git --version   # git version 2.x.x
 1. Đăng nhập [github.com](https://github.com)
 2. Click nút **"+"** góc trên phải → **"New repository"**
 3. Điền thông tin:
-   - Repository name: `gia-dinh-thong-minh`
-   - Description: `Ứng dụng học tập cho trẻ em`
+   - Repository name: `schoolhub`
+   - Description: `Nền tảng học tập thông minh`
    - Chọn **Public** (hoặc Private nếu muốn)
    - ❌ KHÔNG tick "Add a README file"
 4. Click **"Create repository"**
@@ -48,9 +48,8 @@ git --version   # git version 2.x.x
 ### Bước 2.2: Upload code lên GitHub
 
 ```bash
-# 1. Giải nén file zip
-unzip gia-dinh-thong-minh-v3.0-complete.zip
-cd gia-dinh-thong-minh
+# 1. Di chuyển vào thư mục project
+cd schoolhub
 
 # 2. Khởi tạo Git
 git init
@@ -62,7 +61,7 @@ git add .
 git commit -m "Initial commit - v3.0"
 
 # 5. Kết nối với GitHub (thay YOUR_USERNAME)
-git remote add origin https://github.com/YOUR_USERNAME/gia-dinh-thong-minh.git
+git remote add origin https://github.com/YOUR_USERNAME/schoolhub.git
 
 # 6. Đổi branch sang main
 git branch -M main
@@ -73,7 +72,7 @@ git push -u origin main
 
 ### Bước 2.3: Xác nhận
 
-- Mở `https://github.com/YOUR_USERNAME/gia-dinh-thong-minh`
+- Mở `https://github.com/YOUR_USERNAME/schoolhub`
 - Kiểm tra thấy tất cả files đã được upload
 
 ---
@@ -85,7 +84,7 @@ git push -u origin main
 1. Đăng nhập [supabase.com](https://supabase.com)
 2. Click **"New Project"**
 3. Điền thông tin:
-   - Name: `gia-dinh-thong-minh`
+   - Name: `schoolhub`
    - Database Password: **Tạo mật khẩu mạnh** (lưu lại!)
    - Region: `Singapore` (gần Việt Nam nhất)
 4. Click **"Create new project"**
@@ -243,7 +242,7 @@ echo ".env.local" >> .gitignore
 
 1. Đăng nhập [vercel.com](https://vercel.com)
 2. Click **"Add New..."** → **"Project"**
-3. Click **"Import"** bên cạnh repo `gia-dinh-thong-minh`
+3. Click **"Import"** bên cạnh repo `schoolhub`
 4. Nếu không thấy repo, click **"Adjust GitHub App Permissions"**
 
 ### Bước 4.2: Cấu hình Project
@@ -269,14 +268,14 @@ echo ".env.local" >> .gitignore
 1. Click **"Deploy"**
 2. Đợi 2-3 phút để build
 3. Khi hoàn thành, bạn sẽ có URL:
-   - `https://gia-dinh-thong-minh.vercel.app`
+   - `https://schoolhub.vercel.app`
 
 ### Bước 4.5: Cấu hình Supabase Redirect URLs
 
 1. Quay lại Supabase → **Authentication** → **URL Configuration**
 2. Thêm vào **Redirect URLs**:
    ```
-   https://gia-dinh-thong-minh.vercel.app/**
+   https://schoolhub.vercel.app/**
    ```
 
 ---
@@ -286,7 +285,7 @@ echo ".env.local" >> .gitignore
 ### Nếu có domain riêng:
 
 1. Vào Vercel → Project → **"Settings"** → **"Domains"**
-2. Thêm domain: `giadinhthongminh.vn`
+2. Thêm domain: `schoolhub.vn`
 3. Cấu hình DNS theo hướng dẫn:
    - **A Record**: `76.76.19.61`
    - **CNAME**: `cname.vercel-dns.com`
@@ -342,7 +341,7 @@ Tạo file `vercel.json`:
 
 App của bạn đã online tại:
 ```
-https://gia-dinh-thong-minh.vercel.app
+https://schoolhub.vercel.app
 ```
 
 ### Các bước tiếp theo:

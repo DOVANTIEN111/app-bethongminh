@@ -46,7 +46,7 @@ export default function SplashScreen({ message = 'Đang tải...' }) {
         transition={{ delay: 0.3 }}
         className="mt-6 text-2xl font-bold text-white"
       >
-        Gia Đình Thông Minh
+        SchoolHub
       </motion.h1>
 
       {/* Loading indicator */}
