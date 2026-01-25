@@ -53,3 +53,4 @@ ios/
 .stylelintcache
 *.pem
 .vercel
+.env*.local

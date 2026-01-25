@@ -8,7 +8,12 @@ import { getAllTopics } from '../../data/englishVocab';
 import { MATH_LESSONS } from '../../data/mathLessons';
 import { VIETNAMESE_LESSONS } from '../../data/vietnameseLessons';
 import { SCIENCE_LESSONS } from '../../data/scienceLessons';
-import { TIENG_VIET_LOP_1_CATEGORIES, getLessonsByCategory } from '../../data/tiengviet/lop1';
+import {
+  TIENG_VIET_GRADES,
+  getCategoriesByGrade,
+  getLessonsByCategory as getVietnameseLessonsByCategory,
+  getMamNonLessonsByLevel
+} from '../../data/tiengviet';
 import {
   getStudentProgress,
   getEnglishTopicsWithProgress
@@ -133,6 +138,7 @@ export default function LearnLessonsPage() {
   const navigate = useNavigate();
   const { profile } = useAuth();
   const [selectedSubject, setSelectedSubject] = useState(null);
+  const [selectedVietnameseGrade, setSelectedVietnameseGrade] = useState(null);
   const [selectedVietnameseCategory, setSelectedVietnameseCategory] = useState(null);
   const [progress, setProgress] = useState({});
   const [loading, setLoading] = useState(true);
@@ -260,8 +266,8 @@ export default function LearnLessonsPage() {
     );
   };
 
-  // Show Vietnamese categories (Lớp 1)
-  if (selectedSubject === 'vietnamese' && !selectedVietnameseCategory) {
+  // Show Vietnamese grade selection (Mầm non / Lớp 1 / Lớp 2...)
+  if (selectedSubject === 'vietnamese' && !selectedVietnameseGrade) {
     const subject = SUBJECTS.find(s => s.id === 'vietnamese');
 
     return (
@@ -286,15 +292,113 @@ export default function LearnLessonsPage() {
               {subject.icon}
             </div>
             <div className="flex-1">
-              <h1 className="text-2xl font-bold">{subject.name} - Lớp 1</h1>
-              <p className="text-white/80">75 bài học • Dành cho bé 6-7 tuổi</p>
+              <h1 className="text-2xl font-bold">{subject.name}</h1>
+              <p className="text-white/80">Chọn độ tuổi phù hợp với bé</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Grades List */}
+        <div className="space-y-3">
+          {TIENG_VIET_GRADES.map((grade) => (
+            <button
+              key={grade.id}
+              onClick={() => !grade.comingSoon && setSelectedVietnameseGrade(grade.id)}
+              disabled={grade.comingSoon}
+              className={`w-full ${grade.bgColor} rounded-2xl p-4 text-left shadow-lg transition-all ${
+                grade.comingSoon ? 'opacity-60 cursor-not-allowed' : 'hover:shadow-xl active:scale-[0.98]'
+              }`}
+            >
+              <div className="flex items-center gap-4">
+                <div className={`w-16 h-16 bg-gradient-to-br ${grade.color} rounded-2xl flex items-center justify-center text-3xl shadow-md`}>
+                  {grade.icon}
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-bold text-lg text-gray-800">{grade.title}</h3>
+                    <span className="text-sm bg-white/50 px-2 py-0.5 rounded-full text-gray-600">
+                      {grade.subtitle}
+                    </span>
+                    {grade.comingSoon && (
+                      <span className="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">
+                        Sắp ra mắt
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-gray-600 text-sm mt-1">{grade.description}</p>
+                  {grade.lessonCount > 0 && (
+                    <p className="text-gray-500 text-sm mt-1">
+                      📚 {grade.lessonCount} bài học
+                    </p>
+                  )}
+                </div>
+                {!grade.comingSoon && <ChevronRight className="w-6 h-6 text-gray-400" />}
+              </div>
+            </button>
+          ))}
+        </div>
+
+        {/* Info */}
+        <div className="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-2xl p-4">
+          <h3 className="font-bold text-orange-800 mb-2 flex items-center gap-2">
+            <Sparkles className="w-5 h-5" />
+            Nội dung phong phú
+          </h3>
+          <div className="grid grid-cols-2 gap-2 text-sm text-orange-700">
+            <div className="flex items-center gap-2">
+              <span>👶</span> Mầm non: 50 bài
+            </div>
+            <div className="flex items-center gap-2">
+              <span>📚</span> Lớp 1: 75 bài
+            </div>
+            <div className="flex items-center gap-2">
+              <span>📖</span> Lớp 2-4: Sắp ra mắt
+            </div>
+            <div className="flex items-center gap-2">
+              <span>🎯</span> Tổng: 125+ bài
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show Vietnamese categories (after grade selection)
+  if (selectedSubject === 'vietnamese' && selectedVietnameseGrade && !selectedVietnameseCategory) {
+    const gradeInfo = TIENG_VIET_GRADES.find(g => g.id === selectedVietnameseGrade);
+    const categories = getCategoriesByGrade(selectedVietnameseGrade);
+
+    return (
+      <div className="p-4 space-y-4 pb-24">
+        {/* Back Button */}
+        <div className="flex items-center justify-between">
+          <button
+            onClick={() => setSelectedVietnameseGrade(null)}
+            className="flex items-center gap-2 text-gray-600 font-medium"
+          >
+            <ChevronLeft className="w-5 h-5" />
+            Chọn độ tuổi khác
+          </button>
+          {renderRoleBadge()}
+          {renderPremiumBadge()}
+        </div>
+
+        {/* Grade Header */}
+        <div className={`bg-gradient-to-r ${gradeInfo.color} rounded-3xl p-5 text-white shadow-xl`}>
+          <div className="flex items-center gap-4 mb-2">
+            <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-4xl">
+              {gradeInfo.icon}
+            </div>
+            <div className="flex-1">
+              <h1 className="text-2xl font-bold">Tiếng Việt - {gradeInfo.title}</h1>
+              <p className="text-white/80">{gradeInfo.lessonCount} bài học • {gradeInfo.subtitle}</p>
             </div>
           </div>
         </div>
 
         {/* Categories Grid */}
         <div className="grid grid-cols-2 gap-3">
-          {TIENG_VIET_LOP_1_CATEGORIES.map((category) => (
+          {categories.map((category) => (
             <button
               key={category.id}
               onClick={() => setSelectedVietnameseCategory(category.id)}
@@ -303,6 +407,9 @@ export default function LearnLessonsPage() {
               <div className="text-4xl mb-2">{category.icon}</div>
               <h3 className="font-bold text-lg">{category.title}</h3>
               <p className="text-white/80 text-sm">{category.lessonCount} bài</p>
+              {category.ageRange && (
+                <p className="text-white/60 text-xs mt-1">{category.ageRange}</p>
+              )}
               <p className="text-white/60 text-xs mt-1 line-clamp-2">{category.description}</p>
             </button>
           ))}
@@ -312,40 +419,36 @@ export default function LearnLessonsPage() {
         <div className="bg-white rounded-2xl p-4 shadow-md">
           <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
             <BookOpen className="w-5 h-5 text-orange-500" />
-            Nội dung học
+            Nội dung {gradeInfo.title}
           </h3>
-          <div className="space-y-2 text-sm text-gray-600">
-            <div className="flex items-center gap-2">
-              <span className="text-lg">🔤</span>
-              <span><strong>Học vần:</strong> 29 chữ cái + ghép vần</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-lg">📖</span>
-              <span><strong>Tập đọc:</strong> Từ đơn, câu ngắn, đoạn văn</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-lg">✏️</span>
-              <span><strong>Tập viết:</strong> Nét cơ bản, chữ cái</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-lg">📝</span>
-              <span><strong>Chính tả:</strong> Nghe viết, quy tắc</span>
-            </div>
-          </div>
+          <p className="text-sm text-gray-600">{gradeInfo.description}</p>
         </div>
       </div>
     );
   }
 
   // Show Vietnamese lessons by category
-  if (selectedSubject === 'vietnamese' && selectedVietnameseCategory) {
-    const categoryInfo = TIENG_VIET_LOP_1_CATEGORIES.find(c => c.id === selectedVietnameseCategory);
-    const lessons = getLessonsByCategory(selectedVietnameseCategory).map((lesson, idx) => ({
+  if (selectedSubject === 'vietnamese' && selectedVietnameseGrade && selectedVietnameseCategory) {
+    const gradeInfo = TIENG_VIET_GRADES.find(g => g.id === selectedVietnameseGrade);
+    const categories = getCategoriesByGrade(selectedVietnameseGrade);
+    const categoryInfo = categories.find(c => c.id === selectedVietnameseCategory);
+
+    // Get lessons based on grade and category
+    let rawLessons;
+    if (selectedVietnameseGrade === 'mam-non') {
+      // Mầm non uses level-based categories
+      const levelMap = { 'chu-cai': 1, 'nguyen-am-phu-am': 2, 'van-don-gian': 3, 'tu-vung-chu-de': 0 };
+      rawLessons = getMamNonLessonsByLevel(levelMap[selectedVietnameseCategory] ?? 1);
+    } else {
+      rawLessons = getVietnameseLessonsByCategory(selectedVietnameseGrade, selectedVietnameseCategory);
+    }
+
+    const lessons = rawLessons.map((lesson, idx) => ({
       id: lesson.id,
       title: lesson.title,
-      description: lesson.objectives?.[0] || '',
+      description: lesson.objectives?.[0] || lesson.description || '',
       icon: lesson.icon || '📖',
-      level: 1,
+      level: lesson.level || 1,
       index: idx,
     }));
 
@@ -427,7 +530,7 @@ export default function LearnLessonsPage() {
             </div>
             <div className="flex-1">
               <h1 className="text-2xl font-bold">{categoryInfo.title}</h1>
-              <p className="text-white/80">{lessons.length} bài học</p>
+              <p className="text-white/80">{gradeInfo.title} • {lessons.length} bài học</p>
             </div>
           </div>
           {!accessInfo.hasFullAccess && (
