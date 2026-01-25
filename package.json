@@ -1,11 +1,12 @@
 {
-  "name": "schoolhub",
-  "version": "3.6.0",
+  "name": "bethongminh",
+  "version": "3.7.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:web": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "cap:init": "npx cap init 'Bé Thông Minh' com.gdtm.bethongminh --web-dir dist",
@@ -16,6 +17,7 @@
     "cap:open:android": "npx cap open android",
     "build:ios": "npm run build && npx cap sync ios && npx cap open ios",
     "build:android": "npm run build && npx cap sync android && npx cap open android",
+    "sync": "npx cap sync",
     "icons": "bash scripts/generate-icons.sh"
   },
   "dependencies": {

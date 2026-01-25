@@ -5,7 +5,14 @@ const config: CapacitorConfig = {
   appName: 'Bé Thông Minh',
   webDir: 'dist',
   server: {
-    androidScheme: 'https'
+    androidScheme: 'https',
+    iosScheme: 'https',
+    // Cho phép kết nối đến API
+    allowNavigation: [
+      'app-bethongminh.vercel.app',
+      '*.supabase.co',
+      '*.supabase.in'
+    ]
   },
   plugins: {
     SplashScreen: {

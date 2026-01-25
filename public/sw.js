@@ -1,11 +1,11 @@
-const CACHE_NAME = 'gdtm-v3.5';
+const CACHE_NAME = 'bethongminh-v3.7';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/manifest.json',
   '/favicon.svg',
-  '/icon-192.png',
-  '/icon-512.png',
+  '/icon-192.svg',
+  '/icons/icon.svg',
 ];
 
 // Install event - cache static assets
@@ -91,10 +91,10 @@ self.addEventListener('message', (event) => {
 // Handle push events
 self.addEventListener('push', (event) => {
   let data = {
-    title: 'Gia Đình Thông Minh',
+    title: 'Bé Thông Minh',
     body: 'Bạn có thông báo mới!',
-    icon: '/icons/icon-192x192.png',
-    badge: '/icons/icon-72x72.png',
+    icon: '/icon-192.svg',
+    badge: '/icons/icon.svg',
   };
 
   if (event.data) {
@@ -107,8 +107,8 @@ self.addEventListener('push', (event) => {
 
   const options = {
     body: data.body,
-    icon: data.icon || '/icons/icon-192x192.png',
-    badge: data.badge || '/icons/icon-72x72.png',
+    icon: data.icon || '/icon-192.svg',
+    badge: data.badge || '/icons/icon.svg',
     tag: data.tag || 'gdtm-notification',
     data: data.data || {},
     requireInteraction: data.requireInteraction || false,
