@@ -78,6 +78,12 @@ const EnglishLessonPage = lazy(() => import('./pages/EnglishLessonPage'));
 // Math Lesson page
 const MathLessonPage = lazy(() => import('./pages/MathLessonPage'));
 
+// Vietnamese Lesson page
+const VietnameseLessonPage = lazy(() => import('./pages/VietnameseLessonPage'));
+
+// Science Lesson page
+const ScienceLessonPage = lazy(() => import('./pages/ScienceLessonPage'));
+
 // Parent pages
 const ParentLayout = lazy(() => import('./components/ParentLayout'));
 const ParentHomePage = lazy(() => import('./pages/parent/ParentHomePage'));
@@ -259,6 +265,20 @@ function App() {
         <Route path="/math/:lessonId" element={
           <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
             <MathLessonPage />
+          </ProtectedRoute>
+        } />
+
+        {/* Vietnamese Lesson route - for students */}
+        <Route path="/vietnamese/:lessonId" element={
+          <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+            <VietnameseLessonPage />
+          </ProtectedRoute>
+        } />
+
+        {/* Science Lesson route - for students */}
+        <Route path="/science/:lessonId" element={
+          <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+            <ScienceLessonPage />
           </ProtectedRoute>
         } />
 

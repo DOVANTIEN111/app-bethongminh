@@ -196,8 +196,12 @@ export default function LearnLessonsPage() {
       navigate(`/english/${topic.id}`);
     } else if (selectedSubject === 'math') {
       navigate(`/math/${topic.id}`);
+    } else if (selectedSubject === 'vietnamese') {
+      navigate(`/vietnamese/${topic.id}`);
+    } else if (selectedSubject === 'science') {
+      navigate(`/science/${topic.id}`);
     } else {
-      // TODO: Create lesson pages for vietnamese, science
+      // Fallback for any other subjects
       alert(`Bài học "${topic.title}" sẽ sớm mở!`);
     }
   };
