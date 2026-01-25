@@ -1,8 +1,8 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.gdtm.bethongminh',
-  appName: 'Bé Thông Minh',
+  appId: 'com.schoolhub.app',
+  appName: 'SchoolHub',
   webDir: 'dist',
   server: {
     androidScheme: 'https',
@@ -42,7 +42,7 @@ const config: CapacitorConfig = {
   ios: {
     contentInset: 'automatic',
     preferredContentMode: 'mobile',
-    scheme: 'Bé Thông Minh',
+    scheme: 'SchoolHub',
   },
   android: {
     allowMixedContent: true,

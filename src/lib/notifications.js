@@ -19,7 +19,7 @@ const DEFAULT_SETTINGS = {
 };
 
 // Storage key
-const STORAGE_KEY = 'gdtm_notification_settings';
+const STORAGE_KEY = 'schoolhub_notification_settings';
 
 // =====================================================
 // SETTINGS MANAGEMENT
@@ -147,7 +147,7 @@ export const showLocalNotification = async (title, options = {}) => {
   const defaultOptions = {
     icon: '/icons/icon-192x192.png',
     badge: '/icons/icon-72x72.png',
-    tag: 'gdtm-notification',
+    tag: 'schoolhub-notification',
     renotify: true,
     requireInteraction: false,
     ...options,

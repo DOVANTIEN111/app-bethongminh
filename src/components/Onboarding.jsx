@@ -77,7 +77,7 @@ export default function Onboarding({ onComplete }) {
   const nextSlide = () => {
     if (currentSlide === SLIDES.length - 1) {
       // Lưu đã xem onboarding
-      localStorage.setItem('gdtm_onboarding_seen', 'true');
+      localStorage.setItem('schoolhub_onboarding_seen', 'true');
       onComplete();
     } else {
       setDirection(1);
@@ -93,7 +93,7 @@ export default function Onboarding({ onComplete }) {
   };
 
   const skipOnboarding = () => {
-    localStorage.setItem('gdtm_onboarding_seen', 'true');
+    localStorage.setItem('schoolhub_onboarding_seen', 'true');
     onComplete();
   };
 

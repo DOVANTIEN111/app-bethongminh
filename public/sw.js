@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bethongminh-v3.7';
+const CACHE_NAME = 'schoolhub-v4.0';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -91,7 +91,7 @@ self.addEventListener('message', (event) => {
 // Handle push events
 self.addEventListener('push', (event) => {
   let data = {
-    title: 'Bé Thông Minh',
+    title: 'SchoolHub',
     body: 'Bạn có thông báo mới!',
     icon: '/icon-192.svg',
     badge: '/icons/icon.svg',
@@ -109,7 +109,7 @@ self.addEventListener('push', (event) => {
     body: data.body,
     icon: data.icon || '/icon-192.svg',
     badge: data.badge || '/icons/icon.svg',
-    tag: data.tag || 'gdtm-notification',
+    tag: data.tag || 'schoolhub-notification',
     data: data.data || {},
     requireInteraction: data.requireInteraction || false,
     actions: data.actions || [],

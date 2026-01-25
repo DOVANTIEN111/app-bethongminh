@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const ThemeContext = createContext(null);
 
-const STORAGE_KEY = 'gdtm_theme';
+const STORAGE_KEY = 'schoolhub_theme';
 
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(() => {

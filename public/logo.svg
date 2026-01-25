@@ -46,9 +46,9 @@
     </g>
   </g>
   
-  <!-- Text: Bé Thông Minh -->
-  <text x="512" y="780" font-family="Arial, sans-serif" font-size="80" font-weight="bold" fill="white" text-anchor="middle">
-    Bé Thông Minh
+  <!-- Text: SchoolHub -->
+  <text x="512" y="780" font-family="Arial, sans-serif" font-size="100" font-weight="bold" fill="white" text-anchor="middle">
+    SchoolHub
   </text>
   
   <!-- Decorative elements -->

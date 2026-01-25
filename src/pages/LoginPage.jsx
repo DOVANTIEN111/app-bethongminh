@@ -90,7 +90,7 @@ export default function LoginPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-full shadow-lg mb-3 sm:mb-4">
             <span className="text-3xl sm:text-4xl">🎓</span>
           </div>
-          <h1 className="text-xl sm:text-2xl font-bold text-white">Bé Thông Minh</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-white">SchoolHub</h1>
           <p className="text-white/80 text-xs sm:text-sm">Học tập vui nhộn cho bé</p>
         </div>
 
@@ -203,7 +203,7 @@ export default function LoginPage() {
 
         {/* Footer */}
         <p className="text-center text-white/60 text-xs sm:text-sm mt-4 sm:mt-6">
-          © 2024 Bé Thông Minh
+          © 2025 SchoolHub
         </p>
       </div>
     </div>

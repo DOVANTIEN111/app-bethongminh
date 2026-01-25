@@ -59,7 +59,7 @@ export const initSentry = () => {
     // Gắn tag cho dễ filter
     beforeSend(event, hint) {
       // Thêm thông tin người dùng nếu có
-      const currentChild = localStorage.getItem('gdtm_current_child');
+      const currentChild = localStorage.getItem('schoolhub_current_child');
       if (currentChild) {
         try {
           const child = JSON.parse(currentChild);
@@ -75,7 +75,7 @@ export const initSentry = () => {
       // Thêm device info
       event.tags = {
         ...event.tags,
-        device_id: localStorage.getItem('gdtm_device_id'),
+        device_id: localStorage.getItem('schoolhub_device_id'),
         app_version: import.meta.env.VITE_APP_VERSION || '3.5.0',
       };
 

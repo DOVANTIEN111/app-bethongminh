@@ -112,7 +112,7 @@ export default function ParentSettings() {
     setSaving(true);
     try {
       // Verify current PIN
-      const currentHash = btoa(pinData.currentPin + '_bethongminh_salt');
+      const currentHash = btoa(pinData.currentPin + '_schoolhub_salt');
       const { data } = await supabase
         .from('profiles')
         .select('parent_pin')
@@ -126,7 +126,7 @@ export default function ParentSettings() {
       }
 
       // Update new PIN
-      const newHash = btoa(pinData.newPin + '_bethongminh_salt');
+      const newHash = btoa(pinData.newPin + '_schoolhub_salt');
       const { error: updateError } = await supabase
         .from('profiles')
         .update({

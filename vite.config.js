@@ -10,9 +10,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'icon-192.svg', 'icons/icon.svg'],
       manifest: {
-        name: 'Bé Thông Minh - Học tập vui nhộn',
-        short_name: 'Bé Thông Minh',
-        description: 'Ứng dụng học tập vui nhộn cho bé 3-10 tuổi. Toán, Tiếng Việt, Tiếng Anh, Khoa học.',
+        name: 'SchoolHub - Nền tảng học tập thông minh',
+        short_name: 'SchoolHub',
+        description: 'Nền tảng học tập thông minh cho học sinh. Toán, Tiếng Việt, Tiếng Anh, Khoa học.',
         theme_color: '#6366f1',
         background_color: '#ffffff',
         display: 'standalone',

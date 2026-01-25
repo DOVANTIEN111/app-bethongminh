@@ -103,7 +103,7 @@ export default function HomePage() {
   
   // Check for new achievements
   useEffect(() => {
-    const lastAchCount = parseInt(localStorage.getItem('gdtm_last_ach_count') || '0');
+    const lastAchCount = parseInt(localStorage.getItem('schoolhub_last_ach_count') || '0');
     const currentCount = currentChild?.achievements?.length || 0;
     
     if (currentCount > lastAchCount && currentChild?.achievements?.length > 0) {
@@ -113,7 +113,7 @@ export default function HomePage() {
       setNewAchievement(achDetails);
       setShowConfetti(true);
       playSound('achievement');
-      localStorage.setItem('gdtm_last_ach_count', String(currentCount));
+      localStorage.setItem('schoolhub_last_ach_count', String(currentCount));
       
       setTimeout(() => setShowConfetti(false), 3000);
     }

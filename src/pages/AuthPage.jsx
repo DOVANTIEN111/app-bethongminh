@@ -32,7 +32,7 @@ export default function AuthPage() {
 
   // Check nếu chưa xem onboarding
   useEffect(() => {
-    const seen = localStorage.getItem('gdtm_onboarding_seen');
+    const seen = localStorage.getItem('schoolhub_onboarding_seen');
     if (!seen) {
       setShowOnboarding(true);
     }

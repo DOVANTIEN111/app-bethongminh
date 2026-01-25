@@ -140,7 +140,7 @@ export default function SettingsPage() {
           label: 'Hướng dẫn sử dụng',
           description: 'Xem cách dùng app',
           onClick: () => {
-            localStorage.removeItem('gdtm_onboarding_seen');
+            localStorage.removeItem('schoolhub_onboarding_seen');
             navigate('/auth');
           },
         },
@@ -178,7 +178,7 @@ export default function SettingsPage() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `gdtm_backup_${new Date().toISOString().split('T')[0]}.json`;
+      a.download = `schoolhub_backup_${new Date().toISOString().split('T')[0]}.json`;
       a.click();
       URL.revokeObjectURL(url);
       
@@ -191,7 +191,7 @@ export default function SettingsPage() {
 
   function handleClearData() {
     // Only clear local cache, not account data
-    const keysToKeep = ['gdtm_device_id'];
+    const keysToKeep = ['schoolhub_device_id'];
     const savedValues = {};
     
     keysToKeep.forEach(key => {

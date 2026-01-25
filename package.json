@@ -1,6 +1,6 @@
 {
-  "name": "bethongminh",
-  "version": "3.7.0",
+  "name": "schoolhub",
+  "version": "4.0.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,7 +9,7 @@
     "build:web": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "cap:init": "npx cap init 'Bé Thông Minh' com.gdtm.bethongminh --web-dir dist",
+    "cap:init": "npx cap init 'SchoolHub' com.schoolhub.app --web-dir dist",
     "cap:add:ios": "npx cap add ios",
     "cap:add:android": "npx cap add android",
     "cap:sync": "npx cap sync",

@@ -90,7 +90,7 @@ export default function ParentPinModal({ isOpen, onClose }) {
     setLoading(true);
     try {
       // Hash PIN để so sánh
-      const hashedPin = btoa(enteredPin + '_bethongminh_salt');
+      const hashedPin = btoa(enteredPin + '_schoolhub_salt');
 
       const { data } = await supabase
         .from('profiles')
@@ -151,7 +151,7 @@ export default function ParentPinModal({ isOpen, onClose }) {
     setLoading(true);
     try {
       // Hash và lưu PIN
-      const hashedPin = btoa(newPinValue + '_bethongminh_salt');
+      const hashedPin = btoa(newPinValue + '_schoolhub_salt');
 
       const { error } = await supabase
         .from('profiles')

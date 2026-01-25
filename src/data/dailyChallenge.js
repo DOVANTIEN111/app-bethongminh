@@ -64,7 +64,7 @@ const getTargetForType = (type) => {
 // Get or create today's challenges from localStorage
 export const getTodayChallenges = () => {
   try {
-    const stored = localStorage.getItem('gdtm_daily_challenges');
+    const stored = localStorage.getItem('schoolhub_daily_challenges');
     if (stored) {
       const data = JSON.parse(stored);
       // Check if it's today's challenges
@@ -74,7 +74,7 @@ export const getTodayChallenges = () => {
     }
     // Generate new challenges
     const challenges = generateDailyChallenges();
-    localStorage.setItem('gdtm_daily_challenges', JSON.stringify({
+    localStorage.setItem('schoolhub_daily_challenges', JSON.stringify({
       date: getTodayString(),
       challenges
     }));
@@ -87,7 +87,7 @@ export const getTodayChallenges = () => {
 // Update challenge progress
 export const updateChallengeProgress = (type, amount = 1) => {
   try {
-    const stored = localStorage.getItem('gdtm_daily_challenges');
+    const stored = localStorage.getItem('schoolhub_daily_challenges');
     if (!stored) return null;
     
     const data = JSON.parse(stored);
@@ -102,7 +102,7 @@ export const updateChallengeProgress = (type, amount = 1) => {
       challenge.completed = true;
     }
     
-    localStorage.setItem('gdtm_daily_challenges', JSON.stringify(data));
+    localStorage.setItem('schoolhub_daily_challenges', JSON.stringify(data));
     return challenge;
   } catch {
     return null;

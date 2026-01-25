@@ -168,7 +168,7 @@ export default function TeacherStudentsPage() {
       if (authError) throw authError;
 
       // Hash PIN đơn giản (client-side, trong production nên hash ở server)
-      const hashedPin = btoa(generatedPin + '_bethongminh_salt');
+      const hashedPin = btoa(generatedPin + '_schoolhub_salt');
 
       // Tạo profile với thông tin phụ huynh
       if (authData.user) {
@@ -321,7 +321,7 @@ export default function TeacherStudentsPage() {
 
     try {
       const newPin = generateRandomPin();
-      const hashedPin = btoa(newPin + '_bethongminh_salt');
+      const hashedPin = btoa(newPin + '_schoolhub_salt');
 
       const { error } = await supabase
         .from('profiles')

@@ -121,10 +121,10 @@ export const getDeviceInfo = () => {
 
 // Lưu device fingerprint vào localStorage
 export const getOrCreateDeviceId = () => {
-  let deviceId = localStorage.getItem('gdtm_device_id');
+  let deviceId = localStorage.getItem('schoolhub_device_id');
   if (!deviceId) {
     deviceId = generateDeviceFingerprint();
-    localStorage.setItem('gdtm_device_id', deviceId);
+    localStorage.setItem('schoolhub_device_id', deviceId);
   }
   return deviceId;
 };

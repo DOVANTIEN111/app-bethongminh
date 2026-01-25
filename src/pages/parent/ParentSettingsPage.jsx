@@ -418,8 +418,8 @@ export default function ParentSettingsPage() {
 
       {/* App Info */}
       <div className="text-center text-sm text-gray-400">
-        <p>Bé Thông Minh v3.6.0</p>
-        <p>© 2025 Bé Thông Minh. All rights reserved.</p>
+        <p>SchoolHub v4.0.0</p>
+        <p>© 2025 SchoolHub. All rights reserved.</p>
       </div>
     </div>
   );
