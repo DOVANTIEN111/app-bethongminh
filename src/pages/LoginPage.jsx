@@ -1,12 +1,13 @@
 // src/pages/LoginPage.jsx
-// Login Page với link đăng ký dùng thử
+// Login Page với link đăng ký dùng thử và hỗ trợ returnUrl (deep link)
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Mail, Lock, Eye, EyeOff, Loader2, AlertCircle, Gift, Star, Clock } from 'lucide-react';
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { signIn, isAuthenticated, profile, loading: authLoading, getRedirectPath } = useAuth();
 
   const [email, setEmail] = useState('');
@@ -15,14 +16,43 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Get returnUrl from query params for deep linking
+  const returnUrl = searchParams.get('returnUrl');
+
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated && profile) {
-      const redirectPath = getRedirectPath();
-      console.log('[Login] Redirecting to:', redirectPath);
+      // If returnUrl exists and is valid (starts with /), use it
+      // Otherwise, redirect based on role
+      let redirectPath = getRedirectPath();
+
+      if (returnUrl && returnUrl.startsWith('/')) {
+        // Check if returnUrl is accessible by the user's role
+        const rolePrefix = {
+          super_admin: '/admin',
+          school_admin: '/school',
+          department_head: '/department',
+          teacher: '/teacher',
+          parent: '/parent',
+          student: '/learn',
+        };
+
+        // Check if returnUrl matches user's role or is a lesson page (for students)
+        const userPrefix = rolePrefix[profile.role];
+        const isLessonPage = returnUrl.startsWith('/math/') ||
+                            returnUrl.startsWith('/english/') ||
+                            returnUrl.startsWith('/vietnamese/') ||
+                            returnUrl.startsWith('/science/');
+
+        if (returnUrl.startsWith(userPrefix) || (profile.role === 'student' && isLessonPage)) {
+          redirectPath = returnUrl;
+        }
+      }
+
+      console.log('[Login] Redirecting to:', redirectPath, '(returnUrl:', returnUrl, ')');
       navigate(redirectPath, { replace: true });
     }
-  }, [isAuthenticated, profile, navigate, getRedirectPath]);
+  }, [isAuthenticated, profile, navigate, getRedirectPath, returnUrl]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

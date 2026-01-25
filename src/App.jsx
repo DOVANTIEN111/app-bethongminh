@@ -1,7 +1,7 @@
 // src/App.jsx
 // Main App with Role-based Routing
 import React, { Suspense, lazy } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useAuth, ROLES } from './contexts/AuthContext';
 import { AudioProvider } from './contexts/AudioContext';
 import SplashScreen from './components/SplashScreen';
@@ -92,16 +92,19 @@ const ParentMessagesPage = lazy(() => import('./pages/parent/ParentMessagesPage'
 const ParentReportsPage = lazy(() => import('./pages/parent/ParentReportsPage'));
 const ParentSettingsPage = lazy(() => import('./pages/parent/ParentSettingsPage'));
 
-// Protected Route Component
+// Protected Route Component - with returnUrl support
 function ProtectedRoute({ children, allowedRoles }) {
   const { isAuthenticated, loading, profile } = useAuth();
+  const location = useLocation();
 
   if (loading) {
     return <SplashScreen message="Dang tai..." />;
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    // Save current URL as returnUrl so user can be redirected back after login
+    const returnUrl = location.pathname + location.search;
+    return <Navigate to={`/login?returnUrl=${encodeURIComponent(returnUrl)}`} replace />;
   }
 
   // If allowedRoles specified, check role
@@ -126,13 +129,20 @@ function ProtectedRoute({ children, allowedRoles }) {
 // Role-based Redirect Component
 function RoleBasedRedirect() {
   const { isAuthenticated, loading, profile, getRedirectPath } = useAuth();
+  const location = useLocation();
 
   if (loading) {
     return <SplashScreen message="Dang chuyen huong..." />;
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    // For root path, just go to login
+    if (location.pathname === '/') {
+      return <Navigate to="/login" replace />;
+    }
+    // For other paths, save as returnUrl
+    const returnUrl = location.pathname + location.search;
+    return <Navigate to={`/login?returnUrl=${encodeURIComponent(returnUrl)}`} replace />;
   }
 
   const redirectPath = getRedirectPath();
@@ -188,9 +198,13 @@ function App() {
         }>
           <Route index element={<SchoolDashboardPage />} />
           <Route path="departments" element={<DepartmentsPage />} />
+          <Route path="departments/:id" element={<DepartmentsPage />} />
           <Route path="teachers" element={<TeachersPage />} />
+          <Route path="teachers/:id" element={<TeachersPage />} />
           <Route path="students" element={<StudentsPage />} />
+          <Route path="students/:id" element={<StudentsPage />} />
           <Route path="classes" element={<ClassesPage />} />
+          <Route path="classes/:id" element={<ClassesPage />} />
           <Route path="settings" element={<SchoolSettingsPage />} />
         </Route>
 
@@ -209,10 +223,16 @@ function App() {
         }>
           <Route index element={<TeacherDashboardPage />} />
           <Route path="classes" element={<TeacherClassesPage />} />
+          <Route path="classes/:id" element={<TeacherClassesPage />} />
           <Route path="lessons" element={<TeacherLessonsPage />} />
+          <Route path="lessons/create" element={<TeacherLessonsPage />} />
+          <Route path="lessons/:id" element={<TeacherLessonsPage />} />
           <Route path="assignments" element={<AssignmentsPage />} />
+          <Route path="assignments/:id" element={<AssignmentsPage />} />
           <Route path="students" element={<TeacherStudentsPage />} />
+          <Route path="students/:id" element={<TeacherStudentsPage />} />
           <Route path="messages" element={<MessagesPage />} />
+          <Route path="messages/:id" element={<MessagesPage />} />
           <Route path="settings" element={<TeacherSettingsPage />} />
         </Route>
 
@@ -237,7 +257,9 @@ function App() {
         }>
           <Route index element={<LearnHomePage />} />
           <Route path="lessons" element={<LearnLessonsPage />} />
+          <Route path="lessons/:subjectId" element={<LearnLessonsPage />} />
           <Route path="assignments" element={<LearnAssignmentsPage />} />
+          <Route path="assignments/:id" element={<LearnAssignmentsPage />} />
           <Route path="achievements" element={<LearnAchievementsPage />} />
           <Route path="profile" element={<LearnProfilePage />} />
         </Route>
@@ -282,8 +304,8 @@ function App() {
           </ProtectedRoute>
         } />
 
-        {/* Catch all - redirect to login */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        {/* Catch all - redirect to role-based page or login */}
+        <Route path="*" element={<RoleBasedRedirect />} />
         </Routes>
       </Suspense>
     </AudioProvider>
