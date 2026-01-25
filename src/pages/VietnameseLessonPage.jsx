@@ -118,6 +118,20 @@ export default function VietnameseLessonPage() {
   const questions = isLop1 ? (lesson.content?.quiz || []) : (lesson.questions || []);
   const question = questions[currentQ];
 
+  // Chuẩn hóa intro và examples cho cả 2 format
+  const lessonIntro = isLop1
+    ? {
+        title: lesson.content?.introduction?.letter || lesson.title,
+        subtitle: lesson.content?.introduction?.sound || lesson.description,
+        image: lesson.content?.introduction?.image || lesson.icon,
+        imageCount: 1
+      }
+    : lesson.intro;
+
+  const lessonExamples = isLop1
+    ? (lesson.content?.vocabulary || []).map(v => ({ image: v.image, text: v.word }))
+    : (lesson.examples || []);
+
   // Hàm kiểm tra đáp án đúng
   const checkCorrectAnswer = (option, index) => {
     if (isLop1) {
@@ -187,38 +201,42 @@ export default function VietnameseLessonPage() {
     return (
       <div className="min-h-screen bg-gradient-to-b from-indigo-50 to-purple-50">
         {/* Header */}
-        <div className={`bg-gradient-to-br ${lesson.color} p-6 pb-12 rounded-b-[40px]`}>
+        <div className={`bg-gradient-to-br ${lesson.color || 'from-indigo-400 to-purple-500'} p-6 pb-12 rounded-b-[40px]`}>
           <div className="flex items-center gap-3 mb-4">
             <button onClick={() => navigate(-1)} className="p-2 bg-white/20 rounded-full">
               <ArrowLeft className="w-6 h-6 text-white" />
             </button>
-            <span className="text-white/80">Tiếng Việt</span>
+            <span className="text-white/80">Tiếng Việt {isLop1 ? '- Lớp 1' : ''}</span>
           </div>
           <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-center text-white">
             <div className="text-7xl mb-3">{lesson.icon}</div>
             <h1 className="text-3xl font-bold">{lesson.title}</h1>
-            <p className="text-white/80 mt-1">{lesson.description}</p>
+            <p className="text-white/80 mt-1">{lesson.description || lesson.objectives?.[0]}</p>
           </motion.div>
         </div>
-        
+
         <div className="p-4 -mt-6">
           {/* Intro card */}
           <motion.div initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="bg-white rounded-3xl p-6 shadow-xl mb-4">
-            <h2 className="text-2xl font-bold text-center text-gray-800 mb-2">{lesson.intro.title}</h2>
-            <p className="text-center text-gray-500 mb-4">{lesson.intro.subtitle}</p>
+            <h2 className="text-2xl font-bold text-center text-gray-800 mb-2">{lessonIntro?.title || lesson.title}</h2>
+            <p className="text-center text-gray-500 mb-4">{lessonIntro?.subtitle || ''}</p>
             <motion.div animate={{ y: [0, -8, 0] }} transition={{ duration: 2, repeat: Infinity }} className="flex justify-center py-4">
-              <ImageDisplay emoji={lesson.intro.image} count={lesson.intro.imageCount} size="xlarge" />
+              <ImageDisplay emoji={lessonIntro?.image || lesson.icon} count={lessonIntro?.imageCount || 1} size="xlarge" />
             </motion.div>
+            {/* Mô tả cho lớp 1 */}
+            {isLop1 && lesson.content?.introduction?.description && (
+              <p className="text-center text-gray-600 text-sm mt-2">{lesson.content.introduction.description}</p>
+            )}
           </motion.div>
-          
-          {/* Examples */}
-          {lesson.examples?.length > 0 && (
+
+          {/* Examples / Vocabulary */}
+          {lessonExamples?.length > 0 && (
             <motion.div initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }} className="mb-4">
               <h3 className="font-bold text-gray-700 mb-2 flex items-center gap-2">
-                <Lightbulb className="w-5 h-5 text-amber-500" /> Ví dụ
+                <Lightbulb className="w-5 h-5 text-amber-500" /> {isLop1 ? 'Từ vựng' : 'Ví dụ'}
               </h3>
               <div className="grid grid-cols-2 gap-2">
-                {lesson.examples.slice(0, 4).map((ex, i) => (
+                {lessonExamples.slice(0, 4).map((ex, i) => (
                   <div key={i} className="bg-white rounded-xl p-3 text-center shadow">
                     <div className="text-3xl mb-1">{ex.image}</div>
                     <p className="text-sm font-medium text-gray-700">{ex.text}</p>
@@ -451,29 +469,28 @@ export default function VietnameseLessonPage() {
                 </div>
               )}
               
-              {question.hint && showResult && selected !== null && question.answer !== question.options?.[selected] && (
-                <p className="text-center text-amber-600 text-sm mt-2">💡 {question.hint}</p>
+              {/* Hiển thị hint hoặc explanation khi trả lời sai */}
+              {showResult && selected !== null && !checkCorrectAnswer(question.options?.[selected], selected) && (
+                <p className="text-center text-amber-600 text-sm mt-2">
+                  💡 {question.hint || question.explanation || 'Hãy thử lại nhé!'}
+                </p>
               )}
             </div>
             
             {/* Answer options (for non-compare types) */}
             {question.type !== 'compare' && question.options && question.options.length > 0 && (
               <div className={`grid gap-3 ${
-                question.options.length === 2 ? 'grid-cols-2' : 
-                question.options.length === 3 ? 'grid-cols-3' : 
+                question.options.length === 2 ? 'grid-cols-2' :
+                question.options.length === 3 ? 'grid-cols-3' :
                 'grid-cols-2'  /* 4 options = 2x2 grid */
               }`}>
                 {question.options.map((opt, i) => {
-                  let correct = false;
-                  if (question.type === 'select') {
-                    correct = i === question.answer;
-                  } else {
-                    correct = opt === question.answer;
-                  }
-                  
+                  // Sử dụng checkCorrectAnswer để kiểm tra đáp án
+                  const correct = checkCorrectAnswer(opt, i);
+
                   // Hiển thị option text
                   const displayText = typeof opt === 'object' ? (opt.text || opt.count || JSON.stringify(opt)) : opt;
-                  
+
                   return (
                     <AnswerButton
                       key={i}
