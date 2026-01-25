@@ -1,9 +1,9 @@
 // src/pages/LoginPage.jsx
-// Simple Login Page
+// Login Page với link đăng ký dùng thử
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Mail, Lock, Eye, EyeOff, Loader2, AlertCircle } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, Loader2, AlertCircle, Gift, Star, Clock } from 'lucide-react';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ export default function LoginPage() {
     setError('');
 
     if (!email || !password) {
-      setError('Vui long nhap email va mat khau');
+      setError('Vui lòng nhập email và mật khẩu');
       return;
     }
 
@@ -41,9 +41,9 @@ export default function LoginPage() {
     if (signInError) {
       console.error('[Login] Error:', signInError);
       if (signInError.includes('Invalid login')) {
-        setError('Email hoac mat khau khong dung');
+        setError('Email hoặc mật khẩu không đúng');
       } else if (signInError.includes('Email not confirmed')) {
-        setError('Vui long xac nhan email truoc khi dang nhap');
+        setError('Vui lòng xác nhận email trước khi đăng nhập');
       } else {
         setError(signInError);
       }
@@ -56,17 +56,36 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-6">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-full shadow-lg mb-4">
-            <span className="text-4xl">📚</span>
+            <span className="text-4xl">🎓</span>
           </div>
           <h1 className="text-2xl font-bold text-white">SchoolHub</h1>
           <p className="text-white/80 text-sm">Nền tảng học tập thông minh</p>
         </div>
 
+        {/* Trial Banner */}
+        <Link
+          to="/register"
+          className="block bg-gradient-to-r from-yellow-400 to-orange-400 rounded-2xl p-4 mb-4 text-center shadow-lg hover:shadow-xl transition-all hover:scale-[1.02]"
+        >
+          <div className="flex items-center justify-center gap-2 mb-1">
+            <Gift className="w-5 h-5 text-white" />
+            <span className="font-bold text-white">DÙNG THỬ MIỄN PHÍ 30 NGÀY!</span>
+          </div>
+          <div className="flex items-center justify-center gap-3 text-white/90 text-sm">
+            <span className="flex items-center gap-1">
+              <Star className="w-4 h-4" /> Tất cả bài học
+            </span>
+            <span className="flex items-center gap-1">
+              <Clock className="w-4 h-4" /> Không cần thẻ
+            </span>
+          </div>
+        </Link>
+
         {/* Login Card */}
-        <div className="bg-white rounded-2xl shadow-xl p-8">
-          <h2 className="text-xl font-bold text-center mb-6">Dang nhap</h2>
+        <div className="bg-white rounded-2xl shadow-xl p-6">
+          <h2 className="text-xl font-bold text-center mb-6">Đăng nhập</h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Email */}
@@ -90,7 +109,7 @@ export default function LoginPage() {
             {/* Password */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Mat khau
+                Mật khẩu
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -133,13 +152,23 @@ export default function LoginPage() {
               {loading || authLoading ? (
                 <>
                   <Loader2 className="w-5 h-5 animate-spin" />
-                  Dang xu ly...
+                  Đang xử lý...
                 </>
               ) : (
-                'Dang nhap'
+                'Đăng nhập'
               )}
             </button>
           </form>
+
+          {/* Register Link */}
+          <div className="mt-4 text-center">
+            <p className="text-gray-600 text-sm">
+              Chưa có tài khoản?{' '}
+              <Link to="/register" className="text-indigo-600 font-medium hover:underline">
+                Đăng ký dùng thử miễn phí
+              </Link>
+            </p>
+          </div>
         </div>
 
         {/* Footer */}

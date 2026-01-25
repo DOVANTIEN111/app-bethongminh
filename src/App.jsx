@@ -8,6 +8,8 @@ import SplashScreen from './components/SplashScreen';
 
 // Lazy load pages
 const LoginPage = lazy(() => import('./pages/LoginPage'));
+const RegisterPage = lazy(() => import('./pages/RegisterPage'));
+const PricingPage = lazy(() => import('./pages/PricingPage'));
 const DepartmentDashboard = lazy(() => import('./pages/DepartmentDashboard'));
 const ParentDashboard = lazy(() => import('./pages/ParentDashboard'));
 const StudentDashboard = lazy(() => import('./pages/StudentDashboard'));
@@ -135,6 +137,8 @@ function App() {
         <Routes>
         {/* Public routes */}
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/pricing" element={<PricingPage />} />
 
         {/* Role-based redirect */}
         <Route path="/" element={<RoleBasedRedirect />} />
