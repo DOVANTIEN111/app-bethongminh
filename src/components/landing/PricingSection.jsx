@@ -1,10 +1,50 @@
 // src/components/landing/PricingSection.jsx
 // Pricing Section for Landing Page
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Check, X, Star, Zap, Building2, Phone } from 'lucide-react';
+import { Check, X, Star, Zap, Building2, Phone, Loader2 } from 'lucide-react';
+import { getActivePlans, formatPrice, calculateYearlySavings } from '../../services/plansService';
 
-const PLANS = [
+// Icon mapping for dynamic plans from database
+const ICON_MAP = {
+  star: Star,
+  zap: Zap,
+  'building-2': Building2,
+  phone: Phone,
+};
+
+// Badge color mapping
+const BADGE_COLOR_MAP = {
+  blue: 'from-blue-600 to-purple-600',
+  green: 'from-green-600 to-teal-600',
+  orange: 'from-orange-600 to-red-600',
+  purple: 'from-purple-600 to-pink-600',
+  indigo: 'from-indigo-600 to-blue-600',
+  gray: 'from-gray-600 to-gray-700',
+};
+
+// Icon background color mapping
+const ICON_BG_MAP = {
+  blue: 'bg-blue-100',
+  green: 'bg-green-100',
+  orange: 'bg-orange-100',
+  purple: 'bg-purple-100',
+  indigo: 'bg-indigo-100',
+  gray: 'bg-gray-100',
+};
+
+// Icon text color mapping
+const ICON_COLOR_MAP = {
+  blue: 'text-blue-600',
+  green: 'text-green-600',
+  orange: 'text-orange-600',
+  purple: 'text-purple-600',
+  indigo: 'text-indigo-600',
+  gray: 'text-gray-600',
+};
+
+// Fallback static plans (used when database is unavailable)
+const FALLBACK_PLANS = [
   {
     name: 'Miễn phí',
     description: 'Cho học sinh mới bắt đầu',
@@ -95,8 +135,74 @@ const PLANS = [
   },
 ];
 
+// Transform database plan to component format
+function transformPlan(dbPlan) {
+  const IconComponent = ICON_MAP[dbPlan.icon] || Star;
+  const badgeColor = dbPlan.badge_color || 'blue';
+
+  // Parse features - handle both old format (string[]) and new format ({name, included}[])
+  let features = [];
+  if (Array.isArray(dbPlan.features)) {
+    features = dbPlan.features.map(f => {
+      if (typeof f === 'string') {
+        return { text: f, included: true };
+      }
+      return { text: f.name, included: f.included !== false };
+    });
+  }
+
+  // Calculate yearly savings
+  const yearlySavings = calculateYearlySavings(dbPlan.price, dbPlan.price_yearly);
+
+  return {
+    id: dbPlan.id,
+    name: dbPlan.name,
+    description: dbPlan.description,
+    price: dbPlan.price === 0 ? 'Liên hệ' : new Intl.NumberFormat('vi-VN').format(dbPlan.price),
+    priceRaw: dbPlan.price,
+    period: dbPlan.price === 0 ? '' : '/tháng',
+    yearlyPrice: dbPlan.price_yearly > 0 ? `${new Intl.NumberFormat('vi-VN').format(dbPlan.price_yearly)}đ/năm` : null,
+    yearlySave: yearlySavings > 0 ? `Tiết kiệm ${yearlySavings}%` : null,
+    features,
+    buttonText: dbPlan.button_text || 'Đăng ký ngay',
+    buttonLink: dbPlan.button_link || '/register',
+    buttonStyle: dbPlan.is_highlighted ? 'primary' : (dbPlan.target_audience === 'teacher' ? 'secondary' : 'outline'),
+    highlight: dbPlan.is_highlighted,
+    badge: dbPlan.badge,
+    badgeColor: BADGE_COLOR_MAP[badgeColor] || BADGE_COLOR_MAP.blue,
+    icon: IconComponent,
+    iconBg: ICON_BG_MAP[badgeColor] || ICON_BG_MAP.gray,
+    iconColor: ICON_COLOR_MAP[badgeColor] || ICON_COLOR_MAP.gray,
+  };
+}
+
 export default function PricingSection() {
   const [isYearly, setIsYearly] = useState(false);
+  const [plans, setPlans] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch plans from database on mount
+  useEffect(() => {
+    async function fetchPlans() {
+      try {
+        setLoading(true);
+        const dbPlans = await getActivePlans();
+        if (dbPlans && dbPlans.length > 0) {
+          const transformedPlans = dbPlans.map(transformPlan);
+          setPlans(transformedPlans);
+        } else {
+          // Use fallback static plans
+          setPlans(FALLBACK_PLANS);
+        }
+      } catch (error) {
+        console.error('Error fetching plans:', error);
+        setPlans(FALLBACK_PLANS);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchPlans();
+  }, []);
 
   return (
     <section id="pricing" className="py-16 sm:py-20 lg:py-24 bg-white">
@@ -133,10 +239,15 @@ export default function PricingSection() {
         </div>
 
         {/* Pricing Cards */}
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+          </div>
+        ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {PLANS.map((plan, index) => (
+          {plans.map((plan, index) => (
             <div
-              key={index}
+              key={plan.id || index}
               className={`relative bg-white rounded-2xl p-6 transition-all duration-300 ${
                 plan.highlight
                   ? 'border-2 border-blue-500 shadow-xl shadow-blue-100 scale-[1.02]'
@@ -145,7 +256,7 @@ export default function PricingSection() {
             >
               {/* Badge */}
               {plan.badge && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-xs font-bold px-4 py-1 rounded-full whitespace-nowrap">
+                <div className={`absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r ${plan.badgeColor || 'from-blue-600 to-purple-600'} text-white text-xs font-bold px-4 py-1 rounded-full whitespace-nowrap`}>
                   {plan.badge}
                 </div>
               )}
@@ -212,6 +323,7 @@ export default function PricingSection() {
             </div>
           ))}
         </div>
+        )}
 
         {/* Trust badges */}
         <div className="flex flex-wrap justify-center gap-8 mt-12 pt-12 border-t border-gray-100">

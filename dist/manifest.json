@@ -1,7 +1,7 @@
 {
-  "name": "Bé Thông Minh - Học tập vui nhộn",
-  "short_name": "Bé Thông Minh",
-  "description": "Ứng dụng học tập vui nhộn cho bé 3-10 tuổi. Toán, Tiếng Việt, Tiếng Anh, Khoa học.",
+  "name": "SchoolHub - Nền tảng học tập thông minh",
+  "short_name": "SchoolHub",
+  "description": "Nền tảng học tập thông minh cho học sinh. Toán, Tiếng Việt, Tiếng Anh, Khoa học.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
