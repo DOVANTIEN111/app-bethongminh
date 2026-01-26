@@ -53,7 +53,7 @@ export default function PlansPage() {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    price: '',
+    price_monthly: '',
     price_yearly: '',
     duration_days: '30',
     features: [{ name: '', included: true }],
@@ -61,11 +61,10 @@ export default function PlansPage() {
     display_order: 0,
     badge: '',
     badge_color: 'blue',
-    target_audience: 'student',
-    icon: 'star',
+    target_user: 'student',
     button_text: 'Đăng ký ngay',
     button_link: '/register',
-    is_highlighted: false,
+    is_featured: false,
   });
 
   useEffect(() => {
@@ -98,7 +97,7 @@ export default function PlansPage() {
       id: '1',
       name: 'Miễn phí',
       description: 'Cho học sinh mới bắt đầu',
-      price: 0,
+      price_monthly: 0,
       price_yearly: 0,
       duration_days: 30,
       features: [
@@ -112,17 +111,16 @@ export default function PlansPage() {
       display_order: 1,
       badge: null,
       badge_color: 'gray',
-      target_audience: 'student',
-      icon: 'star',
+      target_user: 'student',
       button_text: 'Bắt đầu miễn phí',
       button_link: '/register',
-      is_highlighted: false,
+      is_featured: false,
     },
     {
       id: '2',
       name: 'Học sinh Premium',
       description: 'Cho học sinh muốn học tập toàn diện',
-      price: 49000,
+      price_monthly: 49000,
       price_yearly: 490000,
       duration_days: 30,
       features: [
@@ -135,17 +133,16 @@ export default function PlansPage() {
       display_order: 2,
       badge: 'Phổ biến nhất',
       badge_color: 'blue',
-      target_audience: 'student',
-      icon: 'zap',
+      target_user: 'student',
       button_text: 'Dùng thử 30 ngày',
       button_link: '/register',
-      is_highlighted: true,
+      is_featured: true,
     },
     {
       id: '3',
       name: 'Giáo viên Pro',
       description: 'Cho giáo viên quản lý lớp học',
-      price: 199000,
+      price_monthly: 199000,
       price_yearly: 1990000,
       duration_days: 30,
       features: [
@@ -158,11 +155,10 @@ export default function PlansPage() {
       display_order: 3,
       badge: null,
       badge_color: 'purple',
-      target_audience: 'teacher',
-      icon: 'building-2',
+      target_user: 'teacher',
       button_text: 'Đăng ký ngay',
       button_link: '/register/teacher',
-      is_highlighted: false,
+      is_featured: false,
     },
   ];
 
@@ -191,7 +187,7 @@ export default function PlansPage() {
       setFormData({
         name: plan.name || '',
         description: plan.description || '',
-        price: plan.price?.toString() || '0',
+        price_monthly: plan.price_monthly?.toString() || '0',
         price_yearly: plan.price_yearly?.toString() || '0',
         duration_days: plan.duration_days?.toString() || '30',
         features: features && features.length > 0 ? features : [DEFAULT_FEATURE],
@@ -199,18 +195,17 @@ export default function PlansPage() {
         display_order: plan.display_order || 0,
         badge: plan.badge || '',
         badge_color: plan.badge_color || 'blue',
-        target_audience: plan.target_audience || 'student',
-        icon: plan.icon || 'star',
+        target_user: plan.target_user || 'student',
         button_text: plan.button_text || 'Đăng ký ngay',
         button_link: plan.button_link || '/register',
-        is_highlighted: plan.is_highlighted || false,
+        is_featured: plan.is_featured || false,
       });
     } else {
       setEditingPlan(null);
       setFormData({
         name: '',
         description: '',
-        price: '',
+        price_monthly: '',
         price_yearly: '',
         duration_days: '30',
         features: [DEFAULT_FEATURE],
@@ -218,11 +213,10 @@ export default function PlansPage() {
         display_order: plans.length + 1,
         badge: '',
         badge_color: 'blue',
-        target_audience: 'student',
-        icon: 'star',
+        target_user: 'student',
         button_text: 'Đăng ký ngay',
         button_link: '/register',
-        is_highlighted: false,
+        is_featured: false,
       });
     }
     setShowModal(true);
@@ -242,7 +236,7 @@ export default function PlansPage() {
       const planData = {
         name: formData.name.trim(),
         description: formData.description.trim(),
-        price: parseInt(formData.price) || 0,
+        price_monthly: parseInt(formData.price_monthly) || 0,
         price_yearly: parseInt(formData.price_yearly) || 0,
         duration_days: parseInt(formData.duration_days) || 30,
         features: cleanFeatures,
@@ -250,11 +244,10 @@ export default function PlansPage() {
         display_order: parseInt(formData.display_order) || 0,
         badge: formData.badge.trim() || null,
         badge_color: formData.badge_color,
-        target_audience: formData.target_audience,
-        icon: formData.icon,
+        target_user: formData.target_user,
         button_text: formData.button_text.trim(),
         button_link: formData.button_link.trim(),
-        is_highlighted: formData.is_highlighted,
+        is_featured: formData.is_featured,
       };
 
       if (editingPlan) {
@@ -450,7 +443,7 @@ export default function PlansPage() {
                               {plan.badge}
                             </span>
                           )}
-                          {plan.is_highlighted && (
+                          {plan.is_featured && (
                             <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
                           )}
                         </div>
@@ -459,7 +452,7 @@ export default function PlansPage() {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="font-semibold text-gray-900">{formatPrice(plan.price)}</span>
+                    <span className="font-semibold text-gray-900">{formatPrice(plan.price_monthly)}</span>
                     <span className="text-gray-400 text-sm">/{plan.duration_days} ngày</span>
                   </td>
                   <td className="px-6 py-4">
@@ -468,7 +461,7 @@ export default function PlansPage() {
                   </td>
                   <td className="px-6 py-4">
                     <span className="text-sm text-gray-600">
-                      {TARGET_OPTIONS.find(t => t.value === plan.target_audience)?.label || plan.target_audience}
+                      {TARGET_OPTIONS.find(t => t.value === plan.target_user)?.label || plan.target_user}
                     </span>
                   </td>
                   <td className="px-6 py-4">
@@ -579,8 +572,8 @@ export default function PlansPage() {
                   </label>
                   <input
                     type="number"
-                    value={formData.price}
-                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                    value={formData.price_monthly}
+                    onChange={(e) => setFormData({ ...formData, price_monthly: e.target.value })}
                     placeholder="49000"
                     min="0"
                     className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
@@ -704,8 +697,8 @@ export default function PlansPage() {
                     Đối tượng
                   </label>
                   <select
-                    value={formData.target_audience}
-                    onChange={(e) => setFormData({ ...formData, target_audience: e.target.value })}
+                    value={formData.target_user}
+                    onChange={(e) => setFormData({ ...formData, target_user: e.target.value })}
                     className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
                   >
                     {TARGET_OPTIONS.map((opt) => (
@@ -753,8 +746,8 @@ export default function PlansPage() {
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={formData.is_highlighted}
-                    onChange={(e) => setFormData({ ...formData, is_highlighted: e.target.checked })}
+                    checked={formData.is_featured}
+                    onChange={(e) => setFormData({ ...formData, is_featured: e.target.checked })}
                     className="rounded text-yellow-500 w-5 h-5"
                   />
                   <span className="text-sm font-medium text-gray-700">Nổi bật (scale lớn hơn)</span>

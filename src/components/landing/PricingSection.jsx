@@ -137,8 +137,12 @@ const FALLBACK_PLANS = [
 
 // Transform database plan to component format
 function transformPlan(dbPlan) {
-  const IconComponent = ICON_MAP[dbPlan.icon] || Star;
   const badgeColor = dbPlan.badge_color || 'blue';
+  // Use badge_color to determine icon (no icon column in DB)
+  const iconKey = dbPlan.target_user === 'teacher' ? 'building-2' :
+                  dbPlan.target_user === 'school' ? 'phone' :
+                  dbPlan.is_featured ? 'zap' : 'star';
+  const IconComponent = ICON_MAP[iconKey] || Star;
 
   // Parse features - handle both old format (string[]) and new format ({name, included}[])
   let features = [];
@@ -152,22 +156,22 @@ function transformPlan(dbPlan) {
   }
 
   // Calculate yearly savings
-  const yearlySavings = calculateYearlySavings(dbPlan.price, dbPlan.price_yearly);
+  const yearlySavings = calculateYearlySavings(dbPlan.price_monthly, dbPlan.price_yearly);
 
   return {
     id: dbPlan.id,
     name: dbPlan.name,
     description: dbPlan.description,
-    price: dbPlan.price === 0 ? 'Liên hệ' : new Intl.NumberFormat('vi-VN').format(dbPlan.price),
-    priceRaw: dbPlan.price,
-    period: dbPlan.price === 0 ? '' : '/tháng',
+    price: dbPlan.price_monthly === 0 ? 'Liên hệ' : new Intl.NumberFormat('vi-VN').format(dbPlan.price_monthly),
+    priceRaw: dbPlan.price_monthly,
+    period: dbPlan.price_monthly === 0 ? '' : '/tháng',
     yearlyPrice: dbPlan.price_yearly > 0 ? `${new Intl.NumberFormat('vi-VN').format(dbPlan.price_yearly)}đ/năm` : null,
     yearlySave: yearlySavings > 0 ? `Tiết kiệm ${yearlySavings}%` : null,
     features,
     buttonText: dbPlan.button_text || 'Đăng ký ngay',
     buttonLink: dbPlan.button_link || '/register',
-    buttonStyle: dbPlan.is_highlighted ? 'primary' : (dbPlan.target_audience === 'teacher' ? 'secondary' : 'outline'),
-    highlight: dbPlan.is_highlighted,
+    buttonStyle: dbPlan.is_featured ? 'primary' : (dbPlan.target_user === 'teacher' ? 'secondary' : 'outline'),
+    highlight: dbPlan.is_featured,
     badge: dbPlan.badge,
     badgeColor: BADGE_COLOR_MAP[badgeColor] || BADGE_COLOR_MAP.blue,
     icon: IconComponent,
