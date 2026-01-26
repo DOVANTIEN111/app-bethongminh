@@ -7,8 +7,11 @@ import { AudioProvider } from './contexts/AudioContext';
 import SplashScreen from './components/SplashScreen';
 
 // Lazy load pages
+const LandingPage = lazy(() => import('./pages/LandingPage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const RegisterPage = lazy(() => import('./pages/RegisterPage'));
+const RegisterSchoolPage = lazy(() => import('./pages/RegisterSchoolPage'));
+const RegisterTeacherPage = lazy(() => import('./pages/RegisterTeacherPage'));
 const PricingPage = lazy(() => import('./pages/PricingPage'));
 const DepartmentDashboard = lazy(() => import('./pages/DepartmentDashboard'));
 const ParentDashboard = lazy(() => import('./pages/ParentDashboard'));
@@ -155,12 +158,16 @@ function App() {
       <Suspense fallback={<SplashScreen />}>
         <Routes>
         {/* Public routes */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/home" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/register/school" element={<RegisterSchoolPage />} />
+        <Route path="/register/teacher" element={<RegisterTeacherPage />} />
         <Route path="/pricing" element={<PricingPage />} />
 
-        {/* Role-based redirect */}
-        <Route path="/" element={<RoleBasedRedirect />} />
+        {/* Role-based redirect for authenticated users */}
+        <Route path="/dashboard" element={<RoleBasedRedirect />} />
         <Route path="/redirect" element={<RoleBasedRedirect />} />
 
         {/* Super Admin routes - Nested routes */}
