@@ -1,13 +1,15 @@
 // src/pages/teacher/AssignmentsPage.jsx
-// Quản lý Giao bài cho Giáo viên
+// Quản lý Giao bài cho Giáo viên - Cập nhật với bài giảng hệ thống và chấm điểm
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
+import { generateSystemLessons, SYSTEM_SUBJECTS } from '../../data/systemLessons';
 import {
   ClipboardList, Plus, Search, Loader2, X, Calendar,
   CheckCircle, Clock, AlertCircle, Users, BookOpen, Star,
-  Send, User, ChevronDown, ChevronUp, Eye, Edit2, Filter
+  Send, User, ChevronDown, ChevronUp, Eye, Edit2, Filter,
+  MessageSquare, Save, CheckCircle2, XCircle, Award
 } from 'lucide-react';
 
 export default function AssignmentsPage() {
@@ -17,10 +19,13 @@ export default function AssignmentsPage() {
   const [classes, setClasses] = useState([]);
   const [students, setStudents] = useState([]);
   const [lessons, setLessons] = useState([]);
+  const [systemLessonsData, setSystemLessonsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
+  const [showGradeModal, setShowGradeModal] = useState(false);
   const [selectedAssignment, setSelectedAssignment] = useState(null);
+  const [selectedSubmission, setSelectedSubmission] = useState(null);
   const [studentSubmissions, setStudentSubmissions] = useState([]);
   const [saving, setSaving] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -31,6 +36,7 @@ export default function AssignmentsPage() {
   // Form state
   const [formData, setFormData] = useState({
     lesson_id: '',
+    lesson_source: 'system', // 'system' hoặc 'teacher'
     title: '',
     class_id: '',
     assignment_type: 'class',
@@ -38,6 +44,13 @@ export default function AssignmentsPage() {
     start_date: new Date().toISOString().slice(0, 16),
     deadline: '',
     note: '',
+  });
+
+  // Grade form state
+  const [gradeForm, setGradeForm] = useState({
+    score: '',
+    feedback: '',
+    question_scores: [],
   });
 
   useEffect(() => {
@@ -53,10 +66,10 @@ export default function AssignmentsPage() {
       setFormData(prev => ({
         ...prev,
         lesson_id: lesson.id,
+        lesson_source: lesson.is_system ? 'system' : 'teacher',
         title: lesson.title,
       }));
       setShowModal(true);
-      // Clear the state
       window.history.replaceState({}, document.title);
     }
   }, [location.state]);
@@ -65,7 +78,7 @@ export default function AssignmentsPage() {
     try {
       setLoading(true);
 
-      // Load teacher's classes
+      // Load classes
       const { data: classesData } = await supabase
         .from('classes')
         .select('id, name, grade')
@@ -73,15 +86,19 @@ export default function AssignmentsPage() {
         .order('name');
       setClasses(classesData || []);
 
-      // Load available lessons (system + teacher's own)
-      const { data: sysLessons } = await supabase
+      // Load teacher's lessons from database
+      const { data: teacherLessons } = await supabase
         .from('lessons')
-        .select('id, title, subject_id, lesson_type')
-        .or(`lesson_type.eq.system,teacher_id.eq.${profile.id},teacher_id.is.null`)
+        .select('id, title, subject_id, lesson_type, status')
+        .eq('teacher_id', profile.id)
         .eq('is_active', true)
         .order('created_at', { ascending: false });
 
-      setLessons(sysLessons || []);
+      setLessons(teacherLessons || []);
+
+      // Load system lessons from data file
+      const sysLessons = generateSystemLessons();
+      setSystemLessonsData(sysLessons);
 
       // Load assignments
       const { data: assignData } = await supabase
@@ -95,7 +112,6 @@ export default function AssignmentsPage() {
         .order('created_at', { ascending: false });
 
       if (assignData && assignData.length > 0) {
-        // Load stats for each assignment
         const assignmentsWithStats = await Promise.all(assignData.map(async (a) => {
           const { data: stats } = await supabase
             .from('student_assignments')
@@ -110,11 +126,11 @@ export default function AssignmentsPage() {
         }));
         setAssignments(assignmentsWithStats);
       } else {
-        // Mock data
+        // Mock data khi không có dữ liệu
         setAssignments([
           {
             id: 'a1',
-            title: 'Bài tập Animals',
+            title: 'Bài tập Animals - Động vật',
             lesson: { title: 'Animals - Động vật' },
             class: { name: 'Lớp 3A' },
             deadline: new Date(Date.now() + 86400000 * 2).toISOString(),
@@ -165,6 +181,7 @@ export default function AssignmentsPage() {
   const handleOpenModal = () => {
     setFormData({
       lesson_id: '',
+      lesson_source: 'system',
       title: '',
       class_id: '',
       assignment_type: 'class',
@@ -177,11 +194,17 @@ export default function AssignmentsPage() {
     setShowModal(true);
   };
 
-  const handleLessonChange = (lessonId) => {
-    const lesson = lessons.find(l => l.id === lessonId);
+  const handleLessonChange = (lessonId, source) => {
+    let lesson;
+    if (source === 'system') {
+      lesson = systemLessonsData.find(l => l.id === lessonId || l.original_id === lessonId);
+    } else {
+      lesson = lessons.find(l => l.id === lessonId);
+    }
     setFormData({
       ...formData,
       lesson_id: lessonId,
+      lesson_source: source,
       title: lesson?.title || '',
     });
   };
@@ -218,9 +241,21 @@ export default function AssignmentsPage() {
 
     setSaving(true);
     try {
+      // Lấy thông tin lesson
+      let lessonTitle = formData.title;
+      let lessonData = null;
+
+      if (formData.lesson_source === 'system') {
+        lessonData = systemLessonsData.find(l => l.id === formData.lesson_id || l.original_id === formData.lesson_id);
+        lessonTitle = lessonTitle || lessonData?.title;
+      } else {
+        lessonData = lessons.find(l => l.id === formData.lesson_id);
+        lessonTitle = lessonTitle || lessonData?.title;
+      }
+
       const assignmentData = {
-        lesson_id: formData.lesson_id,
-        title: formData.title || lessons.find(l => l.id === formData.lesson_id)?.title,
+        lesson_id: formData.lesson_source === 'teacher' ? formData.lesson_id : null,
+        title: lessonTitle,
         teacher_id: profile.id,
         school_id: profile.school_id,
         class_id: formData.assignment_type === 'class' ? formData.class_id : null,
@@ -239,12 +274,28 @@ export default function AssignmentsPage() {
 
       if (error) throw error;
 
-      // Create student_assignments for individual students
-      if (formData.assignment_type === 'individual' && formData.selected_students.length > 0) {
-        const studentAssignments = formData.selected_students.map(studentId => ({
+      // Tạo student_assignments
+      let studentsToAssign = [];
+
+      if (formData.assignment_type === 'class') {
+        // Lấy tất cả học sinh trong lớp
+        const { data: classStudents } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('class_id', formData.class_id)
+          .eq('role', 'student')
+          .eq('is_active', true);
+        studentsToAssign = classStudents?.map(s => s.id) || [];
+      } else {
+        studentsToAssign = formData.selected_students;
+      }
+
+      if (studentsToAssign.length > 0) {
+        const studentAssignments = studentsToAssign.map(studentId => ({
           assignment_id: newAssignment.id,
           student_id: studentId,
           status: 'not_started',
+          max_score: lessonData?.questions?.length * 10 || 100,
         }));
 
         await supabase.from('student_assignments').insert(studentAssignments);
@@ -264,7 +315,6 @@ export default function AssignmentsPage() {
   const handleViewDetail = async (assignment) => {
     setSelectedAssignment(assignment);
 
-    // Load student submissions
     const { data } = await supabase
       .from('student_assignments')
       .select(`
@@ -278,65 +328,91 @@ export default function AssignmentsPage() {
     setShowDetailModal(true);
   };
 
-  const handleGrade = async (submissionId, score, feedback = '') => {
+  const handleOpenGradeModal = (submission) => {
+    setSelectedSubmission(submission);
+
+    // Parse answers nếu có
+    let answers = [];
+    if (submission.answers) {
+      try {
+        answers = typeof submission.answers === 'string'
+          ? JSON.parse(submission.answers)
+          : submission.answers;
+      } catch (e) {
+        console.error('Parse answers error:', e);
+      }
+    }
+
+    setGradeForm({
+      score: submission.score || '',
+      feedback: submission.feedback || '',
+      question_scores: answers,
+    });
+    setShowGradeModal(true);
+  };
+
+  const handleSaveGrade = async () => {
+    if (!selectedSubmission) return;
+
+    setSaving(true);
     try {
       await supabase
         .from('student_assignments')
         .update({
-          score: parseFloat(score) || null,
-          feedback: feedback || null,
+          score: parseFloat(gradeForm.score) || 0,
+          feedback: gradeForm.feedback || null,
           status: 'graded',
           graded_at: new Date().toISOString(),
           graded_by: profile.id,
         })
-        .eq('id', submissionId);
+        .eq('id', selectedSubmission.id);
 
       // Refresh submissions
       const { data } = await supabase
         .from('student_assignments')
         .select(`*, student:profiles(id, full_name, email, avatar_url)`)
-        .eq('assignment_id', selectedAssignment.id);
+        .eq('assignment_id', selectedAssignment.id)
+        .order('submitted_at', { ascending: false, nullsFirst: false });
 
       setStudentSubmissions(data || []);
+      setShowGradeModal(false);
+      alert('Đã lưu điểm thành công!');
     } catch (err) {
       console.error('Grade error:', err);
       alert('Có lỗi: ' + err.message);
+    } finally {
+      setSaving(false);
     }
   };
 
-  const getStatusColor = (assignment) => {
+  const getStatusInfo = (assignment) => {
     const deadline = new Date(assignment.deadline);
     const now = new Date();
-    if (deadline < now) return 'text-red-600 bg-red-100';
-    if (assignment.submitted === assignment.total_students) return 'text-green-600 bg-green-100';
-    return 'text-amber-600 bg-amber-100';
-  };
 
-  const getStatusText = (assignment) => {
-    const deadline = new Date(assignment.deadline);
-    const now = new Date();
-    if (deadline < now) return 'Quá hạn';
-    if (assignment.submitted === assignment.total_students) return 'Hoàn thành';
-    return 'Đang mở';
-  };
-
-  const getSubmissionStatusColor = (status) => {
-    switch (status) {
-      case 'submitted': return 'text-blue-600 bg-blue-100';
-      case 'graded': return 'text-green-600 bg-green-100';
-      case 'in_progress': return 'text-amber-600 bg-amber-100';
-      case 'overdue': return 'text-red-600 bg-red-100';
-      default: return 'text-gray-600 bg-gray-100';
+    if (assignment.graded === assignment.total_students && assignment.total_students > 0) {
+      return { text: 'Đã chấm hết', color: 'text-green-600 bg-green-100', icon: CheckCircle };
     }
+    if (assignment.submitted > assignment.graded) {
+      return { text: 'Đang chờ chấm', color: 'text-amber-600 bg-amber-100', icon: Clock };
+    }
+    if (deadline < now) {
+      return { text: 'Quá hạn', color: 'text-red-600 bg-red-100', icon: AlertCircle };
+    }
+    return { text: 'Chưa đến hạn', color: 'text-blue-600 bg-blue-100', icon: Calendar };
   };
 
-  const getSubmissionStatusText = (status) => {
+  const getSubmissionStatusInfo = (status, deadline) => {
+    const now = new Date();
+    const isOverdue = deadline && new Date(deadline) < now;
+
     switch (status) {
-      case 'submitted': return 'Đã nộp';
-      case 'graded': return 'Đã chấm';
-      case 'in_progress': return 'Đang làm';
-      case 'overdue': return 'Quá hạn';
-      default: return 'Chưa làm';
+      case 'graded': return { text: 'Đã chấm', color: 'text-green-600 bg-green-100' };
+      case 'submitted': return { text: 'Đã nộp', color: 'text-blue-600 bg-blue-100' };
+      case 'in_progress': return { text: 'Đang làm', color: 'text-amber-600 bg-amber-100' };
+      default:
+        return isOverdue
+          ? { text: 'Quá hạn', color: 'text-red-600 bg-red-100' }
+          : { text: 'Chưa làm', color: 'text-gray-600 bg-gray-100' };
     }
   };
 
@@ -356,11 +432,17 @@ export default function AssignmentsPage() {
     if (filterStatus === 'expired') matchStatus = deadline < now;
 
     let matchTab = true;
-    if (activeTab === 'not_graded') matchTab = a.graded < a.submitted;
+    if (activeTab === 'not_graded') matchTab = a.submitted > a.graded;
     if (activeTab === 'graded') matchTab = a.graded > 0;
 
     return matchSearch && matchClass && matchStatus && matchTab;
   });
+
+  // Group system lessons by subject
+  const groupedSystemLessons = SYSTEM_SUBJECTS.map(subject => ({
+    ...subject,
+    lessons: systemLessonsData.filter(l => l.subject_key === subject.key),
+  }));
 
   if (loading) {
     return (
@@ -392,7 +474,7 @@ export default function AssignmentsPage() {
         <div className="flex border-b">
           {[
             { id: 'all', label: 'Tất cả', count: assignments.length },
-            { id: 'not_graded', label: 'Chưa chấm', count: assignments.filter(a => a.graded < a.submitted).length },
+            { id: 'not_graded', label: 'Chưa chấm', count: assignments.filter(a => a.submitted > a.graded).length },
             { id: 'graded', label: 'Đã chấm', count: assignments.filter(a => a.graded > 0).length },
           ].map(tab => (
             <button
@@ -447,56 +529,77 @@ export default function AssignmentsPage() {
         {/* Assignments List */}
         <div className="p-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredAssignments.map((assignment) => (
-              <div
-                key={assignment.id}
-                className="border rounded-xl p-4 hover:shadow-md transition-shadow cursor-pointer"
-                onClick={() => handleViewDetail(assignment)}
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
-                    <ClipboardList className="w-5 h-5 text-emerald-600" />
+            {filteredAssignments.map((assignment) => {
+              const statusInfo = getStatusInfo(assignment);
+              const StatusIcon = statusInfo.icon;
+              return (
+                <div
+                  key={assignment.id}
+                  className="border rounded-xl p-4 hover:shadow-md transition-shadow cursor-pointer"
+                  onClick={() => handleViewDetail(assignment)}
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
+                      <ClipboardList className="w-5 h-5 text-emerald-600" />
+                    </div>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${statusInfo.color}`}>
+                      <StatusIcon className="w-3 h-3" />
+                      {statusInfo.text}
+                    </span>
                   </div>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(assignment)}`}>
-                    {getStatusText(assignment)}
-                  </span>
-                </div>
 
-                <h4 className="font-semibold text-gray-900 mb-1 line-clamp-1">{assignment.title}</h4>
-                <p className="text-sm text-gray-500 mb-2 flex items-center gap-1">
-                  <BookOpen className="w-3 h-3" />
-                  {assignment.lesson?.title}
-                </p>
-                {assignment.class && (
-                  <p className="text-sm text-gray-500 mb-2 flex items-center gap-1">
-                    <Users className="w-3 h-3" />
-                    {assignment.class.name}
-                  </p>
-                )}
+                  <h4 className="font-semibold text-gray-900 mb-1 line-clamp-1">{assignment.title}</h4>
+                  {assignment.lesson && (
+                    <p className="text-sm text-gray-500 mb-2 flex items-center gap-1">
+                      <BookOpen className="w-3 h-3" />
+                      {assignment.lesson.title}
+                    </p>
+                  )}
+                  {assignment.class && (
+                    <p className="text-sm text-gray-500 mb-2 flex items-center gap-1">
+                      <Users className="w-3 h-3" />
+                      {assignment.class.name}
+                    </p>
+                  )}
 
-                <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
-                  <Calendar className="w-4 h-4" />
-                  <span>Hạn: {new Date(assignment.deadline).toLocaleDateString('vi-VN', {
-                    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
-                  })}</span>
-                </div>
+                  <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
+                    <Calendar className="w-4 h-4" />
+                    <span>Hạn: {new Date(assignment.deadline).toLocaleDateString('vi-VN', {
+                      day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
+                    })}</span>
+                  </div>
 
-                <div className="grid grid-cols-3 gap-2 pt-3 border-t">
-                  <div className="text-center">
-                    <p className="text-lg font-bold text-blue-600">{assignment.total_students}</p>
-                    <p className="text-xs text-gray-500">Tổng</p>
+                  {/* Progress bar */}
+                  <div className="mb-3">
+                    <div className="flex justify-between text-xs text-gray-500 mb-1">
+                      <span>Tiến độ nộp bài</span>
+                      <span>{assignment.submitted}/{assignment.total_students}</span>
+                    </div>
+                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-blue-500 transition-all"
+                        style={{ width: `${assignment.total_students > 0 ? (assignment.submitted / assignment.total_students) * 100 : 0}%` }}
+                      />
+                    </div>
                   </div>
-                  <div className="text-center">
-                    <p className="text-lg font-bold text-amber-600">{assignment.submitted}</p>
-                    <p className="text-xs text-gray-500">Đã nộp</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-lg font-bold text-green-600">{assignment.graded}</p>
-                    <p className="text-xs text-gray-500">Đã chấm</p>
+
+                  <div className="grid grid-cols-3 gap-2 pt-3 border-t">
+                    <div className="text-center">
+                      <p className="text-lg font-bold text-blue-600">{assignment.total_students}</p>
+                      <p className="text-xs text-gray-500">Tổng</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-lg font-bold text-amber-600">{assignment.submitted}</p>
+                      <p className="text-xs text-gray-500">Đã nộp</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-lg font-bold text-green-600">{assignment.graded}</p>
+                      <p className="text-xs text-gray-500">Đã chấm</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
             {filteredAssignments.length === 0 && (
               <div className="col-span-full text-center py-12 text-gray-500">
                 <ClipboardList className="w-16 h-16 mx-auto mb-4 opacity-30" />
@@ -525,27 +628,77 @@ export default function AssignmentsPage() {
             </div>
 
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
-              {/* Lesson selection */}
+              {/* Lesson source tabs */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Chọn bài giảng <span className="text-red-500">*</span>
                 </label>
+                <div className="flex gap-2 mb-3">
+                  <button
+                    onClick={() => setFormData({ ...formData, lesson_source: 'system', lesson_id: '' })}
+                    className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
+                      formData.lesson_source === 'system'
+                        ? 'bg-emerald-600 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    Bài giảng hệ thống
+                  </button>
+                  <button
+                    onClick={() => setFormData({ ...formData, lesson_source: 'teacher', lesson_id: '' })}
+                    className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
+                      formData.lesson_source === 'teacher'
+                        ? 'bg-emerald-600 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    Bài giảng của tôi
+                  </button>
+                </div>
+
+                {/* Lesson dropdown with optgroups */}
                 <select
                   value={formData.lesson_id}
-                  onChange={(e) => handleLessonChange(e.target.value)}
+                  onChange={(e) => handleLessonChange(e.target.value, formData.lesson_source)}
                   className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-emerald-500"
                 >
                   <option value="">-- Chọn bài giảng --</option>
-                  <optgroup label="Bài giảng hệ thống">
-                    {lessons.filter(l => l.lesson_type === 'system').map(lesson => (
-                      <option key={lesson.id} value={lesson.id}>{lesson.title}</option>
-                    ))}
-                  </optgroup>
-                  <optgroup label="Bài giảng của tôi">
-                    {lessons.filter(l => l.lesson_type === 'teacher').map(lesson => (
-                      <option key={lesson.id} value={lesson.id}>{lesson.title}</option>
-                    ))}
-                  </optgroup>
+
+                  {formData.lesson_source === 'system' ? (
+                    // System lessons grouped by subject
+                    groupedSystemLessons.map(group => (
+                      group.lessons.length > 0 && (
+                        <optgroup key={group.key} label={`${group.icon} ${group.name} (${group.lessons.length} bài)`}>
+                          {group.lessons.slice(0, 20).map(lesson => (
+                            <option key={lesson.id} value={lesson.id}>
+                              {lesson.title} {lesson.question_count > 0 && `(${lesson.question_count} câu)`}
+                            </option>
+                          ))}
+                          {group.lessons.length > 20 && (
+                            <option disabled>... và {group.lessons.length - 20} bài khác</option>
+                          )}
+                        </optgroup>
+                      )
+                    ))
+                  ) : (
+                    // Teacher's lessons
+                    lessons.length > 0 ? (
+                      <>
+                        <optgroup label="Đã xuất bản">
+                          {lessons.filter(l => l.status === 'published').map(lesson => (
+                            <option key={lesson.id} value={lesson.id}>{lesson.title}</option>
+                          ))}
+                        </optgroup>
+                        <optgroup label="Bản nháp">
+                          {lessons.filter(l => l.status === 'draft').map(lesson => (
+                            <option key={lesson.id} value={lesson.id}>{lesson.title} (nháp)</option>
+                          ))}
+                        </optgroup>
+                      </>
+                    ) : (
+                      <option disabled>Bạn chưa có bài giảng nào</option>
+                    )
+                  )}
                 </select>
               </div>
 
@@ -611,7 +764,7 @@ export default function AssignmentsPage() {
                 </select>
               </div>
 
-              {/* Student selection (for individual type) */}
+              {/* Student selection */}
               {formData.assignment_type === 'individual' && formData.class_id && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -630,11 +783,7 @@ export default function AssignmentsPage() {
                           className="text-emerald-600 rounded"
                         />
                         <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                          {student.avatar_url ? (
-                            <img src={student.avatar_url} alt="" className="w-8 h-8 rounded-full" />
-                          ) : (
-                            <User className="w-4 h-4 text-purple-600" />
-                          )}
+                          <User className="w-4 h-4 text-purple-600" />
                         </div>
                         <span className="text-sm">{student.full_name}</span>
                       </label>
@@ -645,30 +794,30 @@ export default function AssignmentsPage() {
                 </div>
               )}
 
-              {/* Start date */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Ngày bắt đầu
-                </label>
-                <input
-                  type="datetime-local"
-                  value={formData.start_date}
-                  onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-emerald-500"
-                />
-              </div>
-
-              {/* Deadline */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Hạn nộp <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="datetime-local"
-                  value={formData.deadline}
-                  onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-emerald-500"
-                />
+              {/* Dates */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Ngày bắt đầu
+                  </label>
+                  <input
+                    type="datetime-local"
+                    value={formData.start_date}
+                    onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+                    className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Hạn nộp <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="datetime-local"
+                    value={formData.deadline}
+                    onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
+                    className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
               </div>
 
               {/* Note */}
@@ -706,14 +855,16 @@ export default function AssignmentsPage() {
         </div>
       )}
 
-      {/* Detail & Grade Modal */}
+      {/* Detail Modal */}
       {showDetailModal && selectedAssignment && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+          <div className="bg-white rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
             <div className="flex items-center justify-between p-4 border-b">
               <div>
                 <h3 className="text-lg font-bold">{selectedAssignment.title}</h3>
-                <p className="text-sm text-gray-500">{selectedAssignment.class?.name} • Hạn: {new Date(selectedAssignment.deadline).toLocaleDateString('vi-VN')}</p>
+                <p className="text-sm text-gray-500">
+                  {selectedAssignment.class?.name} • Hạn: {new Date(selectedAssignment.deadline).toLocaleString('vi-VN')}
+                </p>
               </div>
               <button onClick={() => setShowDetailModal(false)} className="p-2 hover:bg-gray-100 rounded-full">
                 <X className="w-5 h-5" />
@@ -741,7 +892,7 @@ export default function AssignmentsPage() {
                 </div>
                 <div className="text-center p-3 bg-amber-50 rounded-xl">
                   <p className="text-2xl font-bold text-amber-600">
-                    {studentSubmissions.filter(s => s.status === 'not_started' || s.status === 'in_progress').length}
+                    {studentSubmissions.filter(s => !['submitted', 'graded'].includes(s.status)).length}
                   </p>
                   <p className="text-xs text-amber-600">Chưa nộp</p>
                 </div>
@@ -749,51 +900,69 @@ export default function AssignmentsPage() {
 
               {/* Student list */}
               <div className="space-y-3">
-                {studentSubmissions.map((sub) => (
-                  <div key={sub.id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
-                    <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                      {sub.student?.avatar_url ? (
-                        <img src={sub.student.avatar_url} alt="" className="w-10 h-10 rounded-full" />
-                      ) : (
-                        <User className="w-5 h-5 text-purple-600" />
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-gray-900">{sub.student?.full_name}</p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getSubmissionStatusColor(sub.status)}`}>
-                          {getSubmissionStatusText(sub.status)}
-                        </span>
-                        {sub.submitted_at && (
-                          <span className="text-xs text-gray-500">
-                            Nộp: {new Date(sub.submitted_at).toLocaleString('vi-VN')}
+                <div className="flex items-center justify-between">
+                  <h4 className="font-medium text-gray-900">Danh sách học sinh</h4>
+                </div>
+
+                {studentSubmissions.map((sub) => {
+                  const statusInfo = getSubmissionStatusInfo(sub.status, selectedAssignment.deadline);
+                  return (
+                    <div key={sub.id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                      <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                        {sub.student?.avatar_url ? (
+                          <img src={sub.student.avatar_url} alt="" className="w-10 h-10 rounded-full" />
+                        ) : (
+                          <User className="w-5 h-5 text-purple-600" />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-gray-900">{sub.student?.full_name || 'Học sinh'}</p>
+                        <div className="flex items-center gap-2 mt-1 flex-wrap">
+                          <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${statusInfo.color}`}>
+                            {statusInfo.text}
                           </span>
+                          {sub.submitted_at && (
+                            <span className="text-xs text-gray-500">
+                              Nộp: {new Date(sub.submitted_at).toLocaleString('vi-VN')}
+                            </span>
+                          )}
+                          {sub.status === 'graded' && sub.score !== null && (
+                            <span className="text-xs font-medium text-green-600 flex items-center gap-1">
+                              <Award className="w-3 h-3" />
+                              {sub.score}/{sub.max_score || 100} điểm
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex items-center gap-2">
+                        {(sub.status === 'submitted' || sub.status === 'graded') && (
+                          <button
+                            onClick={() => handleOpenGradeModal(sub)}
+                            className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium ${
+                              sub.status === 'graded'
+                                ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                                : 'bg-amber-100 text-amber-700 hover:bg-amber-200'
+                            }`}
+                          >
+                            {sub.status === 'graded' ? (
+                              <>
+                                <Eye className="w-4 h-4" />
+                                Xem điểm
+                              </>
+                            ) : (
+                              <>
+                                <Edit2 className="w-4 h-4" />
+                                Chấm điểm
+                              </>
+                            )}
+                          </button>
                         )}
                       </div>
                     </div>
-
-                    {/* Grading */}
-                    {(sub.status === 'submitted' || sub.status === 'graded') && (
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-2">
-                          <Star className="w-4 h-4 text-amber-500" />
-                          <input
-                            type="number"
-                            min="0"
-                            max="100"
-                            value={sub.score || ''}
-                            onChange={(e) => handleGrade(sub.id, e.target.value, sub.feedback)}
-                            placeholder="0-100"
-                            className="w-20 px-2 py-1 border rounded-lg text-center"
-                          />
-                        </div>
-                        <button className="p-2 hover:bg-gray-200 rounded-lg">
-                          <Eye className="w-4 h-4 text-gray-500" />
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                ))}
+                  );
+                })}
 
                 {studentSubmissions.length === 0 && (
                   <p className="text-center text-gray-500 py-8">Chưa có học sinh nào được giao bài</p>
@@ -804,9 +973,134 @@ export default function AssignmentsPage() {
             <div className="p-4 border-t">
               <button
                 onClick={() => setShowDetailModal(false)}
-                className="w-full px-4 py-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700"
+                className="w-full px-4 py-2 bg-gray-100 rounded-xl hover:bg-gray-200"
               >
                 Đóng
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Grade Modal */}
+      {showGradeModal && selectedSubmission && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b">
+              <div>
+                <h3 className="text-lg font-bold">Chấm điểm</h3>
+                <p className="text-sm text-gray-500">{selectedSubmission.student?.full_name}</p>
+              </div>
+              <button onClick={() => setShowGradeModal(false)} className="p-2 hover:bg-gray-100 rounded-full">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              {/* Thông tin học sinh */}
+              <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
+                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                  <User className="w-6 h-6 text-purple-600" />
+                </div>
+                <div>
+                  <p className="font-medium text-gray-900">{selectedSubmission.student?.full_name}</p>
+                  <p className="text-sm text-gray-500">{selectedSubmission.student?.email}</p>
+                </div>
+              </div>
+
+              {/* Thời gian nộp */}
+              {selectedSubmission.submitted_at && (
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <Clock className="w-4 h-4" />
+                  <span>Nộp bài lúc: {new Date(selectedSubmission.submitted_at).toLocaleString('vi-VN')}</span>
+                </div>
+              )}
+
+              {/* Hiển thị câu trả lời nếu có */}
+              {gradeForm.question_scores && gradeForm.question_scores.length > 0 && (
+                <div className="border rounded-xl p-4">
+                  <h4 className="font-medium text-gray-900 mb-3">Bài làm của học sinh</h4>
+                  <div className="space-y-3">
+                    {gradeForm.question_scores.map((answer, index) => (
+                      <div key={index} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                        <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium ${
+                          answer.isCorrect ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                        }`}>
+                          {index + 1}
+                        </span>
+                        <div className="flex-1">
+                          <p className="text-sm text-gray-700">{answer.question}</p>
+                          <p className={`text-sm font-medium mt-1 ${
+                            answer.isCorrect ? 'text-green-600' : 'text-red-600'
+                          }`}>
+                            Đáp án: {answer.selectedAnswer}
+                            {!answer.isCorrect && (
+                              <span className="text-gray-500"> (Đúng: {answer.correctAnswer})</span>
+                            )}
+                          </p>
+                        </div>
+                        {answer.isCorrect ? (
+                          <CheckCircle2 className="w-5 h-5 text-green-500" />
+                        ) : (
+                          <XCircle className="w-5 h-5 text-red-500" />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Điểm */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Điểm số (0 - {selectedSubmission.max_score || 100})
+                </label>
+                <div className="relative">
+                  <Star className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-amber-500" />
+                  <input
+                    type="number"
+                    min="0"
+                    max={selectedSubmission.max_score || 100}
+                    value={gradeForm.score}
+                    onChange={(e) => setGradeForm({ ...gradeForm, score: e.target.value })}
+                    placeholder="Nhập điểm"
+                    className="w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-emerald-500 text-lg font-medium"
+                  />
+                </div>
+              </div>
+
+              {/* Nhận xét */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Nhận xét cho học sinh
+                </label>
+                <div className="relative">
+                  <MessageSquare className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                  <textarea
+                    value={gradeForm.feedback}
+                    onChange={(e) => setGradeForm({ ...gradeForm, feedback: e.target.value })}
+                    placeholder="Nhận xét về bài làm của học sinh..."
+                    rows={4}
+                    className="w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-3 p-4 border-t">
+              <button
+                onClick={() => setShowGradeModal(false)}
+                className="flex-1 px-4 py-2 border rounded-xl hover:bg-gray-50"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={handleSaveGrade}
+                disabled={saving}
+                className="flex-1 px-4 py-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                {saving ? 'Đang lưu...' : 'Lưu điểm'}
               </button>
             </div>
           </div>

@@ -1,13 +1,15 @@
 // src/pages/teacher/TeacherStudentsPage.jsx
-// Quản lý Học sinh cho Giáo viên
+// Quản lý Học sinh cho Giáo viên - Hỗ trợ Import từ Excel
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
+import * as XLSX from 'xlsx';
 import {
   Users, Search, Loader2, X, BookOpen, Plus,
   TrendingUp, Clock, Star, Eye, UserPlus, Edit2,
   Trash2, Upload, Download, RefreshCw, Mail, Phone,
-  AlertCircle, Check, FileSpreadsheet, User, Copy, Key
+  AlertCircle, Check, FileSpreadsheet, User, Copy, Key,
+  CheckCircle2, XCircle
 } from 'lucide-react';
 
 export default function TeacherStudentsPage() {
@@ -355,82 +357,167 @@ export default function TeacherStudentsPage() {
   };
 
   // ==================== IMPORT TỪ EXCEL ====================
+  const [importResults, setImportResults] = useState([]);
+  const [showResultModal, setShowResultModal] = useState(false);
+
+  // Tải file Excel mẫu
   const handleDownloadTemplate = () => {
-    // Tạo template CSV
-    const template = 'Họ và tên,Email,Số điện thoại phụ huynh,Ghi chú\nNguyễn Văn A,nguyenvana@email.com,0901234567,Học sinh giỏi\nTrần Thị B,tranthib@email.com,0912345678,';
-    const blob = new Blob(['\ufeff' + template], { type: 'text/csv;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'mau_import_hoc_sinh.csv';
-    a.click();
-    URL.revokeObjectURL(url);
+    // Tạo workbook mới
+    const wb = XLSX.utils.book_new();
+
+    // Dữ liệu mẫu
+    const templateData = [
+      ['STT', 'Họ và tên', 'Email', 'Lớp'],
+      [1, 'Nguyễn Văn A', 'nguyenvana@email.com', 'Lớp 1A'],
+      [2, 'Trần Thị B', 'tranthib@email.com', 'Lớp 1A'],
+      [3, 'Lê Văn C', 'levanc@email.com', 'Lớp 1B'],
+    ];
+
+    // Tạo worksheet
+    const ws = XLSX.utils.aoa_to_sheet(templateData);
+
+    // Set độ rộng cột
+    ws['!cols'] = [
+      { wch: 5 },   // STT
+      { wch: 25 },  // Họ và tên
+      { wch: 30 },  // Email
+      { wch: 15 },  // Lớp
+    ];
+
+    // Thêm worksheet vào workbook
+    XLSX.utils.book_append_sheet(wb, ws, 'Danh sách học sinh');
+
+    // Tải file
+    XLSX.writeFile(wb, 'mau_import_hocsinh.xlsx');
   };
 
+  // Đọc file Excel
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
     const reader = new FileReader();
     reader.onload = (event) => {
-      const text = event.target.result;
-      const lines = text.split('\n').filter(line => line.trim());
-      const data = [];
+      try {
+        const data = new Uint8Array(event.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
 
-      // Skip header row
-      for (let i = 1; i < lines.length; i++) {
-        const cols = lines[i].split(',').map(c => c.trim().replace(/^"|"$/g, ''));
-        if (cols[0] && cols[1]) {
-          data.push({
-            full_name: cols[0],
-            email: cols[1],
-            phone: cols[2] || '',
-            note: cols[3] || '',
-            status: 'pending',
-          });
+        // Lấy sheet đầu tiên
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+
+        // Chuyển thành JSON
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+        // Parse data (skip header row)
+        const parsedData = [];
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        for (let i = 1; i < jsonData.length; i++) {
+          const row = jsonData[i];
+          if (!row || row.length === 0) continue;
+
+          const fullName = String(row[1] || '').trim();
+          const email = String(row[2] || '').trim().toLowerCase();
+          const className = String(row[3] || '').trim();
+
+          // Validate dữ liệu
+          let status = 'pending';
+          let errorMsg = '';
+
+          if (!fullName) {
+            status = 'invalid';
+            errorMsg = 'Thiếu họ tên';
+          } else if (!email) {
+            status = 'invalid';
+            errorMsg = 'Thiếu email';
+          } else if (!emailRegex.test(email)) {
+            status = 'invalid';
+            errorMsg = 'Email không hợp lệ';
+          }
+
+          // Kiểm tra email trùng trong danh sách
+          const duplicateIndex = parsedData.findIndex(p => p.email === email);
+          if (duplicateIndex >= 0) {
+            status = 'invalid';
+            errorMsg = 'Email trùng với dòng ' + (duplicateIndex + 2);
+          }
+
+          if (fullName || email) {
+            parsedData.push({
+              stt: i,
+              full_name: fullName,
+              email: email,
+              class_name: className,
+              status: status,
+              errorMsg: errorMsg,
+              password: 'Student@123',
+              pin: '',
+            });
+          }
         }
-      }
 
-      setImportData(data);
-      setShowImportModal(true);
+        setImportData(parsedData);
+        setShowImportModal(true);
+      } catch (err) {
+        console.error('Parse Excel error:', err);
+        alert('Không thể đọc file. Vui lòng kiểm tra định dạng file Excel.');
+      }
     };
-    reader.readAsText(file);
+    reader.readAsArrayBuffer(file);
     e.target.value = '';
   };
 
+  // Import học sinh hàng loạt
   const handleImportStudents = async () => {
-    if (importData.length === 0) return;
+    // Chỉ import các dòng hợp lệ
+    const validStudents = importData.filter(s => s.status === 'pending');
+    if (validStudents.length === 0) {
+      alert('Không có học sinh hợp lệ để import!');
+      return;
+    }
 
     setImporting(true);
-    setImportProgress({ current: 0, total: importData.length });
+    setImportProgress({ current: 0, total: validStudents.length });
 
-    // Lưu session trước
+    // Lưu session trước khi tạo users
     const { data: currentSession } = await supabase.auth.getSession();
     const savedSession = currentSession?.session;
 
     const results = [...importData];
     let successCount = 0;
+    const createdStudents = [];
 
     for (let i = 0; i < importData.length; i++) {
       const student = importData[i];
-      setImportProgress({ current: i + 1, total: importData.length });
+
+      // Bỏ qua các dòng không hợp lệ
+      if (student.status === 'invalid') {
+        continue;
+      }
+
+      setImportProgress({ current: successCount + 1, total: validStudents.length });
 
       try {
-        // Kiểm tra email
+        // Kiểm tra email đã tồn tại
         const { data: existing } = await supabase
           .from('profiles')
           .select('id')
-          .eq('email', student.email.toLowerCase())
+          .eq('email', student.email)
           .single();
 
         if (existing) {
-          results[i] = { ...student, status: 'error', message: 'Email đã tồn tại' };
+          results[i] = { ...student, status: 'error', errorMsg: 'Email đã tồn tại trong hệ thống' };
           continue;
         }
 
-        // Tạo tài khoản
+        // Tạo PIN ngẫu nhiên
+        const pin = String(Math.floor(1000 + Math.random() * 9000));
+        const hashedPin = btoa(pin + '_schoolhub_salt');
+
+        // Tạo tài khoản (KHÔNG đăng nhập vào tài khoản mới)
         const { data: authData, error: authError } = await supabase.auth.signUp({
-          email: student.email.toLowerCase(),
+          email: student.email,
           password: 'Student@123',
           options: {
             data: {
@@ -440,7 +527,7 @@ export default function TeacherStudentsPage() {
           },
         });
 
-        // Khôi phục session ngay sau mỗi lần tạo
+        // QUAN TRỌNG: Khôi phục session GV ngay sau mỗi lần tạo
         if (savedSession) {
           await supabase.auth.setSession({
             access_token: savedSession.access_token,
@@ -449,7 +536,7 @@ export default function TeacherStudentsPage() {
         }
 
         if (authError) {
-          results[i] = { ...student, status: 'error', message: authError.message };
+          results[i] = { ...student, status: 'error', errorMsg: authError.message };
           continue;
         }
 
@@ -457,28 +544,65 @@ export default function TeacherStudentsPage() {
         if (authData.user) {
           await supabase.from('profiles').upsert({
             id: authData.user.id,
-            email: student.email.toLowerCase(),
+            email: student.email,
             full_name: student.full_name,
-            phone: student.phone || null,
             role: 'student',
             school_id: profile.school_id,
             class_id: formData.class_id || null,
             is_active: true,
+            parent_pin: hashedPin,
           });
         }
 
-        results[i] = { ...student, status: 'success' };
+        results[i] = { ...student, status: 'success', pin: pin };
+        createdStudents.push({
+          ...student,
+          pin: pin,
+          password: 'Student@123',
+        });
         successCount++;
       } catch (err) {
-        results[i] = { ...student, status: 'error', message: err.message };
+        results[i] = { ...student, status: 'error', errorMsg: err.message };
       }
 
       setImportData([...results]);
     }
 
     setImporting(false);
-    alert(`Đã import ${successCount}/${importData.length} học sinh thành công!\nMật khẩu mặc định: Student@123`);
+    setImportResults(createdStudents);
+    setShowImportModal(false);
+    setShowResultModal(true);
     loadData();
+  };
+
+  // Tải file kết quả sau khi import
+  const handleDownloadResults = () => {
+    if (importResults.length === 0) return;
+
+    const wb = XLSX.utils.book_new();
+
+    const resultData = [
+      ['STT', 'Họ và tên', 'Email', 'Mật khẩu', 'PIN Phụ huynh'],
+      ...importResults.map((s, i) => [
+        i + 1,
+        s.full_name,
+        s.email,
+        s.password,
+        s.pin,
+      ])
+    ];
+
+    const ws = XLSX.utils.aoa_to_sheet(resultData);
+    ws['!cols'] = [
+      { wch: 5 },
+      { wch: 25 },
+      { wch: 30 },
+      { wch: 15 },
+      { wch: 15 },
+    ];
+
+    XLSX.utils.book_append_sheet(wb, ws, 'Thông tin đăng nhập');
+    XLSX.writeFile(wb, 'thongtin_dangnhap_hocsinh.xlsx');
   };
 
   // Filter
@@ -1129,9 +1253,9 @@ export default function TeacherStudentsPage() {
       {/* ==================== MODAL IMPORT ==================== */}
       {showImportModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
+          <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
             <div className="flex items-center justify-between p-4 border-b">
-              <h3 className="text-lg font-bold">Import học sinh từ file</h3>
+              <h3 className="text-lg font-bold">Import học sinh từ Excel</h3>
               <button onClick={() => setShowImportModal(false)} className="p-2 hover:bg-gray-100 rounded-full">
                 <X className="w-5 h-5" />
               </button>
@@ -1139,7 +1263,17 @@ export default function TeacherStudentsPage() {
 
             <div className="p-4 border-b bg-gray-50">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-sm text-gray-600">Tìm thấy {importData.length} học sinh</span>
+                <div>
+                  <span className="text-sm text-gray-600">
+                    Tìm thấy <strong className="text-emerald-600">{importData.filter(s => s.status === 'pending').length}</strong> hợp lệ /
+                    <strong className="text-gray-700 ml-1">{importData.length}</strong> dòng
+                  </span>
+                  {importData.filter(s => s.status === 'invalid').length > 0 && (
+                    <span className="text-sm text-red-500 ml-2">
+                      ({importData.filter(s => s.status === 'invalid').length} lỗi)
+                    </span>
+                  )}
+                </div>
                 <button
                   onClick={handleDownloadTemplate}
                   className="flex items-center gap-1 text-sm text-emerald-600 hover:underline"
@@ -1151,7 +1285,7 @@ export default function TeacherStudentsPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Xếp vào lớp
+                  Xếp tất cả vào lớp
                 </label>
                 <select
                   value={formData.class_id}
@@ -1167,34 +1301,70 @@ export default function TeacherStudentsPage() {
             </div>
 
             <div className="flex-1 overflow-y-auto p-4">
-              <div className="space-y-2">
-                {importData.map((student, index) => (
-                  <div
-                    key={index}
-                    className={`flex items-center gap-3 p-3 rounded-lg ${
-                      student.status === 'success' ? 'bg-green-50' :
-                      student.status === 'error' ? 'bg-red-50' : 'bg-gray-50'
-                    }`}
-                  >
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center bg-white">
-                      {student.status === 'success' ? (
-                        <Check className="w-4 h-4 text-green-600" />
-                      ) : student.status === 'error' ? (
-                        <AlertCircle className="w-4 h-4 text-red-600" />
-                      ) : (
-                        <span className="text-gray-400 text-sm">{index + 1}</span>
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-gray-900 text-sm">{student.full_name}</p>
-                      <p className="text-xs text-gray-500">{student.email}</p>
-                      {student.status === 'error' && (
-                        <p className="text-xs text-red-600">{student.message}</p>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
+              {/* Preview Table */}
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-gray-100">
+                    <th className="px-3 py-2 text-left font-medium text-gray-600 w-12">STT</th>
+                    <th className="px-3 py-2 text-left font-medium text-gray-600">Họ và tên</th>
+                    <th className="px-3 py-2 text-left font-medium text-gray-600">Email</th>
+                    <th className="px-3 py-2 text-left font-medium text-gray-600">Lớp</th>
+                    <th className="px-3 py-2 text-center font-medium text-gray-600 w-24">Trạng thái</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {importData.map((student, index) => (
+                    <tr
+                      key={index}
+                      className={`${
+                        student.status === 'success' ? 'bg-green-50' :
+                        student.status === 'error' ? 'bg-red-50' :
+                        student.status === 'invalid' ? 'bg-amber-50' : ''
+                      }`}
+                    >
+                      <td className="px-3 py-2 text-gray-500">{student.stt}</td>
+                      <td className="px-3 py-2">
+                        <span className={`font-medium ${!student.full_name ? 'text-red-500 italic' : 'text-gray-900'}`}>
+                          {student.full_name || 'Thiếu họ tên'}
+                        </span>
+                      </td>
+                      <td className="px-3 py-2">
+                        <span className={`${!student.email ? 'text-red-500 italic' : 'text-gray-600'}`}>
+                          {student.email || 'Thiếu email'}
+                        </span>
+                      </td>
+                      <td className="px-3 py-2 text-gray-500">{student.class_name || '-'}</td>
+                      <td className="px-3 py-2 text-center">
+                        {student.status === 'success' ? (
+                          <span className="inline-flex items-center gap-1 text-green-600">
+                            <CheckCircle2 className="w-4 h-4" />
+                          </span>
+                        ) : student.status === 'error' ? (
+                          <span className="inline-flex items-center gap-1 text-red-600" title={student.errorMsg}>
+                            <XCircle className="w-4 h-4" />
+                          </span>
+                        ) : student.status === 'invalid' ? (
+                          <span className="inline-flex items-center gap-1 text-amber-600" title={student.errorMsg}>
+                            <AlertCircle className="w-4 h-4" />
+                          </span>
+                        ) : (
+                          <span className="text-gray-400">-</span>
+                        )}
+                        {(student.status === 'error' || student.status === 'invalid') && student.errorMsg && (
+                          <p className="text-xs text-red-500 mt-1">{student.errorMsg}</p>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              {importData.length === 0 && (
+                <div className="text-center py-8 text-gray-500">
+                  <FileSpreadsheet className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                  <p>Không có dữ liệu</p>
+                </div>
+              )}
             </div>
 
             {importing && (
@@ -1215,6 +1385,12 @@ export default function TeacherStudentsPage() {
             )}
 
             <div className="p-4 border-t">
+              <div className="bg-yellow-50 p-3 rounded-lg mb-4">
+                <p className="text-sm text-yellow-800">
+                  <strong>Lưu ý:</strong> Mật khẩu mặc định là <strong>Student@123</strong>.
+                  PIN phụ huynh sẽ được tạo tự động cho mỗi học sinh.
+                </p>
+              </div>
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowImportModal(false)}
@@ -1225,7 +1401,7 @@ export default function TeacherStudentsPage() {
                 </button>
                 <button
                   onClick={handleImportStudents}
-                  disabled={importing || importData.length === 0}
+                  disabled={importing || importData.filter(s => s.status === 'pending').length === 0}
                   className="flex-1 px-4 py-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {importing ? (
@@ -1235,12 +1411,77 @@ export default function TeacherStudentsPage() {
                     </>
                   ) : (
                     <>
-                      <FileSpreadsheet className="w-4 h-4" />
-                      Import {importData.length} học sinh
+                      <Upload className="w-4 h-4" />
+                      Import {importData.filter(s => s.status === 'pending').length} học sinh
                     </>
                   )}
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ==================== MODAL KẾT QUẢ IMPORT ==================== */}
+      {showResultModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl w-full max-w-md p-6">
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Check className="w-8 h-8 text-green-600" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900">Import thành công!</h3>
+              <p className="text-gray-600 mt-2">
+                Đã tạo <strong className="text-emerald-600">{importResults.length}</strong> học sinh mới
+              </p>
+            </div>
+
+            <div className="bg-gray-50 rounded-xl p-4 mb-6">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm font-medium text-gray-700">Thông tin tài khoản</span>
+                <button
+                  onClick={handleDownloadResults}
+                  className="flex items-center gap-1 text-sm text-emerald-600 hover:underline"
+                >
+                  <Download className="w-4 h-4" />
+                  Tải file Excel
+                </button>
+              </div>
+              <ul className="text-sm text-gray-600 space-y-2">
+                <li className="flex items-center gap-2">
+                  <Key className="w-4 h-4 text-gray-400" />
+                  <span>Mật khẩu mặc định: <strong>Student@123</strong></span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <User className="w-4 h-4 text-gray-400" />
+                  <span>Mỗi học sinh có PIN phụ huynh riêng</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="bg-amber-50 rounded-xl p-4 mb-6">
+              <p className="text-sm text-amber-800">
+                <strong>Quan trọng:</strong> Hãy tải file Excel chứa thông tin đăng nhập để gửi cho phụ huynh.
+              </p>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowResultModal(false);
+                  setImportResults([]);
+                }}
+                className="flex-1 px-4 py-2 border border-gray-200 rounded-xl hover:bg-gray-50"
+              >
+                Đóng
+              </button>
+              <button
+                onClick={handleDownloadResults}
+                className="flex-1 px-4 py-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 flex items-center justify-center gap-2"
+              >
+                <Download className="w-4 h-4" />
+                Tải thông tin đăng nhập
+              </button>
             </div>
           </div>
         </div>
