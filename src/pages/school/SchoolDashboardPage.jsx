@@ -1,172 +1,313 @@
 // src/pages/school/SchoolDashboardPage.jsx
-// Dashboard for School Admin
-import React, { useState, useEffect } from 'react';
+// Dashboard thông minh Real-time cho Nhà trường
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
+import { Building2, RefreshCw, Loader2, ChevronDown } from 'lucide-react';
+
+// Dashboard Components
 import {
-  Building2, Users, GraduationCap, BookOpen,
-  TrendingUp, Clock, Loader2
-} from 'lucide-react';
+  StatsCards,
+  AlertsSection,
+  RecentActivities,
+  ClassScoresChart,
+  AttendanceChart,
+  LearningTrendChart,
+  TopStudentsTable,
+  TopTeachersTable,
+  EventsCalendar,
+  QuickActions,
+} from '../../components/school/dashboard';
+
+// Dashboard Service
+import * as dashboardService from '../../services/schoolDashboardService';
+
+// Date range options
+const DATE_RANGES = [
+  { value: 'today', label: 'Hôm nay' },
+  { value: 'week', label: 'Tuần này' },
+  { value: 'month', label: 'Tháng này' },
+  { value: 'year', label: 'Năm học' },
+];
+
+// Format ngày
+function formatDate(date) {
+  const days = ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'];
+  const day = days[date.getDay()];
+  return `${day}, ngày ${date.toLocaleDateString('vi-VN')}`;
+}
+
+// Get date range
+function getDateRange(range) {
+  const end = new Date();
+  const start = new Date();
+
+  switch (range) {
+    case 'today':
+      return { start, end };
+    case 'week':
+      start.setDate(start.getDate() - 7);
+      return { start, end };
+    case 'month':
+      start.setDate(1);
+      return { start, end };
+    case 'year':
+      start.setMonth(8); // Tháng 9 năm học
+      if (start > end) start.setFullYear(start.getFullYear() - 1);
+      return { start, end };
+    default:
+      return { start, end };
+  }
+}
 
 export default function SchoolDashboardPage() {
   const { profile } = useAuth();
-  const [stats, setStats] = useState(null);
-  const [recentActivity, setRecentActivity] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [dateRange, setDateRange] = useState('week');
+  const [lastUpdate, setLastUpdate] = useState(null);
 
-  useEffect(() => {
-    loadDashboardData();
-  }, [profile?.school_id]);
+  // Data states
+  const [stats, setStats] = useState(null);
+  const [alerts, setAlerts] = useState([]);
+  const [activities, setActivities] = useState([]);
+  const [classScores, setClassScores] = useState([]);
+  const [attendanceStats, setAttendanceStats] = useState(null);
+  const [learningTrend, setLearningTrend] = useState([]);
+  const [topStudents, setTopStudents] = useState([]);
+  const [topTeachers, setTopTeachers] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [sparklineData, setSparklineData] = useState({});
+  const [schoolInfo, setSchoolInfo] = useState(null);
 
-  const loadDashboardData = async () => {
-    if (!profile?.school_id) {
-      setLoading(false);
-      return;
-    }
+  // Load all dashboard data
+  const loadDashboardData = useCallback(async () => {
+    if (!profile?.school_id) return;
+
+    const schoolId = profile.school_id;
+    const { start, end } = getDateRange(dateRange);
 
     try {
-      // Load stats
+      // Load all data in parallel
       const [
-        { count: departmentCount },
-        { count: teacherCount },
-        { count: studentCount },
-        { count: classCount }
+        statsData,
+        alertsData,
+        activitiesData,
+        classScoresData,
+        attendanceData,
+        trendData,
+        studentsData,
+        teachersData,
+        eventsData,
+        schoolData,
       ] = await Promise.all([
-        supabase.from('departments').select('*', { count: 'exact', head: true }).eq('school_id', profile.school_id),
-        supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('school_id', profile.school_id).eq('role', 'teacher'),
-        supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('school_id', profile.school_id).eq('role', 'student'),
-        supabase.from('classes').select('*', { count: 'exact', head: true }).eq('school_id', profile.school_id),
+        dashboardService.getDashboardStats(schoolId),
+        dashboardService.getAlerts(schoolId),
+        dashboardService.getRecentActivities(schoolId, 20),
+        dashboardService.getClassAverageScores(schoolId),
+        dashboardService.getAttendanceStats(schoolId, start, end),
+        dashboardService.getLearningTrend(schoolId, 30),
+        dashboardService.getTopStudents(schoolId, 10),
+        dashboardService.getTopTeachers(schoolId, 5),
+        dashboardService.getUpcomingEvents(schoolId, 7),
+        supabase.from('schools').select('*').eq('id', schoolId).single(),
       ]);
 
-      setStats({
-        departments: departmentCount || 0,
-        teachers: teacherCount || 0,
-        students: studentCount || 0,
-        classes: classCount || 0,
+      setStats(statsData);
+      setAlerts(alertsData);
+      setActivities(activitiesData);
+      setClassScores(classScoresData);
+      setAttendanceStats(attendanceData);
+      setLearningTrend(trendData);
+      setTopStudents(studentsData);
+      setTopTeachers(teachersData);
+      setEvents(eventsData);
+      setSchoolInfo(schoolData.data);
+      setLastUpdate(new Date().toISOString());
+
+      // Load sparkline data
+      const [teacherSparkline, studentSparkline] = await Promise.all([
+        dashboardService.getSparklineData(schoolId, 'teacher'),
+        dashboardService.getSparklineData(schoolId, 'student'),
+      ]);
+      setSparklineData({
+        teachers: teacherSparkline,
+        students: studentSparkline,
       });
-
-      // Load recent activity (recent profiles)
-      const { data: recent } = await supabase
-        .from('profiles')
-        .select('id, full_name, role, created_at')
-        .eq('school_id', profile.school_id)
-        .order('created_at', { ascending: false })
-        .limit(5);
-
-      setRecentActivity(recent || []);
     } catch (err) {
       console.error('Load dashboard error:', err);
-    } finally {
-      setLoading(false);
     }
+  }, [profile?.school_id, dateRange]);
+
+  // Initial load
+  useEffect(() => {
+    const init = async () => {
+      setLoading(true);
+      await loadDashboardData();
+      setLoading(false);
+    };
+    init();
+  }, [loadDashboardData]);
+
+  // Subscribe to realtime updates
+  useEffect(() => {
+    if (!profile?.school_id) return;
+
+    const subscription = dashboardService.subscribeToActivities(
+      profile.school_id,
+      async (newActivity) => {
+        // Fetch full activity with profile
+        const { data } = await supabase
+          .from('activity_log')
+          .select('*, profiles:user_id (id, full_name, avatar)')
+          .eq('id', newActivity.id)
+          .single();
+
+        if (data) {
+          setActivities(prev => [data, ...prev.slice(0, 19)]);
+        }
+      }
+    );
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [profile?.school_id]);
+
+  // Auto refresh every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      loadDashboardData();
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [loadDashboardData]);
+
+  // Manual refresh
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await loadDashboardData();
+    setRefreshing(false);
   };
 
+  // Loading state
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+        <div className="text-center">
+          <Loader2 className="w-10 h-10 animate-spin text-blue-600 mx-auto mb-3" />
+          <p className="text-gray-500">Đang tải dữ liệu...</p>
+        </div>
       </div>
     );
   }
 
+  // No school assigned
   if (!profile?.school_id) {
     return (
-      <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 text-center">
-        <Building2 className="w-12 h-12 mx-auto mb-4 text-yellow-600" />
-        <h3 className="text-lg font-semibold text-yellow-800 mb-2">Chưa được gán trường</h3>
+      <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-8 text-center">
+        <Building2 className="w-16 h-16 mx-auto mb-4 text-yellow-600" />
+        <h3 className="text-xl font-semibold text-yellow-800 mb-2">Chưa được gán trường</h3>
         <p className="text-yellow-600">Vui lòng liên hệ quản trị viên để được gán trường.</p>
       </div>
     );
   }
 
-  const statCards = [
-    { label: 'Bộ phận', value: stats?.departments || 0, icon: Building2, color: 'bg-blue-500' },
-    { label: 'Giáo viên', value: stats?.teachers || 0, icon: GraduationCap, color: 'bg-green-500' },
-    { label: 'Học sinh', value: stats?.students || 0, icon: Users, color: 'bg-purple-500' },
-    { label: 'Lớp học', value: stats?.classes || 0, icon: BookOpen, color: 'bg-amber-500' },
-  ];
-
   return (
     <div className="space-y-6">
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {statCards.map((stat, index) => (
-          <div key={index} className="bg-white rounded-xl shadow-sm p-6">
-            <div className="flex items-center gap-4">
-              <div className={`w-12 h-12 ${stat.color} rounded-xl flex items-center justify-center`}>
-                <stat.icon className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                <p className="text-sm text-gray-500">{stat.label}</p>
-              </div>
-            </div>
+      {/* Header */}
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-6 text-white">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold flex items-center gap-2">
+              Xin chào, {profile?.full_name}! 👋
+            </h1>
+            <p className="text-white/80 mt-1">
+              Tổng quan trường {schoolInfo?.name || 'SchoolHub'} - {formatDate(new Date())}
+            </p>
           </div>
-        ))}
+
+          <div className="flex items-center gap-3">
+            {/* Date Range Selector */}
+            <div className="relative">
+              <select
+                value={dateRange}
+                onChange={(e) => setDateRange(e.target.value)}
+                className="appearance-none bg-white/20 text-white px-4 py-2 pr-8 rounded-xl focus:outline-none focus:ring-2 focus:ring-white/50 cursor-pointer"
+              >
+                {DATE_RANGES.map(range => (
+                  <option key={range.value} value={range.value} className="text-gray-900">
+                    {range.label}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" />
+            </div>
+
+            {/* Refresh Button */}
+            <button
+              onClick={handleRefresh}
+              disabled={refreshing}
+              className="flex items-center gap-2 px-4 py-2 bg-white/20 rounded-xl hover:bg-white/30 transition-colors"
+            >
+              <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+              <span className="hidden sm:inline">Làm mới</span>
+            </button>
+          </div>
+        </div>
       </div>
 
-      {/* Charts and Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Simple Chart Placeholder */}
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-blue-600" />
-            Thống kê
-          </h3>
-          <div className="h-48 flex items-center justify-center bg-gray-50 rounded-lg">
-            <div className="text-center">
-              <div className="flex items-end justify-center gap-2 mb-4">
-                <div className="w-8 bg-blue-500 rounded-t" style={{ height: `${(stats?.departments || 0) * 10 + 20}px` }}></div>
-                <div className="w-8 bg-green-500 rounded-t" style={{ height: `${(stats?.teachers || 0) * 5 + 20}px` }}></div>
-                <div className="w-8 bg-purple-500 rounded-t" style={{ height: `${(stats?.students || 0) * 2 + 20}px` }}></div>
-                <div className="w-8 bg-amber-500 rounded-t" style={{ height: `${(stats?.classes || 0) * 8 + 20}px` }}></div>
-              </div>
-              <div className="flex justify-center gap-4 text-xs text-gray-500">
-                <span>Bộ phận</span>
-                <span>Giáo viên</span>
-                <span>Học sinh</span>
-                <span>Lớp</span>
-              </div>
-            </div>
+      {/* Stats Cards */}
+      <StatsCards stats={stats} sparklineData={sparklineData} loading={false} />
+
+      {/* Alerts Section */}
+      <AlertsSection alerts={alerts} loading={false} />
+
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Column - 2/3 width */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Charts Row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <ClassScoresChart data={classScores} loading={false} />
+            <AttendanceChart
+              data={attendanceStats}
+              loading={false}
+              dateRange={DATE_RANGES.find(r => r.value === dateRange)?.label}
+            />
+          </div>
+
+          {/* Learning Trend */}
+          <LearningTrendChart data={learningTrend} loading={false} />
+
+          {/* Rankings */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <TopStudentsTable data={topStudents} loading={false} />
+            <TopTeachersTable data={topTeachers} loading={false} />
           </div>
         </div>
 
-        {/* Recent Activity */}
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <Clock className="w-5 h-5 text-blue-600" />
-            Hoạt động gần đây
-          </h3>
-          {recentActivity.length > 0 ? (
-            <div className="space-y-3">
-              {recentActivity.map((item) => (
-                <div key={item.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                    item.role === 'teacher' ? 'bg-green-100' :
-                    item.role === 'student' ? 'bg-purple-100' : 'bg-gray-100'
-                  }`}>
-                    {item.role === 'teacher' ? (
-                      <GraduationCap className="w-5 h-5 text-green-600" />
-                    ) : (
-                      <Users className="w-5 h-5 text-purple-600" />
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-gray-900 truncate">{item.full_name}</p>
-                    <p className="text-xs text-gray-500">
-                      {item.role === 'teacher' ? 'Giáo viên' : 'Học sinh'} -
-                      {new Date(item.created_at).toLocaleDateString('vi-VN')}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8 text-gray-500">
-              <Clock className="w-12 h-12 mx-auto mb-2 opacity-50" />
-              <p>Chưa có hoạt động nào</p>
-            </div>
-          )}
+        {/* Right Column - 1/3 width */}
+        <div className="space-y-6">
+          {/* Recent Activities */}
+          <RecentActivities
+            activities={activities}
+            loading={false}
+            onRefresh={handleRefresh}
+            lastUpdate={lastUpdate}
+          />
+
+          {/* Events Calendar */}
+          <EventsCalendar
+            events={events}
+            loading={false}
+            onRefresh={() => dashboardService.getUpcomingEvents(profile.school_id, 7).then(setEvents)}
+            schoolId={profile.school_id}
+            userId={profile.id}
+          />
+
+          {/* Quick Actions */}
+          <QuickActions />
         </div>
       </div>
     </div>
