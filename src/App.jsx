@@ -7,7 +7,7 @@ import { AudioProvider } from './contexts/AudioContext';
 import SplashScreen from './components/SplashScreen';
 
 // Lazy load pages
-const LandingPage = lazy(() => import('./pages/LandingPage'));
+const LandingPage = lazy(() => import('./pages/LandingPageNew'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const RegisterPage = lazy(() => import('./pages/RegisterPage'));
 const RegisterSchoolPage = lazy(() => import('./pages/RegisterSchoolPage'));
