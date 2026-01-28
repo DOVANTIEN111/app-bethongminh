@@ -3,7 +3,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
-import * as XLSX from 'xlsx';
+// Dynamic import xlsx để giảm bundle size - chỉ load khi cần
+const loadXLSX = () => import('xlsx');
 import {
   Users, Search, Loader2, X, BookOpen, Plus,
   TrendingUp, Clock, Star, Eye, UserPlus, Edit2,
@@ -361,7 +362,10 @@ export default function TeacherStudentsPage() {
   const [showResultModal, setShowResultModal] = useState(false);
 
   // Tải file Excel mẫu
-  const handleDownloadTemplate = () => {
+  const handleDownloadTemplate = async () => {
+    // Dynamic import xlsx
+    const XLSX = await loadXLSX();
+
     // Tạo workbook mới
     const wb = XLSX.utils.book_new();
 
@@ -392,9 +396,12 @@ export default function TeacherStudentsPage() {
   };
 
   // Đọc file Excel
-  const handleFileUpload = (e) => {
+  const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+
+    // Dynamic import xlsx
+    const XLSX = await loadXLSX();
 
     const reader = new FileReader();
     reader.onload = (event) => {
@@ -576,8 +583,11 @@ export default function TeacherStudentsPage() {
   };
 
   // Tải file kết quả sau khi import
-  const handleDownloadResults = () => {
+  const handleDownloadResults = async () => {
     if (importResults.length === 0) return;
+
+    // Dynamic import xlsx
+    const XLSX = await loadXLSX();
 
     const wb = XLSX.utils.book_new();
 

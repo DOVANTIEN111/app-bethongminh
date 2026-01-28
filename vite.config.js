@@ -99,5 +99,20 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: false,
+    // Tối ưu code splitting
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Vendor chunks - tách các thư viện lớn
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-ui': ['lucide-react', 'framer-motion'],
+          'vendor-charts': ['recharts'],
+          'vendor-supabase': ['@supabase/supabase-js'],
+          'vendor-utils': ['date-fns'],
+        },
+      },
+    },
+    // Tăng giới hạn cảnh báo chunk
+    chunkSizeWarningLimit: 500,
   },
 });
