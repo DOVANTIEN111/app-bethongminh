@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
+import { createUserWithoutLogin } from '../../utils/createUserWithoutLogin';
 import {
   Users, Search, Loader2, Eye, BookOpen, Building2,
   Plus, X, Mail, Phone, User, Key, RefreshCw, Copy, Check, Edit, Trash2
@@ -107,65 +108,26 @@ export default function StudentsPage() {
 
     setSaving(true);
     try {
-      // Kiểm tra email đã tồn tại chưa
-      const { data: existingUser } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('email', formData.email.trim().toLowerCase())
-        .single();
-
-      if (existingUser) {
-        alert('Email này đã được sử dụng. Vui lòng dùng email khác.');
-        setSaving(false);
-        return;
-      }
-
-      // Lưu session hiện tại
-      const { data: currentSession } = await supabase.auth.getSession();
-      const savedSession = currentSession?.session;
-
-      // Tạo tài khoản mới
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: formData.email.trim().toLowerCase(),
-        password: 'Student@123',
-        options: {
-          data: {
-            full_name: formData.full_name.trim(),
-            role: 'student',
-          },
-        },
-      });
-
-      // Khôi phục session
-      if (savedSession) {
-        await supabase.auth.setSession({
-          access_token: savedSession.access_token,
-          refresh_token: savedSession.refresh_token,
-        });
-      }
-
-      if (authError) throw authError;
-
       // Hash PIN
       const hashedPin = btoa(generatedPin + '_schoolhub_salt');
 
-      // Tạo profile
-      if (authData.user) {
-        const { error: profileError } = await supabase.from('profiles').upsert({
-          id: authData.user.id,
-          email: formData.email.trim().toLowerCase(),
-          full_name: formData.full_name.trim(),
-          phone: formData.phone.trim() || null,
-          role: 'student',
-          school_id: profile.school_id,
-          class_id: formData.class_id || null,
-          is_active: true,
-          parent_name: formData.parent_name.trim() || null,
-          parent_phone: formData.parent_phone.trim() || null,
-          parent_pin: hashedPin,
-        });
+      // Tạo học sinh mới (dùng helper để giữ session)
+      const result = await createUserWithoutLogin(supabase, {
+        email: formData.email.trim(),
+        full_name: formData.full_name.trim(),
+        phone: formData.phone.trim(),
+        role: 'student',
+        school_id: profile.school_id,
+        class_id: formData.class_id || null,
+        parent_name: formData.parent_name.trim() || null,
+        parent_phone: formData.parent_phone.trim() || null,
+        parent_pin: hashedPin,
+      });
 
-        if (profileError) throw profileError;
+      if (!result.success) {
+        alert(result.error);
+        setSaving(false);
+        return;
       }
 
       // Hiển thị modal thành công

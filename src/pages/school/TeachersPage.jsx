@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
+import { createUserWithoutLogin } from '../../utils/createUserWithoutLogin';
 import {
   GraduationCap, Plus, Edit, Trash2, Search,
   Loader2, X, Mail, Phone, Building2
@@ -92,77 +93,23 @@ export default function TeachersPage() {
         if (error) throw error;
         alert('Đã cập nhật thông tin giáo viên!');
       } else {
-        // === TẠO GIÁO VIÊN MỚI ===
-        const email = formData.email.trim().toLowerCase();
+        // === TẠO GIÁO VIÊN MỚI (dùng helper để giữ session) ===
+        const result = await createUserWithoutLogin(supabase, {
+          email: formData.email.trim(),
+          full_name: formData.full_name.trim(),
+          phone: formData.phone.trim(),
+          role: 'teacher',
+          school_id: profile.school_id,
+          department_id: formData.department_id || null,
+        });
 
-        // 1. Kiểm tra email đã tồn tại chưa
-        const { data: existingUser } = await supabase
-          .from('profiles')
-          .select('id')
-          .eq('email', email)
-          .single();
-
-        if (existingUser) {
-          alert('Email này đã được sử dụng. Vui lòng dùng email khác.');
+        if (!result.success) {
+          alert(result.error);
           setSaving(false);
           return;
         }
 
-        // 2. Lưu session hiện tại
-        const { data: currentSession } = await supabase.auth.getSession();
-        const savedSession = currentSession?.session;
-
-        // 3. Tạo tài khoản auth
-        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-          email: email,
-          password: 'Teacher@123',
-          options: {
-            data: {
-              full_name: formData.full_name.trim(),
-              role: 'teacher',
-            },
-          },
-        });
-
-        // 4. Khôi phục session cũ NGAY LẬP TỨC
-        if (savedSession) {
-          await supabase.auth.setSession({
-            access_token: savedSession.access_token,
-            refresh_token: savedSession.refresh_token,
-          });
-        }
-
-        // 5. Kiểm tra lỗi signUp
-        if (signUpError) {
-          if (signUpError.message.includes('already registered')) {
-            throw new Error('Email này đã được đăng ký. Vui lòng dùng email khác.');
-          }
-          throw signUpError;
-        }
-
-        // 6. Tạo/cập nhật profile
-        if (signUpData?.user) {
-          const { error: profileError } = await supabase.from('profiles').upsert({
-            id: signUpData.user.id,
-            email: email,
-            full_name: formData.full_name.trim(),
-            role: 'teacher',
-            school_id: profile.school_id,
-            department_id: formData.department_id || null,
-            phone: formData.phone.trim() || null,
-            is_active: true,
-            created_at: new Date().toISOString(),
-          });
-
-          if (profileError) {
-            console.error('Profile error:', profileError);
-            // Không throw vì user đã được tạo
-          }
-
-          alert(`Đã tạo giáo viên thành công!\n\nEmail: ${email}\nMật khẩu: Teacher@123`);
-        } else {
-          throw new Error('Không thể tạo tài khoản. Vui lòng thử lại.');
-        }
+        alert(`Đã tạo giáo viên thành công!\n\nEmail: ${formData.email.trim()}\nMật khẩu: ${result.password}`);
       }
 
       setShowModal(false);
