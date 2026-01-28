@@ -2,43 +2,43 @@
 // Nút truy cập nhanh
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Clock, Users, Bell, FileText, ChevronRight } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 
 const ACTIONS = [
   {
-    id: 'teacher-attendance',
+    id: 'teachers',
     icon: '👨‍🏫',
     iconBg: 'bg-blue-100',
-    label: 'Chấm công GV',
-    description: 'Quản lý điểm danh giáo viên',
+    label: 'Giáo viên',
+    description: 'Quản lý giáo viên',
     link: '/school/teachers',
     color: 'hover:border-blue-300',
   },
   {
-    id: 'student-attendance',
+    id: 'students',
     icon: '👧',
     iconBg: 'bg-green-100',
-    label: 'Điểm danh HS',
-    description: 'Theo dõi chuyên cần học sinh',
+    label: 'Học sinh',
+    description: 'Quản lý học sinh',
     link: '/school/students',
     color: 'hover:border-green-300',
   },
   {
-    id: 'notifications',
-    icon: '📢',
+    id: 'classes',
+    icon: '📚',
     iconBg: 'bg-orange-100',
-    label: 'Gửi thông báo',
-    description: 'Thông báo đến GV, HS, PH',
-    link: '/school/notifications',
+    label: 'Lớp học',
+    description: 'Quản lý lớp học',
+    link: '/school/classes',
     color: 'hover:border-orange-300',
   },
   {
-    id: 'reports',
-    icon: '📊',
+    id: 'departments',
+    icon: '🏢',
     iconBg: 'bg-purple-100',
-    label: 'Xuất báo cáo',
-    description: 'Báo cáo tổng hợp, thống kê',
-    link: '/school/reports',
+    label: 'Bộ phận',
+    description: 'Quản lý bộ phận',
+    link: '/school/departments',
     color: 'hover:border-purple-300',
   },
 ];
@@ -88,15 +88,9 @@ export default function QuickActions() {
 
       {/* Additional links */}
       <div className="mt-6 pt-4 border-t border-gray-100">
-        <div className="flex items-center justify-between text-sm">
-          <Link to="/school/settings" className="text-gray-600 hover:text-blue-600 transition-colors">
-            ⚙️ Cài đặt trường
-          </Link>
-          <Link to="/school/classes" className="text-gray-600 hover:text-blue-600 transition-colors">
-            🏫 Quản lý lớp học
-          </Link>
-          <Link to="/school/departments" className="text-gray-600 hover:text-blue-600 transition-colors">
-            🏢 Quản lý bộ phận
+        <div className="flex items-center justify-center">
+          <Link to="/school/settings" className="text-gray-600 hover:text-blue-600 transition-colors text-sm">
+            ⚙️ Cài đặt
           </Link>
         </div>
       </div>
