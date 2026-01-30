@@ -116,8 +116,12 @@ export default function PricingPage() {
       return;
     }
 
-    // TODO: Implement payment flow
-    alert('Tính năng thanh toán sẽ được cập nhật sớm!');
+    // Find the plan to get amount and billing info
+    const plan = PLANS.find(p => p.id === planId);
+    if (plan) {
+      const billing = planId.includes('yearly') ? 'yearly' : 'monthly';
+      navigate(`/payment?planId=${planId}&amount=${plan.price}&billing=${billing}&planName=${encodeURIComponent(plan.name)}`);
+    }
   };
 
   const formatPrice = (price) => {

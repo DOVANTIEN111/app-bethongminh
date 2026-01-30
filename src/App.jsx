@@ -95,6 +95,9 @@ const ScienceLessonPage = lazy(() => import('./pages/ScienceLessonPage'));
 const GamesPage = lazy(() => import('./pages/learn/games/GamesPage'));
 const GamePlayPage = lazy(() => import('./pages/learn/games/GamePlayPage'));
 
+// Payment page
+const PaymentPage = lazy(() => import('./pages/PaymentPage'));
+
 // Parent pages
 const ParentLayout = lazy(() => import('./components/ParentLayout'));
 const ParentHomePage = lazy(() => import('./pages/parent/ParentHomePage'));
@@ -173,6 +176,7 @@ function App() {
         <Route path="/register/school" element={<RegisterSchoolPage />} />
         <Route path="/register/teacher" element={<RegisterTeacherPage />} />
         <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/payment" element={<PaymentPage />} />
 
         {/* Role-based redirect for authenticated users */}
         <Route path="/dashboard" element={<RoleBasedRedirect />} />
