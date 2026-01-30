@@ -9,6 +9,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { AudioProvider } from './contexts/AudioContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import './index.css';
+import './styles/mobile.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

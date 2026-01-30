@@ -7,11 +7,12 @@ const config: CapacitorConfig = {
   server: {
     androidScheme: 'https',
     iosScheme: 'https',
-    // Cho phép kết nối đến API
+    // Cho phep ket noi den API
     allowNavigation: [
       'app-bethongminh.vercel.app',
       '*.supabase.co',
-      '*.supabase.in'
+      '*.supabase.in',
+      'img.vietqr.io'
     ]
   },
   plugins: {
@@ -21,7 +22,10 @@ const config: CapacitorConfig = {
       backgroundColor: '#6366f1',
       androidSplashResourceName: 'splash',
       androidScaleType: 'CENTER_CROP',
-      showSpinner: false,
+      showSpinner: true,
+      spinnerColor: '#FFFFFF',
+      androidSpinnerStyle: 'large',
+      iosSpinnerStyle: 'large',
       splashFullScreen: true,
       splashImmersive: true,
     },
@@ -33,21 +37,34 @@ const config: CapacitorConfig = {
       resize: 'body',
       resizeOnFullScreen: true,
     },
-    LocalNotifications: {
-      smallIcon: 'ic_stat_icon_config_sample',
-      iconColor: '#6366f1',
-      sound: 'beep.wav',
+    PushNotifications: {
+      presentationOptions: ['badge', 'sound', 'alert']
     },
+    LocalNotifications: {
+      smallIcon: 'ic_stat_icon',
+      iconColor: '#6366f1',
+      sound: 'default',
+    },
+    App: {
+      deepLinks: [
+        { appId: 'com.schoolhub.app', paths: ['*'] }
+      ]
+    },
+    CapacitorHttp: {
+      enabled: true
+    }
   },
   ios: {
     contentInset: 'automatic',
     preferredContentMode: 'mobile',
     scheme: 'SchoolHub',
+    backgroundColor: '#FFFFFF',
   },
   android: {
     allowMixedContent: true,
     captureInput: true,
     webContentsDebuggingEnabled: false,
+    backgroundColor: '#FFFFFF',
   },
 };
 

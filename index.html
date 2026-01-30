@@ -2,7 +2,7 @@
 <html lang="vi">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
 
     <!-- SEO Meta Tags -->
     <meta name="theme-color" content="#6366f1" />
@@ -17,8 +17,14 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="SchoolHub" />
-    <link rel="apple-touch-icon" href="/icon-192.svg" />
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
     <link rel="apple-touch-startup-image" href="/icons/icon.svg" />
+
+    <!-- Prevent phone number detection -->
+    <meta name="format-detection" content="telephone=no" />
+
+    <!-- Android -->
+    <meta name="mobile-web-app-capable" content="yes" />
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -101,6 +107,24 @@
       button, a, [role="button"] {
         min-height: 44px;
         min-width: 44px;
+      }
+
+      /* Prevent overscroll bounce */
+      html, body {
+        overscroll-behavior: none;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      /* Prevent text selection on buttons */
+      button {
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      /* Smooth scrolling */
+      html {
+        scroll-behavior: smooth;
       }
     </style>
 
