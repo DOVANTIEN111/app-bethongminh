@@ -44,6 +44,8 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        // Giới hạn kích thước file cache
+        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024, // 3MB
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -78,12 +80,25 @@ export default defineConfig({
             handler: 'NetworkFirst',
             options: {
               cacheName: 'supabase-cache',
+              networkTimeoutSeconds: 10,
               expiration: {
-                maxEntries: 50,
+                maxEntries: 100,
                 maxAgeSeconds: 60 * 5 // 5 minutes
               },
               cacheableResponse: {
                 statuses: [0, 200]
+              }
+            }
+          },
+          // Cache images
+          {
+            urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'images-cache',
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
               }
             }
           }
@@ -99,6 +114,21 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: false,
+    // Minification với terser
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+        pure_funcs: ['console.log', 'console.info', 'console.debug'],
+      },
+      mangle: {
+        safari10: true,
+      },
+      format: {
+        comments: false,
+      },
+    },
     // Tối ưu code splitting
     rollupOptions: {
       output: {
@@ -110,9 +140,34 @@ export default defineConfig({
           'vendor-supabase': ['@supabase/supabase-js'],
           'vendor-utils': ['date-fns'],
         },
+        // Tên file chunk tối ưu
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]',
       },
     },
     // Tăng giới hạn cảnh báo chunk
     chunkSizeWarningLimit: 500,
+    // CSS code splitting
+    cssCodeSplit: true,
+    // Target browsers hiện đại
+    target: 'es2020',
+    // Asset inline limit (dưới 4KB sẽ inline)
+    assetsInlineLimit: 4096,
+  },
+  // Optimize dependencies
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom', 'lucide-react'],
+    exclude: ['xlsx'], // Dynamic import
+  },
+  // Server config for development
+  server: {
+    host: true,
+    port: 5173,
+  },
+  // Preview config
+  preview: {
+    host: true,
+    port: 4173,
   },
 });
