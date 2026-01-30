@@ -9,25 +9,31 @@ const QUESTIONS = [
     id: 1,
     question: 'Đếm xem có bao nhiêu quả táo?',
     image: '🍎🍎🍎',
+    imageStyle: 'text-6xl sm:text-7xl tracking-wider',
     options: ['2', '3', '4', '5'],
     answer: 1, // index
     hint: 'Hãy đếm từng quả táo nhé!',
+    correctMessage: 'Đúng rồi! 3 quả táo!',
   },
   {
     id: 2,
     question: 'Đây là số mấy?',
-    image: '5️⃣',
+    image: '5',
+    imageStyle: 'text-8xl sm:text-9xl font-bold text-blue-500',
     options: ['3', '4', '5', '6'],
     answer: 2,
     hint: 'Nhìn kỹ số trong hình!',
+    correctMessage: 'Giỏi quá! Đây là số 5!',
   },
   {
     id: 3,
-    question: '2 + 1 = ?',
-    image: '🔢',
-    options: ['2', '3', '4', '1'],
+    question: 'Hai cộng một bằng mấy?',
+    image: '2 + 1 = ?',
+    imageStyle: 'text-5xl sm:text-6xl font-bold text-purple-500',
+    options: ['2', '3', '4', '5'],
     answer: 1,
-    hint: 'Hai cộng một bằng mấy nhỉ?',
+    hint: 'Đếm thử xem: 2... rồi thêm 1 nữa!',
+    correctMessage: 'Xuất sắc! 2 + 1 = 3!',
   },
 ];
 
@@ -186,7 +192,7 @@ export default function DemoLesson() {
         </h3>
 
         {/* Image/Emoji */}
-        <div className="text-6xl sm:text-8xl text-center mb-8 select-none">
+        <div className={`text-center mb-8 select-none py-4 ${question.imageStyle || 'text-6xl sm:text-8xl'}`}>
           {question.image}
         </div>
 
@@ -232,7 +238,7 @@ export default function DemoLesson() {
           <div className="mt-6 text-center animate-bounce-in">
             <div className="inline-flex items-center gap-2 bg-green-100 text-green-700 px-6 py-3 rounded-full font-bold">
               <span className="text-xl">🎉</span>
-              Chính xác! +10 điểm
+              {question.correctMessage || 'Chính xác!'} +10 điểm
             </div>
           </div>
         )}

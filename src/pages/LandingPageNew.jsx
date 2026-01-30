@@ -3,6 +3,34 @@
 import React, { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 
+// Structured Data for SEO
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "SchoolHub",
+  "applicationCategory": "EducationalApplication",
+  "operatingSystem": "Web, iOS, Android",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "VND",
+    "description": "Dùng thử miễn phí 30 ngày"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9",
+    "ratingCount": "10000",
+    "bestRating": "5",
+    "worstRating": "1"
+  },
+  "description": "Ứng dụng học tập thông minh cho trẻ em với 500+ bài học Toán, Tiếng Việt, Tiếng Anh. Học qua trò chơi, phụ huynh theo dõi tiến độ dễ dàng.",
+  "screenshot": "https://app-bethongminh.vercel.app/icons/icon.svg",
+  "author": {
+    "@type": "Organization",
+    "name": "SchoolHub"
+  }
+};
+
 // Landing Components
 import LandingHeader from '../components/landing/LandingHeader';
 import HeroSection from '../components/landing/HeroSection';
@@ -53,7 +81,11 @@ export default function LandingPageNew() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* SEO Meta Tags are in index.html */}
+      {/* Structured Data for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
 
       {/* Sticky Header */}
       <LandingHeader />
