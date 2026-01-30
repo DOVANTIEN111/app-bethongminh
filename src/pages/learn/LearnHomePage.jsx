@@ -400,6 +400,33 @@ export default function LearnHomePage() {
         </div>
       </div>
 
+      {/* Games Section */}
+      <div
+        onClick={() => navigate('/learn/games')}
+        className="bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-lg cursor-pointer active:scale-[0.98] transition-transform"
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 bg-white/20 rounded-2xl flex items-center justify-center">
+              <span className="text-3xl sm:text-4xl">🎮</span>
+            </div>
+            <div>
+              <h3 className="text-white font-bold text-lg sm:text-xl">Tro choi hoc tap</h3>
+              <p className="text-white/80 text-xs sm:text-sm">Vua hoc vua choi, kien thuc nho lau!</p>
+            </div>
+          </div>
+          <div className="text-white">
+            <ChevronRight className="w-6 h-6 sm:w-8 sm:h-8" />
+          </div>
+        </div>
+        <div className="flex gap-2 mt-3 overflow-x-auto pb-1">
+          <span className="bg-white/20 text-white text-xs px-3 py-1 rounded-full whitespace-nowrap">🔢 Dem so</span>
+          <span className="bg-white/20 text-white text-xs px-3 py-1 rounded-full whitespace-nowrap">🔗 Noi cap</span>
+          <span className="bg-white/20 text-white text-xs px-3 py-1 rounded-full whitespace-nowrap">🧠 Tri nho</span>
+          <span className="bg-white/20 text-white text-xs px-3 py-1 rounded-full whitespace-nowrap">📝 Ghep chu</span>
+        </div>
+      </div>
+
       {/* Badges Section */}
       <div className="bg-white rounded-2xl sm:rounded-3xl p-3 sm:p-5 shadow-lg">
         <div className="flex items-center justify-between mb-3 sm:mb-4">

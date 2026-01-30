@@ -3,15 +3,15 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, NavLink, useLocation, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Home, BookOpen, ClipboardList, Trophy, User, Star, Flame, Users, Clock, X, Crown, AlertTriangle } from 'lucide-react';
+import { Home, BookOpen, ClipboardList, Trophy, User, Star, Flame, Users, Clock, X, Crown, AlertTriangle, Gamepad2 } from 'lucide-react';
 import ParentPinModal from './ParentPinModal';
 import { getUserSubscription, checkSubscriptionExpiry, expireSubscription } from '../services/subscriptionService';
 
 const MENU_ITEMS = [
   { path: '/learn', icon: Home, label: 'Trang chủ', exact: true },
   { path: '/learn/lessons', icon: BookOpen, label: 'Bài học' },
+  { path: '/learn/games', icon: Gamepad2, label: 'Trò chơi' },
   { path: '/learn/assignments', icon: ClipboardList, label: 'Bài tập' },
-  { path: '/learn/achievements', icon: Trophy, label: 'Thành tích' },
   { path: '/learn/profile', icon: User, label: 'Cá nhân' },
 ];
 
