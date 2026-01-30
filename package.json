@@ -31,6 +31,7 @@
     "@capacitor/status-bar": "^6.0.0",
     "@sentry/react": "^8.55.0",
     "@supabase/supabase-js": "^2.91.0",
+    "canvas-confetti": "^1.9.4",
     "date-fns": "^3.3.0",
     "framer-motion": "^11.0.0",
     "lucide-react": "^0.330.0",

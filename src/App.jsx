@@ -91,6 +91,10 @@ const VietnameseLessonPage = lazy(() => import('./pages/VietnameseLessonPage'));
 // Science Lesson page
 const ScienceLessonPage = lazy(() => import('./pages/ScienceLessonPage'));
 
+// Games pages
+const GamesPage = lazy(() => import('./pages/learn/games/GamesPage'));
+const GamePlayPage = lazy(() => import('./pages/learn/games/GamePlayPage'));
+
 // Parent pages
 const ParentLayout = lazy(() => import('./components/ParentLayout'));
 const ParentHomePage = lazy(() => import('./pages/parent/ParentHomePage'));
@@ -316,6 +320,18 @@ function App() {
         <Route path="/science/:lessonId" element={
           <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
             <ScienceLessonPage />
+          </ProtectedRoute>
+        } />
+
+        {/* Games routes - for students */}
+        <Route path="/learn/games" element={
+          <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+            <GamesPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/learn/games/:gameId" element={
+          <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+            <GamePlayPage />
           </ProtectedRoute>
         } />
 
