@@ -40,6 +40,7 @@ const TransactionsPage = lazy(() => import('./pages/admin/TransactionsPage'));
 const PromotionsPage = lazy(() => import('./pages/admin/PromotionsPage'));
 const NotificationsPage = lazy(() => import('./pages/admin/NotificationsPage'));
 const AnalyticsPage = lazy(() => import('./pages/admin/AnalyticsPage'));
+const ReportsPage = lazy(() => import('./pages/admin/ReportsPage'));
 
 // School Admin pages
 const SchoolLayout = lazy(() => import('./components/SchoolLayout'));
@@ -195,6 +196,7 @@ function App() {
           <Route path="promotions" element={<PromotionsPage />} />
           <Route path="notifications" element={<NotificationsPage />} />
           <Route path="analytics" element={<AnalyticsPage />} />
+          <Route path="reports" element={<ReportsPage />} />
         </Route>
 
         {/* School Admin routes - Nested routes */}

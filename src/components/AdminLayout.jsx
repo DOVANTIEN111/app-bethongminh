@@ -7,7 +7,7 @@ import {
   LayoutDashboard, School, Users, CreditCard, BarChart3,
   Settings, LogOut, Menu, X, Shield, ChevronDown, ChevronRight,
   BookOpen, FileText, Languages, HelpCircle, FolderOpen,
-  DollarSign, Receipt, Gift, Bell, TrendingUp
+  DollarSign, Receipt, Gift, Bell, TrendingUp, ClipboardList
 } from 'lucide-react';
 
 const MENU_ITEMS = [
@@ -226,6 +226,22 @@ export default function AdminLayout() {
           >
             <TrendingUp className="w-5 h-5" />
             <span className="font-medium">Phân tích</span>
+          </NavLink>
+
+          {/* Reports */}
+          <NavLink
+            to="/admin/reports"
+            onClick={() => setSidebarOpen(false)}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
+                isActive
+                  ? 'bg-blue-700 text-white'
+                  : 'text-blue-200 hover:bg-blue-800 hover:text-white'
+              }`
+            }
+          >
+            <ClipboardList className="w-5 h-5" />
+            <span className="font-medium">Báo cáo</span>
           </NavLink>
 
           {/* Settings */}
