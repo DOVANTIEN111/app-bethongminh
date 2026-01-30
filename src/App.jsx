@@ -49,6 +49,9 @@ const DepartmentsPage = lazy(() => import('./pages/school/DepartmentsPage'));
 const TeachersPage = lazy(() => import('./pages/school/TeachersPage'));
 const StudentsPage = lazy(() => import('./pages/school/StudentsPage'));
 const ClassesPage = lazy(() => import('./pages/school/ClassesPage'));
+const AttendancePage = lazy(() => import('./pages/school/AttendancePage'));
+const SchedulesPage = lazy(() => import('./pages/school/SchedulesPage'));
+const SchoolReportsPage = lazy(() => import('./pages/school/SchoolReportsPage'));
 const SchoolSettingsPage = lazy(() => import('./pages/school/SchoolSettingsPage'));
 
 // Teacher pages
@@ -214,6 +217,9 @@ function App() {
           <Route path="students/:id" element={<StudentsPage />} />
           <Route path="classes" element={<ClassesPage />} />
           <Route path="classes/:id" element={<ClassesPage />} />
+          <Route path="attendance" element={<AttendancePage />} />
+          <Route path="schedules" element={<SchedulesPage />} />
+          <Route path="reports" element={<SchoolReportsPage />} />
           <Route path="settings" element={<SchoolSettingsPage />} />
         </Route>
 

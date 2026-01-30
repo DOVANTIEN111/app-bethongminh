@@ -5,7 +5,8 @@ import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import {
   LayoutDashboard, Building2, GraduationCap, Users,
-  BookOpen, Settings, LogOut, Menu, X, School
+  BookOpen, Settings, LogOut, Menu, X, School,
+  Calendar, Clock, BarChart3
 } from 'lucide-react';
 
 const MENU_ITEMS = [
@@ -14,6 +15,9 @@ const MENU_ITEMS = [
   { path: '/school/teachers', icon: GraduationCap, label: 'Giáo viên' },
   { path: '/school/students', icon: Users, label: 'Học sinh' },
   { path: '/school/classes', icon: BookOpen, label: 'Lớp học' },
+  { path: '/school/attendance', icon: Calendar, label: 'Điểm danh' },
+  { path: '/school/schedules', icon: Clock, label: 'Thời khóa biểu' },
+  { path: '/school/reports', icon: BarChart3, label: 'Báo cáo' },
   { path: '/school/settings', icon: Settings, label: 'Cài đặt' },
 ];
 

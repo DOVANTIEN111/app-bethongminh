@@ -6,7 +6,7 @@ import { supabase } from '../../lib/supabase';
 import { createUserWithoutLogin } from '../../utils/createUserWithoutLogin';
 import {
   GraduationCap, Plus, Edit, Trash2, Search,
-  Loader2, X, Mail, Phone, Building2
+  Loader2, X, Mail, Phone, Building2, Check, Copy
 } from 'lucide-react';
 
 export default function TeachersPage() {
@@ -22,6 +22,9 @@ export default function TeachersPage() {
   const [saving, setSaving] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterDepartment, setFilterDepartment] = useState('');
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [createdTeacherInfo, setCreatedTeacherInfo] = useState(null);
+  const [copiedField, setCopiedField] = useState(null);
 
   useEffect(() => {
     loadData();
@@ -109,11 +112,22 @@ export default function TeachersPage() {
           return;
         }
 
-        alert(`Đã tạo giáo viên thành công!\n\nEmail: ${formData.email.trim()}\nMật khẩu: ${result.password}`);
+        // Show success modal with credentials
+        setCreatedTeacherInfo({
+          full_name: formData.full_name.trim(),
+          email: formData.email.trim(),
+          password: result.password,
+          department: departments.find(d => d.id === formData.department_id)?.name || '',
+        });
+        setShowModal(false);
+        setShowSuccessModal(true);
+        loadData();
+        return;
       }
 
       setShowModal(false);
       loadData();
+      alert('Đã cập nhật thông tin giáo viên!');
     } catch (err) {
       console.error('Save teacher error:', err);
       alert('Có lỗi xảy ra: ' + (err.message || 'Vui lòng thử lại'));
@@ -138,6 +152,22 @@ export default function TeachersPage() {
       console.error('Delete teacher error:', err);
       alert('Có lỗi xảy ra: ' + err.message);
     }
+  };
+
+  // Copy to clipboard with feedback
+  const copyToClipboard = (text, field) => {
+    navigator.clipboard.writeText(text);
+    setCopiedField(field);
+    setTimeout(() => setCopiedField(null), 2000);
+  };
+
+  // Copy all credentials
+  const copyAllCredentials = () => {
+    if (!createdTeacherInfo) return;
+    const text = `Thông tin đăng nhập Giáo viên:\nHọ tên: ${createdTeacherInfo.full_name}\nEmail: ${createdTeacherInfo.email}\nMật khẩu: ${createdTeacherInfo.password}`;
+    navigator.clipboard.writeText(text);
+    setCopiedField('all');
+    setTimeout(() => setCopiedField(null), 2000);
   };
 
   const filteredTeachers = teachers.filter(t => {
@@ -358,6 +388,95 @@ export default function TeachersPage() {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Success Modal */}
+      {showSuccessModal && createdTeacherInfo && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl w-full max-w-md p-6">
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Check className="w-8 h-8 text-green-600" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900">Tạo giáo viên thành công!</h3>
+              <p className="text-gray-500 mt-1">Thông tin đăng nhập bên dưới</p>
+            </div>
+
+            <div className="bg-gray-50 rounded-xl p-4 space-y-3 mb-4">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Họ tên:</span>
+                <span className="font-medium">{createdTeacherInfo.full_name}</span>
+              </div>
+              {createdTeacherInfo.department && (
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">Bộ phận:</span>
+                  <span className="font-medium text-blue-600">{createdTeacherInfo.department}</span>
+                </div>
+              )}
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Email:</span>
+                <div className="flex items-center gap-2">
+                  <span className="font-medium">{createdTeacherInfo.email}</span>
+                  <button
+                    onClick={() => copyToClipboard(createdTeacherInfo.email, 'email')}
+                    className="p-1 hover:bg-gray-200 rounded"
+                  >
+                    {copiedField === 'email' ? (
+                      <Check className="w-4 h-4 text-green-500" />
+                    ) : (
+                      <Copy className="w-4 h-4 text-gray-500" />
+                    )}
+                  </button>
+                </div>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Mật khẩu:</span>
+                <div className="flex items-center gap-2">
+                  <span className="font-medium font-mono bg-yellow-100 px-2 py-0.5 rounded">
+                    {createdTeacherInfo.password}
+                  </span>
+                  <button
+                    onClick={() => copyToClipboard(createdTeacherInfo.password, 'password')}
+                    className="p-1 hover:bg-gray-200 rounded"
+                  >
+                    {copiedField === 'password' ? (
+                      <Check className="w-4 h-4 text-green-500" />
+                    ) : (
+                      <Copy className="w-4 h-4 text-gray-500" />
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={copyAllCredentials}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 mb-3"
+            >
+              {copiedField === 'all' ? (
+                <>
+                  <Check className="w-4 h-4" />
+                  Đã sao chép!
+                </>
+              ) : (
+                <>
+                  <Copy className="w-4 h-4" />
+                  Sao chép tất cả
+                </>
+              )}
+            </button>
+
+            <button
+              onClick={() => {
+                setShowSuccessModal(false);
+                setCreatedTeacherInfo(null);
+              }}
+              className="w-full px-4 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 font-medium"
+            >
+              Đóng
+            </button>
           </div>
         </div>
       )}
