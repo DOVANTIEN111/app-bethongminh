@@ -347,6 +347,145 @@ export const toggleVideoFeatured = async (id, isFeatured) => {
   return true;
 };
 
+// === TOPICS (CHU DE / CHUONG) ===
+
+// Lay danh sach chu de theo mon va lop
+export const getTopics = async (filters = {}) => {
+  let query = supabase
+    .from('video_topics')
+    .select('*')
+    .eq('is_active', true)
+    .order('display_order', { ascending: true });
+
+  if (filters.subject) {
+    query = query.eq('subject', filters.subject);
+  }
+  if (filters.grade) {
+    query = query.eq('grade', filters.grade);
+  }
+
+  const { data, error } = await query;
+  if (error) throw error;
+  return data || [];
+};
+
+// Lay tat ca chu de (bao gom inactive, cho admin)
+export const getAllTopics = async (filters = {}) => {
+  let query = supabase
+    .from('video_topics')
+    .select('*')
+    .order('subject', { ascending: true })
+    .order('grade', { ascending: true })
+    .order('display_order', { ascending: true });
+
+  if (filters.subject) {
+    query = query.eq('subject', filters.subject);
+  }
+  if (filters.grade) {
+    query = query.eq('grade', filters.grade);
+  }
+
+  const { data, error } = await query;
+  if (error) throw error;
+  return data || [];
+};
+
+// Lay chi tiet chu de kem danh sach video
+export const getTopicWithVideos = async (topicId) => {
+  // Lay thong tin chu de
+  const { data: topic, error: topicError } = await supabase
+    .from('video_topics')
+    .select('*')
+    .eq('id', topicId)
+    .single();
+
+  if (topicError) throw topicError;
+
+  // Lay danh sach video trong chu de
+  const { data: videos, error: videosError } = await supabase
+    .from('video_lessons')
+    .select('*')
+    .eq('topic_id', topicId)
+    .eq('is_active', true)
+    .order('display_order', { ascending: true });
+
+  if (videosError) throw videosError;
+
+  return { ...topic, videos: videos || [] };
+};
+
+// Tao chu de moi
+export const createTopic = async (topicData) => {
+  const { data, error } = await supabase
+    .from('video_topics')
+    .insert(topicData)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+// Cap nhat chu de
+export const updateTopic = async (id, topicData) => {
+  const { data, error } = await supabase
+    .from('video_topics')
+    .update({ ...topicData, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+// Xoa chu de
+export const deleteTopic = async (id) => {
+  const { error } = await supabase
+    .from('video_topics')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw error;
+  return true;
+};
+
+// Cap nhat so luong video trong chu de
+export const updateTopicVideoCount = async (topicId) => {
+  const { count } = await supabase
+    .from('video_lessons')
+    .select('*', { count: 'exact', head: true })
+    .eq('topic_id', topicId)
+    .eq('is_active', true);
+
+  await supabase
+    .from('video_topics')
+    .update({ video_count: count || 0 })
+    .eq('id', topicId);
+};
+
+// Lay video theo mon hoc va lop (nhom theo chu de)
+export const getVideosBySubjectAndGrade = async (subject, grade) => {
+  // Lay tat ca chu de
+  const topics = await getTopics({ subject, grade });
+
+  // Lay video cho tung chu de
+  const topicsWithVideos = await Promise.all(
+    topics.map(async (topic) => {
+      const { data: videos } = await supabase
+        .from('video_lessons')
+        .select('*')
+        .eq('topic_id', topic.id)
+        .eq('is_active', true)
+        .order('display_order', { ascending: true });
+
+      return { ...topic, videos: videos || [] };
+    })
+  );
+
+  return topicsWithVideos;
+};
+
 export default {
   extractYoutubeId,
   getYoutubeThumbnail,
@@ -366,5 +505,13 @@ export default {
   getFavorites,
   getAllVideos,
   toggleVideoActive,
-  toggleVideoFeatured
+  toggleVideoFeatured,
+  getTopics,
+  getAllTopics,
+  getTopicWithVideos,
+  createTopic,
+  updateTopic,
+  deleteTopic,
+  updateTopicVideoCount,
+  getVideosBySubjectAndGrade
 };

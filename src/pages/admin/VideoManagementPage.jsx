@@ -11,7 +11,9 @@ import {
   extractYoutubeId,
   getYoutubeThumbnail,
   toggleVideoFeatured,
-  toggleVideoActive
+  toggleVideoActive,
+  getAllTopics,
+  updateTopicVideoCount
 } from '../../services/videoService';
 
 const VideoManagementPage = () => {
@@ -22,6 +24,7 @@ const VideoManagementPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterSubject, setFilterSubject] = useState('');
   const [saving, setSaving] = useState(false);
+  const [allTopics, setAllTopics] = useState([]);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -30,6 +33,7 @@ const VideoManagementPage = () => {
     subject: 'toan',
     grade: 'lop-1',
     category: 'bai-giang',
+    topic_id: '',
     teacher_name: '',
     channel_name: '',
     duration: '',
@@ -63,7 +67,17 @@ const VideoManagementPage = () => {
 
   useEffect(() => {
     loadVideos();
+    loadTopics();
   }, [filterSubject]);
+
+  const loadTopics = async () => {
+    try {
+      const data = await getAllTopics({});
+      setAllTopics(data || []);
+    } catch (error) {
+      console.error('Error loading topics:', error);
+    }
+  };
 
   const loadVideos = async () => {
     setLoading(true);
@@ -88,14 +102,25 @@ const VideoManagementPage = () => {
     try {
       const videoData = {
         ...formData,
+        topic_id: formData.topic_id || null,
         duration: formData.duration ? parseInt(formData.duration) : null,
         tags: formData.tags ? formData.tags.split(',').map(t => t.trim()).filter(t => t) : []
       };
 
+      let oldTopicId = null;
       if (editingVideo) {
+        oldTopicId = editingVideo.topic_id;
         await updateVideo(editingVideo.id, videoData);
       } else {
         await createVideo(videoData);
+      }
+
+      // Update topic video count
+      if (videoData.topic_id) {
+        await updateTopicVideoCount(videoData.topic_id);
+      }
+      if (oldTopicId && oldTopicId !== videoData.topic_id) {
+        await updateTopicVideoCount(oldTopicId);
       }
 
       setShowModal(false);
@@ -118,6 +143,7 @@ const VideoManagementPage = () => {
       subject: video.subject || 'toan',
       grade: video.grade || 'lop-1',
       category: video.category || 'bai-giang',
+      topic_id: video.topic_id || '',
       teacher_name: video.teacher_name || '',
       channel_name: video.channel_name || '',
       duration: video.duration?.toString() || '',
@@ -168,6 +194,7 @@ const VideoManagementPage = () => {
       subject: 'toan',
       grade: 'lop-1',
       category: 'bai-giang',
+      topic_id: '',
       teacher_name: '',
       channel_name: '',
       duration: '',
@@ -454,6 +481,31 @@ const VideoManagementPage = () => {
                     ))}
                   </select>
                 </div>
+              </div>
+
+              {/* Topic Selection */}
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Chủ đề / Chương
+                  <span className="text-gray-400 font-normal ml-1">(tùy chọn)</span>
+                </label>
+                <select
+                  value={formData.topic_id}
+                  onChange={(e) => setFormData({ ...formData, topic_id: e.target.value })}
+                  className="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-red-500"
+                >
+                  <option value="">-- Chọn chủ đề --</option>
+                  {allTopics
+                    .filter(t => t.subject === formData.subject && t.grade === formData.grade)
+                    .map(t => (
+                      <option key={t.id} value={t.id}>{t.title}</option>
+                    ))}
+                </select>
+                {allTopics.filter(t => t.subject === formData.subject && t.grade === formData.grade).length === 0 && (
+                  <p className="text-xs text-gray-400 mt-1">
+                    Chưa có chủ đề cho môn và lớp này. Vui lòng tạo chủ đề trước.
+                  </p>
+                )}
               </div>
 
               {/* Category & Duration */}
