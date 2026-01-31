@@ -95,6 +95,11 @@ const ScienceLessonPage = lazy(() => import('./pages/ScienceLessonPage'));
 const GamesPage = lazy(() => import('./pages/learn/games/GamesPage'));
 const GamePlayPage = lazy(() => import('./pages/learn/games/GamePlayPage'));
 
+// Video pages
+const VideosPage = lazy(() => import('./pages/learn/VideosPage'));
+const VideoPlayerPage = lazy(() => import('./pages/learn/VideoPlayerPage'));
+const VideoManagementPage = lazy(() => import('./pages/admin/VideoManagementPage'));
+
 // Payment page
 const PaymentPage = lazy(() => import('./pages/PaymentPage'));
 
@@ -208,6 +213,7 @@ function App() {
           <Route path="notifications" element={<NotificationsPage />} />
           <Route path="analytics" element={<AnalyticsPage />} />
           <Route path="reports" element={<ReportsPage />} />
+          <Route path="videos" element={<VideoManagementPage />} />
         </Route>
 
         {/* School Admin routes - Nested routes */}
@@ -336,6 +342,18 @@ function App() {
         <Route path="/learn/games/:gameId" element={
           <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
             <GamePlayPage />
+          </ProtectedRoute>
+        } />
+
+        {/* Video routes - for students */}
+        <Route path="/learn/videos" element={
+          <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+            <VideosPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/learn/videos/:videoId" element={
+          <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+            <VideoPlayerPage />
           </ProtectedRoute>
         } />
 

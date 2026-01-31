@@ -244,6 +244,22 @@ export default function AdminLayout() {
             <span className="font-medium">Báo cáo</span>
           </NavLink>
 
+          {/* Video YouTube */}
+          <NavLink
+            to="/admin/videos"
+            onClick={() => setSidebarOpen(false)}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
+                isActive
+                  ? 'bg-blue-700 text-white'
+                  : 'text-blue-200 hover:bg-blue-800 hover:text-white'
+              }`
+            }
+          >
+            <span className="text-lg">🎬</span>
+            <span className="font-medium">Video YouTube</span>
+          </NavLink>
+
           {/* Settings */}
           <NavLink
             to="/admin/settings"
